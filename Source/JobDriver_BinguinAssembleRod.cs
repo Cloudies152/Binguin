@@ -229,7 +229,28 @@ namespace Binguin
             //        → CarryHauledThingToCell → ToilDropAtTable
             //   搬完之后，`SpawnUnfinishedRod()` 会把它们**和 4 件配件一起**
             //   吸进半成品容器（见 `Comp_BinguinUnfinishedRod.Accepts` 的白名单）。
-            //   ★ job.count 用 1（不用"一次搬一堆"）—— 和配件那条能跑通的路径完全一致。
+            //
+            // ★★★ 2026-10-09 修复（用户报「搬高级零部件只搬一个，却消耗四个」）★★★
+            //
+            // 【旧代码的 bug】
+            //   循环体里是 `job.count = 1;`（一次只搬 1 个），
+            //   但累加写的是 `hauledSoFar += fromThis;`，而
+            //     `fromThis = Mathf.Min(4 - hauledSoFar, 那一堆的数量)`
+            //   ⇒ **只要那一堆本身有 ≥4 个**，第一轮 `fromThis` 就等于 4，
+            //     循环条件 `hauledSoFar < 4` 立刻为假 ⇒ **直接跳出循环**
+            //   ⇒ 结果：**实际只搬了 1 个（`job.count = 1` 的产物），
+            //     但计数认为已经搬够 4 个**。这就是"只搬一个"的根因。
+            //   （原来的注释还写着"job.count 用 1，和配件那条能跑通的路径完全一致"——
+            //     配件那边没事是因为配件是 4 个**不同**的 def，每个循环只搬固定的一件；
+            //     而零部件是**同一 def 的可堆叠物品**，一堆就有好几个，才会踩到这个坑。）
+            //
+            // 【修法】下面两处一起改，缺一不可：
+            //   ① `job.count` 改成**这一轮真正需要的数量**（不再恒为 1）
+            //      ⇒ `Toils_Haul.StartCarryThing` 会拿 min(需要, 那一堆有几个)，
+            //        同一堆有 4 个就一次拿走 4 个 —— 这才是"四个一起搬"
+            //   ② `hauledSoFar` 改成按**实际拿到手的数量**累加（在拿起后的 toil 里读
+            //      `carryTracker.CarriedThing.stackCount`），
+            //      不再用 `fromThis` 预估值 —— 预估与实际一旦不一致就会漏搬
             const int SpacersToHaul = 4;
             int hauledSoFar = 0;
             for (int si = 0; si < spacersToHaul.Count && hauledSoFar < SpacersToHaul; si++)
@@ -239,8 +260,12 @@ namespace Binguin
                 {
                     continue;
                 }
-                int fromThis = Mathf.Min(SpacersToHaul - hauledSoFar, sp.stackCount);
-                if (fromThis <= 0)
+                int need = SpacersToHaul - hauledSoFar;
+                if (need <= 0)
+                {
+                    break;
+                }
+                if (sp.stackCount <= 0)
                 {
                     continue;
                 }
@@ -249,17 +274,26 @@ namespace Binguin
                 yield return Toils_General.Do(delegate
                 {
                     if (capturedSp == null || capturedSp.Destroyed) return;
+                    int left = SpacersToHaul - hauledSoFar;
+                    if (left <= 0) return;
                     job.SetTarget(TargetIndex.B, capturedSp);
-                    job.count = 1;      // ★ 和配件一致，一个一个搬（更稳）
+                    // ★ 按"还需要几个"取，但仍受这一堆的数量限制
+                    job.count = Mathf.Clamp(Mathf.Min(left, capturedSp.stackCount), 1, capturedSp.stackCount);
                 });
                 yield return Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.ClosestTouch)
                     .FailOnDespawnedOrNull(TargetIndex.B);
                 yield return Toils_Haul.StartCarryThing(TargetIndex.B, false, false, true)
                     .FailOnDespawnedOrNull(TargetIndex.B);
+                // ★ 用 toil 读"实际拿到几个"，回写到 hauledSoFar（按实际而非预估累加）
+                yield return Toils_General.Do(delegate
+                {
+                    Thing c = pawn.carryTracker != null ? pawn.carryTracker.CarriedThing : null;
+                    int got = (c != null && c.def != null && c.def.defName == "ComponentSpacer")
+                        ? c.stackCount : 0;
+                    hauledSoFar += got;
+                });
                 yield return Toils_Haul.CarryHauledThingToCell(TargetIndex.A);
                 yield return ToilDropAtTable();
-
-                hauledSoFar += fromThis;
             }
 
 

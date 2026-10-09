@@ -719,8 +719,50 @@ namespace Binguin
             //   绑定后：只有他能**自动**回来续做（其它人不会抢），
             //   但玩家仍可手动用「继续装配」换人（换人时会重新绑定）。
             comp.boundMaker = pendingPawn;
-            // ★ 记下这根半成品已经付过 4 个高级零部件 —— 半成品被销毁时要退回来
-            comp.spacersSpent = 4;
+            // ★★★ 2026-10-09 修复（用户报「搬高级零部件只搬一个，却消耗四个」）：
+            //
+            // 【旧代码的 bug】
+            //   `comp.spacersSpent = 4;`  —— **硬编码**
+            //   而 `CompBinguinUnfinishedRod.TryAbsorbPart` 的 L301 其实**已经正确记账**了：
+            //       `spacersSpent += part.stackCount;`
+            //   ⇒ 这行硬编码把真实数量**覆盖**掉了
+            //   ⇒ 结果：只吸进 1 个实物、却按 4 个记账 ⇒ 玩家看到"消耗四个"。
+            //
+            // 【修法】不再硬编码，改成按**实际吸进容器的数量**记账：
+            //   · `spacersSpent` 由 `TryAbsorbPart` 累加，这里**一个字都不改**
+            //   · 少了的部分**在这里立刻从地图补扣**（不是拖到收尾）
+            //     —— 因为「已经付过料」的语义是"生成半成品时就付了"，
+            //        补扣放在这里，收尾/退款两端就都不用特判了
+            //   · 补扣成功 ⇒ `spacersSpent` 记满 4（容器里的实物 + 补扣的合计 4）
+            //   · 补扣失败 ⇒ `spacersSpent` 保持实际值，**收尾时会再兜一次**
+            //     （见 `Comp_BinguinUnfinishedRod` 收尾里的 `spacersSpent > 0` 分支）
+            //
+            // ★ 这样保证：**玩家既不亏也不白拿** —— 拿走几个就记几个，缺的当场补。
+            if (spacersAbsorbed < SpacersNeeded2)
+            {
+                int gap = SpacersNeeded2 - comp.spacersSpent;
+                if (gap > 0)
+                {
+                    // ConsumeComponentsFromMap 成功会返回 true，并已扣掉地图上的实物
+                    if (ConsumeComponentsFromMap(map, gap))
+                    {
+                        comp.spacersSpent = SpacersNeeded2;
+                        Log.Message("[冰鹅族] 零部件只吸进 " + spacersAbsorbed
+                            + " 堆（" + (SpacersNeeded2 - gap) + " 个实物），"
+                            + "差额 " + gap + " 个已从地图补扣。");
+                    }
+                    else
+                    {
+                        // 地图上也不够 —— 保持实际数量，让收尾流程再兜；绝不虚报
+                        Log.Warning("[冰鹅族] 零部件差额 " + gap
+                            + " 个在地图上补扣失败；spacersSpent 保持实际值 "
+                            + comp.spacersSpent + "（收尾时会再试一次）。");
+                    }
+                }
+            }
+
+            // ★ 记下这根半成品【实际】付过几个高级零部件 —— 半成品被销毁时要按这个数退回来
+            //   （★ 不再硬编码 4，见上面的修复说明）
 
             Log.Message("[冰鹅族] 已生成【钓竿（未完成）】于 " + rod.Position
                 + "，装入配件 " + absorbed + " 件：" + comp.PartsSummary());
