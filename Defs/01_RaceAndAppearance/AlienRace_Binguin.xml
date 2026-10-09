@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰鹅族种族定义（Humanoid Alien Races 2.0 / RimWorld 1.6.4871）
   ★ 结构已对照 Miho 1.6（用户提供）与 原版 Human 定义（_vanilla_refs）逐字段核对：
@@ -57,14 +57,31 @@
 
         <alienPartGenerator>
 
-          <!-- ============ 头部（2026-09 用户手绘：南 / 北 / 东） ============
-               ★ Inherit="False" 必须写：不然会【继承父类 Human 的头型表】，
-                 小人会随机长出一颗原版人头。
-               ★ 头型定义见 Defs/Head_Binguin.xml；贴图
-                 Textures/Races/Binguin/Head/BinguinHead_{south,north,east}.png；
-                 生成脚本 Tools/Make-BinguinHeadTextures.py（素材在 贴图/头/）。 -->
+          <!-- ============ 头部 ============
+               ★★ 2026-10-09 修复（用户报"不知道为什么的红字"）：
+                 原来这里挂的是自绘头 def `Binguin_Head_Average`，
+                 但切到【原版身形·脸版】后 `Defs/01_RaceAndAppearance/HeadTypeDefs_Binguin.xml`
+                 已删除 ⇒ 游戏报
+                   `Could not resolve cross-reference to Verse.HeadTypeDef named Binguin_Head_Average`
+                 ⇒ 现在改成**原版头型表**（照抄原版 Human 用的那 12 个），
+                   与本文件 `<head><path>Things/Pawn/Humanlike/Heads/Male/Male_Average_Normal`
+                   一致 —— 头部就是原版头，随机选型。
+               ★ `Inherit="False"` 仍然要写：不然会继承父类 Human 的头型表（虽然结果一样，
+                 但显式列出更清楚，也防止以后改父类时被带偏）。
+               ★ 原版 HeadTypeDef 名单见 `Data/Core/Defs/HeadTypeDefs/HeadTypeDefs.xml`。 -->
           <headTypes Inherit="False">
-            <li>Binguin_Head_Average</li>
+            <li>Male_AverageNormal</li>
+            <li>Male_AveragePointy</li>
+            <li>Male_AverageWide</li>
+            <li>Male_NarrowNormal</li>
+            <li>Male_NarrowPointy</li>
+            <li>Male_NarrowWide</li>
+            <li>Female_AverageNormal</li>
+            <li>Female_AveragePointy</li>
+            <li>Female_AverageWide</li>
+            <li>Female_NarrowNormal</li>
+            <li>Female_NarrowPointy</li>
+            <li>Female_NarrowWide</li>
           </headTypes>
 
           <!-- ============ 体型限制（2026-09 用户需求） ============

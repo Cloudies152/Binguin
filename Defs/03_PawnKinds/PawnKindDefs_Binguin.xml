@@ -31,7 +31,7 @@
     <defName>Binguin_Settler</defName>
     <label>冰鹅族定居者</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -61,7 +61,7 @@
     <defName>Binguin_Diplomat</defName>
     <label>冰鹅族外交官</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -93,7 +93,7 @@
     <defName>Binguin_Merchant</defName>
     <label>冰鹅族商人</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -127,7 +127,7 @@
     <defName>Binguin_CoserNine</defName>
     <label>冰鹅族coser</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -154,7 +154,7 @@
     <defName>Binguin_CoserDaiyousei</defName>
     <label>冰鹅族coser</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -182,7 +182,7 @@
     <defName>Binguin_CaravanLeader</defName>
     <label>冰鹅族商队领袖</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -219,7 +219,7 @@
     <defName>Binguin_Militia</defName>
     <label>冰鹅族民兵</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -275,7 +275,7 @@
     <defName>Binguin_Soldier</defName>
     <label>冰鹅族士兵</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -340,7 +340,7 @@
     <defName>Binguin_Sapper</defName>
     <label>冰鹅族工兵</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -394,7 +394,7 @@
     <defName>Binguin_Scout</defName>
     <label>冰鹅族哨骑</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -451,7 +451,7 @@
     <defName>Binguin_LeaderGuard</defName>
     <label>冰鹅族领袖护卫</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -508,7 +508,7 @@
     <defName>Binguin_Leader</defName>
     <label>冰鹅族领袖</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>
@@ -565,7 +565,7 @@
     <defName>Binguin_Fighter</defName>
     <label>冰鹅族巡护员</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>

@@ -38,17 +38,15 @@ namespace Binguin
             {
                 return;
             }
+            // ★★ 2026-10-09 用户需求：可以瞄准 pawn 了（不再只能点地板）。
+            //   `LocalTargetInfo.Pawn` 是 `Thing as Pawn`（RimSage 查
+            //   `Verse/LocalTargetInfo.cs` 实证），瞄准 pawn 时 `target.Cell`
+            //   就是那个 pawn 所在的格，所以下面统一取 `.Cell` 即可。
             IntVec3 aimCell = target.Cell;
-            Vector3 dirVec = (aimCell - pawn.Position).ToVector3();
-            if (dirVec.sqrMagnitude < 0.01f)
-            {
-                return;
-            }
-            dirVec.Normalize();
-            IntVec3 dir = new IntVec3(
-                Mathf.RoundToInt(dirVec.x),
-                0,
-                Mathf.RoundToInt(dirVec.z));
+            // ★★ 方向算法**必须与瞄准预览共用同一份**
+            //   （`BinguinPierceAim.DirectionTo`）—— 否则又会变成
+            //   "看到一条线、实际打另一个方向"。用户报的正是这个问题的观感版本。
+            IntVec3 dir = BinguinPierceAim.DirectionTo(pawn.Position, aimCell);
             if (dir == IntVec3.Zero)
             {
                 return;

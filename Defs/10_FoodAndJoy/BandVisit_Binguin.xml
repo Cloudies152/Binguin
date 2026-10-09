@@ -379,7 +379,7 @@
     <defName>Binguin_BandMember</defName>
     <label>冰鹅族乐队成员</label>
     <race>Binguin</race>
-    <defaultFactionType>Binguin</defaultFactionType>
+    <defaultFactionDef>Binguin</defaultFactionDef>
     <xenotypeSet>
       <xenotypeChances>
         <Binguin_Xenotype>1.0</Binguin_Xenotype>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   高级钓鱼学 —— 钓竿制作系统（2026-08-19 用户设计文档：高级钓鱼学.md）
   ★ 本文件在 AdvancedFishing/ 文件夹（Odyssey 门控，LoadFolders.xml）
@@ -196,6 +196,23 @@
       <workAmount>10000</workAmount>
       <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
       <workSkill>Crafting</workSkill>
+      <!-- ★★ 2026-10-09 修复 Config error（用户报的红字之一）：
+           日志原文：`Config error in Binguin_UnfinishedRod:
+                      has a recipeMaker but no costList or costStuffCount.`（报 2 次）
+           出处（RimSage 实证）：`Verse/ThingDef.cs:1804` 的 `ConfigErrors`：
+             `if (costList.NullOrEmpty() && costStuffCount <= 0 && recipeMaker != null)
+                  yield return "has a recipeMaker but no costList or costStuffCount.";`
+           ⇒ 只要 `recipeMaker != null` 就必须给一个代价字段。
+           ★ 为什么删不掉 recipeMaker：`Comp_BinguinUnfinishedRod` 的
+             `WorkAmountBase` / `Maker` 都是从 `def.recipeMaker` 读的
+             （workAmount / workSpeedStat / workSkill）—— 删了整个装配工作量就没来源了。
+           ★ 这个 1 单位代价**不会被扣**：装配流程不走 `RecipeDef`、不走 bill，
+             工作量是 `WorkAmountBase` 直接读的；这条自动生成的
+             `Make_Binguin_UnfinishedRod` 配方也**没有 recipeUsers**，
+             所以不会出现在任何工作台的清单里。
+           ★ 同时注意 L165 那行 `<recipeMaker IsNull="true" />` 其实**是无效的**
+             —— 被这里的 `<recipeMaker>` 覆盖了（这是我原来的误解，留着无害但别指望它）。 -->
+      <costStuffCount>1</costStuffCount>
     </recipeMaker>
     <stuffCategories Inherit="false" />
     <researchPrerequisites>
@@ -528,13 +545,26 @@
     <label>穿刺</label>
     <description>对前方 10 格内所有敌人造成 200% 于武器面板的伤害。冷却 10 秒。</description>
     <cooldownTicksRange>600~600</cooldownTicksRange>
+    <!-- ★★ 2026-10-09 用户需求：「让它瞄准的时候，显示范围变成一条直线，
+         然后可以瞄准 pawn 而不是地板」
+         ⇒ ① 换成自定义 command：瞄准时由 GameComponent 每帧画【直线】射程预览，
+              不再用原版那个跟实际范围对不上的圆（XML 画不了，必须代码）
+              见 `Source/Command_BinguinAbility.cs`
+              挂载方式：`Ability.cs:1047` 用
+                `Activator.CreateInstance(def.gizmoClass, this, pawn)`
+         ⇒ ② `canTargetPawns` 改成 **true**（原来是 false ⇒ 只能点地板）。
+              `canTargetLocations` 保持 true ⇒ 地板照样能点，两种都行。
+         ★ 注意：`compClass` 仍然用原版可实例化类占位，效果类由静态构造挂载
+           （XML 零自定义类型原则）—— 只有 gizmoClass 是例外，因为 gizmo 不需要
+           XML 序列化字段，只是"按钮行为"，RimWorld 就是用 Activator 直接 new 的。 -->
+    <gizmoClass>Binguin.Command_BinguinPierce</gizmoClass>
     <verbProperties>
       <verbClass>Verb_CastAbility</verbClass>
       <range>10</range>
       <warmupTime>0.2</warmupTime>
       <targetParams>
         <canTargetLocations>true</canTargetLocations>
-        <canTargetPawns>false</canTargetPawns>
+        <canTargetPawns>true</canTargetPawns>
         <canTargetBuildings>false</canTargetBuildings>
         <canTargetItems>false</canTargetItems>
       </targetParams>
@@ -786,18 +816,36 @@
   <!-- 尚方宝剑 · 单次鱼斩的损伤：钝击 + 按面板伤害 1:1 累积冰爆
        ★ workerClass 用原版 DamageWorker_Blunt 占位，静态构造替换成
          DamageWorker_BinguinFishBlunt（XML 零自定义类型原则）。
-       ★ armorPenetration 也在这里给一份（100% 钝器穿透），
-         技能里另外显式传 cfg.armorPenetration，双保险。 -->
+       ★★ 2026-10-09 修复三个字段错误（用户报"不知道为什么的红字"，日志实证）：
+         原写法                                   问题 → 现在
+         ─────────────────────────────────────────────────────────────────
+         `<hediff>BluntTrauma</hediff>`           ❌ 原版**没有** `BluntTrauma` 这个 def
+                                                  （那是 DamageDef 名，不是 HediffDef）
+                                                  → 改成 **`Crush`**（原版钝击用的 HediffDef，
+                                                    见 Core `Damages_MeleeWeapon.xml` 的
+                                                    `<DamageDef><defName>Crush</defName>
+                                                     <hediff>Crush</hediff>`）
+         `<armorPenetration>1.0</armorPenetration>` ❌ **DamageDef 里没有这个字段**
+                                                  （RimSage 查 `Verse/DamageDef.cs` 字段表：
+                                                    只有 `defaultArmorPenetration`）
+                                                  → 改成 **`defaultArmorPenetration`**
+         `<combatLogRules>Damage_Blunt</...>`      ❌ 原版**没有** `Damage_Blunt` 这个 RulePackDef
+                                                  → **删掉**（原版绝大多数 DamageDef 都不写，
+                                                    只有 Flame/Smoke/Stun/EMP 等特殊损伤才写）
+       ★ 三条报错原文见 Player.log：
+         `XML error: <armorPenetration>1.0</armorPenetration> doesn't correspond to any field
+          in type DamageDef`
+         `Could not resolve cross-reference: No Verse.RulePackDef named Damage_Blunt`
+         `Could not resolve cross-reference: No Verse.HediffDef named BluntTrauma` -->
   <DamageDef>
     <defName>Binguin_FishBluntDamage</defName>
     <label>鱼斩</label>
     <workerClass>DamageWorker_Blunt</workerClass>
     <externalViolence>true</externalViolence>
     <deathMessage>{0} 被十四条鱼斩成了碎片。</deathMessage>
-    <hediff>BluntTrauma</hediff>
+    <hediff>Crush</hediff>
     <armorCategory>Blunt</armorCategory>
-    <armorPenetration>1.0</armorPenetration>
-    <combatLogRules>Damage_Blunt</combatLogRules>
+    <defaultArmorPenetration>1.0</defaultArmorPenetration>
   </DamageDef>
 
   <!-- ============ 尚方宝剑技能「天顶鱼斩」（测试玩法，mod 选项控制）============
