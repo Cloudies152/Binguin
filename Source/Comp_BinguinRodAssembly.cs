@@ -15,6 +15,7 @@
 //   待装配数据暂存在 comp（单槽），job 完成时读取（取消 job 不损失配件）。
 // ============================================================================
 
+using System;
 using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
@@ -504,6 +505,74 @@ namespace Binguin
             pendingPawn = null;
         }
 
+        /// <summary>
+        /// 把某个格子上压着的**可搬运物品**挪到旁边，给即将放下的东西腾位置。
+        ///
+        /// ★ 为什么需要（2026-10-09 用 RimSage 查原版源码确认的机制）：
+        ///   `BuildingProperties.maxItemsInCell` 默认 **1**（`BuildingProperties.cs:132`），
+        ///   装配台（`BenchBase` 子类）没覆盖 ⇒ 每格只能容 1 个物品。
+        ///   而 `GenPlace.TryPlaceDirect` 的容量是
+        ///     `GetMaxItemsAllowedInCell(map) - 该格已有物品数`
+        ///   （`GridsUtility.cs:267` / `GenPlace.cs:352`）⇒ 格子上有东西时**放不进去**。
+        ///
+        /// ★ 安全性：
+        ///   · 只动 `def.category == ThingCategory.Item` 且 `def.alwaysHaulable` 的东西
+        ///     （建筑、蓝图、尸体等一律不碰）；
+        ///   · 用原版 `ThingPlaceMode.Near` 挪到附近，失败就放弃（**绝不销毁**）；
+        ///   · 留 `TryAbsorbPart` 后面照样能从地图上把它吸进半成品
+        ///     （它按 `pendingXxx` 引用找东西，不依赖位置）。
+        /// </summary>
+        private void MakeRoomOnCell(IntVec3 cell, Map map)
+        {
+            try
+            {
+                if (!cell.IsValid || !cell.InBounds(map))
+                {
+                    return;
+                }
+                List<Thing> things = cell.GetThingList(map);
+                if (things == null || things.Count == 0)
+                {
+                    return;
+                }
+                // ★ 必须复制一份再遍历：挪动过程中会改 things 列表
+                List<Thing> snapshot = new List<Thing>(things);
+                int moved = 0;
+                for (int i = 0; i < snapshot.Count; i++)
+                {
+                    Thing t = snapshot[i];
+                    if (t == null || t.Destroyed || t.def == null)
+                    {
+                        continue;
+                    }
+                    if (t.def.category != ThingCategory.Item || !t.def.alwaysHaulable)
+                    {
+                        continue;   // 不是可搬运物品 —— 不碰
+                    }
+                    if (t.def.EverHaulable && t.def.category == ThingCategory.Item
+                        && t.IsForbidden(Faction.OfPlayer))
+                    {
+                        // 被禁止的物品玩家可能故意摆在那里，不动它
+                        continue;
+                    }
+                    if (GenPlace.TryPlaceThing(t, cell, map, ThingPlaceMode.Near, null))
+                    {
+                        moved++;
+                    }
+                }
+                if (moved > 0)
+                {
+                    Log.Message("[冰鹅族] 为放下半成品，把装配台格上的 " + moved
+                        + " 件物品挪到了旁边。");
+                }
+            }
+            catch (Exception ex)
+            {
+                // 腾位置失败不影响主流程 —— Direct 失败还有后面的兜底
+                Log.Warning("[冰鹅族] 腾台面位置时出错（已忽略）：" + ex.Message);
+            }
+        }
+
         // ================================================================
         // 【钓竿（未完成）】· 可搬运半成品（2026-10-06 用户需求）
         // ================================================================
@@ -546,15 +615,33 @@ namespace Binguin
             Building table = parent as Building;
             IntVec3 icell = (table != null) ? table.InteractionCell : IntVec3.Invalid;
             IntVec3 tableCell = parent.Position;
+
+            // ★★ 关键前提（2026-10-09 用 RimSage 查原版源码确认）：
+            //   `GenPlace.TryPlaceDirect` 的容量算法是
+            //     `num3 = loc.GetMaxItemsAllowedInCell(map) - 该格已有物品数`
+            //   而 `IntVec3.GetMaxItemsAllowedInCell` = `GetEdifice(map)?.MaxItemsInCell ?? 1`
+            //   （`Source/Verse/GridsUtility.cs:267`），
+            //   `BuildingProperties.maxItemsInCell` 默认 = **1**（`BuildingProperties.cs:132`），
+            //   我们的装配台（`BenchBase` 子类）没覆盖它 ⇒ **每格只能容 1 个物品**。
+            //   ⇒ 如果台子格上已经压着一件零件（搬运过程中很正常），
+            //     `num3 <= 0` ⇒ **Direct 会失败** ⇒ 半成品掉到交互格/台子旁边（地上），
+            //     而不是"在台面上"。这与需求「鱼竿未成品应该在装配台中间」不符。
+            //   ⇒ 修法：放之前先把那格上的**可搬运物品**挪到旁边，给半成品腾位置。
+            MakeRoomOnCell(tableCell, map);
+
             // ★ Direct = 精确放在指定格（装配台是 PassThroughOnly，物品可以压在台面上）
             GenPlace.TryPlaceThing(rod, tableCell, map, ThingPlaceMode.Direct, null);
             if (!rod.Spawned && icell.IsValid && icell.InBounds(map))
             {
                 // 没能压在台面上 ⇒ 退回交互格
+                MakeRoomOnCell(icell, map);
                 GenPlace.TryPlaceThing(rod, icell, map, ThingPlaceMode.Direct, null);
             }
             if (!rod.Spawned)
             {
+                // ⚠️ 最后兜底：Near 会放到台子【旁边】（地上），不是台面。
+                //   正常流程不该走到这里（前面 Direct 应该成功）。
+                Log.Warning("[冰鹅族] 半成品无法压到台面上（台子格被占？），已退到台子附近的地上。");
                 GenPlace.TryPlaceThing(rod, tableCell, map, ThingPlaceMode.Near, null);
             }
             if (!rod.Spawned)

@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // 装配高级钓竿 JobDriver（第一次装配）—— 搬配件 → 生成【钓竿（未完成）】→ 交给工作 job
 //
 // JobDef = Binguin_AssembleRod（targetA = 装配台）。
@@ -208,6 +208,17 @@ namespace Binguin
                     .FailOnDespawnedOrNull(TargetIndex.B);
                 yield return Toils_Haul.StartCarryThing(TargetIndex.B, false, false, true)
                     .FailOnDespawnedOrNull(TargetIndex.B);
+                // ★★ 2026-10-09 用 RimSage 查原版源码后确认的一条**隐含前提**：
+                //   `Toils_Haul.CarryHauledThingToCell`（Verse.AI/Toils_Haul.cs L254-294）
+                //   有三个 failCondition，其中第二个是：
+                //     if (job.haulMode == HaulMode.ToCellStorage
+                //         && !cell.IsValidStorageFor(map, CarriedThing)) return true;
+                //   ⇒ **若把 job.haulMode 设成 ToCellStorage，而装配台不是储存格
+                //     ⇒ 每次搬运都会立刻失败 ⇒ 整个装配流程全挂！**
+                //   当前之所以没事：`Job.haulMode` 是 `HaulMode` 枚举字段
+                //   （`Verse.AI/Job.cs:57`，枚举 Undefined=0）
+                //   ⇒ **默认值 Undefined**，永远不等于 ToCellStorage ⇒ 该条件不触发。
+                //   ⚠️ **所以千万别给这个 job 设 haulMode = ToCellStorage**（新写 job 时同理）。
                 yield return Toils_Haul.CarryHauledThingToCell(TargetIndex.A);
                 yield return ToilDropAtTable();
             }
