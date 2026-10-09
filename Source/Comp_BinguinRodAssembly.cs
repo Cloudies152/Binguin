@@ -400,9 +400,29 @@ namespace Binguin
             return true;
         }
 
-        // job 完成：扣配件 + 4 高级零部件 → 按技能生成品质 → 产出鱼竿
+        // ══════════════════════════════════════════════════════════════════════
+        // ⚠️⚠️ 死代码警告（2026-10-09 用 RimSage 复核原版源码后确认）⚠️⚠️
+        //
+        //   本方法【全文没有任何调用点】。2026-10-06 起流程已改成：
+        //     StartAssembly  → 派 Binguin_AssembleRod job
+        //                    → 小人把 4 件配件 + 4 个高级零部件搬到装配台
+        //                    → SpawnUnfinishedRod() 生成【钓竿（未完成）】
+        //                    → Binguin_WorkOnUnfinishedRod 干活
+        //                    → 收尾逻辑在 Comp_BinguinUnfinishedRod.cs
+        //   ⇒ 这里保留的只是**旧流程的收尾逻辑**，供对照。
+        //
+        //   ★ 为什么不能直接删：语言键 / 注释 / 未来可能需要对照，
+        //     而且它是 public（删了要连带清干净）。
+        //   ★★ 但**绝对不能重新接上它**：它会 `ConsumeComponents(4)` 并
+        //     `ThingMaker.MakeThing(rodDef)` —— 现在是 SpawnUnfinishedRod 在收料，
+        //     两处都跑 = **双重扣料 + 双重产出**。
+        //   ⇒ 所以下面加了一句运行时告警：万一有人接上，日志里立刻能看见。
+        // ══════════════════════════════════════════════════════════════════════
         public void FinishAssembly(Pawn worker)
         {
+            Log.Warning("[冰鹅族] CompBinguinRodAssembly.FinishAssembly 被调用了 —— 这是【死代码】！"
+                + "当前流程的收尾在 Comp_BinguinUnfinishedRod.cs。"
+                + "若确实需要走旧路径，请先确认不会与 SpawnUnfinishedRod 双重扣料。");
             Map map = parent.Map;
             if (map == null) return;
             if (pendingShaft == null || pendingTip == null || pendingHook == null)

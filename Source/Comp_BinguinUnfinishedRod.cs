@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // 钓竿（未完成）—— 可搬运的半成品（2026-10-06 用户需求）
 //
 // ★★ 用户需求原文：
@@ -233,10 +233,23 @@ namespace Binguin
         ///      if (part.Spawned) part.DeSpawn(DestroyMode.Vanish);
         ///      ok = innerContainer.TryAdd(part, true);
         ///      ```
-        ///    `DeSpawn` 会把 `holdingOwner` 清空（转入 `ThingOwner` 的"已脱spawn"态），
-        ///    于是 `TryAdd` 的守卫通过，落入真正的加入逻辑。
-        ///    ★ 这也解释了为什么"装备入容器"类功能（`Pawn_EquipmentTracker`）能用那个
-        ///      `TryTransferToContainer` 重载 —— 那些场景的原 holder 都会真正清空。
+        ///    ★ 实测有效（这是最终跑通的写法）。
+        ///    ⚠️ **别猜"为什么有效"** —— 我先前在这里写过
+        ///      「`DeSpawn` 会把 `holdingOwner` 清空」，那是**编的**。
+        ///      2026-10-09 用 RimSage 查原版源码逐条核实（`Source/Verse/Thing.cs`）：
+        ///        · `holdingOwner` 是 `Thing` 的 **public 字段**（L39），默认 null；
+        ///        · `DeSpawn` 的实现（L945-1036）**一行都没碰 `holdingOwner`**；
+        ///        · 全代码库里 `holdingOwner = null` 只有 4 处：
+        ///          `ThingOwner.Remove`(L269)、`ThingOwner`(L814)、
+        ///          `Thing.Notify_MyMapRemoved`(L1140)、`BackCompatibilityConverter_1_0`(L217)。
+        ///      ⇒ **真实原因未查明**。可查证的只有：
+        ///        · `ThingOwner.TryAdd` 有 `if (item.holdingOwner != null) → 拒绝` 的守卫
+        ///          （L108 与 L154 两个重载都有，日志就是它打的）；
+        ///        · 而`GenSpawn`(L169-171) 会先把 `holdingOwner` 摘掉再放地图上。
+        ///      ⇒ 要么地图上的 Thing 本来就 `holdingOwner == null`（那 `DeSpawn` 是多余的），
+        ///        要么 `DeSpawn` 经某条间接路径清了它。**两者都没验证，不要当结论用。**
+        ///      ★ 这也解释了为什么"装备入容器"类功能（`Pawn_EquipmentTracker`）能用那个
+        ///        `TryTransferToContainer` 重载 —— 那个重载内部会走 `holdingOwner.TryTransferToContainer`。
         /// </summary>
         public bool TryAbsorbPart(Thing part, Pawn carrier)
         {
@@ -586,12 +599,25 @@ namespace Binguin
                 //   ★ 正确的区分点是 **`ParentHolder`**：
                 //     · 被小人提着 / 放进容器 / 塞进背包
                 //       ⇒ `Spawned=false`，但 **`ParentHolder` != null**
-                //       （`Thing.DeSpawn` 结尾会把 `holder` 设成 `holdingOwner.Owner`）
                 //       ⇒ 东西还在，**不退款**
                 //     · 被销毁（`Thing.Destroy` 先 DeSpawn 再调 PostDeSpawn）
                 //       ⇒ `ParentHolder == null` 且 `Spawned == false`
                 //       ⇒ **退款**
                 //     · 被商队/远征队带离地图 ⇒ 同上 ⇒ 退款（符合预期）
+                //
+                //   ★ `ParentHolder` 的真身（2026-10-09 用 RimSage 核实，
+                //     见 `Source/Verse/Thing.cs`）：
+                //       `public IThingHolder ParentHolder => holdingOwner?.Owner;`   (L388)
+                //     它是**计算属性**，没有自己的存储。
+                //     ⇒ 我先前写的「`Thing.DeSpawn` 结尾会把 `holder` 设成
+                //       `holdingOwner.Owner`」是**编的** ——
+                //       `Thing` 里根本没有 `holder` 这个字段，而且 `DeSpawn` 没碰 `holdingOwner`。
+                //     真正给 `holdingOwner` 赋值的是 `ThingOwner.TryAdd`
+                //     （`ThingOwner.cs:193` `item.holdingOwner = this`），
+                //     小人搬运时走的就是 `Pawn_CarryTracker.innerContainer.TryAdd`
+                //     （`Pawn_CarryTracker.cs:76`），而 `Pawn_CarryTracker : IThingHolder`
+                //     ⇒ `Owner` 就是那个小人 ⇒ `ParentHolder` 非 null。
+                //     ★ 结论不变（判断是对的），只是机制要按上面这样讲。
                 if (parent == null)
                 {
                     return;
