@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
+  <Recipe_Binguin_VoidSwordFish.label>make Void Sword Fish</Recipe_Binguin_VoidSwordFish.label>
+  <Recipe_Binguin_VoidSwordFish.description>Twenty-five each of the fourteen kinds of fish of the cold plain, condensed into a single sword. The forms and spirits of the fourteen fish are drawn into the blade, becoming the fourteen phantoms of the "Zenith Fish Slash".</Recipe_Binguin_VoidSwordFish.description>
+  <Recipe_Binguin_VoidSwordFish.jobString>Condensing the forms and spirits of the fourteen kinds of fish...</Recipe_Binguin_VoidSwordFish.jobString>
+  <Recipe_Binguin_FishingRod.label>make mass-produced fishing rod</Recipe_Binguin_FishingRod.label>
+  <Recipe_Binguin_FishingRod.jobString>Making a mass-produced fishing rod...</Recipe_Binguin_FishingRod.jobString>
+  <Make_Binguin_StinkFishCan.label>Make stinkfish can</Make_Binguin_StinkFishCan.label>
+  <Make_Binguin_StinkFishCan.description>A fish crammed into a can and left to rot until it stinks. Load it into a mortar and fire it, or bury it in the ground as a trap.</Make_Binguin_StinkFishCan.description>
+  <Make_Binguin_StinkFishCan.jobString>Making a stinkfish can.</Make_Binguin_StinkFishCan.jobString>
+  <Recipe_Binguin_ScoutHelmet.label>Make scout helmet</Recipe_Binguin_ScoutHelmet.label>
+  <Recipe_Binguin_ScoutHelmet.jobString>Making scout helmet.</Recipe_Binguin_ScoutHelmet.jobString>
+  <Recipe_Binguin_ScoutArmor.label>Make scout armor</Recipe_Binguin_ScoutArmor.label>
+  <Recipe_Binguin_ScoutArmor.jobString>Making scout armor.</Recipe_Binguin_ScoutArmor.jobString>
+  <InstallBinguinFieldCombatBionicEye.label>Install field combat bionic eye</InstallBinguinFieldCombatBionicEye.label>
+  <InstallBinguinFieldCombatBionicEye.description>Install a field combat bionic eye in the target.</InstallBinguinFieldCombatBionicEye.description>
+  <InstallBinguinFieldCombatBionicEye.jobString>Installing field combat bionic eye.</InstallBinguinFieldCombatBionicEye.jobString>
+  <Binguin_Recipe_FishJerky.label>Make fish jerky</Binguin_Recipe_FishJerky.label>
+  <Binguin_Recipe_FishJerky.jobString>Making fish jerky...</Binguin_Recipe_FishJerky.jobString>
+  <Binguin_Recipe_CheeseSticks.label>Make cheese sticks</Binguin_Recipe_CheeseSticks.label>
+  <Binguin_Recipe_CheeseSticks.jobString>Making cheese sticks...</Binguin_Recipe_CheeseSticks.jobString>
+  <Recipe_Binguin_GateShield.label>Make Gate Shield</Recipe_Binguin_GateShield.label>
+  <Recipe_Binguin_GateShield.jobString>Making Gate Shield...</Recipe_Binguin_GateShield.jobString>
+  <Recipe_Binguin_FlakVest.label>Make binguin flak vest</Recipe_Binguin_FlakVest.label>
+  <Recipe_Binguin_FlakVest.jobString>Making binguin flak vest...</Recipe_Binguin_FlakVest.jobString>
+  <Recipe_Binguin_AssaultRifle.label>Make binguin assault rifle</Recipe_Binguin_AssaultRifle.label>
+  <Recipe_Binguin_AssaultRifle.jobString>Making binguin assault rifle...</Recipe_Binguin_AssaultRifle.jobString>
+  <Recipe_Binguin_PrecisionRifle.label>Make binguin precision rifle</Recipe_Binguin_PrecisionRifle.label>
+  <Recipe_Binguin_PrecisionRifle.jobString>Making binguin precision rifle...</Recipe_Binguin_PrecisionRifle.jobString>
+  <Recipe_Binguin_PenguinKick.label>Make penguin flying kick!!</Recipe_Binguin_PenguinKick.label>
+  <Recipe_Binguin_PenguinKick.jobString>Making penguin flying kick!!...</Recipe_Binguin_PenguinKick.jobString>
+  <Recipe_Binguin_LaserGatling.label>Make binguin GGGGGG</Recipe_Binguin_LaserGatling.label>
+  <Recipe_Binguin_LaserGatling.jobString>Making binguin GGGGGG...</Recipe_Binguin_LaserGatling.jobString>
+  <Recipe_Binguin_SMG.label>Make binguin SMG</Recipe_Binguin_SMG.label>
+  <Recipe_Binguin_SMG.jobString>Making binguin SMG...</Recipe_Binguin_SMG.jobString>
+  <Recipe_Binguin_Shotgun.label>Make binguin shotgun</Recipe_Binguin_Shotgun.label>
+  <Recipe_Binguin_Shotgun.jobString>Making binguin shotgun...</Recipe_Binguin_Shotgun.jobString>
+  <Recipe_Binguin_LeverRifle.label>Make binguin lever-action rifle</Recipe_Binguin_LeverRifle.label>
+  <Recipe_Binguin_LeverRifle.jobString>Making binguin lever-action rifle...</Recipe_Binguin_LeverRifle.jobString>
+</LanguageData>

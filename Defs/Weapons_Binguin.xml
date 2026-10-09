@@ -1,0 +1,421 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族基础武器（2026-08-19 用户定稿 v2）：
+  ★ v2 修复（用户反馈）：
+    - 原版机械加工台不应能制作冰鹅武器 → ThingDef 继承改为 BaseGunWithQuality
+      （父类 BaseMakeableGun 自带 recipeMaker recipeUsers=[TableMachining]，
+      RimWorld XML 继承 List 是追加语义 → 之前 recipeUsers 叠加导致原版机工台
+      也出配方），制作改用独立 RecipeDef（recipeUsers 精确 = 冰鹅机工台）
+    - 工作量统一 18000（用户定稿）
+  ★ 全部由「冰鹅机加工」（Binguin_ResearchMachining）解锁，冰鹅族机工台制作。
+  DPS 比原版蓝本高约 10%：
+    - 冰鹅族冲锋枪（蓝本 HeavySMG）：伤害 12→13、冷却 1.65→1.6 → DPS 13.60（原 12.34，+10.2%）
+      成本 60 铁 + 1 零部件
+    - 冰鹅族霰弹枪（蓝本 ChainShotgun）：伤害 18→20 → DPS 20.81（原 18.73，+11.1%）
+      成本 120 铁 + 1 零部件
+    - 冰鹅族杠杆步枪（蓝本 BoltActionRifle）：伤害 18→20 → DPS 6.25（原 5.63，+11.1%）
+      成本 90 铁 + 1 零部件
+  DPS 公式（1.6）：单次齐射周期 = warmup + (burstCount-1)*ticksBetweenBurstShots/60 + cooldown 秒，
+  DPS = 伤害*burst / 周期。
+  ★ 1.6 研究解锁 = 反向引用：RecipeDef <researchPrerequisites> 指向 Binguin_ResearchMachining
+  （RecipeDef 同时有 researchPrerequisite 单数与 researchPrerequisites 列表字段）。
+-->
+<Defs>
+
+  <!-- ============ 冰鹅族冲锋枪（蓝本：重型冲锋枪） ============ -->
+  <ThingDef ParentName="BaseGunWithQuality">
+    <defName>Binguin_SMG</defName>
+    <label>冰鹅族冲锋枪</label>
+    <description>冰鹅族工匠以寒铁锻造的紧凑型冲锋枪，枪身覆着蓝黑冰纹。射程内火力凶猛，如冰风暴般倾泻弹雨。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/Binguin/SMG</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <soundInteract>Interact_SMG</soundInteract>
+    <weaponClasses>
+      <li>ShortShots</li>
+      <li>RangedHeavy</li>
+    </weaponClasses>
+    <thingSetMakerTags>
+      <li>RewardStandardQualitySuper</li>
+    </thingSetMakerTags>
+    <statBases>
+      <WorkToMake>18000</WorkToMake>
+      <Mass>3.2</Mass>
+      <AccuracyTouch>0.85</AccuracyTouch>
+      <AccuracyShort>0.65</AccuracyShort>
+      <AccuracyMedium>0.35</AccuracyMedium>
+      <AccuracyLong>0.20</AccuracyLong>
+      <RangedWeapon_Cooldown>1.6</RangedWeapon_Cooldown>
+    </statBases>
+    <costList>
+      <Steel>60</Steel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>Binguin_Bullet_SMG</defaultProjectile>
+        <warmupTime>0.9</warmupTime>
+        <range>22.9</range>
+        <burstShotCount>5</burstShotCount>
+        <ticksBetweenBurstShots>11</ticksBetweenBurstShots>
+        <soundCast>Shot_HeavySMG</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>9</muzzleFlashScale>
+      </li>
+    </verbs>
+    <weaponTags>
+      <li>Gun</li>
+      <li>IndustrialGunAdvanced</li>
+      <li>ShortShots</li>
+      <li>BinguinMachined</li>
+      <li>BinguinGunSMG</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponRanged</li>
+    </tradeTags>
+    <tools>
+      <li>
+        <label>grip</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+      <li>
+        <label>barrel</label>
+        <capacities>
+          <li>Blunt</li>
+          <li>Poke</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+    </tools>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMachining</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <RecipeDef>
+    <defName>Recipe_Binguin_SMG</defName>
+    <label>制作冰鹅族冲锋枪</label>
+    <jobString>正在制作冰鹅族冲锋枪……</jobString>
+    <workAmount>18000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedGun</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>60</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_SMG>1</Binguin_SMG>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>4</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchMachining</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- 冲锋枪子弹：伤害 13（原版 12） -->
+  <ThingDef ParentName="BaseBullet">
+    <defName>Binguin_Bullet_SMG</defName>
+    <label>冰鹅冲锋枪子弹</label>
+    <graphicData>
+      <texPath>Things/Projectile/Bullet_Small</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+      <damageDef>Bullet</damageDef>
+      <damageAmountBase>8</damageAmountBase>
+      <armorPenetrationBase>0.08</armorPenetrationBase>
+      <speed>48</speed>
+    </projectile>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族霰弹枪（蓝本：链式霰弹枪） ============ -->
+  <ThingDef ParentName="BaseGunWithQuality">
+    <defName>Binguin_Shotgun</defName>
+    <label>冰鹅族霰弹枪</label>
+    <description>冰鹅族自制的连发霰弹枪，蓝黑枪身嵌着冰晶纹路。近距离连喷如冰雹崩落，是寒原据点防御的中坚火力。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/Binguin/Shotgun</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <soundInteract>Interact_Shotgun</soundInteract>
+    <weaponClasses>
+      <li>ShortShots</li>
+    </weaponClasses>
+    <thingSetMakerTags>
+      <li>RewardStandardQualitySuper</li>
+    </thingSetMakerTags>
+    <statBases>
+      <WorkToMake>18000</WorkToMake>
+      <Mass>4.2</Mass>
+      <AccuracyTouch>0.63</AccuracyTouch>
+      <AccuracyShort>0.64</AccuracyShort>
+      <AccuracyMedium>0.55</AccuracyMedium>
+      <AccuracyLong>0.51</AccuracyLong>
+      <RangedWeapon_Cooldown>1.35</RangedWeapon_Cooldown>
+    </statBases>
+    <costList>
+      <Steel>120</Steel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>Binguin_Bullet_Shotgun</defaultProjectile>
+        <warmupTime>1.2</warmupTime>
+        <range>12.9</range>
+        <burstShotCount>2</burstShotCount>
+        <ticksBetweenBurstShots>10</ticksBetweenBurstShots>
+        <soundCast>Shot_Shotgun</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>9</muzzleFlashScale>
+      </li>
+    </verbs>
+    <weaponTags>
+      <li>Gun</li>
+      <li>IndustrialGunAdvanced</li>
+      <li>ShortShots</li>
+      <li>BinguinMachined</li>
+      <li>BinguinGunShotgun</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponRanged</li>
+    </tradeTags>
+    <tools>
+      <li>
+        <label>stock</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+      <li>
+        <label>barrel</label>
+        <capacities>
+          <li>Blunt</li>
+          <li>Poke</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+    </tools>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMachining</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <RecipeDef>
+    <defName>Recipe_Binguin_Shotgun</defName>
+    <label>制作冰鹅族霰弹枪</label>
+    <jobString>正在制作冰鹅族霰弹枪……</jobString>
+    <workAmount>18000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedGun</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>120</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_Shotgun>1</Binguin_Shotgun>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>4</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchMachining</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- 霰弹枪子弹：伤害 20（原版 18） -->
+  <ThingDef ParentName="BaseBullet">
+    <defName>Binguin_Bullet_Shotgun</defName>
+    <label>冰鹅霰弹枪弹</label>
+    <graphicData>
+      <texPath>Things/Projectile/Bullet_Shotgun</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+      <damageDef>Bullet</damageDef>
+      <damageAmountBase>24</damageAmountBase>
+      <stoppingPower>3</stoppingPower>
+      <armorPenetrationBase>0.16</armorPenetrationBase>
+      <speed>55</speed>
+    </projectile>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族杠杆步枪（蓝本：栓动步枪） ============ -->
+  <ThingDef ParentName="BaseGunWithQuality">
+    <defName>Binguin_LeverRifle</defName>
+    <label>冰鹅族杠杆步枪</label>
+    <description>冰鹅族改良的杠杆式步枪，蓝黑枪管配着寒木枪托，射程极远、单发沉重。狩猎巡边两相宜，是观测站哨兵的可靠伙伴。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/Binguin/LeverRifle</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <soundInteract>Interact_Rifle</soundInteract>
+    <weaponClasses>
+      <li>LongShots</li>
+    </weaponClasses>
+    <statBases>
+      <WorkToMake>18000</WorkToMake>
+      <Mass>3.2</Mass>
+      <AccuracyTouch>0.65</AccuracyTouch>
+      <AccuracyShort>0.80</AccuracyShort>
+      <AccuracyMedium>0.90</AccuracyMedium>
+      <AccuracyLong>0.80</AccuracyLong>
+      <RangedWeapon_Cooldown>1.5</RangedWeapon_Cooldown>
+    </statBases>
+    <costList>
+      <Steel>90</Steel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>Binguin_Bullet_LeverRifle</defaultProjectile>
+        <warmupTime>1.7</warmupTime>
+        <range>36.9</range>
+        <soundCast>Shot_BoltActionRifle</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>9</muzzleFlashScale>
+      </li>
+    </verbs>
+    <weaponTags>
+      <li>Gun</li>
+      <li>IndustrialGunAdvanced</li>
+      <li>LongShots</li>
+      <li>BinguinMachined</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponRanged</li>
+    </tradeTags>
+    <tools>
+      <li>
+        <label>stock</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+      <li>
+        <label>barrel</label>
+        <capacities>
+          <li>Blunt</li>
+          <li>Poke</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+    </tools>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMachining</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <RecipeDef>
+    <defName>Recipe_Binguin_LeverRifle</defName>
+    <label>制作冰鹅族杠杆步枪</label>
+    <jobString>正在制作冰鹅族杠杆步枪……</jobString>
+    <workAmount>18000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedGun</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>90</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_LeverRifle>1</Binguin_LeverRifle>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>4</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchMachining</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- 杠杆步枪子弹：伤害 20（原版 18） -->
+  <ThingDef ParentName="BaseBullet">
+    <defName>Binguin_Bullet_LeverRifle</defName>
+    <label>冰鹅杠杆步枪弹</label>
+    <projectile>
+      <damageDef>Bullet</damageDef>
+      <damageAmountBase>23</damageAmountBase>
+      <stoppingPower>1.5</stoppingPower>
+      <armorPenetrationBase>0.25</armorPenetrationBase>
+      <speed>70</speed>
+    </projectile>
+    <graphicData>
+      <texPath>Things/Projectile/Bullet_big</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+  </ThingDef>
+
+</Defs>

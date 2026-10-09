@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
+  <Binguin_FieldCombatBionicEye.label>Field combat bionic eye</Binguin_FieldCombatBionicEye.label>
+  <Binguin_FieldCombatBionicEye.description>An installed field combat bionic eye. Its lens is sheathed in a frostproof crystal film, and the meteorological compensation array at its intake corrects in real time the distortion in imaging caused by rain, snow, sandstorms and thick fog, so that however foul the weather, the shooter's hit chance is the same as in clear skies. The extra optical gain also raises the wearer's shooting accuracy by one step.</Binguin_FieldCombatBionicEye.description>
+  <Binguin_FieldCombatBionicEye.label>Field combat bionic eye</Binguin_FieldCombatBionicEye.label>
+  <Binguin_FieldCombatBionicEye.description>A bionic eye modified specifically for field combat on the snowplain. Its lens is sheathed in a layer of frostproof crystal film, and a meteorological compensation array is fitted at the intake: rain, snow, sandstorms and thick fog no longer blur the image, and the shooter's hit chance in foul weather is the same as in clear skies. The extra optical gain also raises the wearer's shooting accuracy by one more step.</Binguin_FieldCombatBionicEye.description>
+  <Binguin_BoardSpeed.label>Board dash</Binguin_BoardSpeed.label>
+  <Binguin_BoardSpeed.description>The extra mobility granted by a penguin board, making every step as light as a glide over ice.</Binguin_BoardSpeed.description>
+  <Binguin_BoardSpeed.label>Board dash</Binguin_BoardSpeed.label>
+  <Binguin_SlideImmunity.label>Sliding</Binguin_SlideImmunity.label>
+  <Binguin_SlideImmunity.description>Sliding at high speed, swift as lightning, and impossible for enemies to hit.</Binguin_SlideImmunity.description>
+  <Binguin_WasteToxemia.label>waste toxemia</Binguin_WasteToxemia.label>
+  <Binguin_WasteToxemia.description>Heavy metals and organic poisons in toxic waste are rapidly destroying the blood. Wounds will not stop bleeding, consciousness falls steadily with blood loss, and death follows within hours.</Binguin_WasteToxemia.description>
+  <Binguin_WasteToxemia.label>Minor</Binguin_WasteToxemia.label>
+  <Binguin_WasteToxemia.label>Noticeable</Binguin_WasteToxemia.label>
+  <Binguin_WasteToxemia.label>Serious</Binguin_WasteToxemia.label>
+  <Binguin_IceBurst.label>ice burst</Binguin_IceBurst.label>
+  <Binguin_IceBurst.description>Freezing energy gathering within the body. At 100%, the cold energy abruptly freezes and shatters one body part.</Binguin_IceBurst.description>
+</LanguageData>

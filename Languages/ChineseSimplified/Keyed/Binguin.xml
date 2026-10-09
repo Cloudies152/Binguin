@@ -1,0 +1,633 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- ============================================================================
+       武器名（2026-10-08）
+       ★ 中文名【不变】，仍是"冰鹅级极激急击机枪"。
+         这里补上同名的键，是为了让中英两份语言文件的键**完全对等**
+         （否则英文多出 4 个键，一致性检查会报不平）。
+       ★ 英文那份走 Keyed + DefInjected 双保险，值换成 GGGGGG。
+       ★★ 注意：description 与 Defs\Weapons4_Binguin.xml 里的原文**内容相同**，
+           改文案时**两处都要改**（保持同步）。
+       ============================================================================ -->
+  <Binguin_LaserGatling.label>冰鹅级极激急击机枪</Binguin_LaserGatling.label>
+  <Binguin_LaserGatling.description>霰雪无垠的终极造物：八管激光机枪，转起来便是一道不散的极光之鞭。单发威力虽小（2 伤），每秒却有三十发激光倾泻而出，更以终极冰爆加倍（每发 4% 冰爆）把敌人冻成雪雕。抑止能力 0.5。（制作 8 高级零部件 / 60 玻璃钢 / 200 钢铁）
+
+英文全名：Glacier Goose Giga-Gust Graser Gatling（缩写 GGGGGG）</Binguin_LaserGatling.description>
+  <Recipe_Binguin_LaserGatling.label>制作冰鹅级极激急击机枪</Recipe_Binguin_LaserGatling.label>
+  <Recipe_Binguin_LaserGatling.jobString>正在制作冰鹅级极激急击机枪……</Recipe_Binguin_LaserGatling.jobString>
+
+  <Binguin_AbilityIceThrow_01              >只投出了 </Binguin_AbilityIceThrow_01>
+  <Binguin_AbilityIceThrow_02              > 块冰岩。</Binguin_AbilityIceThrow_02>
+  <Binguin_AbilityIceThrow_03              >剩余 </Binguin_AbilityIceThrow_03>
+  <Binguin_AbilityIceThrow_04              > 小时</Binguin_AbilityIceThrow_04>
+  <Binguin_AbilityRodSkills_01             >穿刺：</Binguin_AbilityRodSkills_01>
+  <Binguin_AbilityRodSkills_02             > 个目标</Binguin_AbilityRodSkills_02>
+  <Binguin_AbilityRodSkills_03             >钩鱼！</Binguin_AbilityRodSkills_03>
+  <Binguin_DefPatches_01                   >冰爆弹 ×1（突击/精确步枪）</Binguin_DefPatches_01>
+  <Binguin_DefPatches_02                   >企鹅飞踢 ×2（终极，钝击 60）</Binguin_DefPatches_02>
+  <Binguin_DefPatches_03                   >极激急击激光 ×2（终极）</Binguin_DefPatches_03>
+  <Binguin_ChoiceLetterDiplomacy_01        >我们愿意与冰鹅族共存。</Binguin_ChoiceLetterDiplomacy_01>
+  <Binguin_ChoiceLetterDiplomacy_02        >我们保持中立。</Binguin_ChoiceLetterDiplomacy_02>
+  <Binguin_ChoiceLetterDiplomacy_03        >很抱歉，我们无意共存。</Binguin_ChoiceLetterDiplomacy_03>
+  <Binguin_CompAutoStone_01                >未通电</Binguin_CompAutoStone_01>
+  <Binguin_CompAutoStone_02                >切石模式</Binguin_CompAutoStone_02>
+  <Binguin_CompAutoStone_03                >采石模式</Binguin_CompAutoStone_03>
+  <Binguin_CompAutoStone_04                >冰岩 → 冰岩砖</Binguin_CompAutoStone_04>
+  <Binguin_CompAutoStone_05                >冰岩</Binguin_CompAutoStone_05>
+  <Binguin_CompAutoStone_06                >普通地面：首次工作时随机确定石头类型</Binguin_CompAutoStone_06>
+  <Binguin_CompAutoStone_07                >下一块石料产出：约 </Binguin_CompAutoStone_07>
+  <Binguin_CompAutoStone_08                > 小时后（</Binguin_CompAutoStone_08>
+  <Binguin_CompAutoStone_09                >将产出：</Binguin_CompAutoStone_09>
+  <Binguin_CompAutoStone_10                >切石模式</Binguin_CompAutoStone_10>
+  <Binguin_CompAutoStone_11                >开启时，采出的岩石块会直接切成石砖；关闭时只采原石。</Binguin_CompAutoStone_11>
+  <Binguin_CompAutoStone_12                >立即产出</Binguin_CompAutoStone_12>
+  <Binguin_CompAutoStone_13                >立即产出一块石料（开发者工具）。</Binguin_CompAutoStone_13>
+  <Binguin_CompBoard_01                    >滑行冲刺</Binguin_CompBoard_01>
+  <Binguin_CompBoard_02                    >向指定方向滑行冲刺（半径 </Binguin_CompBoard_02>
+  <Binguin_CompBoard_03                    > 格，冷却 </Binguin_CompBoard_03>
+  <Binguin_CompBoard_04                    > 秒）。</Binguin_CompBoard_04>
+  <Binguin_CompBoard_05                    >冷却中：</Binguin_CompBoard_05>
+  <Binguin_CompBoard_06                    > 秒</Binguin_CompBoard_06>
+  <Binguin_CompBoard_07                    >滑行目标必须是可以行走的空地。</Binguin_CompBoard_07>
+  <Binguin_CompBoard_08                    >滑行目标必须是可以行走的空地。</Binguin_CompBoard_08>
+  <Binguin_CompBoard_09                    >滑行目标超出范围（</Binguin_CompBoard_09>
+  <Binguin_CompBoard_10                    > 格）。</Binguin_CompBoard_10>
+  <Binguin_CompBoard_11                    >滑行路径被墙壁阻挡，无法到达目标点。</Binguin_CompBoard_11>
+  <Binguin_CompBoard_12                    >滑行准备…</Binguin_CompBoard_12>
+  <Binguin_CompCrabTrap_01                 >本水域捕鱼</Binguin_CompCrabTrap_01>
+  <Binguin_CompCrabTrap_02                 >冰面模式：海洋鱼种随机</Binguin_CompCrabTrap_02>
+  <Binguin_CompCrabTrap_03                 >海洋鱼种随机</Binguin_CompCrabTrap_03>
+  <Binguin_CompCrabTrap_04                 >下次捕鱼：约 </Binguin_CompCrabTrap_04>
+  <Binguin_CompCrabTrap_05                 > 小时后（</Binguin_CompCrabTrap_05>
+  <Binguin_CompCrabTrap_06                 >管理鱼群</Binguin_CompCrabTrap_06>
+  <Binguin_CompCrabTrap_07                 >查看并手动调控本水域的鱼群数量（+/- 相当于放苗或捕捞，</Binguin_CompCrabTrap_07>
+  <Binguin_CompCrabTrap_08                 >与原版钓鱼一致的鱼群管理）。当前鱼群：</Binguin_CompCrabTrap_08>
+  <Binguin_CompCrabTrap_09                 >立即捕鱼</Binguin_CompCrabTrap_09>
+  <Binguin_CompCrabTrap_10                 >立即捕一次鱼（开发者工具）。</Binguin_CompCrabTrap_10>
+  <Binguin_CompCrabTrap_11                 >设置本水域的捕捞下限。本水域鱼群：</Binguin_CompCrabTrap_11>
+  <Binguin_CompCrabTrap_12                 >，捕捞下限：</Binguin_CompCrabTrap_12>
+  <Binguin_CompCrabTrap_13                 >（鱼群在下限之上，正常捕捞中）</Binguin_CompCrabTrap_13>
+  <Binguin_CompCrabTrap_14                 >（鱼群已达下限，暂停捕捞，等待恢复）</Binguin_CompCrabTrap_14>
+  <Binguin_CompFishPond_01                 >未放苗</Binguin_CompFishPond_01>
+  <Binguin_CompFishPond_02                 >放入鱼苗</Binguin_CompFishPond_02>
+  <Binguin_CompFishPond_03                 >追加鱼苗</Binguin_CompFishPond_03>
+  <Binguin_CompFishPond_04                 >选择鱼种后，殖民者会搬运 1 条该鱼放入鱼池（确定养殖鱼种）。\n相邻鱼池在放置时即连成一个大池。</Binguin_CompFishPond_04>
+  <Binguin_CompFishPond_05                 >再搬 1 条</Binguin_CompFishPond_05>
+  <Binguin_CompFishPond_06                 >放入鱼池（鱼群 +1）。</Binguin_CompFishPond_06>
+  <Binguin_CompFishPond_07                 >钓鱼</Binguin_CompFishPond_07>
+  <Binguin_CompFishPond_08                 >指派一名最近的殖民者来鱼池垂钓。\n</Binguin_CompFishPond_08>
+  <Binguin_CompFishPond_09                 >低于保留鱼数（</Binguin_CompFishPond_09>
+  <Binguin_CompFishPond_10                 >）时不会钓。</Binguin_CompFishPond_10>
+  <Binguin_CompFishPond_11                 >\n提示：殖民者启用原版「钓鱼」工作会自动来钓。</Binguin_CompFishPond_11>
+  <Binguin_CompFishPond_12                 >保留鱼数</Binguin_CompFishPond_12>
+  <Binguin_CompFishPond_13                 >鱼群低于此数量时停止捕捞（钓鱼/蟹笼模块），让鱼繁殖。\n当前：</Binguin_CompFishPond_13>
+  <Binguin_CompFishPond_14                 > / 上限 </Binguin_CompFishPond_14>
+  <Binguin_CompFishPond_15                 >蟹笼模块</Binguin_CompFishPond_15>
+  <Binguin_CompFishPond_16                 >开启后每 6 小时自动捕鱼（每个相连池 1 条；不低于保留鱼数）。</Binguin_CompFishPond_16>
+  <Binguin_CompFishPond_17                 >鱼池的鱼群已达到保留数下限（</Binguin_CompFishPond_17>
+  <Binguin_CompFishPond_18                 >），暂不钓鱼。</Binguin_CompFishPond_18>
+  <Binguin_CompFishPond_19                 >没有可用的殖民者来钓鱼。</Binguin_CompFishPond_19>
+  <Binguin_CompFishPond_20                 >鱼池：未放苗（「放入鱼苗」选鱼种，殖民者搬运放入）\n</Binguin_CompFishPond_20>
+  <Binguin_CompFishPond_21                 >相邻池数：</Binguin_CompFishPond_21>
+  <Binguin_CompFishPond_22                 >鱼池：</Binguin_CompFishPond_22>
+  <Binguin_CompFishPond_23                 > 池相连）\n</Binguin_CompFishPond_23>
+  <Binguin_CompFishPond_24                 >鱼群：</Binguin_CompFishPond_24>
+  <Binguin_CompFishPond_25                 >（保留 </Binguin_CompFishPond_25>
+  <Binguin_CompFishPond_26                 >鱼食：</Binguin_CompFishPond_26>
+  <Binguin_CompFishPond_27                 >（繁殖 +50%）</Binguin_CompFishPond_27>
+  <Binguin_CompFishPond_28                 >蟹笼模块：</Binguin_CompFishPond_28>
+  <Binguin_CompFishPond_29                 >开</Binguin_CompFishPond_29>
+  <Binguin_CompFishPond_30                 >关</Binguin_CompFishPond_30>
+  <Binguin_CompFishingBait_01              >不在水域（无效）</Binguin_CompFishingBait_01>
+  <Binguin_CompFishingBait_02              >鱼群 </Binguin_CompFishingBait_02>
+  <Binguin_CompFishingBait_03              >饵料营养：</Binguin_CompFishingBait_03>
+  <Binguin_CompFishingBait_04              >立即消耗饵料</Binguin_CompFishingBait_04>
+  <Binguin_CompFishingBait_05              >立即消耗 0.5 营养值并加速鱼群（开发者工具）。</Binguin_CompFishingBait_05>
+  <Binguin_CompGateShieldField_01          >寒门盾·外层</Binguin_CompGateShieldField_01>
+  <Binguin_CompGateShieldField_02          >寒门盾外层寒冰护罩（拦截子弹/炮弹）：\n剩余 </Binguin_CompGateShieldField_02>
+  <Binguin_CompGateShieldField_03          >。\n被击破后需充能恢复；EMP 会暂时断电。</Binguin_CompGateShieldField_03>
+  <Binguin_CompMeteorGuide_01              >陨石引导器存储已满，无法保存新发现的陨石。</Binguin_CompMeteorGuide_01>
+  <Binguin_CompMeteorGuide_02              >发现陨石</Binguin_CompMeteorGuide_02>
+  <Binguin_CompMeteorGuide_03              >陨石引导器：观测到一颗</Binguin_CompMeteorGuide_03>
+  <Binguin_CompMeteorGuide_04              >陨石，</Binguin_CompMeteorGuide_04>
+  <Binguin_CompMeteorGuide_05              >已通过引力场捕获并存入仪器存储（</Binguin_CompMeteorGuide_05>
+  <Binguin_CompMeteorGuide_06              >随时可以打开仪器面板，选择这颗陨石并将其引导坠落至指定区域。</Binguin_CompMeteorGuide_06>
+  <Binguin_CompMeteorGuide_07              >注意：陨石会在 10 天后因偏离轨道而过期。</Binguin_CompMeteorGuide_07>
+  <Binguin_CompMeteorGuide_08              >存储管理（</Binguin_CompMeteorGuide_08>
+  <Binguin_CompMeteorGuide_09              >查看已捕获的陨石列表：可选择引导坠落，或删除不需要的陨石。</Binguin_CompMeteorGuide_09>
+  <Binguin_CompMeteorGuide_10              >立即发现陨石</Binguin_CompMeteorGuide_10>
+  <Binguin_CompMeteorGuide_11              >（开发者）立即判定一次陨石发现（按当前进度概率）。</Binguin_CompMeteorGuide_11>
+  <Binguin_CompMeteorGuide_12              >扫描进度：</Binguin_CompMeteorGuide_12>
+  <Binguin_CompMeteorGuide_13              >已捕获陨石：</Binguin_CompMeteorGuide_13>
+  <Binguin_CompMeteorGuide_14              >（无电）\n</Binguin_CompMeteorGuide_14>
+  <Binguin_CompMeteorGuide_15              >陨石引导器没有电力，无法引导陨石。</Binguin_CompMeteorGuide_15>
+  <Binguin_CompMeteorGuide_16              >陨石引导器被屋顶遮挡，无法引导陨石。</Binguin_CompMeteorGuide_16>
+  <Binguin_CompMeteorGuide_17              >陨石已引导，将在 1-2 小时内坠落至指定区域。</Binguin_CompMeteorGuide_17>
+  <Binguin_CompMeteorGuide_18              >已放弃 </Binguin_CompMeteorGuide_18>
+  <Binguin_CompMeteorGuide_19              > 陨石。</Binguin_CompMeteorGuide_19>
+  <Binguin_CompMeteorGuide_20              >陨石存储（</Binguin_CompMeteorGuide_20>
+  <Binguin_CompMeteorGuide_21              >还没有捕获到陨石。等待研究扫描发现陨石。</Binguin_CompMeteorGuide_21>
+  <Binguin_CompMeteorGuide_22              >已过期</Binguin_CompMeteorGuide_22>
+  <Binguin_CompMeteorGuide_23              >剩余 </Binguin_CompMeteorGuide_23>
+  <Binguin_CompMeteorGuide_24              > 天</Binguin_CompMeteorGuide_24>
+  <Binguin_CompMeteorGuide_25              >引导坠落</Binguin_CompMeteorGuide_25>
+  <Binguin_CompMeteorGuide_26              >删除</Binguin_CompMeteorGuide_26>
+  <Binguin_CompRecycler_01                 >立即回收</Binguin_CompRecycler_01>
+  <Binguin_CompRecycler_02                 >（开发者）立即回收当前储存的 1 个有毒垃圾并产出随机矿物。</Binguin_CompRecycler_02>
+  <Binguin_CompRecycler_03                 >垃圾回收器里没有有毒垃圾。</Binguin_CompRecycler_03>
+  <Binguin_CompRod_01                      >长竿</Binguin_CompRod_01>
+  <Binguin_CompRod_02                      >短竿</Binguin_CompRod_02>
+  <Binguin_CompRod_03                      >刀头</Binguin_CompRod_03>
+  <Binguin_CompRod_04                      >锤头</Binguin_CompRod_04>
+  <Binguin_CompRod_05                      >直钩</Binguin_CompRod_05>
+  <Binguin_CompRod_06                      >弯钩</Binguin_CompRod_06>
+  <Binguin_CompRod_07                      >伤害×</Binguin_CompRod_07>
+  <Binguin_CompRod_08                      > 冷却×</Binguin_CompRod_08>
+  <Binguin_CompRod_09                      >饵：</Binguin_CompRod_09>
+  <Binguin_CompRodAssembly_01              >制作鱼饵</Binguin_CompRodAssembly_01>
+  <Binguin_CompRodAssembly_02              >选择 1~2 种食材（素/肉/虫肉/扭曲肉/人肉/虫胶/无忌口），消耗对应食物制成鱼饵。</Binguin_CompRodAssembly_02>
+  <Binguin_CompRodAssembly_03              >需要电力才能使用装配台。</Binguin_CompRodAssembly_03>
+  <Binguin_CompRodAssembly_04              >合成钓竿</Binguin_CompRodAssembly_04>
+  <Binguin_CompRodAssembly_05              >依次在地图上点选竿身、竿头、鱼钩、鱼饵（只有该类配件会高亮可点，可按材质精确选择），选完自动由制作技能最高的殖民者开始装配（需 4 个高级零部件）。</Binguin_CompRodAssembly_05>
+  <Binguin_CompRodAssembly_06              >需要电力才能使用装配台。</Binguin_CompRodAssembly_06>
+  <Binguin_CompRodAssembly_07              >正在装配中……</Binguin_CompRodAssembly_07>
+  <Binguin_CompRodAssembly_08              >缺少高级零部件（需要 4 个）。</Binguin_CompRodAssembly_08>
+  <Binguin_CompRodAssembly_09              > 开始装配高级钓竿……</Binguin_CompRodAssembly_09>
+  <Binguin_CompRodAssembly_10              >缺少高级零部件（需要 4 个），装配中止。</Binguin_CompRodAssembly_10>
+  <Binguin_CompRodAssembly_11              >高级钓竿已组装完成（</Binguin_CompRodAssembly_11>
+
+  <!-- ============ 库存选配件 / 选人窗口（2026-10-08 并入正式版）============ -->
+  <Binguin_CompRodAssembly_12              >合成钓竿（从库存选）</Binguin_CompRodAssembly_12>
+  <Binguin_CompRodAssembly_13              >打开一个窗口，一次选完 4 件配件和装配者。</Binguin_CompRodAssembly_13>
+  <Binguin_UnfinishedRodRefund         >半成品被销毁，已退还 {0} 个高级零部件。</Binguin_UnfinishedRodRefund>
+  <Binguin_RodStock_01                     >装配高级钓竿</Binguin_RodStock_01>
+  <Binguin_RodStock_02                     >选择配件（从殖民地里现有的配件中挑选）</Binguin_RodStock_02>
+  <Binguin_RodStock_03                     >选择{0}：</Binguin_RodStock_03>
+  <Binguin_RodStock_04                     >（未选）</Binguin_RodStock_04>
+  <Binguin_RodStock_05                     >选择</Binguin_RodStock_05>
+  <Binguin_RodStock_06                     >更换</Binguin_RodStock_06>
+  <Binguin_RodStock_07                     >还缺：{0}</Binguin_RodStock_07>
+  <Binguin_RodStock_08                     >开始装配</Binguin_RodStock_08>
+  <Binguin_RodStock_09                     >取消</Binguin_RodStock_09>
+  <Binguin_RodStock_10                     >地图上没有这类配件。</Binguin_RodStock_10>
+  <Binguin_CompRodBait_01                  >无饵料效果</Binguin_CompRodBait_01>
+  <Binguin_CompRodBait_02                  >饵料效果：</Binguin_CompRodBait_02>
+  <Binguin_CompWeather_01                  >大气控制仪充能完毕，已进入低耗能模式，可以操控天气了。</Binguin_CompWeather_01>
+  <Binguin_CompWeather_02                  >天气操控：已充能（低耗能模式 </Binguin_CompWeather_02>
+  <Binguin_CompWeather_03                  >W），可使用一次</Binguin_CompWeather_03>
+  <Binguin_CompWeather_04                  >天气操控：充能中，还需 </Binguin_CompWeather_04>
+  <Binguin_CompWeather_05                  > 小时（充能功耗 </Binguin_CompWeather_05>
+  <Binguin_CompWeather_06                  >充能中 </Binguin_CompWeather_06>
+  <Binguin_CompWeather_07                  >大气控制仪需要充能 24 小时才能操控一次天气；充满后自动进入低耗能模式。充能期间必须保持通电。</Binguin_CompWeather_07>
+  <Binguin_CompWeather_08                  >充能中：还需 </Binguin_CompWeather_08>
+  <Binguin_CompWeather_09                  > 小时。</Binguin_CompWeather_09>
+  <Binguin_CompWeather_10                  >将天气切换为晴天。</Binguin_CompWeather_10>
+  <Binguin_CompWeather_11                  >将天气切换为降雨。</Binguin_CompWeather_11>
+  <Binguin_CompWeather_12                  >将天气切换为暴风雨。</Binguin_CompWeather_12>
+  <Binguin_CompWeather_13                  >将天气切换为小雪。</Binguin_CompWeather_13>
+  <Binguin_CompWeather_14                  >将天气切换为暴风雪。</Binguin_CompWeather_14>
+  <Binguin_CompWeather_15                  >充能中：还需 </Binguin_CompWeather_15>
+  <Binguin_CompWeather_16                  > 小时。</Binguin_CompWeather_16>
+  <Binguin_CompWeather_17                  >需要电力才能操控天气。</Binguin_CompWeather_17>
+  <Binguin_CompWeather_18                  >大气控制仪没有电力，无法操控天气。</Binguin_CompWeather_18>
+  <Binguin_CompWeather_19                  >大气控制仪还在充能，还需 </Binguin_CompWeather_19>
+  <Binguin_CompWeather_20                  > 小时。</Binguin_CompWeather_20>
+  <Binguin_CompWeather_21                  >大气控制仪已启动：天气切换为</Binguin_CompWeather_21>
+  <Binguin_CompWeather_22                  >（需重新充能 24 小时）。</Binguin_CompWeather_22>
+  <Binguin_CompWillingCannon_01            > · 自动装填：</Binguin_CompWillingCannon_01>
+  <Binguin_CompWillingCannon_02            > · 自动补燃料</Binguin_CompWillingCannon_02>
+  <Binguin_CompWillingCannon_03            >威灵炮：</Binguin_CompWillingCannon_03>
+  <Binguin_CompWillingCannon_04            > 弹 · 燃料 </Binguin_CompWillingCannon_04>
+  <Binguin_CompWillingCannon_05            >（每发耗 </Binguin_CompWillingCannon_05>
+  <Binguin_CompWillingCannon_06            >装填炮弹</Binguin_CompWillingCannon_06>
+  <Binguin_CompWillingCannon_07            >装填炮弹或设置自动装填（弹舱 </Binguin_CompWillingCannon_07>
+  <Binguin_CompWillingCannon_08            >，燃料 </Binguin_CompWillingCannon_08>
+  <Binguin_CompWillingCannon_09            >；自动装填</Binguin_CompWillingCannon_09>
+  <Binguin_CompWillingCannon_10            >发射迫击炮</Binguin_CompWillingCannon_10>
+  <Binguin_CompWillingCannon_11            >轰击选中的落点（射程 </Binguin_CompWillingCannon_11>
+  <Binguin_CompWillingCannon_12            > 格，1 秒瞄准，落点 0-</Binguin_CompWillingCannon_12>
+  <Binguin_CompWillingCannon_13            > 格随机偏移；弹舱 </Binguin_CompWillingCannon_13>
+  <Binguin_CompWillingCannon_14            >，燃料 </Binguin_CompWillingCannon_14>
+  <Binguin_CompWillingCannon_15            >，冷却 30 秒）。</Binguin_CompWillingCannon_15>
+  <Binguin_CompWillingCannon_16            >炮管冷却中：</Binguin_CompWillingCannon_16>
+  <Binguin_CompWillingCannon_17            > 秒</Binguin_CompWillingCannon_17>
+  <Binguin_CompWillingCannon_18            >弹舱为空</Binguin_CompWillingCannon_18>
+  <Binguin_CompWillingCannon_19            >燃料不足</Binguin_CompWillingCannon_19>
+  <Binguin_CompWillingCannon_20            >弹舱已满（</Binguin_CompWillingCannon_20>
+  <Binguin_CompWillingCannon_21            > 发）。</Binguin_CompWillingCannon_21>
+  <Binguin_CompWillingCannon_22            >库存里没有这种炮弹。</Binguin_CompWillingCannon_22>
+  <Binguin_CompWillingCannon_23            >弹舱已满（</Binguin_CompWillingCannon_23>
+  <Binguin_CompWillingCannon_24            > 发）。</Binguin_CompWillingCannon_24>
+  <Binguin_CompWillingCannon_25            >目标超出射程（</Binguin_CompWillingCannon_25>
+  <Binguin_CompWillingCannon_26            > 格）。</Binguin_CompWillingCannon_26>
+  <Binguin_CompWillingCannon_27            >无法开始炮击（小人正忙/无法打断）。</Binguin_CompWillingCannon_27>
+  <Binguin_CompWillingCannon_28            >炮管冷却中（剩 </Binguin_CompWillingCannon_28>
+  <Binguin_CompWillingCannon_29            > 秒）。</Binguin_CompWillingCannon_29>
+  <Binguin_CompWillingCannon_30            >弹舱为空：先装填炮弹。</Binguin_CompWillingCannon_30>
+  <Binguin_CompWillingCannon_31            >燃料不足（每发需 </Binguin_CompWillingCannon_31>
+  <Binguin_CompWillingCannon_32            >，当前 </Binguin_CompWillingCannon_32>
+  <Binguin_CompWillingCannon_33            >，先补充燃料）。</Binguin_CompWillingCannon_33>
+  <Binguin_CompWillingCannon_34            >目标超出射程（</Binguin_CompWillingCannon_34>
+  <Binguin_CompWillingCannon_35            > 格）。</Binguin_CompWillingCannon_35>
+  <Binguin_CompWillingCannon_36            >库存 </Binguin_CompWillingCannon_36>
+  <Binguin_CompWillingCannon_37            >装填炮弹与自动装填（</Binguin_CompWillingCannon_37>
+  <Binguin_CompWillingCannon_38            > 弹 · 燃料 </Binguin_CompWillingCannon_38>
+  <Binguin_CompWillingCannon_39            >自动装填炮弹</Binguin_CompWillingCannon_39>
+  <Binguin_CompWillingCannon_40            >自动补充燃料</Binguin_CompWillingCannon_40>
+  <Binguin_CompWillingCannon_41            >库存里没有炮弹。\n先去制造台做几发迫击炮弹。</Binguin_CompWillingCannon_41>
+  <Binguin_CompWillingCannon_42            >库存 </Binguin_CompWillingCannon_42>
+  <Binguin_CompWillingCannon_43            >弹舱已满</Binguin_CompWillingCannon_43>
+  <Binguin_CompWillingCannon_44            >装填 1 发</Binguin_CompWillingCannon_44>
+  <Binguin_CompWillingCannon_45            >弹舱已满（</Binguin_CompWillingCannon_45>
+  <Binguin_CompWillingCannon_46            > 发）。</Binguin_CompWillingCannon_46>
+  <Binguin_CryoSiege_01                    >（没有任何工兵职责的人，无法探测）</Binguin_CryoSiege_01>
+  <Binguin_CryoSiege_02                    >【判定】探测者 </Binguin_CryoSiege_02>
+  <Binguin_CryoSiege_03                    >（建造 </Binguin_CryoSiege_03>
+  <Binguin_CryoSiege_04                    >可接触=</Binguin_CryoSiege_04>
+  <Binguin_CryoSiege_05                    > 阻挡物=</Binguin_CryoSiege_05>
+  <Binguin_CryoSiege_06                    >无</Binguin_CryoSiege_06>
+  <Binguin_CryoSiege_07                    > 可交付材料=</Binguin_CryoSiege_07>
+  <Binguin_CryoSiege_08                    > 可完工=</Binguin_CryoSiege_08>
+  <Binguin_CryoSiege_09                    >（未找到冷冻器蓝图）</Binguin_CryoSiege_09>
+  <Binguin_CryoSiege_10                    >（TotalMaterialCost 返回 null —— 材质解析失败）</Binguin_CryoSiege_10>
+  <Binguin_CryoSiege_11                    >（需要/场地 30 格内已有：</Binguin_CryoSiege_11>
+  <Binguin_CryoSiege_12                    >大气冷冻器运转满 24 小时后自毁，冰鹅族部队放弃阵地发起总攻！</Binguin_CryoSiege_12>
+  <Binguin_CryoSiege_13                    >冰鹅族工兵已经全部倒下，围攻部队放弃阵地发起冲锋！</Binguin_CryoSiege_13>
+  <Binguin_CryoSiege_14                    >低温围攻部队减员严重，放弃阵地发起冲锋！</Binguin_CryoSiege_14>
+  <Binguin_CryoSiege_15                    >大气冷冻器开始运转：气温将以每小时 </Binguin_CryoSiege_15>
+  <Binguin_CryoSiege_16                    >℃ 的速度持续下滑，</Binguin_CryoSiege_16>
+  <Binguin_CryoSiege_17                    > 小时后装置自毁。</Binguin_CryoSiege_17>
+  <Binguin_DialogBait_01                   >制作鱼饵</Binguin_DialogBait_01>
+  <Binguin_DialogBait_02                   >选择 1~2 种食材（每种消耗 </Binguin_DialogBait_02>
+  <Binguin_DialogBait_03                   > 营养的对应食物）：</Binguin_DialogBait_03>
+  <Binguin_DialogBait_04                   >食材 1</Binguin_DialogBait_04>
+  <Binguin_DialogBait_05                   >食材 2（可无）</Binguin_DialogBait_05>
+  <Binguin_DialogBait_06                   >食物不足</Binguin_DialogBait_06>
+  <Binguin_DialogBait_07                   >制作</Binguin_DialogBait_07>
+  <Binguin_DialogBait_08                   >清除</Binguin_DialogBait_08>
+  <Binguin_DialogBait_09                   >（可用 </Binguin_DialogBait_09>
+  <Binguin_DialogBait_10                   > 营养）</Binguin_DialogBait_10>
+  <Binguin_DialogBait_11                   >（可用 </Binguin_DialogBait_11>
+  <Binguin_DialogBait_12                   > 营养）</Binguin_DialogBait_12>
+  <Binguin_DialogBait_13                   >未选择食材。</Binguin_DialogBait_13>
+  <Binguin_DialogBait_14                   >将获得：</Binguin_DialogBait_14>
+  <Binguin_DialogBait_15                   >食物不足，无法制作鱼饵。</Binguin_DialogBait_15>
+  <Binguin_DialogBait_16                   >鱼饵制作完成！</Binguin_DialogBait_16>
+  <Binguin_DialogManageFish_01             >管理鱼群</Binguin_DialogManageFish_01>
+  <Binguin_DialogManageFish_02             >本水域鱼群：  </Binguin_DialogManageFish_02>
+  <Binguin_DialogManageFish_03             >手动增减鱼群（相当于放苗 / 捕捞）：</Binguin_DialogManageFish_03>
+  <Binguin_DialogManageFish_04             >充满（恢复上限）</Binguin_DialogManageFish_04>
+  <Binguin_DialogManageFish_05             >放空</Binguin_DialogManageFish_05>
+  <Binguin_DialogManageFish_06             >鱼群会随时间自然恢复，打窝用具可加快恢复。冰面模式下蟹笼不依赖鱼群，此窗口无需使用。</Binguin_DialogManageFish_06>
+  <Binguin_DialogManageFish_07             >本水域捕捞下限：</Binguin_DialogManageFish_07>
+  <Binguin_DialogManageFish_08             >（默认）</Binguin_DialogManageFish_08>
+  <Binguin_DialogManageFish_09             >重置</Binguin_DialogManageFish_09>
+  <Binguin_DialogManageFish_10             >⚠ 鱼群已降到下限以下，本水域所有蟹笼暂停捕捞，等待鱼群恢复。</Binguin_DialogManageFish_10>
+  <Binguin_DialogManageFish_11             >✓ 鱼群在下限之上，蟹笼正常捕捞中（每 6 小时一次）。</Binguin_DialogManageFish_11>
+  <Binguin_DialogManageFish_12             >高级 / 调试：直接修改鱼群数量</Binguin_DialogManageFish_12>
+  <Binguin_DialogManageFish_13             >本水域捕捞下限（含默认值）</Binguin_DialogManageFish_13>
+  <Binguin_DialogPondKeep_01               >保留鱼数（捕捞下限）</Binguin_DialogPondKeep_01>
+  <Binguin_DialogPondKeep_02               >当前：</Binguin_DialogPondKeep_02>
+  <Binguin_DialogPondKeep_03               > 条（组容量 </Binguin_DialogPondKeep_03>
+  <Binguin_DialogPondKeep_04               >鱼群低于该值时，钓鱼与蟹笼模块停止捕捞，让鱼繁殖恢复。\n设 0 = 不保留（可捕光）。</Binguin_DialogPondKeep_04>
+  <Binguin_DialogPondKeep_05               >清空（不保留）</Binguin_DialogPondKeep_05>
+  <Binguin_DialogPondKeep_06               >保留一半（</Binguin_DialogPondKeep_06>
+  <Binguin_DialogRodAssembly_01            >合成钓竿</Binguin_DialogRodAssembly_01>
+  <Binguin_DialogRodAssembly_02            >竿身（长制×120%伤害 / 短制×80%冷却）</Binguin_DialogRodAssembly_02>
+  <Binguin_DialogRodAssembly_03            >竿头（刀制：割25/刺25 / 锤制：钝32/捅15）</Binguin_DialogRodAssembly_03>
+  <Binguin_DialogRodAssembly_04            >鱼钩（直钩：穿刺 / 弯钩：钩鱼）</Binguin_DialogRodAssembly_04>
+  <Binguin_DialogRodAssembly_05            >鱼饵（1~2 种效果）</Binguin_DialogRodAssembly_05>
+  <Binguin_DialogRodAssembly_06            >制作人（品质按制作技能生成）：</Binguin_DialogRodAssembly_06>
+  <Binguin_DialogRodAssembly_07            >（制作 </Binguin_DialogRodAssembly_07>
+  <Binguin_DialogRodAssembly_08            >需要高级零部件：4（仓库可用 </Binguin_DialogRodAssembly_08>
+  <Binguin_DialogRodAssembly_09            >需要选择制作人</Binguin_DialogRodAssembly_09>
+  <Binguin_DialogRodAssembly_10            >需要竿身+竿头+鱼钩+4高级零部件</Binguin_DialogRodAssembly_10>
+  <Binguin_DialogRodAssembly_11            >开始装配</Binguin_DialogRodAssembly_11>
+  <Binguin_DialogRodAssembly_12            >（仓库中没有该配件）</Binguin_DialogRodAssembly_12>
+  <Binguin_DialogRodAssembly_13            >请选择竿身、竿头与鱼钩（鱼饵可选）。</Binguin_DialogRodAssembly_13>
+  <Binguin_DialogRodAssembly_14            >\n鱼饵：</Binguin_DialogRodAssembly_14>
+  <Binguin_DialogRodAssembly_15            >\n技能：穿刺（前方 10 格 200% 面板伤害，10s 冷却）</Binguin_DialogRodAssembly_15>
+  <Binguin_DialogRodAssembly_16            >\n技能：钩鱼（31 格内拉敌到身前，10s 冷却）</Binguin_DialogRodAssembly_16>
+  <Binguin_DialogRodAssembly_17            >伤害倍率：×</Binguin_DialogRodAssembly_17>
+  <Binguin_DialogRodAssembly_18            >（割/刺 25）</Binguin_DialogRodAssembly_18>
+  <Binguin_DialogRodAssembly_19            >\n冷却倍率：×</Binguin_DialogRodAssembly_19>
+  <Binguin_DialogRodAssembly_20            >\n耐久倍率：×</Binguin_DialogRodAssembly_20>
+  <Binguin_DialogRodAssembly_21            >伤害倍率：×</Binguin_DialogRodAssembly_21>
+  <Binguin_DialogRodAssembly_22            >（钝 32/捅 15）</Binguin_DialogRodAssembly_22>
+  <Binguin_DialogRodAssembly_23            >\n冷却倍率：×</Binguin_DialogRodAssembly_23>
+  <Binguin_DialogRodAssembly_24            >\n耐久倍率：×</Binguin_DialogRodAssembly_24>
+  <Binguin_DialogStockFish_01              >营养 </Binguin_DialogStockFish_01>
+  <Binguin_DialogStockFish_02              >放入鱼苗</Binguin_DialogStockFish_02>
+  <Binguin_DialogStockFish_03              >选择鱼种。之后殖民者会把一条该鱼搬运放入鱼池。\n相邻鱼池在放置时已连成一个大池，放苗对整个池组生效。</Binguin_DialogStockFish_03>
+  <Binguin_DialogStockFish_04              >殖民地库存里没有鱼。\n请先在自然水域垂钓，或购买鱼类后重试。</Binguin_DialogStockFish_04>
+  <Binguin_DialogStockFish_05              >库存里找不到 </Binguin_DialogStockFish_05>
+  <Binguin_DialogStockFish_06              >，先钓一条或购买吧。</Binguin_DialogStockFish_06>
+  <Binguin_DialogStockFish_07              >没有可用的殖民者来搬运鱼苗。</Binguin_DialogStockFish_07>
+  <Binguin_FloatMenuOptionProviderDiplomacy_01>与冰鹅族外交官交谈</Binguin_FloatMenuOptionProviderDiplomacy_01>
+  <Binguin_FloatMenuOptionProviderDiplomacy_02>未找到交谈任务定义。</Binguin_FloatMenuOptionProviderDiplomacy_02>
+  <Binguin_FloatMenuOptionProviderDiplomacy_03>外交官已经不在这里等候了。</Binguin_FloatMenuOptionProviderDiplomacy_03>
+  <Binguin_GameComponentDiplomacy_01       >剩余约 </Binguin_GameComponentDiplomacy_01>
+  <Binguin_GameComponentDiplomacy_02       > 天（已来 </Binguin_GameComponentDiplomacy_02>
+  <Binguin_GameComponentDiplomacy_03       > 波袭击）</Binguin_GameComponentDiplomacy_03>
+  <Binguin_GameComponentDiplomacy_04       >母舰已链接</Binguin_GameComponentDiplomacy_04>
+  <Binguin_GameComponentDiplomacy_05       >未联系</Binguin_GameComponentDiplomacy_05>
+  <Binguin_GameComponentDiplomacy_06       >母舰联系已在进行或已完成。</Binguin_GameComponentDiplomacy_06>
+  <Binguin_GameComponentDiplomacy_07       >天问：信号已发出</Binguin_GameComponentDiplomacy_07>
+  <Binguin_GameComponentDiplomacy_08       >冰鹅族大型信号发射器发出巨量信号，划破苍穹向深空呼唤母舰。\n\n</Binguin_GameComponentDiplomacy_08>
+  <Binguin_GameComponentDiplomacy_09       >巨量的信号必然引来窥伺——预计 13 天内将遭受 </Binguin_GameComponentDiplomacy_09>
+  <Binguin_GameComponentDiplomacy_10       > 波远超平常的袭击。守住它，直到母舰回应。</Binguin_GameComponentDiplomacy_10>
+  <Binguin_GameComponentDiplomacy_11       >信号中断</Binguin_GameComponentDiplomacy_11>
+  <Binguin_GameComponentDiplomacy_12       >大型信号发射器已被摧毁，与母舰的联系中断了。建造新的发射器后可以重新尝试。</Binguin_GameComponentDiplomacy_12>
+  <Binguin_GameComponentDiplomacy_13       >母舰已链接！</Binguin_GameComponentDiplomacy_13>
+  <Binguin_GameComponentDiplomacy_14       >深空中传来一声悠长的应答。冰鹅族母舰确认了你们的坐标，航线已点亮。\n\n</Binguin_GameComponentDiplomacy_14>
+  <Binguin_GameComponentDiplomacy_15       >现在，让殖民者进入飞船型发射仓，然后点火——飞向群星，达成冰鹅族飞天结局。</Binguin_GameComponentDiplomacy_15>
+  <Binguin_GameComponentDiplomacy_16       >冰鹅族飞天结局\n\n</Binguin_GameComponentDiplomacy_16>
+  <Binguin_GameComponentDiplomacy_17       >发射仓点火，烈焰托起船体，直刺苍穹。\n\n</Binguin_GameComponentDiplomacy_17>
+  <Binguin_GameComponentDiplomacy_18       > 乘着冰鹅族的飞船，穿过云层、电离层与亿万星辰——\n母舰的舷梯已在星光下展开。\n\n</Binguin_GameComponentDiplomacy_18>
+  <Binguin_GameComponentDiplomacy_19       >—— 制作人员 ——\n\n</Binguin_GameComponentDiplomacy_19>
+  <Binguin_GameComponentDiplomacy_20       >冰鹅族 MOD（Binguin Race）\n</Binguin_GameComponentDiplomacy_20>
+  <Binguin_GameComponentDiplomacy_21       >设计 / 程序 / 美术 / 测试：冰鹅\n\n</Binguin_GameComponentDiplomacy_21>
+  <Binguin_GameComponentDiplomacy_22       >以及每一位与冰鹅族同行的殖民者。\n\n\n</Binguin_GameComponentDiplomacy_22>
+  <Binguin_GameComponentDiplomacy_23       >感谢游玩！</Binguin_GameComponentDiplomacy_23>
+  <Binguin_GameComponentDiplomacy_24       >母舰尚未链接，无法发射。</Binguin_GameComponentDiplomacy_24>
+  <Binguin_GameComponentDiplomacy_25       >没有殖民者进入发射仓。</Binguin_GameComponentDiplomacy_25>
+  <Binguin_GameComponentDiplomacy_26       >霜语者的冷笑话</Binguin_GameComponentDiplomacy_26>
+  <Binguin_GameComponentDiplomacy_27       >冰鹅族外交使节</Binguin_GameComponentDiplomacy_27>
+  <Binguin_GameComponentDiplomacy_28       >外交官扶了扶鼻梁上的圆框眼镜，展开卷轴，念出观测日志的结尾：\n\n</Binguin_GameComponentDiplomacy_28>
+  <Binguin_GameComponentDiplomacy_29       >「来自寒冬星球的冰鹅文明，暂居于边缘星球，“暂时”无意争斗。」\n\n</Binguin_GameComponentDiplomacy_29>
+  <Binguin_GameComponentDiplomacy_30       >她抬起头望向你：「那么——贵殖民地，愿意与我们共存吗？」</Binguin_GameComponentDiplomacy_30>
+  <Binguin_GameComponentDiplomacy_31       >冰鹅族外交官合上羊皮纸，向你微微颔首：「中立亦可为邻。愿我们互不相扰」\n\n她在殖民地短暂逗留后，启程返回冰原。</Binguin_GameComponentDiplomacy_31>
+  <Binguin_GameComponentDiplomacy_32       >冰鹅族外交官的神情瞬间黯淡下来，她抿了抿嘴，轻声说道：「……我明白了。愿寒潮不再叩响贵方的门。」\n\n她转身走出殖民地边缘，消失在漫天风雪中。</Binguin_GameComponentDiplomacy_32>
+  <Binguin_GameComponentDiplomacy_33       >冰鹅族外交官郑重将一卷羊皮纸交到你手中：「如此甚好，愿我们的观测塔共守望同一片星空。」\n\n她在殖民地逗留了一段时间后，启程返回冰原。</Binguin_GameComponentDiplomacy_33>
+  <Binguin_GameComponentDiplomacy_34       >冰鹅族外交官离去了</Binguin_GameComponentDiplomacy_34>
+  <Binguin_GameComponentDiplomacy_35       >一位自称冰鹅族外交官的企鹅娘抵达了殖民地边缘。她身披黑白绒羽，此番前来，是想询问贵殖民地对于「共存」的意向。\n\n她会在殖民地边缘等候。选中一名殖民者，右键点击这位外交官，与她交谈。</Binguin_GameComponentDiplomacy_35>
+  <Binguin_GameComponentDiplomacy_36       >冰鹅族外交官来访</Binguin_GameComponentDiplomacy_36>
+  <Binguin_JobDriverPondStock_01           >已将 1 条</Binguin_JobDriverPondStock_01>
+  <Binguin_JobDriverPondStock_02           >放入鱼池。</Binguin_JobDriverPondStock_02>
+  <Binguin_JobDriverPondStock_03           >无法放入：鱼池已养了别的鱼种（需拆开相邻池），或鱼群已满。</Binguin_JobDriverPondStock_03>
+  <Binguin_JobDriverWillingLoad_01         >目标没有穿着威灵装甲。</Binguin_JobDriverWillingLoad_01>
+  <Binguin_JobDriverWillingLoad_02         >已为威灵装甲装填 1 发</Binguin_JobDriverWillingLoad_02>
+  <Binguin_Jokes_01                        >问:环世界最可怕的天气是什么?答:太阳耀斑——毕竟电脑没电了游戏就关了。</Binguin_Jokes_01>
+  <Binguin_Jokes_02                        >殖民者给袭击者挖了个坑,并在旁边立牌:「请自觉排队跳」。袭击者很感动,然后绕过去了。</Binguin_Jokes_02>
+  <Binguin_Jokes_58                        >一只猪猡种被做成背包后,再也没人问它肚子里面装的是什么。</Binguin_Jokes_58>
+  <Binguin_Jokes_03                        >商队来了又走了,殖民者看了看账单,决定下次改行当袭击者。</Binguin_Jokes_03>
+  <Binguin_Jokes_04                        >为什么环世界的人很少养宠物？等狗狗吃掉红色糖果后就知道了。</Binguin_Jokes_04>
+  <Binguin_Jokes_59                        >炎魔种被称为恶魔——这并不是因为炎魔种的威胁有多大，而是因为他们简直过着地狱一般的生活。</Binguin_Jokes_59>
+  <Binguin_Jokes_127                        >泰南小时候在外面做坏事，结果父母在单位里立马就知道了</Binguin_Jokes_127>
+  <Binguin_Jokes_05                        >袭击者:我们人多!殖民者:我们有迫击炮。袭击者:我们还有人质!殖民者:我们还有迫击炮。</Binguin_Jokes_05>
+  <Binguin_Jokes_06                        >虫灾来了,殖民者纷纷躲进房间。虫族啃了两天墙,最后发现门没锁。</Binguin_Jokes_06>
+  <Binguin_Jokes_60                        >驯兽师试图训练一只爆炸鼠,成功后它成了殖民地最受欢迎的「烟花」。</Binguin_Jokes_60>
+  <Binguin_Jokes_61                        >吃动物的肉在毛绒种眼里太残忍了，因此吃外人的肉为生。</Binguin_Jokes_61>
+  <Binguin_Jokes_07                        >营养膏的配方是机密,但大家都猜里面至少有 33% 的「未知」。</Binguin_Jokes_07>
+  <Binguin_Jokes_08                        >太阳耀斑一来,整个殖民地都在黑暗中摸索。</Binguin_Jokes_08>
+  <Binguin_Jokes_62                        >如何让一位污骸种俘虏感到快乐？ 答案是杀死所有和这个人一起被抓住的污骸种俘虏。</Binguin_Jokes_62>
+  <Binguin_Jokes_09                        >问:环世界的莓果为什么越来越少?答:因为每个殖民者都养了一只猪。</Binguin_Jokes_09>
+  <Binguin_Jokes_10                        >迫击炮手瞄了三天,终于开炮,结果砸中了自己的仓库。他说:这是压财富。</Binguin_Jokes_10>
+  <Binguin_Jokes_74                        >囚犯越狱被抓住,狱卒问为什么。囚犯答:饭太难吃了。狱卒:那你怎么不去死?囚犯:吃米莉拉的饭和死了有什么区别。</Binguin_Jokes_74>
+  <Binguin_Jokes_63                        >骠骑种虽然叫骠骑种，但是他们都没有马，可能是由于骠骑种根本没有能力驯兽。</Binguin_Jokes_63>
+  <Binguin_Jokes_64                        >为了改变粗短手指，猪猡种大力发展科技，为精英成员都装上了仿生臂。但因为猪猡种只熟悉粗短手指的手，因此这些仿生臂也是按照粗短手指制造的……</Binguin_Jokes_64>
+  <Binguin_Jokes_75                        >因为听说鼠族的巨盾很坚固，一位殖民者搞了一件，发现只能当他的护臂。</Binguin_Jokes_75>
+  <Binguin_Jokes_11                        >贸易商队抵达,殖民者热情迎上。商队首领看了看货单,说:你们这「新鲜人肉」过期了。</Binguin_Jokes_11>
+  <Binguin_Jokes_65                        >如果你有一位尼人种族的兄长，千万不要称呼他为...</Binguin_Jokes_65>
+  <Binguin_Jokes_66                        >袭击者大军压境,殖民者淡定喝茶,然后打电话给了机械族。</Binguin_Jokes_66>
+  <Binguin_Jokes_12                        >环世界的肉食动物会吃掉你的殖民者,但至少它会说一声……不,它不会说话。</Binguin_Jokes_12>
+  <Binguin_Jokes_67                        >问:怎么让一只爆炸鼠安静下来?答:别碰它。问:怎么让它更安静?答:让它去袭击者营地。</Binguin_Jokes_67>
+  <Binguin_Jokes_76                        >据说墨诺灵为鼠鼠定制了洗礼池，以防她们淹死。</Binguin_Jokes_76>
+  <Binguin_Jokes_13                        >太阳耀斑结束,殖民者欢呼。冰箱说:你们高兴什么?我的肉都白解冻了。</Binguin_Jokes_13>
+  <Binguin_Jokes_14                        >殖民者把180 公斤的钢块搬进仓库,出来时一块一块地石砖搬出去。</Binguin_Jokes_14>
+  <Binguin_Jokes_15                        >殖民者:医生,我有点感冒了。医生:没事,我截肢很熟练。</Binguin_Jokes_15>
+  <Binguin_Jokes_128                        >泰南所在的国家已经能手搓宇宙飞船了，但是还是要跑到隔壁国家去买加固炮管</Binguin_Jokes_128>
+  <Binguin_Jokes_16                        >地雷:我藏好了。袭击者:我也是。殖民者:你们俩别聊了,都炸了。</Binguin_Jokes_16>
+  <Binguin_Jokes_17                        >殖民者小孩在画画，这没什么大不了的，不过他是在冷库里...</Binguin_Jokes_17>
+  <Binguin_Jokes_68                        >一只爆炸养和一个袭击者对峙。袭击者:你过来啊!爆炸羊:你过来啊!袭击者:那我们都别动。</Binguin_Jokes_68>
+  <Binguin_Jokes_18                        >殖民者养了一群鸡,结果鸡把冷库吃完了。从此鸡被袭击者授予「高级间谍」称号。</Binguin_Jokes_18>
+  <Binguin_Jokes_129                        >泰南小时候家里长辈过生日当天心脏病发作而死</Binguin_Jokes_129>
+  <Binguin_Jokes_19                        >医生:病人需要一次手术。殖民者:那需要什么材料?医生:一颗新的肺。殖民者:仓库里有个「自愿」捐献的。</Binguin_Jokes_19>
+  <Binguin_Jokes_20                        >袭击者的情报员报告:殖民地有 20 个炮塔。首领:那我们改天再去。第二天:他们有 25 个了。</Binguin_Jokes_20>
+  <Binguin_Jokes_69                        >环世界最忠实的伙伴是狗?不,是金属怪形——它替你做了多少工作,从不抱怨。</Binguin_Jokes_69>
+  <Binguin_Jokes_21                        >一个殖民者问智者:怎么才能快乐?智者指了指一具新鲜的尸体:把烦恼做成帽子,你就快乐了。</Binguin_Jokes_21>
+  <Binguin_Jokes_77                        >邪恶中式粉色四奶六角恐龙...</Binguin_Jokes_77>
+  <Binguin_Jokes_130                        >泰南小时候房子着火了，消防员因为没有划居住区无法灭火</Binguin_Jokes_130>
+  <Binguin_Jokes_22                        >殖民地陷入食物危机,厨师端上一盘「营养膏刺身」。殖民者:这能吃吗?厨师:能,就是别问原料。</Binguin_Jokes_22>
+  <Binguin_Jokes_23                        >一只发狂野牛冲进殖民地。殖民者评价:它看起来很着急,可能是赶着变成营养膏。</Binguin_Jokes_23>
+  <Binguin_Jokes_24                        >囚犯在监狱里写回忆录,第一章:我为什么不该袭击那个只有三个人却有五十个炮塔的殖民地。</Binguin_Jokes_24>
+  <Binguin_Jokes_25                        >殖民者:我要征服世界！第四天他死于一只发狂兔子。</Binguin_Jokes_25>
+  <Binguin_Jokes_131                        >泰南小时候遇上外面枪战在大街上闲逛</Binguin_Jokes_131>
+  <Binguin_Jokes_26                        >一个部落袭击者被俘,殖民者问他为什么袭击。他答:我们缺一位好裁缝。殖民者:那你来得正好,我缺一件新大衣。</Binguin_Jokes_26>
+  <Binguin_Jokes_27                        >机械体大军来袭,殖民者装备心灵错乱枪。机械体:我们没有心灵。殖民者:真的吗。</Binguin_Jokes_27>
+  <Binguin_Jokes_70                        >惊惧母兽本来在巨坑里过着安逸的生活，直到天上下起了绿色的雨。</Binguin_Jokes_70>
+  <Binguin_Jokes_78                        >一只冰鹅问另一只:你说殖民者为什么总盯着我们的羽绒看?答:因为那是上好的保暖材料。</Binguin_Jokes_78>
+  <Binguin_Jokes_79                        >企鹅走路摇摇晃晃,殖民者问它为什么不飞。企鹅:我会飞的话,现在就不在这里了。</Binguin_Jokes_79>
+  <Binguin_Jokes_132                        >泰南小时候被人用狙击步枪爆头了，幸好这一枪被他的鼻子挡下来了</Binguin_Jokes_132>
+  <Binguin_Jokes_80                        >殖民者试图教企鹅开炮。企鹅学得很快,就是每开一炮都要先「嗯!」一声。</Binguin_Jokes_80>
+  <Binguin_Jokes_81                        >冰原上,企鹅和北极熊相遇。企鹅:我滑冰超快。北极熊:我吃企鹅超快。企鹅:那我们比比谁先到家。</Binguin_Jokes_81>
+  <Binguin_Jokes_28                        >霜语者讲了一个笑话,整个殖民地冷得抖了一下——然后发现是暖气坏了。</Binguin_Jokes_28>
+  <Binguin_Jokes_133                        >泰南小时候家里想开山修路，厚岩顶砸了30年也没砸完</Binguin_Jokes_133>
+  <Binguin_Jokes_82                        >一只小企鹅问妈妈:我们为什么住在这么冷的地方？这样要穿好多衣服?妈妈说:因为暖和的地方,人类会拿我们穿衣服。</Binguin_Jokes_82>
+  <Binguin_Jokes_83                        >冰鹅外交官带了一箱观测数据出访,殖民者问:这是什么?外交官:我们数了十年星星,终于数清了——星星不会数我们。</Binguin_Jokes_83>
+  <Binguin_Jokes_84                        >殖民者给企鹅围了条围巾。企鹅说:我是冰鹅,不是怕冷的企鹅!然后默默把围巾系紧了。</Binguin_Jokes_84>
+  <Binguin_Jokes_85                        >为什么冰鹅族不养狗?因为狗在冰盖上会变成冰狗（bingo）,而冰狗填不出热狗(hotdog)。</Binguin_Jokes_85>
+  <Binguin_Jokes_86                        >企鹅厨师发明了冰镇营养膏,殖民者吃了直呼:吃了不烧心。</Binguin_Jokes_86>
+  <Binguin_Jokes_87                        >一只冰鹅偷偷练习说冷笑话,练了三天,终于把全族都冻住了。</Binguin_Jokes_87>
+  <Binguin_Jokes_88                        >殖民者问冰鹅:你们的房子为什么都是冰做的?冰鹅:因为搬家的时候不用搬房子。</Binguin_Jokes_88>
+  <Binguin_Jokes_134                        >泰南小时候偷玩爸妈手机，发现手机有生物编码</Binguin_Jokes_134>
+  <Binguin_Jokes_135                        >泰南小时候被座狼捕食，没选择逃跑而是给了座狼一拳，这样座狼就会发狂而忘记吃掉他</Binguin_Jokes_135>
+  <Binguin_Jokes_89                        >冰鹅族发明了不用电的冰箱——把门打开。</Binguin_Jokes_89>
+  <Binguin_Jokes_136                        >泰南小时候妈妈让他好好学习，他说不行因为研究是长期工作</Binguin_Jokes_136>
+  <Binguin_Jokes_90                        >凝砂族不能放屁，不然会被当成响尾蛇。</Binguin_Jokes_90>
+  <Binguin_Jokes_91                        >企鹅在南极拔自己的毛，然后被北极熊告了侵权。</Binguin_Jokes_91>
+  <Binguin_Jokes_29                        >霜语者讲笑话时,会先吃薄荷糖,因为这样比较清“凉”。</Binguin_Jokes_29>
+  <Binguin_Jokes_92                        >快看，那里有一只企鹅...哦不对，那是夜鹭？</Binguin_Jokes_92>
+  <Binguin_Jokes_30                        >正在窜稀冷笑话...</Binguin_Jokes_30>
+  <Binguin_Jokes_93                        >冰鹅族战士从不回头,因为回头会摔跤。</Binguin_Jokes_93>
+  <Binguin_Jokes_94                        >冰鹅族没有飞机，但有很多空军。</Binguin_Jokes_94>
+  <Binguin_Jokes_95                        >一只企鹅去理发店,理发师问:要什么发型?企鹅:给我剪个燕尾服。</Binguin_Jokes_95>
+  <Binguin_Jokes_96                       >各大种族抱团开会,主持人说:今天的议题是「如何让殖民地不那么冷」。参会者一致决定:让冰鹅族少说话。</Binguin_Jokes_96>
+  <Binguin_Jokes_97                       >冰鹅士兵报告:报告长官,我们冻住了三台机械蜈蚣!长官:很好，怎么做到的？士兵：它们在偷听我们讲冷笑话！</Binguin_Jokes_97>
+  <Binguin_Jokes_31                       >问:为什么环世界没有蚊子?答:它们占的tps太多了，把自己卡死了。</Binguin_Jokes_31>
+  <Binguin_Jokes_98                       >一只龙娘闯进殖民地,殖民者问:你是来加入我们的吗?龙娘:我是来吃你草坪的。殖民者:我们只有扭曲肉味的粗饲料。</Binguin_Jokes_98>
+  <Binguin_Jokes_32                       >一台太阳能板对着太阳说:今天也要加油啊!太阳:我是清洁能源。</Binguin_Jokes_32>
+  <Binguin_Jokes_99                       >你怎么知道进厨房偷吃的是鼠族？因为只有最下层柜子空了。</Binguin_Jokes_99>
+  <Binguin_Jokes_100                       >没有终端的墨诺灵算不算一种脑残。</Binguin_Jokes_100>
+  <Binguin_Jokes_137                       >泰南小时候因为哭了几次被爸妈当仇人</Binguin_Jokes_137>
+  <Binguin_Jokes_101                       >飞僵遇到雷雨天会装死，因为假死避雷。</Binguin_Jokes_101>
+  <Binguin_Jokes_33                       >袭击者问投降的殖民者:你们的秘密武器是什么?殖民者:是加班。</Binguin_Jokes_33>
+  <Binguin_Jokes_34                       >两个殖民者争论先有鸡还是先有蛋。第三个殖民者说:反正最后是营养膏。</Binguin_Jokes_34>
+  <Binguin_Jokes_138                       >泰南小时候亵渎了两大黑帮之间的和平仪式被两百个黑帮打手追着打了三条街</Binguin_Jokes_138>
+  <Binguin_Jokes_35                       >殖民地的新人问:老兵,打仗最重要的是什么?老兵:活下来。新人:那怎么活?老兵:别死。</Binguin_Jokes_35>
+  <Binguin_Jokes_102                       >沃芬坚持称自己为狼而不是狗，即使她们经常说:“累成狗了。”</Binguin_Jokes_102>
+  <Binguin_Jokes_36                       >殖民者在田里种土豆,晚上发现土豆被偷了。第二天他种了一地土豆地雷。</Binguin_Jokes_36>
+  <Binguin_Jokes_103                       >狐朋狗友被认为是对美狐和沃芬的歧视词汇。</Binguin_Jokes_103>
+  <Binguin_Jokes_139                       >泰南的族谱每过几天就要重新编写一次，因为每过几天他的亲戚就会变多</Binguin_Jokes_139>
+  <Binguin_Jokes_104                       >有人曾尝试不让美狐哈草，但最后失败了，因为哈草比裸奔比还是更正常一点。</Binguin_Jokes_104>
+  <Binguin_Jokes_105                       >哪个种族走路最不稳？美狐/魅狐，因为狐狸狡猾。</Binguin_Jokes_105>
+  <Binguin_Jokes_37                       >殖民者们非常向往地狱的幸福生活。</Binguin_Jokes_37>
+  <Binguin_Jokes_106                       >殖民地停电,米莉拉偷偷摸黑做饭,结果把洗洁精当酱油。殖民者吃完后说:这顿饭清淡无油。</Binguin_Jokes_106>
+  <Binguin_Jokes_107                       >问：如何让米莉拉的饭变得好吃。答：放进营养膏机过滤两轮</Binguin_Jokes_107>
+  <Binguin_Jokes_38                       >一位殖民者试图教鹦鹉说「有袭击者！」,结果鹦鹉学会了说「投降」。</Binguin_Jokes_38>
+  <Binguin_Jokes_39                       >殖民地的孩子把雪人堆在炮塔前,炮塔问:这是敌袭吗?雪人:我是来应聘门卫的。</Binguin_Jokes_39>
+  <Binguin_Jokes_108                       >米莉拉试图学习爆炒，于是把爆炸鼠（活的）丢进锅里。</Binguin_Jokes_108>
+  <Binguin_Jokes_40                       >殖民者问智者:如何判断一个人是否会研究?智者:看他在停电时是否还守在高级研究台前。</Binguin_Jokes_40>
+  <Binguin_Jokes_71                       >自从纵火狂点燃了燃料，殖民地有了个规定:不许在仓库里玩火。第二天，仓库管理员补充:也不许在仓库里养爆炸鼠。</Binguin_Jokes_71>
+  <Binguin_Jokes_41                       >一台研究台前,研究员写着写着睡着了,梦里他解出了反热力学机器。醒来后他写下了四个字:需要空调。</Binguin_Jokes_41>
+  <Binguin_Jokes_109                       >殖民地的龙娘突然会开冰箱了。殖民者调查发现,是狗教的。</Binguin_Jokes_109>
+  <Binguin_Jokes_42                       >一台空调坏了,维修工说:有病。殖民者:它一台空调还能生病?维修工:它装反了。</Binguin_Jokes_42>
+  <Binguin_Jokes_110                       >商队首领问殖民者:你们这为什么这么多企鹅?殖民者:它们才是本地人。</Binguin_Jokes_110>
+  <Binguin_Jokes_111                       >不用担心讲龙娘笑话她们会听见，她们听不懂。</Binguin_Jokes_111>
+  <Binguin_Jokes_112                       >停电时,殖民者点起篝火,狗靠过来,猫靠过来,企鹅也靠过来。企鹅:我其实不怕冷,我只是想凑热闹。</Binguin_Jokes_112>
+  <Binguin_Jokes_43                       >为什么殖民地的葬礼都很简短?因为主持人都怕冷。</Binguin_Jokes_43>
+  <Binguin_Jokes_44                       >这里本来有个贝斯笑话，但是我忘了写了。</Binguin_Jokes_44>
+  <Binguin_Jokes_113                       >两只鼠族本来要冻死在那个冬天，但一名好心的驼鹿将自己的胸罩脱下来送给他们，成功让两鼠度过寒冷的冬天。</Binguin_Jokes_113>
+  <Binguin_Jokes_45                       >问:为什么数学书总是很忧郁?答:因为它有太多问题。</Binguin_Jokes_45>
+  <Binguin_Jokes_46                       >鱼敢冲浪但不敢上网。</Binguin_Jokes_46>
+  <Binguin_Jokes_114                       >涅瓦莲是强大的冰龙，一般是这么认为的，直到一只飞螳的出现。</Binguin_Jokes_114>
+  <Binguin_Jokes_115                       >涅瓦莲的虽然害怕高温，但她们更怕冷场。</Binguin_Jokes_115>
+  <Binguin_Jokes_47                       >问:蜗牛为什么跑得慢?答:因为它背着房子,而且房贷没还完。</Binguin_Jokes_47>
+  <Binguin_Jokes_48                       >问:为什么手机要带壳?答:因为裸机会害羞。</Binguin_Jokes_48>
+  <Binguin_Jokes_116                       >雪牛娘有角力气大又笨蛋又产奶又产毛，我严重怀疑雪牛娘其实是是龙娘娘？</Binguin_Jokes_116>
+  <Binguin_Jokes_49                       >问:什么动物最会算数?答:算术(鼠)。</Binguin_Jokes_49>
+  <Binguin_Jokes_72                       >电荷标枪需要高级零部件，但是机械静螳不需要高级零部件，谁把回扣吃了？</Binguin_Jokes_72>
+  <Binguin_Jokes_50                       >问:驼鹿为什么不用电脑?答:怕踩到鼠标。</Binguin_Jokes_50>
+  <Binguin_Jokes_51                       >问:为什么星星总是眨眼?答:因为太阳太亮了,它们睁不开。</Binguin_Jokes_51>
+  <Binguin_Jokes_117                       >薇薇不会迷路，因为她们有蜂向标</Binguin_Jokes_117>
+  <Binguin_Jokes_118                       >没人在意珉巧的冰激凌是从哪来的，太伟大了纳米机械。</Binguin_Jokes_118>
+  <Binguin_Jokes_119                       >如果打是亲骂是爱，蚁族和月兔已经结婚上亿次了。</Binguin_Jokes_119>
+  <Binguin_Jokes_120                       >问:为什么喝醉的冰鹅不抓小鱼?答:因为小鱼没有罪(醉)。</Binguin_Jokes_120>
+  <Binguin_Jokes_140                       >泰南小时候被外人打了，后来发现是自己的姑父。</Binguin_Jokes_140>
+  <Binguin_Jokes_121                       >问:什么花开得最慢?答:悠悠兰。</Binguin_Jokes_121>
+  <Binguin_Jokes_52                       >问:什么东西越洗越脏?答:水。</Binguin_Jokes_52>
+  <Binguin_Jokes_122                       >问:什么种族最沉默?答:茉约——因为她在深海里没人听见。</Binguin_Jokes_122>
+  <Binguin_Jokes_123                       >天上下起了白色的雨，我去怎么有俩渡鸦。</Binguin_Jokes_123>
+  <Binguin_Jokes_141                       >泰南小时候只带了个帽子在冬天裸奔也没有冻伤</Binguin_Jokes_141>
+  <Binguin_Jokes_124                       >艾波娜生了什么病动不了?答:「木马病毒」。</Binguin_Jokes_124>
+  <Binguin_Jokes_53                       >问:什么山最温柔?答:靠山。</Binguin_Jokes_53>
+  <Binguin_Jokes_142                       >泰南小时候一天向同班女同学互相表白了15次全部被拒绝，决定成为野人</Binguin_Jokes_142>
+  <Binguin_Jokes_125                       >问:什么种族最喜欢玩捉迷藏?答:绮罗，因为躲猫猫。</Binguin_Jokes_125>
+  <Binguin_Jokes_143                       >泰南死亡时被推进焚化炉，烧完后他的衣服突然出现并堆满了焚化室</Binguin_Jokes_143>
+  <Binguin_Jokes_144                       >泰南小时候被同学欺负，零花钱越多来揍他的人就越多</Binguin_Jokes_144>
+  <Binguin_Jokes_145                       >泰南小时候养了三只小鸡，其中一只死了，泰南很难过，于是把另外两只小鸡都杀了</Binguin_Jokes_145>
+  <Binguin_Jokes_126                       >问:为什么企鹅不穿羽绒服?答:因为它自己就是羽绒服。</Binguin_Jokes_126>
+  <Binguin_Jokes_54                       >云就是喜欢跟风</Binguin_Jokes_54>
+  <Binguin_Jokes_55                       >第一个加薪的人简直是添柴。</Binguin_Jokes_55>
+  <Binguin_Jokes_56                       >问:什么瓜最苦?答:傻瓜。</Binguin_Jokes_56>
+  <Binguin_Jokes_73                       >问:为什么机械族总是很冷?答:因为它的心(芯)是冰的。</Binguin_Jokes_73>
+  <Binguin_Jokes_57                       >问:什么茶最提神?答:警察(查)。</Binguin_Jokes_57>
+  <Binguin_Mothership_01                   >必须露天放置。</Binguin_Mothership_01>
+  <Binguin_Mothership_02                   >正在联系冰鹅族母舰…</Binguin_Mothership_02>
+  <Binguin_Mothership_03                   >联系进行中</Binguin_Mothership_03>
+  <Binguin_Mothership_04                   >尝试联系冰鹅族母舰</Binguin_Mothership_04>
+  <Binguin_Mothership_05                   >向深空发射巨量信号，尝试联络冰鹅族母舰。\n联系需要 13 天，期间将引来大量袭击者。</Binguin_Mothership_05>
+  <Binguin_Mothership_06                   >发射器未就位</Binguin_Mothership_06>
+  <Binguin_Mothership_07                   >必须露天</Binguin_Mothership_07>
+  <Binguin_Mothership_08                   >需要与冰鹅族结盟</Binguin_Mothership_08>
+  <Binguin_Mothership_09                   >母舰联系中：</Binguin_Mothership_09>
+  <Binguin_Mothership_10                   >母舰已链接——发射仓可以发射了</Binguin_Mothership_10>
+  <Binguin_Mothership_11                   >进入发射仓</Binguin_Mothership_11>
+  <Binguin_Mothership_12                   >放出舱内人员</Binguin_Mothership_12>
+  <Binguin_Mothership_13                   >让舱内的殖民者离开发射仓。</Binguin_Mothership_13>
+  <Binguin_Mothership_14                   >发射飞船！</Binguin_Mothership_14>
+  <Binguin_Mothership_15                   >点火发射，飞向冰鹅族母舰（飞天结局）。\n飞船将带走所有已进入发射仓的殖民者。</Binguin_Mothership_15>
+  <Binguin_Mothership_16                   >没有殖民者进入发射仓</Binguin_Mothership_16>
+  <Binguin_Mothership_17                   >舱内：</Binguin_Mothership_17>
+  <Binguin_Mothership_18                   >舱内：空</Binguin_Mothership_18>
+  <Binguin_Mothership_19                   >（母舰已链接，可发射）</Binguin_Mothership_19>
+  <Binguin_Mothership_20                   >发射仓里已经有人了。</Binguin_Mothership_20>
+  <Binguin_Mothership_21                   >无法进入发射仓。</Binguin_Mothership_21>
+  <Binguin_Mothership_22                   > 进入了发射仓。</Binguin_Mothership_22>
+  <Binguin_PlaceWorkerFishing_01           >蟹笼必须放置在水域中或冰面上。</Binguin_PlaceWorkerFishing_01>
+  <Binguin_PlaceWorkerFishing_02           >打窝用具必须放置在水域中。</Binguin_PlaceWorkerFishing_02>
+  <Binguin_PlaceWorkerFishing_03           >每个水域最多只能放置 </Binguin_PlaceWorkerFishing_03>
+  <Binguin_PlaceWorkerFishing_04           > 个打窝用具。</Binguin_PlaceWorkerFishing_04>
+  <Binguin_RodShared_01                    >素</Binguin_RodShared_01>
+  <Binguin_RodShared_02                    >肉</Binguin_RodShared_02>
+  <Binguin_RodShared_03                    >虫肉</Binguin_RodShared_03>
+  <Binguin_RodShared_04                    >扭曲肉</Binguin_RodShared_04>
+  <Binguin_RodShared_05                    >人肉</Binguin_RodShared_05>
+  <Binguin_RodShared_06                    >虫胶</Binguin_RodShared_06>
+  <Binguin_RodShared_07                    >无忌口</Binguin_RodShared_07>
+  <Binguin_RodShared_08                    >无</Binguin_RodShared_08>
+  <Binguin_RodShared_09                    >移速 +0.2</Binguin_RodShared_09>
+  <Binguin_RodShared_10                    >近战倍率 ×105%</Binguin_RodShared_10>
+  <Binguin_RodShared_11                    >免疫中毒</Binguin_RodShared_11>
+  <Binguin_RodShared_12                    >征召时不会崩溃</Binguin_RodShared_12>
+  <Binguin_RodShared_13                    >击杀敌人后心情 +5</Binguin_RodShared_13>
+  <Binguin_RodShared_14                    >心情 +3</Binguin_RodShared_14>
+  <Binguin_RodShared_15                    >自愈/免疫速度 ×200%</Binguin_RodShared_15>
+  <Binguin_StatPartRod_01                  >高级钓竿配件（×</Binguin_StatPartRod_01>
+  <Binguin_StatPartRod_02                  >高级钓竿配件（×</Binguin_StatPartRod_02>
+  <Binguin_StatPartRod_03                  >鱼饵（素）：+0.2</Binguin_StatPartRod_03>
+  <Binguin_StatPartRod_04                  >鱼饵（虫肉）：免疫中毒</Binguin_StatPartRod_04>
+  <Binguin_StatPartRod_05                  >鱼饵（无忌口）：免疫速度 ×200%</Binguin_StatPartRod_05>
+  <Binguin_StatPartRod_06                  >鱼饵（无忌口）：自愈速度 ×200%</Binguin_StatPartRod_06>
+  <Binguin_WasteRetaliation_LetterLabel>毒垃圾报复</Binguin_WasteRetaliation_LetterLabel>
+  <Binguin_WasteRetaliation_LetterText>冰鹅族把我们丢过去的毒垃圾原样送回来了——运输舱直接砸进殖民地里，卸下 {0} 袋毒垃圾和 {1} 只发狂的爆炸羊。</Binguin_WasteRetaliation_LetterText>
+  <Binguin_BandInvite_Label                >冰鹅族乐队来访</Binguin_BandInvite_Label>
+  <Binguin_BandInvite_Text                 >一支冰鹅族乐队托人捎来口信：他们想在你的殖民地附近办一场演唱会。\n\n只要按他们画的地标把场地建起来（五件乐器），乐队就会登门演出。演出结束后，他们会在原地留下谢礼。（最好备些椅子用来坐）\n\n如果中途拆掉已经建好的部分，演出就办不成了。</Binguin_BandInvite_Text>
+  <Binguin_BandInvite_Accept               >没问题，场地交给我们</Binguin_BandInvite_Accept>
+  <Binguin_BandInvite_Refuse               >这次就算了</Binguin_BandInvite_Refuse>
+  <Binguin_Band_TalkToSinger               >请主唱开始演出</Binguin_Band_TalkToSinger>
+  <Binguin_BandQuest_Name                  >冰鹅族乐队来访</Binguin_BandQuest_Name>
+  <Binguin_BandQuest_Desc                  >一支冰鹅族乐队托人捎来口信：他们想在你的殖民地附近办一场演唱会。\n\n接受之后，他们会用运输舱把【场地地标】空投到你的殖民地附近——按地标上的蓝图把场地建起来（五件乐器）。\n\n乐队到场后，找【主唱】右键交谈即可开演（最好备些椅子用来坐）。\n\n注意：乐队到场后如果 4 小时内没开演会有人催你，6 小时还没开演他们就走了（任务失败）。\n\n演出结束后，乐队会在原地留下谢礼。</Binguin_BandQuest_Desc>
+  <Binguin_BandMarkerDropped_Label         >乐队场地地标已送达</Binguin_BandMarkerDropped_Label>
+  <Binguin_BandMarkerDropped_Text          >冰鹅族乐队把场地地标用运输舱送来了。\n\n它是一个【可安装】的地标：在你的地图上找个宽敞的地方放下它（按 R 可以旋转），放下之后蓝图会自动铺开，照着建就行。\n\n建好之后乐队就会登门。</Binguin_BandMarkerDropped_Text>
+
+  <!-- ==================== 钓到企鹅！（2026-09-24 用户需求） ====================
+       机制见 Source/Fishing_Binguin.cs：原版钓鱼区 + 本 mod 鱼池，
+       0.78% 概率把渔获换成一名倒地（麻痹症 2 天）的冰鹅难民，60 天冷却。
+       {0} = 钓上来的冰鹅名字；{1} = 兵种标签；{2} = 麻痹天数。 -->
+  <Binguin_FishingCatch_01                 >鱼竿猛地一沉——钓上来的好像不是鱼……</Binguin_FishingCatch_01>
+  <Binguin_FishingCatch_02                 >钓上来的是 {0}！这名冰鹅族难民（{1}）被拉上岸的时候还在抽搐，看起来是【麻痹症】——大约 {2} 天之后才能恢复。\n\n先把她抬回床上救起来吧，之后再决定要不要留下她。</Binguin_FishingCatch_02>
+
+  <!-- ============ 钓竿装配台：地图连续点选 4 次配件（2026-09-26） ============
+       机制见 Source/RodPartPicker_Binguin.cs。
+       {0} = 当前第几步；{1} = 共几步；{2} = 这一步要选的配件名称。 -->
+  <Binguin_RodPick_01                      >装配钓竿（{0}/{1}）：请在地图上点选【{2}】，按 ESC 取消</Binguin_RodPick_01>
+  <Binguin_RodPick_06                      >没有可以来装配的殖民者（全部倒地 / 死亡）。</Binguin_RodPick_06>
+  <Binguin_RodPick_07                      >已取消装配。</Binguin_RodPick_07>
+  <Binguin_RodPick_08                      >地图上没有可用的{0}，装配已取消。</Binguin_RodPick_08>
+  <Binguin_RodPick_09                      >正在点选配件中，先选完或者按 ESC 取消。</Binguin_RodPick_09>
+  <Binguin_RodPick_10                      >请点选一位殖民者来进行装配，按 ESC 取消</Binguin_RodPick_10>
+  <Binguin_RodPick_11                      >{0} 现在没法来装配（倒地 / 死亡 / 不在场），请另选一位。</Binguin_RodPick_11>
+  <Binguin_RodPick_12                      >已选好的配件：</Binguin_RodPick_12>
+  <Binguin_RodPick_13                      >没有可以来装配的殖民者（全部倒地 / 死亡）。</Binguin_RodPick_13>
+  <Binguin_RodPick_14                      >开始装配</Binguin_RodPick_14>
+  <Binguin_RodPick_15                      >装配没能开始（可能缺 4 个高级零部件）。</Binguin_RodPick_15>
+
+  <!-- ============ 尚方宝剑 · 天顶鱼斩（2026-10-06）============ -->
+  <Binguin_VoidSword_01                    >没有目标被斩到。</Binguin_VoidSword_01>
+  <Binguin_VoidSword_02                    >天顶鱼斩！{0} 次斩击 · {1} 个目标 · {2} 种鱼轮转</Binguin_VoidSword_02>
+
+  <!-- ============ C# 文案（2026-10-09 从硬编码重构为语言键）============ -->
+  <Binguin_AssembleRod_SpawnFailed         >成品生成失败，装配已中止（配件还在原位，可以重试）</Binguin_AssembleRod_SpawnFailed         >
+  <Binguin_BandQuest_Title                 >鹅族乐队想来你这里开演唱会</Binguin_BandQuest_Title                 >
+  <Binguin_BandQuest_Waiting               >鹅族乐队已经等了 4 个小时了，该请主唱开始演唱会了</Binguin_BandQuest_Waiting               >
+  <Binguin_Band_Arrived                    >冰鹅族乐队和 {0} 位观众正从地图边缘赶来！找主唱聊聊就能开演。</Binguin_Band_Arrived                    >
+  <Binguin_Band_ColonistsAttended          >（{0} 位殖民者听了演唱会）</Binguin_Band_ColonistsAttended          >
+  <Binguin_Band_ConcertEnd                 >唱会结束，乐队与观众离开了</Binguin_Band_ConcertEnd                 >
+  <Binguin_Band_ConcertStart               >唱会开始了！冰鹅族乐队登台演出，全场安静下来</Binguin_Band_ConcertStart               >
+  <Binguin_Band_Declined                   >婉拒了冰鹅族乐队的演出请求</Binguin_Band_Declined                   >
+  <Binguin_Band_Empty                      >空</Binguin_Band_Empty                      >
+  <Binguin_Band_LeftGift                   >乐队临走留下了 {0}。</Binguin_Band_LeftGift                   >
+  <Binguin_Band_LeftGift2                  >乐队临走留下了 {0} 件武器。</Binguin_Band_LeftGift2                  >
+  <Binguin_Band_MarkerSent                 >鹅族乐队寄来了场地地标，按蓝图建好之后他们就会登门</Binguin_Band_MarkerSent                 >
+  <Binguin_Band_MayLeave                   >这几个小人可能会自己离场</Binguin_Band_MayLeave                   >
+  <Binguin_Band_NoVenue                    >鹅族乐队找不到合适的地方搭台，改日再来</Binguin_Band_NoVenue                    >
+  <Binguin_CombinedRaid                    >霜牙同时发动了【{0}】与【{1}】的联合袭击！</Binguin_CombinedRaid                    >
+  <Binguin_Concert_EnemyMoved              >人被音乐所打动，决定撤退</Binguin_Concert_EnemyMoved              >
+  <Binguin_Concert_EnemyWatching           >鹅族的演唱会正开得热闹，敌人远远听见动静，决定先观望一阵再来</Binguin_Concert_EnemyWatching           >
+  <Binguin_ResumeRod_NoJobDef              >法继续装配（找不到 job 定义）</Binguin_ResumeRod_NoJobDef              >
+  <Binguin_Ticket_Dropped                  > 银（实物落地={0}）</Binguin_Ticket_Dropped                  >
+  <Binguin_Ticket_Income                   >演唱会门票收入：{0} 银（{1} 位观众 × {2} 银 × 场地系数 {3}）</Binguin_Ticket_Income                   >
+  <Binguin_Ticket_Income2                  >演唱会门票收入 {0} 银，但场地边没找到落点，银两已直接计入。</Binguin_Ticket_Income2                  >
+  <Binguin_UnfinishedRod_Continue          >续装</Binguin_UnfinishedRod_Continue          >
+  <Binguin_UnfinishedRod_MissingParts      >还缺必需配件，无法继续装配。\n当前：{0}</Binguin_UnfinishedRod_MissingParts      >
+  <Binguin_UnfinishedRod_PartsIncomplete   >根钓竿的配件不齐，无法完成装配</Binguin_UnfinishedRod_PartsIncomplete   >
+  <Binguin_UnfinishedRod_SendColonist      >派一位殖民者来继续装配这根钓竿。\n当前进度：{0} / {1}\n当前：{2}</Binguin_UnfinishedRod_SendColonist      >
+  <Binguin_VoidStrike_Disabled             >天顶鱼斩」是测试玩法，需要在【选项 → Mod 设置 → 冰鹅族】里启用</Binguin_VoidStrike_Disabled             >
+  <Binguin_Weather_Clear                   ></Binguin_Weather_Clear                   >
+  <Binguin_Weather_Rain                    ></Binguin_Weather_Rain                    >
+  <Binguin_Weather_Snow                    ></Binguin_Weather_Snow                    >
+  <Binguin_Weather_Snowstorm               >风</Binguin_Weather_Snowstorm               >
+  <Binguin_Weather_Thunderstorm            >风</Binguin_Weather_Thunderstorm            >
+  <Binguin_WorkOnRod_PartsIncomplete       >根钓竿的配件还不齐，没法继续装配</Binguin_WorkOnRod_PartsIncomplete       >
+</LanguageData>

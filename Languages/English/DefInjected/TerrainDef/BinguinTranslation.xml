@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
+  <Binguin_IceFloor.label>ice floor</Binguin_IceFloor.label>
+  <Binguin_IceFloor.description>A smooth floor of ice, blue and clear, scattered over its surface with fine white veins of ice. Walking on it is no effort at all, and to the binguin it is like walking on flat ground—flat ice, rather.</Binguin_IceFloor.description>
+  <Binguin_SnowflakeFloor.label>snowflake floor</Binguin_SnowflakeFloor.label>
+  <Binguin_SnowflakeFloor.description>A finely made floor of blue ground adorned with white snowflakes, recalling the snow that fills the skies of the binguin homeland.</Binguin_SnowflakeFloor.description>
+  <Binguin_FancyIceFloor.label>fine ice-and-snow floor</Binguin_FancyIceFloor.label>
+  <Binguin_FancyIceFloor.description>A superior ice-and-snow floor strewn with frost crystals and ice flowers, elaborate in its workmanship and polished like a mirror—the most respectable floor a binguin observation post can have.</Binguin_FancyIceFloor.description>
+</LanguageData>

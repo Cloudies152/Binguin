@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!--
+    ============================================================================
+    冰鹅族 · 武器英文名覆盖（DefInjected 路径注入）
+
+    ★ 为什么要这个文件：
+      这把枪的 `<label>` / `<description>` 是**直接写在 Defs\Weapons4_Binguin.xml
+      里的中文**，不是语言键 ⇒ 改英文不能靠 Languages\English\Keyed\。
+      RimWorld 的机制是：
+        · `Keyed\*.xml`       → 只进 keyedReplacements（给 `"...".Translate()` 用）
+        · `DefInjected\*.xml` → 进 DefInjectionPackage → `InjectIntoDefs()`
+                                直接改写 def 的**字段**（label / description …）
+      键名语法 = `DefName.元素路径`（本文件用最简单的 `DefName.label` 形式）。
+    ★ 文件放在 DefInjected\ThingDef\ 下，文件名随意，路径以 Def 类型名为准。
+
+    ★ 用户 2026-10-08 需求：
+        英文名 = GGGGGG
+        全名   = Glacier Goose Giga-Gust Graser Gatling
+      （全名放进 description 开头，物品名本身保持 GGGGGG）
+    ============================================================================
+  -->
+
+  <!-- ========== 冰鹅级极激急击机枪 ========== -->
+  <Binguin_LaserGatling.label>GGGGGG</Binguin_LaserGatling.label>
+  <Binguin_LaserGatling.description>Glacier Goose Giga-Gust Graser Gatling.
+
+The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once it spins up, it trails an aurora that never fades. Each shot is weak (2 damage), yet thirty laser bolts pour out every second, and the ultimate ice burst doubles down on every hit (4% freeze chance per bolt) to sculpt the enemy into snow statues. Suppression 0.5. (Costs 8 advanced components / 60 plasteel / 200 steel)</Binguin_LaserGatling.description>
+
+  <!-- ========== 制作配方 ========== -->
+  <Recipe_Binguin_LaserGatling.label>Craft GGGGGG</Recipe_Binguin_LaserGatling.label>
+  <Recipe_Binguin_LaserGatling.jobString>crafting GGGGGG.</Recipe_Binguin_LaserGatling.jobString>
+
+</LanguageData>

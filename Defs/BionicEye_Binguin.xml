@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  野外作战仿生眼（2026-09 用户需求）
+    · 归属研究：在【霰雪无垠】Binguin_ResearchEndlessSnow（科技蓝图研究）下新增，
+      同时保留原版【仿生体】Bionics 前置研究 → 两个研究都完成后才能自己造。
+      ★ 1.6 反编译确认（Mono.Cecil 读 Assembly-CSharp.dll）：
+        RecipeDefGenerator.CreateRecipeDefFromMaker 会把 recipeMaker 上的
+        researchPrerequisite（单个）与 researchPrerequisites（列表）都拷到 RecipeDef；
+        RecipeDef.AvailableNow 对【两者】都做 IsFinished 校验 → 写两处即可双前置。
+    · 效果 ①：射击精度 +2（ShootingAccuracyPawn，等同"射击技能+2"；
+       该 stat 原始值≈射击等级，postProcessCurve：8→96%，10→97%；
+       原版"射击狂热"灵感给的是 +8，所以 +2 属于温和增益）
+      效果 ②：开枪时无视天气精度减益 —— 由 C# 补丁改 ShotReport.factorFromWeather
+       （源码 Patch_BinguinFieldEye.cs；全游戏只有 ShotReport.HitReportFor 一处
+        读取 WeatherManager.CurWeatherAccuracyMultiplier，改它即完全免疫）
+    · 制作：原版【装配台】FabricationBench（继承 BodyPartBionicBase 的 recipeUsers），
+      手工 8 级、工作量 30000；成本 玻璃钢20 + 高级零部件6 + 零部件8
+    · 安装：医疗床手术（继承 SurgeryInstallBodyPartArtificialBase），
+      占【眼睛】部位、替换眼球；拆下来会掉回物品（spawnThingOnRemoved）
+    · 贴图沿用原版仿生体通用贴图，仅改色调为冰蓝；外观沿用原版仿生眼的眼部绘制
+-->
+<Defs>
+
+  <!-- ==================== 植入体（Hediff） ==================== -->
+  <HediffDef ParentName="AddedBodyPartBase">
+    <defName>Binguin_FieldCombatBionicEye</defName>
+    <label>野外作战仿生眼</label>
+    <labelNoun>一只野外作战仿生眼</labelNoun>
+    <description>已安装的野外作战仿生眼。晶状体外覆防冻晶膜，入光端的气象补偿阵列会实时修正雨雪、沙暴与浓雾造成的成像畸变，因此无论天气多糟，射手的命中判定都和晴天一样。额外的光学增益还让佩戴者的射击精度提升一档。</description>
+    <descriptionHyperlinks>
+      <ThingDef>Binguin_FieldCombatBionicEye</ThingDef>
+    </descriptionHyperlinks>
+    <spawnThingOnRemoved>Binguin_FieldCombatBionicEye</spawnThingOnRemoved>
+    <addedPartProps>
+      <solid>true</solid>
+      <partEfficiency>1.25</partEfficiency>
+      <betterThanNatural>true</betterThanNatural>
+    </addedPartProps>
+    <stages>
+      <li>
+        <!-- 射击精度 +2（原版"射击狂热"灵感为 +8，此处为温和增益） -->
+        <statOffsets>
+          <ShootingAccuracyPawn>2</ShootingAccuracyPawn>
+        </statOffsets>
+      </li>
+    </stages>
+    <!-- 外观：沿用原版仿生眼的眼部绘制（与 BionicEye 同款） -->
+    <renderNodeProperties>
+      <li Class="PawnRenderNodeProperties_Eye">
+        <workerClass>PawnRenderNodeWorker_HediffEye</workerClass>
+        <texPath>Things/Pawn/Wounds/BionicEye</texPath>
+        <parentTagDef>Head</parentTagDef>
+        <drawSize>0.15</drawSize>
+        <drawData>
+          <defaultData>
+            <layer>56</layer>
+            <offset>(0, 0, -0.25)</offset>
+          </defaultData>
+          <dataWest>
+            <flip>true</flip>
+          </dataWest>
+        </drawData>
+      </li>
+    </renderNodeProperties>
+  </HediffDef>
+
+  <!-- ==================== 物品 ==================== -->
+  <ThingDef ParentName="BodyPartBionicBase">
+    <defName>Binguin_FieldCombatBionicEye</defName>
+    <label>野外作战仿生眼</label>
+    <description>一只为雪原野外作战专门改装的仿生眼。晶状体外覆一层防冻晶膜，入光端加装了气象补偿阵列：雨、雪、沙暴、浓雾都不再让成像发糊，射手在恶劣天气下的命中率与晴天无异。额外的光学增益也让佩戴者的射击精度再提升一档。</description>
+    <descriptionHyperlinks>
+      <RecipeDef>InstallBinguinFieldCombatBionicEye</RecipeDef>
+    </descriptionHyperlinks>
+    <costList>
+      <Plasteel>20</Plasteel>
+      <ComponentSpacer>6</ComponentSpacer>
+      <ComponentIndustrial>8</ComponentIndustrial>
+    </costList>
+    <thingSetMakerTags>
+      <li>RewardStandardMidFreq</li>
+    </thingSetMakerTags>
+    <statBases>
+      <Mass>0.3</Mass>
+      <WorkToMake>30000</WorkToMake>
+    </statBases>
+    <graphicData>
+      <texPath>Things/Item/Health/HealthItem</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.80</drawSize>
+      <color>(0.62,0.80,1.00)</color>
+    </graphicData>
+    <recipeMaker>
+      <!-- 原版仿生体前置（父类 BodyPartBionicBase 已有，这里显式写出便于阅读） -->
+      <researchPrerequisite>Bionics</researchPrerequisite>
+      <!-- 冰鹅族霰雪无垠（科技蓝图）前置 -->
+      <researchPrerequisites>
+        <li>Binguin_ResearchEndlessSnow</li>
+      </researchPrerequisites>
+    </recipeMaker>
+  </ThingDef>
+
+  <!-- ==================== 手术：安装 ==================== -->
+  <RecipeDef ParentName="SurgeryInstallBodyPartArtificialBase">
+    <defName>InstallBinguinFieldCombatBionicEye</defName>
+    <label>安装野外作战仿生眼</label>
+    <description>给目标安装一只野外作战仿生眼。</description>
+    <descriptionHyperlinks>
+      <ThingDef>Binguin_FieldCombatBionicEye</ThingDef>
+      <HediffDef>Binguin_FieldCombatBionicEye</HediffDef>
+    </descriptionHyperlinks>
+    <jobString>正在安装野外作战仿生眼。</jobString>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Binguin_FieldCombatBionicEye</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <fixedIngredientFilter>
+      <thingDefs>
+        <li>Binguin_FieldCombatBionicEye</li>
+      </thingDefs>
+    </fixedIngredientFilter>
+    <appliedOnFixedBodyParts>
+      <li>Eye</li>
+    </appliedOnFixedBodyParts>
+    <addsHediff>Binguin_FieldCombatBionicEye</addsHediff>
+  </RecipeDef>
+
+</Defs>

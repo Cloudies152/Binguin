@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族工作台 WorkGiver 注册（2026-08-19 修复）：
+  ★ 1.6 殖民者"使用工作台执行任务清单"依赖 WorkGiverDef 的 fixedBillGiverDefs 白名单
+    （WorkGiver_DoBill 按此匹配工作台）。原版 DoBillsMachiningTable 只列 TableMachining、
+    DoBillsMakeApparel 只列原版缝纫台 → 冰鹅族机工台/缝纫台"Can't find a WorkGiver"
+    （日志实测报错，殖民者不来使用）。这里为两个冰鹅工作台注册专属 WorkGiver。
+-->
+<Defs>
+
+  <!-- 冰鹅族机工台：仿 DoBillsMachiningTable（Smithing 75） -->
+  <WorkGiverDef>
+    <defName>DoBillsBinguinMachiningTable</defName>
+    <label>在冰鹅族机工台制造物品</label>
+    <giverClass>WorkGiver_DoBill</giverClass>
+    <workType>Smithing</workType>
+    <priorityInType>75</priorityInType>
+    <fixedBillGiverDefs>
+      <li>Binguin_MachiningTable</li>
+    </fixedBillGiverDefs>
+    <verb>work at</verb>
+    <gerund>working at</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <prioritizeSustains>true</prioritizeSustains>
+  </WorkGiverDef>
+
+  <!-- 冰鹅族缝纫台：仿 DoBillsMakeApparel（Tailoring 110） -->
+  <WorkGiverDef>
+    <defName>DoBillsBinguinTailoringTable</defName>
+    <label>在冰鹅族缝纫台制作衣物</label>
+    <giverClass>WorkGiver_DoBill</giverClass>
+    <workType>Tailoring</workType>
+    <priorityInType>110</priorityInType>
+    <fixedBillGiverDefs>
+      <li>Binguin_TailoringTable</li>
+    </fixedBillGiverDefs>
+    <verb>tailor at</verb>
+    <gerund>tailoring at</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <prioritizeSustains>true</prioritizeSustains>
+  </WorkGiverDef>
+
+  <!-- ============ 半成品钓竿：自动续做（2026-10-06 用户需求）============
+       用户需求原文：「然后记得绑定制作者，制作者工作时会自动制作鱼竿」。
+       ★ 为什么需要这个 WorkGiver：本 mod 的装配不是原版 bill 体系，
+         自定义 job 不会被工作分配系统自动捡起来（玩家不点就没人做）。
+         原版 bill 能"中断后自己回去做"靠的是 `WorkGiver_DoBill` 每轮扫描工作台，
+         ⇒ 这里为"还没做完的半成品"写一个同类的扫描型 WorkGiver。
+       ★ 工作类型用原版 **Crafting**（手工），与"制作钓竿"语义一致，
+         玩家能用工作优先级控制它，且不需要新增 WorkType（新增会让所有殖民者多一列）。
+       ★ `scanThings=true` 才会走 `PotentialWorkThingsGlobal` 全图扫描。
+       ★ 占位 giverClass 必须是可实例化的具体类（`WorkGiver_Scanner` 是 abstract，
+         占位会导致每帧实例化异常）；C# 静态构造会替换成
+         `WorkGiver_BinguinUnfinishedRod` 并清 `workerInt` 缓存。 -->
+  <WorkGiverDef>
+    <defName>Binguin_WorkOnUnfinishedRod</defName>
+    <label>继续装配半成品钓竿</label>
+    <giverClass>WorkGiver_Researcher</giverClass>
+    <workType>Crafting</workType>
+    <verb>continue assembling</verb>
+    <gerund>continuing assembling</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <scanThings>true</scanThings>
+    <!-- 与其它手工活同档（原版 DoBillsSmithing 是 75），不抢也不被抢 -->
+    <priorityInType>75</priorityInType>
+  </WorkGiverDef>
+
+</Defs>

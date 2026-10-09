@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
+  <Binguin_Gene_PureWhiteSkin.label>pure white down</Binguin_Gene_PureWhiteSkin.label>
+  <Binguin_Gene_PureWhiteSkin.description>The skin of the binguin is white from birth, untouched by any pigment, and its color never changes.</Binguin_Gene_PureWhiteSkin.description>
+  <Binguin_Gene_Skating.label>swift skating</Binguin_Gene_Skating.label>
+  <Binguin_Gene_Skating.description>Glide freely over ice, snow and water. Movement speed is entirely unaffected by terrain.</Binguin_Gene_Skating.description>
+  <Binguin_Gene_FishLover.label>fish lover</Binguin_Gene_FishLover.label>
+  <Binguin_Gene_FishLover.description>Mood +8 when eating food that contains fish.</Binguin_Gene_FishLover.description>
+  <Binguin_Gene_MechExpert.label>mechanic's gift</Binguin_Gene_MechExpert.label>
+  <Binguin_Gene_MechExpert.description>Construction speed +50%, mech gestation speed +20%, mech repair speed +50%, and mech assembly (including disassembly) work speed +20%.</Binguin_Gene_MechExpert.description>
+  <Binguin_Gene_EfficientResearch.label>efficient research</Binguin_Gene_EfficientResearch.label>
+  <Binguin_Gene_EfficientResearch.description>Research speed +20% and entity deciphering speed +30%.</Binguin_Gene_EfficientResearch.description>
+  <Binguin_Gene_RecreationLover.label>recreation first</Binguin_Gene_RecreationLover.label>
+  <Binguin_Gene_RecreationLover.description>Recreation falls 10% faster, so more recreation is needed to stay happy.</Binguin_Gene_RecreationLover.description>
+</LanguageData>

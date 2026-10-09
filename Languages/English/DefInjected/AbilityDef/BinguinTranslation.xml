@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
+  <Binguin_AbilityPierce.label>pierce</Binguin_AbilityPierce.label>
+  <Binguin_AbilityPierce.description>Deals 200% of the weapon's damage to all enemies within 10 tiles in front. Cooldown 10 seconds.</Binguin_AbilityPierce.description>
+  <Binguin_AbilityHook.label>hook fish</Binguin_AbilityHook.label>
+  <Binguin_AbilityHook.description>Target a unit within a radius of 31 tiles and pull it to stand before you. Cooldown 10 seconds.</Binguin_AbilityHook.description>
+  <Binguin_AbilityVoidStrike.label>Zenith Fish Slash</Binguin_AbilityVoidStrike.label>
+  <Binguin_AbilityVoidStrike.description>The phantom shapes of the fourteen fish fall one after another from the zenith, dealing area damage to all enemies within an oval area. Each slash deals 10 blunt damage, applies ice burst, and has 100% blunt penetration; all 14 slashes are resolved at once.\n\n(Test feature: must be enabled in Options -> Mod Settings -> Binguin; off by default.)</Binguin_AbilityVoidStrike.description>
+  <Binguin_AbilityThrowIce.label>Throw ice</Binguin_AbilityThrowIce.label>
+  <Binguin_AbilityThrowIce.description>Hurl 5 spirit ice rocks at the target location. 3 charges.</Binguin_AbilityThrowIce.description>
+</LanguageData>

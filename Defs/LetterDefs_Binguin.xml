@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  外交事件相关信件定义。
+  BinguinDiplomacyLetter：外交官来访询问共存意向（选择信件，按钮与效果由 C# 侧提供）。
+  BinguinLeaveLetter：外交官离开的提示信。
+-->
+<Defs>
+  <!--
+    1.6 起 LetterDef 仅保留 letterClass / color / flashColor 等字段；
+    canBeDismissed / bounceIfArrivalTimeNotMet / solidColor 已不存在（日志报错确认）。
+  -->
+  <LetterDef>
+    <defName>BinguinDiplomacyLetter</defName>
+    <letterClass>ChoiceLetter</letterClass>
+    <flashColor>(0.85,0.9,0.95)</flashColor>
+    <color>(0.85,0.9,0.95)</color>
+  </LetterDef>
+
+  <!-- 外交官到达通知信（2026-08-22：到达只通知，共存选项需殖民者右键
+       点击外交官交谈后才会弹出 BinguinDiplomacyLetter） -->
+  <LetterDef>
+    <defName>BinguinDiplomatArrivalLetter</defName>
+    <letterClass>StandardLetter</letterClass>
+    <flashColor>(0.85,0.9,0.95)</flashColor>
+    <color>(0.85,0.9,0.95)</color>
+  </LetterDef>
+
+  <LetterDef>
+    <defName>BinguinLeaveLetter</defName>
+    <letterClass>StandardLetter</letterClass>
+  </LetterDef>
+</Defs>

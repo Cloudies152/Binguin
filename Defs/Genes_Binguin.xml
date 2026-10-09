@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族自定义基因（RimWorld 1.6 + Biotech + Anomaly + Odyssey）
+  原版基因引用见 Race_Binguin.xml 的 raceGenes；
+  本文件只放需要自定义实现的基因/心情/效果。
+-->
+<Defs>
+
+  <!-- ============ 纯白绒羽（肤色基因，2026-09 用户定稿） ============
+       ★ 用户要求："直接加个纯白皮肤基因，也不用乱改了"。
+       这是**根治**冰鹅族肤色问题的办法，原因（IL 实证链）：
+         ① 原版 Pawn_StoryTracker.get_SkinColor() = skinColorOverride ?? SkinColorBase；
+         ② SkinColorBase 若为空且 pawn 有基因，会调 PawnSkinColors.RandomSkinColorGene()
+            【当场随机塞一个黑色素基因进去】→ 于是每只小人肤色都不一样；
+         ③ 黑色素基因还带 randomBrightnessFactor，会更进一步让每只深浅不同。
+       所以只改 HAR 的 colorChannels（那条路只是"通道"）治不了本 —— 必须用
+       skinColorOverride 把它【硬性定死】。
+       ★ randomBrightnessFactor 必须写 0，否则还会叠一层随机明度。
+       ★ exclusionTags 写 SkinColor，避免原版再随机塞一个黑色素基因进来。
+       ★ 不写 ParentName（原版父类 GeneSkinColorOverride 在 Biotech 里），字段全列出来更稳。 -->
+  <GeneDef>
+    <defName>Binguin_Gene_PureWhiteSkin</defName>
+    <label>纯白绒羽</label>
+    <labelShortAdj>纯白</labelShortAdj>
+    <description>冰鹅族的皮肤天生纯白，不受任何色素影响，肤色恒定。</description>
+    <displayCategory>Cosmetic_Skin</displayCategory>
+    <skinColorOverride>(255, 255, 255)</skinColorOverride>
+    <randomBrightnessFactor>0</randomBrightnessFactor>
+    <biostatCpx>0</biostatCpx>
+    <biostatMet>0</biostatMet>
+    <displayOrderInCategory>1</displayOrderInCategory>
+    <iconPath>UI/Icons/Genes/Gene_SkinColorOverride</iconPath>
+    <exclusionTags>
+      <li>SkinColor</li>
+    </exclusionTags>
+  </GeneDef>
+
+  <!-- ============ 快速滑冰（冰/雪/水面移动不受影响） ============
+       实现：Harmony 挂钩 Pawn_PathFollower.CostToMoveIntoCell，
+       有本基因时冰/雪/水面成本归零（= 平地速度）。无需 geneClass。 -->
+  <GeneDef>
+    <defName>Binguin_Gene_Skating</defName>
+    <label>快速滑冰</label>
+    <labelShortAdj>滑冰</labelShortAdj>
+    <description>在冰面、雪面与水面上滑行自如，移动速度完全不受地形影响。</description>
+    <displayCategory>Miscellaneous</displayCategory>
+    <biostatCpx>1</biostatCpx>
+    <biostatMet>-1</biostatMet>
+    <iconPath>UI/Icons/Genes/Gene_QuickMovespeed</iconPath>
+  </GeneDef>
+
+  <!-- ============ 鱼类爱好（食用含鱼食物 +8 心情） ============ -->
+  <GeneDef>
+    <defName>Binguin_Gene_FishLover</defName>
+    <label>鱼类爱好</label>
+    <labelShortAdj>爱鱼</labelShortAdj>
+    <description>食用含有鱼类的食物时心情 +8。</description>
+    <displayCategory>Miscellaneous</displayCategory>
+    <geneClass>Binguin.Gene_BinguinFishLover</geneClass>
+    <biostatCpx>1</biostatCpx>
+    <iconPath>UI/Icons/Genes/Gene_AnimalWarcall</iconPath>
+  </GeneDef>
+
+  <ThoughtDef>
+    <defName>Binguin_AteFish</defName>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>1</durationDays>
+    <stages>
+      <li>
+        <label>吃了鲜美的鱼</label>
+        <description>鲜美的鱼肉让我精神焕发！</description>
+        <baseMoodEffect>8</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- ============ 机工高手（纯 statFactors，无需 C#） ============ -->
+  <GeneDef>
+    <defName>Binguin_Gene_MechExpert</defName>
+    <label>机工高手</label>
+    <labelShortAdj>机工</labelShortAdj>
+    <description>建造速度提升 50%，机械培育速度提升 20%，机械维修速度提升 50%，机械组装（含拆解类）工作速度提升 20%。</description>
+    <displayCategory>Miscellaneous</displayCategory>
+    <statFactors>
+      <ConstructionSpeed>1.5</ConstructionSpeed>
+      <MechFormingSpeed>1.2</MechFormingSpeed>
+      <MechRepairSpeed>1.5</MechRepairSpeed>
+      <AssemblySpeedFactor>1.2</AssemblySpeedFactor>
+    </statFactors>
+    <biostatCpx>1</biostatCpx>
+    <biostatMet>-2</biostatMet>
+    <iconPath>UI/Icons/Genes/Gene_FastLearning</iconPath>
+  </GeneDef>
+
+  <!-- ============ 高效研究（研究 +20%，破译 +30%） ============ -->
+  <GeneDef>
+    <defName>Binguin_Gene_EfficientResearch</defName>
+    <label>高效研究</label>
+    <labelShortAdj>研究</labelShortAdj>
+    <description>研究速度提升 20%，异常体破译速度提升 30%。</description>
+    <displayCategory>Miscellaneous</displayCategory>
+    <statFactors>
+      <ResearchSpeed>1.2</ResearchSpeed>
+      <EntityStudyRate>1.3</EntityStudyRate>
+    </statFactors>
+    <biostatCpx>1</biostatCpx>
+    <biostatMet>-1</biostatMet>
+    <iconPath>UI/Icons/Genes/Gene_FastLearning</iconPath>
+  </GeneDef>
+
+  <!-- ============ 娱乐至上（娱乐下降 ×110%） ============ -->
+  <GeneDef>
+    <defName>Binguin_Gene_RecreationLover</defName>
+    <label>娱乐至上</label>
+    <labelShortAdj>享乐</labelShortAdj>
+    <description>娱乐值下降速度提升 10%，需要更多娱乐才能保持快乐。</description>
+    <displayCategory>Miscellaneous</displayCategory>
+    <statFactors>
+      <JoyFallRateFactor>1.1</JoyFallRateFactor>
+    </statFactors>
+    <biostatCpx>1</biostatCpx>
+    <biostatMet>2</biostatMet>
+    <iconPath>UI/Icons/Genes/Gene_Sanguine</iconPath>
+  </GeneDef>
+
+  <!-- ============ 冰鹅种异种（XenotypeDef）：让种族小人显示为"冰鹅种"并携带全部基因 ============
+       注：HAR 的 raceGenes 在本环境未生效（小人仍显示为"智人种"），
+       改用原版机制：定义专属异种 + pawnkind 的 xenotypeSet 指定生成该异种。 -->
+  <XenotypeDef>
+    <defName>Binguin_Xenotype</defName>
+    <label>冰鹅种</label>
+    <description>冰鹅族的基因组合：寒域观测者、滑冰与捕鱼能手、天生的机械维护者与研究者。</description>
+    <iconPath>UI/Icons/Xenotypes/Baseliner</iconPath>
+    <inheritable>true</inheritable>
+    <genes>
+      <!-- 原版 -->
+      <li>MinTemp_SmallDecrease</li>
+      <li>MaxTemp_SmallDecrease</li>
+      <li>AptitudePoor_Plants</li>
+      <li>AptitudePoor_Melee</li>
+      <li>MoveSpeed_Slow</li>
+      <li>Mood_Sanguine</li>
+      <li>Aggression_DeadCalm</li>
+      <!-- 自定义 -->
+      <!-- ★★★ 2026-09-23：纯白绒羽必须列在这里！
+           之前只写在 Race_Binguin.xml 的 raceGenes 里，而本环境 HAR 的 raceGenes
+           不生效（见本文件下方注释），于是小人身上【根本没有】这个基因 →
+           原版 get_SkinColorBase 会当场随机塞一个黑色素基因进来
+           （PawnSkinColors.RandomSkinColorGene），表现就是
+           「企鹅族的基因会被其他肤色基因覆盖」。
+           写进异种基因列表后：skinColorOverride = 纯白，随机黑色素基因不再影响外观。 -->
+      <li>Binguin_Gene_PureWhiteSkin</li>
+      <li>Binguin_Gene_EfficientResearch</li>
+      <li>Binguin_Gene_Skating</li>
+      <li>Binguin_Gene_FishLover</li>
+      <li>Binguin_Gene_MechExpert</li>
+      <li>Binguin_Gene_RecreationLover</li>
+    </genes>
+  </XenotypeDef>
+
+</Defs>

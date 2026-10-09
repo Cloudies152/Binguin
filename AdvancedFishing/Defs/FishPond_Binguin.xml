@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  鱼池（2026-08-20 用户需求，进阶钓鱼学解锁，奥德赛门控目录自动生效）
+  - 2x2 建筑，200 钢 + 2 零部件；500 耐久
+  - 多个鱼池相邻连接 = 合并成一个大鱼池（同鱼种才连通）：
+    总容量 = 相连池数 × 20 条鱼（每池上限 20）
+  - 内置模块（用户选定方案，不额外放置蟹笼/打窝建筑）：
+      ① 放养鱼苗：从殖民地库存消耗 1 条任意鱼 → 决定池内鱼种（一条即可启动）
+      ② 钓鱼：指派殖民者到池边垂钓，每次 1 条（从池鱼群扣除）
+      ③ 投放鱼食（打窝）：消耗 1 营养任意食物 → 鱼群繁殖速度 +50%（营养值累计上限 5，★ 每天耗 0.5，2026-08-20 用户改）
+      ④ 自动捕鱼（蟹笼模块开关）：开启后每 6 小时自动产出 1 条（从池鱼群扣除）
+  - 繁殖：每池每天自然 +4 条（上限 20/池）；有鱼食时 +6 条/天
+  - 低仇恨：<building><isInert>true</isInert></building>（袭击者不会主动攻击它）
+  ★ XML 零自定义类型：Comp/PlaceWorker/Job driverClass 由 BinguinDefPatches 静态构造挂载。
+-->
+<Defs>
+
+  <!-- ============ 鱼池（2x2，进阶钓鱼学） ============ -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_FishPond</defName>
+    <label>鱼池</label>
+    <description>冰鹅族以寒铁围出的浅池，放入一条鱼苗即可养殖。多个鱼池相连会连成一个大鱼池，容量随池数增加（每池 20 条）。可以指派殖民者垂钓、投放鱼食加快繁殖，或开启内置蟹笼自动捕鱼。鱼池毫不起眼，袭击者不会特意攻击它。</description>
+    <thingClass>Building</thingClass>
+    <!-- ★ 性能优化（2026-08-20）：繁殖/鱼食/自动捕鱼为分钟级事件 → Rare（每 250 tick） -->
+    <tickerType>Rare</tickerType>
+    <size>(2,2)</size>
+    <graphicData>
+      <texPath>Things/Building/Binguin/FishPond</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,2)</drawSize>
+      <shadowData>
+        <volume>(2, 0.4, 2)</volume>
+      </shadowData>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>Impassable</passability>
+    <pathCost>120</pathCost>
+    <canOverlapZones>false</canOverlapZones>
+    <blockWind>false</blockWind>
+    <fillPercent>1</fillPercent>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <uiOrder>181</uiOrder>
+    <statBases>
+      <MaxHitPoints>500</MaxHitPoints>
+      <WorkToBuild>2500</WorkToBuild>
+      <Mass>60</Mass>
+      <Flammability>0</Flammability>
+      <Beauty>-3</Beauty>
+    </statBases>
+    <costList>
+      <Steel>200</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <building>
+      <ai_chillDestination>false</ai_chillDestination>
+      <!-- ★ 低仇恨：袭击者不会主动攻击/破坏鱼池（isInert 原版语义，
+           同 Anomaly Buildings_Misc 用法；仍可正常拆除） -->
+      <isInert>true</isInert>
+      <!-- ★ 鱼食筛选（2026-08-20 用户需求：手动选择鱼食，同打窝用具）：
+           选中鱼池出现「存储」标签（ITab_Storage）→ 玩家筛选允许投入的食物；
+           WorkGiver 投喂只搬符合筛选的食物。默认 Foods 类目=一切食物。 -->
+      <fixedStorageSettings>
+        <filter>
+          <categories>
+            <li>Foods</li>
+          </categories>
+        </filter>
+      </fixedStorageSettings>
+      <defaultStorageSettings>
+        <filter>
+          <categories>
+            <li>Foods</li>
+          </categories>
+        </filter>
+      </defaultStorageSettings>
+    </building>
+    <!-- 鱼食容器（占位原版 CompProperties_ThingContainer，静态构造换
+         compClass → CompBinguinPondFeed，见 BinguinDefPatches） -->
+    <inspectorTabs>
+      <li>ITab_Storage</li>
+    </inspectorTabs>
+    <comps>
+      <li Class="CompProperties_ThingContainer">
+        <stackLimit>50</stackLimit>
+        <drawContainedThing>false</drawContainedThing>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Binguin_ResearchAdvancedFishing</li>
+    </researchPrerequisites>
+    <constructionSkillPrerequisite>4</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- ============ 在鱼池钓鱼 job（driverClass 静态构造挂载） ============ -->
+  <JobDef>
+    <defName>Binguin_PondFish</defName>
+    <reportString>fishing in pond.</reportString>
+    <casualInterruptible>false</casualInterruptible>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    <!-- ★★ 2026-10-06 用户需求：「把冰鹅族的钓鱼改为娱乐，即冰鹅族钓鱼的时候
+         会增加娱乐条」。
+         ★ 这两项是**娱乐条的必需品**：`JoyUtility.JoyTickCheckEnd`（IL 实证）
+           是唯一真正加娱乐的地方，它读的正是
+             `jobDef.joyKind`      → 传给 Need_Joy.GainJoy
+             `jobDef.joyGainRate`  → 乘进增量的系数
+           没有 `joyKind` 时它会直接 `Log.Warning("This method can only be called
+           for jobs with joyKind.")` 然后返回 ⇒ 娱乐条一动不动。
+           （对照：原版 `JobDef Fish` 就**没有** joyKind ⇒ 原版钓鱼是纯工作。
+             这正是用户要改掉的点。）
+         ★ `joyKind` 用原版 `Meditative`（"独自静处"类）：
+           原版 Skygaze / Meditate / GoForWalk / BuildSnowman / ViewArt 都用它 ——
+           钓鱼独自坐在池边，语义正好对上。
+           它同时决定"哪种娱乐被满足"（Need_Joy 会按 JoyKind 记容忍度）。
+         ★ `joyGainRate` = 1（原版默认值）。原版所有 joyKind job 都没显式写它，
+           靠默认 1；这里显式写出来是为了让人一眼看到"这是可调的"。
+           调高 = 钓得快满；调低 = 要钓更久。 -->
+    <joyKind>Meditative</joyKind>
+    <joyGainRate>1</joyGainRate>
+  </JobDef>
+
+  <!-- ============ 鱼池钓鱼工作（2026-08-20）：接入原版「钓鱼」工作类型 ============
+       殖民者启用原版 Fishing 工作后自动寻找有鱼的鱼池并垂钓。
+       ★ giverClass 用原版具体类 WorkGiver_Researcher 占位（零自定义类型），
+         静态构造替换为 WorkGiver_BinguinPondFishing 并清 workerInt 缓存。 -->
+  <WorkGiverDef>
+    <defName>Binguin_PondFishWork</defName>
+    <label>fish in pond</label>
+    <giverClass>WorkGiver_Researcher</giverClass>
+    <workType>Fishing</workType>
+    <verb>fish</verb>
+    <gerund>fishing in pond</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <scanThings>true</scanThings>
+    <!-- 原版钓鱼（Fish workgiver）priorityInType=50；鱼池略低，优先自然水域 -->
+    <priorityInType>40</priorityInType>
+  </WorkGiverDef>
+
+  <!-- ============ 把鱼苗放进鱼池 job（driverClass 静态构造挂载） ============
+       殖民者（库存鱼苗/活鱼 -> 鱼池），放入后 TryStock 入池，鱼 Thing 销毁。 -->
+  <JobDef>
+    <defName>Binguin_PondStock</defName>
+    <reportString>releasing fish into pond.</reportString>
+    <casualInterruptible>true</casualInterruptible>
+    <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+  </JobDef>
+
+  <!-- ============ 鱼食投喂工作（2026-08-20）：仿打窝用具的自动投喂 ============
+       殖民者开「搬运」(Hauling) 工作后，自动把 ITab 筛选允许的鱼食
+       从库存搬到鱼池（鱼池本身是 CompThingContainer 容器）。
+       ★ giverClass 占位 -> 静态构造替换为 WorkGiver_BinguinPondFeed。 -->
+  <WorkGiverDef>
+    <defName>Binguin_PondFeedWork</defName>
+    <label>feed fish in pond</label>
+    <giverClass>WorkGiver_Researcher</giverClass>
+    <workType>Hauling</workType>
+    <verb>feed</verb>
+    <gerund>feeding fish in pond</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <scanThings>true</scanThings>
+    <!-- 比普通搬运（90）低：同打窝用具，只在空闲时投喂，不抢占主线搬运 -->
+    <priorityInType>50</priorityInType>
+  </WorkGiverDef>
+
+  <!-- ============ 鱼池钓鱼【娱乐】JoyGiver（2026-10-06 用户需求）============
+       用户原文：「并且在娱乐时会主动去钓鱼」。
+       ⇒ 娱乐条低时，冰鹅会自己走去鱼池钓鱼（不需要玩家指派"钓鱼工作"）。
+
+       ★ 机制（IL 实证）：`Pawn_JobTracker` 在小人需要娱乐时遍历
+         `DefDatabase<JoyGiverDef>.AllDefs`，调 `CanBeGivenTo` → `TryGiveJob`，
+         拿到 job 就去做。所以"主动去钓鱼" = 提供一个 JoyGiverDef。
+
+       ★★ `giverClass` 必须用**可实例化的原版 JoyGiver**占位：
+          `JoyGiver` 是 abstract（IL 实证 IsAbstract=True），
+          写成它会被懒加载实例化而报异常。
+          `BinguinDefPatches` 静态构造会替换成 `JoyGiver_BinguinPondFishing`
+          并清 `workerInt` 缓存。
+
+       ★ `thingDefs` 写明鱼池：原版带 thingDefs 的 JoyGiver（Play_Chess /
+         WatchTelevision 等）就是这个写法，作为该娱乐方式的对象范围声明。
+
+       ★ `baseChance` = 1：与其它娱乐方式同权重的基准值（原版 GoSwimming 也是 1）。
+         想让冰鹅更爱钓鱼就调大（这是 JoyGiverDef 里唯一的权重字段）。
+
+       ★ `jobDef` 必须指向那个**带 joyKind** 的 job（上面 Binguin_PondFish 已加）。
+
+       ★ 只有冰鹅族能拿到它 —— `JoyGiverDef` **没有种族限制字段**（IL 实证），
+         所以种族判断写在 `JoyGiver_BinguinPondFishing.CanBeGivenTo` 里。 -->
+  <JoyGiverDef>
+    <defName>Binguin_PondFishingJoy</defName>
+    <giverClass>JoyGiver_Meditate</giverClass>
+    <baseChance>1</baseChance>
+    <thingDefs>
+      <li>Binguin_FishPond</li>
+    </thingDefs>
+    <jobDef>Binguin_PondFish</jobDef>
+    <joyKind>Meditative</joyKind>
+  </JoyGiverDef>
+
+</Defs>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  滑行冲刺的 job 与冰屑拖尾效果。
+  JobDef：驱动 JobDriver_Slide 沿直线滑行（由企鹅滑板的 Verb_SlideDash 派发）。
+  FleckDef：滑行时脚下的冰屑拖尾（FleckBase = 静态 fleck，FleckMaker.Static 使用）。
+-->
+<Defs>
+
+  <JobDef>
+    <defName>Binguin_Slide</defName>
+    <!-- driverClass 由代码挂载（BinguinDefPatches），不在 XML 里引用自定义类型，
+         避免 GenTypes 缓存问题导致 driver 为 null（滑行动画不跑） -->
+    <allowOpportunisticPrefix>false</allowOpportunisticPrefix>
+  </JobDef>
+
+  <!-- 装配高级钓竿（2026-08-19）：driverClass 由 PatchMasterFishing 挂载 -->
+  <JobDef>
+    <defName>Binguin_AssembleRod</defName>
+    <reportString>assembling a fishing rod.</reportString>
+  </JobDef>
+
+  <!-- 对【钓竿（未完成）】干活（2026-10-06 用户需求：「搬运后会变成一个
+       钓竿（未完成），这样可以让殖民者不用一次干完」）。
+       driverClass = JobDriver_BinguinWorkOnUnfinishedRod，由 BinguinDefPatches 挂载。
+       工作量记在半成品身上 ⇒ 可反复中断、任何人可续接。 -->
+  <JobDef>
+    <defName>Binguin_WorkOnUnfinishedRod</defName>
+    <reportString>working on an unfinished fishing rod.</reportString>
+  </JobDef>
+
+  <!-- 与冰鹅族外交官交谈（2026-08-22）：殖民者右键外交官 → 走近 → 弹共存
+       意向选择信；driverClass 由 BinguinDefPatches.PatchDiplomacy 挂载 -->
+  <JobDef>
+    <defName>Binguin_DiplomatTalk</defName>
+    <reportString>talking to the Binguin diplomat.</reportString>
+  </JobDef>
+
+  <FleckDef ParentName="FleckBase">
+    <defName>Binguin_IceDust</defName>
+    <graphicData>
+      <texPath>Things/Fleck/Binguin/IceDust</texPath>
+      <renderInstanced>true</renderInstanced>
+    </graphicData>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <fadeInTime>0.05</fadeInTime>
+    <solidTime>0.12</solidTime>
+    <fadeOutTime>0.5</fadeOutTime>
+  </FleckDef>
+
+</Defs>

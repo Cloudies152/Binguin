@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族低温围攻（2026-09 用户需求）
+  ─────────────────────────────────────────────────────────────
+  1) 特殊建筑：大气冷冻器（一次性版）Binguin_AtmosphereFreezer
+     · 占地 9 格（3x3，2026-09 用户调整），耐久 900；造价 75 钢铁 + 2 高级零部件 + 20 玻璃钢
+     · 工作量 7500 ≈ 100% 建造速度下 3 小时（1 小时 = 2500 tick）
+       —— 工兵从落地到建成这段时间就是给玩家的准备时间
+     · 效果：建成后给整张地图挂一个 -30℃ 的温度偏移
+       （用原版 GameCondition_TemperatureOffset，见 Defs 下方的 Binguin_CryoFreeze）
+     · 一次性版含义：不需要供电/燃料，被拆或被打掉效果即消失；
+       袭击部队打完就撤，装置留在原地（用户后续可自行改）
+
+  2) 低温围攻策略 Binguin_CryoSiege
+     · workerClass 直接用原版 RaidStrategyWorker_Siege
+       → 选点（地图边缘就近）、沙袋掩体、建造、待机等行为全部继承原版围攻
+     · ★ 蓝图内容被 C# 换掉（Harmony 前缀拦 SiegeBlueprintPlacer.PlaceBlueprints）：
+       大气冷冻器 + 掩体沙袋（2026-09 用户要求去掉两台自动加农炮）
+     · ★ 2026-09：CanUseWith 增加「必须是敌对袭击」——友方支援不会再抽到本策略
+     · ★ 袭击点数乘数：直接沿用【原版围攻 Siege】的 pointsFactorCurve
+       （0 点 → 0.80，5000 点 → 0.65）—— 纯 XML，不需要任何 C#
+       （历史：0.5「减半」→ 0.6 → 现在的原版同款）
+     · ★ 进攻时机（C# 里判定）：减员 30% 或工兵全部倒下 → 全员冲锋
+-->
+<Defs>
+
+  <!-- ==================== 大气冷冻器（一次性版） ==================== -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_AtmosphereFreezer</defName>
+    <label>大气冷冻器</label>
+    <description>冰鹅族工兵就地拼装的低温装置。以寒晶阵列抽走周遭的热量，一旦运转起来，整片区域的气温都会缓慢下滑——这是他们不流血也要让人屈服的方式。装置本身不接电、不加油，摆在那里就会一直吸热，直到被拆掉或打烂。</description>
+    <thingClass>Building</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <tickerType>Rare</tickerType>
+    <graphicData>
+      <texPath>Things/Building/Binguin/AtmosphereController</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3.4,3.4)</drawSize>
+      <shadowData>
+        <volume>(3.4, 0.4, 3.4)</volume>
+      </shadowData>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <canOverlapZones>false</canOverlapZones>
+    <pathCost>50</pathCost>
+    <blockWind>true</blockWind>
+    <fillPercent>0.6</fillPercent>
+    <size>(3,3)</size>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <uiOrder>176</uiOrder>
+    <statBases>
+      <MaxHitPoints>900</MaxHitPoints>
+      <WorkToBuild>7500</WorkToBuild>
+      <Mass>150</Mass>
+      <Flammability>0.3</Flammability>
+      <Cleanliness>-4</Cleanliness>
+    </statBases>
+    <costList>
+      <Steel>75</Steel>
+      <ComponentSpacer>2</ComponentSpacer>
+      <Plasteel>20</Plasteel>
+    </costList>
+    <comps>
+      <!-- 占位：真正的 compClass 由 BinguinDefPatches 在运行时换成 CompBinguinCryoFreezer -->
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>0</basePowerConsumption>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Binguin_ResearchAtmosphere</li>
+    </researchPrerequisites>
+    <!-- ★ 2026-09 用户定稿：建造技能门槛 6 → 0。**这就是"蓝图没人造"的真凶。**
+         原因（IL 实证）：GenConstruct.CanConstruct 会检查
+         pawn.skills(Construction) >= def.constructionSkillPrerequisite，
+         而原版围攻的建造者只被补到 max(沙袋 0, 迫击炮 0) = 0 —— 原版营地没有
+         任何技能门槛，所以袭击者建造时技能往往是 0~3。
+         我们给冷冻器设了 6 之后，只有少数人（工兵 11~20）够格，其他人
+         （民兵/士兵背景随机）根本接不了这个活 → 蓝图永远没人造。
+         现在改成 0（与沙袋/迫击炮一致）→ 任何建造者都能盖。
+         ★ 既然门槛是 0，就【不需要】去改袭击者的建造技能了：
+         RaidStrategyWorker_BinguinCryoSiege 里曾经把全队技能强抬到 8，
+         2026-09 用户指出"全队都 8 级看着很假" → 已删除。
+         副作用只是盖得慢一点（技能 0 的建造速度约一半）→ 玩家准备时间更长。
+         要调快请改 <WorkToBuild>（现在 7500 ＝ 100% 速度下 3 小时），
+         别再动技能。 -->
+    <constructionSkillPrerequisite>0</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- ==================== 降温 GameCondition ==================== -->
+  <GameConditionDef>
+    <defName>Binguin_CryoFreeze</defName>
+    <label>大气冷冻</label>
+    <description>大气冷冻器正在抽走这一带的热量，气温持续下滑。</description>
+    <conditionClass>GameCondition_TemperatureOffset</conditionClass>
+    <canBePermanent>false</canBePermanent>
+    <preventRain>false</preventRain>
+    <letterText>大气冷冻器开始运转，气温骤降。</letterText>
+    <letterDef>ThreatSmall</letterDef>
+    <!-- ★ 2026-09 修复：删掉 letterLabel / durationRange / temperatureRange 三个节点——
+         GameConditionDef 上根本没有这些字段（Player.log 每次启动都报 3 条
+         「doesn't correspond to any field in type GameConditionDef」）。
+         降温斜坡与时长全部由 GameCondition_BinguinCryoFreeze 在代码里算。 -->
+  </GameConditionDef>
+
+  <!-- ==================== 低温围攻策略 ==================== -->
+  <RaidStrategyDef>
+    <defName>Binguin_CryoSiege</defName>
+    <workerClass>RaidStrategyWorker_Siege</workerClass>
+    <minPawns>4</minPawns>
+    <raidLootValueFactor>0</raidLootValueFactor>
+    <arriveModes>
+      <li>EdgeDrop</li>
+      <li>EdgeWalkIn</li>
+    </arriveModes>
+    <!-- ★ 袭击点数乘数（2026-09 用户三次定稿：直接沿用【原版围攻】的曲线）
+         原版 Siege（Core/Defs/Storyteller/RaidStrategies_Siege.xml）原文就是：
+           0 点 → 0.80，5000 点 → 0.65
+         历史：0.5（"减半"）→ 0.6（"感觉 0.5 少了点"）→ 现在的原版同款。
+         ⚠ 这比原来的 0.6 高：低点数段 0.60 → 0.80（+33%），
+           前期低温围攻的敌人规模会明显变大，是用户明确要求的。 -->
+    <pointsFactorCurve>
+      <points>
+        <li>0, 0.80</li>
+        <li>5000, 0.65</li>
+      </points>
+    </pointsFactorCurve>
+    <!-- ★ 2026-09 用户反馈「低温围攻概率好像太高了」→ 下调选择权重。
+         原版对比（Core/RaidStrategies_*.xml）：ImmediateAttack 恒 1、Siege 在
+         1000 点时 1.6、破墙两兄弟共用 2000 点时 0.6、Smart 0.5。
+         我们原来是 2500 点就给 1.2（比破墙/Smart 都高）→ 现在改成
+         「2500 点才起步、6000 点才 0.35」，明显低于原版围攻，只作为偶尔出现的特色打法。 -->
+    <selectionWeightPerPointsCurve>
+      <points>
+        <li>(2500, 0)</li>
+        <li>(6000, 0.35)</li>
+      </points>
+    </selectionWeightPerPointsCurve>
+    <letterLabelEnemy>低温围攻</letterLabelEnemy>
+    <arrivalTextEnemy>冰鹅族的工兵正在地图边缘架设阵地。他们要在这里装一台大气冷冻器——装置一旦运转，整片区域都会被冻住。趁他们还没建完，现在动手还来得及。</arrivalTextEnemy>
+    <letterLabelFriendly>援军</letterLabelFriendly>
+    <arrivalTextFriendly>友军准备用低温围攻的方式支援你。</arrivalTextFriendly>
+    <layerWhitelist>
+      <li>Surface</li>
+    </layerWhitelist>
+  </RaidStrategyDef>
+
+</Defs>

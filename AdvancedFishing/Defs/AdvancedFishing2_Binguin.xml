@@ -1,0 +1,836 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  高级钓鱼学 —— 钓竿制作系统（2026-08-19 用户设计文档：高级钓鱼学.md）
+  ★ 本文件在 AdvancedFishing/ 文件夹（Odyssey 门控，LoadFolders.xml）
+  ★ XML 零自定义类型原则：自定义 Comp/ThoughtWorker/StatPart 由
+    BinguinDefPatches 静态构造挂载。
+  ★ 核心设计（防踩坑记录，详见交接文档）：
+    - 配件 = stuff 物品（costStuffCount + stuffCategories Metallic +
+      内嵌 recipeMaker（本 def 无父类 recipeMaker → 不产生 recipeUsers 追加问题）），
+      制作时玩家用原版材质选择器选金属（铁/玻璃钢/铀/银/金）→ 材质信息存 stuff。
+    - 合成 = 装配台自定义对话框（原版配方筛选无法按材质区分配件——用户点名问题），
+      精确选择仓库中的特定材质配件。
+    - 动态属性 = 全部走原版 pawn stat + StatPart_BinguinRod（静态构造注册到
+      MeleeWeapon_DamageMultiplier / MeleeWeapon_CooldownMultiplier / MoveSpeed /
+      ToxicResistance / Immunity / InjuryHealingFactor / MaxHitPoints）：
+      伤害&穿甲 = tool.power/armorPen × pawn.MeleeWeapon_DamageMultiplier（原版结算）
+      冷却 = tool.cooldown × pawn.MeleeWeapon_CooldownMultiplier（原版结算）
+      材质加成数值直接读原版 stuff 乘数（铀 BluntDamageMultiplier=1.5、
+      玻璃钢 MeleeWeapon_CooldownMultiplier=0.8 —— 与用户设计文档示例完全一致）
+    - 鱼饵 = 自定义对话框制作（效果由消耗食物决定，最多 2 种），comp 存档效果。
+-->
+<Defs>
+
+  <!-- ============ 高级钓鱼学（3600 点，前置：进阶钓鱼学） ============
+       解锁（反向引用）：钓竿装配台 -->
+  <ResearchProjectDef>
+    <defName>Binguin_ResearchMasterFishing</defName>
+    <label>高级钓鱼学</label>
+    <description>冰鹅族的渔者已将垂钓化作一门工程学：钓竿装配台、可替换的竿身与竿头、直弯双钩，以及以食物调制的饵料——每一根钓竿，都是量身打造的艺术品……但是，怎么是用来打人的？</description>
+    <tab>Binguin_ResearchTab</tab>
+    <techLevel>Industrial</techLevel>
+    <baseCost>3600</baseCost>
+    <!-- ★ 2026-09 用户要求：本科技必须在【高级研究台】上研究 -->
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <researchViewX>2.80</researchViewX>
+    <researchViewY>2.40</researchViewY>
+    <prerequisites>
+      <li>Binguin_ResearchAdvancedFishing</li>
+    </prerequisites>
+  </ResearchProjectDef>
+
+  <!-- ============ 终极钓鱼学（2026-10-06 用户需求）============
+       用户规格：「需要研究终极钓鱼学，前置是高级钓鱼学，需要高级研究台和多远分析仪」。
+       · 前置 = 高级钓鱼学（Binguin_ResearchMasterFishing）
+       · 工作台 = 高级研究台（HiTechResearchBench）
+       · 设施   = 多元分析仪（MultiAnalyzer）
+       研究完成才能制作尚方宝剑（见文件末尾的 Recipe_Binguin_VoidSwordFish）。 -->
+  <ResearchProjectDef>
+    <defName>Binguin_ResearchUltimateFishing</defName>
+    <label>终极钓鱼学</label>
+    <description>冰鹅族的渔者终于触及垂钓之道的尽头：他们发现，把寒原上每一条鱼的形与意都收进一柄剑里，便能唤出「天顶鱼斩」——十四条鱼的虚影自天顶轮番斩落。传说中，唯有将鱼竿和身体合二为一者才配执此剑。</description>
+    <tab>Binguin_ResearchTab</tab>
+    <techLevel>Spacer</techLevel>
+    <baseCost>5000</baseCost>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities>
+      <li>MultiAnalyzer</li>
+    </requiredResearchFacilities>
+    <researchViewX>4.20</researchViewX>
+    <researchViewY>2.40</researchViewY>
+    <prerequisites>
+      <li>Binguin_ResearchMasterFishing</li>
+    </prerequisites>
+  </ResearchProjectDef>
+
+  <!-- ============ 钓竿装配台（3 格，200钢+200玻璃钢+4高级零部件+8零部件） ============
+       制作钓竿配件（stuff 材质可选）+ 自定义对话框合成最终钓竿 / 制作鱼饵。 -->
+  <!-- ★ 用 BenchBase 父类（原版工作台基类：ReportWorkSpeed comp、workshop 房间判定），
+       加 ITab_Bills 制作清单 → 殖民者像用机工台一样制作配件（用户 2026-08-19 反馈） -->
+  <ThingDef ParentName="BenchBase">
+    <defName>Binguin_RodAssemblyTable</defName>
+    <label>钓竿装配台</label>
+    <description>冰鹅族工程渔者的工作台：以铁与玻璃钢打造，用于制作钓竿配件（竿身、竿头、鱼钩），并将选定的配件与鱼饵组装成独一无二的高级钓竿。</description>
+    <thingClass>Building_WorkTable</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>Things/Building/Binguin/RodAssemblyTable</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3.2,2.2)</drawSize>
+      <shadowData>
+        <volume>(3.2, 0.4, 2.2)</volume>
+      </shadowData>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <canOverlapZones>false</canOverlapZones>
+    <pathCost>42</pathCost>
+    <blockWind>true</blockWind>
+    <fillPercent>0.6</fillPercent>
+    <size>(3,1)</size>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <uiOrder>182</uiOrder>
+    <statBases>
+      <MaxHitPoints>500</MaxHitPoints>
+      <WorkToBuild>8000</WorkToBuild>
+      <Mass>250</Mass>
+      <Flammability>0.2</Flammability>
+      <Cleanliness>-5</Cleanliness>
+    </statBases>
+    <costList>
+      <Steel>200</Steel>
+      <Plasteel>200</Plasteel>
+      <ComponentSpacer>4</ComponentSpacer>
+      <ComponentIndustrial>8</ComponentIndustrial>
+    </costList>
+    <hasInteractionCell>True</hasInteractionCell>
+    <interactionCellOffset>(0,0,-1)</interactionCellOffset>
+    <surfaceType>Item</surfaceType>
+    <inspectorTabs>
+      <li>ITab_Bills</li>
+    </inspectorTabs>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>300</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Breakdownable" />
+    </comps>
+    <building>
+      <workTableRoomRole>Workshop</workTableRoomRole>
+      <workTableNotInRoomRoleFactor>0.8</workTableNotInRoomRoleFactor>
+    </building>
+    <constructEffect>ConstructMetal</constructEffect>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMasterFishing</li>
+    </researchPrerequisites>
+    <constructionSkillPrerequisite>8</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- ============ 钓竿（未完成）· 可搬运半成品（2026-10-06 用户需求）============
+       用户需求原文：「应该是搬运后会变成一个 钓竿（未完成） 这样可以让殖民者不用一次干完」
+       → 追问确认：**可搬运的半成品，装配进度跟着物品走**。
+
+       设计：4 件配件搬到位后生成这件物品，4 件配件由它的 comp 容器保管
+       （`CompBinguinUnfinishedRod : RimWorld.CompThingContainer`），
+       已投入的工作量也记在它身上 ⇒ 中途被打断/换人/搬走都能接着干。
+
+       ★ 这里**不写任何自定义类型**（本环境硬性要求）：`thingClass` 用原版
+         `ThingWithComps`，compClass 由 `BinguinDefPatches` 静态构造挂上去。
+       ★ 故意**不写 recipeMaker**（它不可制作）。
+         ⚠ 但为了绝对安全，仍然显式写 `<recipeMaker IsNull="true" />`：
+         本文件的其它 def 也可能带 recipeMaker，而原版
+         `RecipeDefGenerator` 只要 `thingDef.recipeMaker != null` 就会自动生成
+         一条 `Make_<defName>` 配方（IL 实证），撞名后会被 `DefDatabase.Add`
+         改名（`defName + 随机数`），是上一轮踩过的真坑。
+       ★ `tickerType` 用 Never：半成品不需要每 tick 逻辑（工作由 job 驱动）。 -->
+  <ThingDef ParentName="UnfinishedBase">
+    <defName>Binguin_UnfinishedRod</defName>
+    <label>钓竿（未完成）</label>
+    <description>一根装了一半的钓竿。配件已经装上去了，只差继续打磨装配——任何殖民者都可以接替工作。</description>
+    <!-- ★ 覆盖 UnfinishedBase 的 thingClass（原版是 Verse.UnfinishedThing，
+         那套绑定 bill 体系，本 mod 的装配没有 bill） -->
+    <thingClass>ThingWithComps</thingClass>
+    <!-- ★ 关掉原版 UnfinishedThing 专属标记，避免被原版各类判定当成 bill 半成品 -->
+    <isUnfinishedThing>false</isUnfinishedThing>
+    <graphicData>
+      <!-- 复用原版"未完成武器"贴图（先能用；要专画再换） -->
+      <texPath>Things/Item/Unfinished/UnfinishedWeapon</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <tickerType>Never</tickerType>
+    <recipeMaker IsNull="true" />
+    <statBases>
+      <Mass>3</Mass>
+      <Flammability>0</Flammability>
+      <Beauty>-4</Beauty>
+      <SellPriceFactor>0.4</SellPriceFactor>
+    </statBases>
+    <!-- ★ 关掉继承来的 stuffCategories（`UnfinishedBase` 有 Metallic/Woody/Stony）：
+         否则 `ThingMaker.MakeThing` 会报
+           `MakeThing error: Binguin_UnfinishedRod is madeFromStuff but stuff=null. Assigning default.`
+         （2026-10-06 实测）。半成品不需要另外选材质 —— 材质信息已经由它容器里
+         **那 4 件配件本身**承载了，收尾时是从配件上读 `Stuff` 的。
+         ★ 写法照抄原版同类 def：`UnfinishedGun` / `UnfinishedComponent` /
+           `UnfinishedTechArmor` / `UnfinishedPack` … 都是用
+           `<stuffCategories Inherit="false" />`（Core\Defs\ThingDefs_Items\Items_Unfinished.xml
+           第 70/114/158/172/186 行等）。 -->
+    <!-- ★★ 装配工作量 —— 直接挂原版配方（2026-10-06 用户需求：
+         「我指的是你直接用原版制作的代码和显示，这样比较方便」）。
+         这里就是**唯一的数值来源**：想调装配工作量只改这一个 `<workAmount>`。
+
+         ★ 为什么这样写而不是在读代码里层层回退：原版取工作量的办法是
+           `RecipeDef.WorkAmountTotal(thing)`，其 IL 为
+             `if (workAmount >= 0) return workAmount;`
+             `else return products[0].thingDef.GetStatValueAbstract(StatDefOf.WorkToMake, stuff);`
+           ⇒ 写了 `workAmount` 就用它，否则才去看产物的 `WorkToMake`。
+           所以给半成品配一个只带"做工参数"的 recipeMaker，就等价于
+           "让装配也用原版配方的那套工作量/技能/速度设置"。
+
+         ★ `workSpeedStat` / `workSkill` 与配件基类 `Binguin_RodPartBase` 保持一致
+           （GeneralLaborSpeed / Crafting）⇒ 手工技能与工作速度加成照旧生效。 -->
+    <recipeMaker>
+      <workAmount>10000</workAmount>
+      <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+      <workSkill>Crafting</workSkill>
+    </recipeMaker>
+    <stuffCategories Inherit="false" />
+    <researchPrerequisites>
+      <li>Binguin_ResearchMasterFishing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 配件基类（stuff 物品：材质在制作时选择） ============ -->
+  <ThingDef Name="Binguin_RodPartBase" Abstract="True">
+    <thingClass>ThingWithComps</thingClass>
+    <category>Item</category>
+    <drawerType>MapMeshOnly</drawerType>
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <altitudeLayer>Item</altitudeLayer>
+    <alwaysHaulable>true</alwaysHaulable>
+    <tickerType>Never</tickerType>
+    <useHitPoints>false</useHitPoints>
+    <selectable>true</selectable>
+    <rotatable>false</rotatable>
+    <pathCost>14</pathCost>
+    <statBases>
+      <!-- ★ 修复 config 错误：必须 Mass（可搬运）、Flammability 0（useHitPoints=false
+           时易燃会报错）、去掉 DeteriorationRate（无耐久不可腐烂） -->
+      <Mass>0.5</Mass>
+      <Flammability>0</Flammability>
+      <Beauty>-2</Beauty>
+      <SellPriceFactor>0.5</SellPriceFactor>
+    </statBases>
+    <comps>
+      <li Class="CompProperties_Forbiddable"/>
+    </comps>
+    <!-- ★ stuff 制作（内嵌 recipeMaker）：本 def 无父类 recipeMaker →
+         不会产生原版工作台 recipeUsers 追加问题；材质在制作时选择（铁/玻璃钢/铀…） -->
+    <costStuffCount>1</costStuffCount>
+    <stuffCategories>
+      <li>Metallic</li>
+    </stuffCategories>
+    <recipeMaker>
+      <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+      <workSkill>Crafting</workSkill>
+      <effectWorking>Smith</effectWorking>
+      <soundWorking>Recipe_Smith</soundWorking>
+      <unfinishedThingDef>UnfinishedWeapon</unfinishedThingDef>
+      <recipeUsers>
+        <li>Binguin_RodAssemblyTable</li>
+      </recipeUsers>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMasterFishing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 竿身（90 金属）：长制 ×120% 伤害 / 短制 ×80% 攻击间隔 ============ -->
+  <ThingDef ParentName="Binguin_RodPartBase">
+    <defName>Binguin_RodShaft_Long</defName>
+    <label>长制竿身</label>
+    <description>长竿身：近战伤害倍率 ×120%。（材料决定冷却倍率）</description>
+    <costStuffCount>90</costStuffCount>
+    <graphicData>
+      <texPath>Things/Item/RodParts/RodShaftLong</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <recipeMaker>
+      <workAmount>10000</workAmount>
+    </recipeMaker>
+  </ThingDef>
+
+  <ThingDef ParentName="Binguin_RodPartBase">
+    <defName>Binguin_RodShaft_Short</defName>
+    <label>短制竿身</label>
+    <description>短竿身：攻击间隔 ×80%。（材质决定冷却倍率）</description>
+    <costStuffCount>90</costStuffCount>
+    <graphicData>
+      <texPath>Things/Item/RodParts/RodShaftShort</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <recipeMaker>
+      <workAmount>10000</workAmount>
+    </recipeMaker>
+  </ThingDef>
+
+  <!-- ============ 竿头（50 金属）：刀制 割25/刺25（1.6s/1.2s）/ 锤制 钝32/捅15（2s/1.6s） ============ -->
+  <ThingDef ParentName="Binguin_RodPartBase">
+    <defName>Binguin_RodTip_Blade</defName>
+    <label>刀制竿头</label>
+    <description>刀制竿头：攻击方式变为割/刺（材质决定伤害与穿甲倍率）。</description>
+    <costStuffCount>50</costStuffCount>
+    <graphicData>
+      <texPath>Things/Item/RodParts/RodTipBlade</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <recipeMaker>
+      <workAmount>10000</workAmount>
+    </recipeMaker>
+  </ThingDef>
+
+  <ThingDef ParentName="Binguin_RodPartBase">
+    <defName>Binguin_RodTip_Hammer</defName>
+    <label>锤制竿头</label>
+    <description>锤制竿头：攻击方式变为钝击/捅（材质决定伤害与穿甲倍率）。</description>
+    <costStuffCount>50</costStuffCount>
+    <graphicData>
+      <texPath>Things/Item/RodParts/RodTipHammer</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <recipeMaker>
+      <workAmount>10000</workAmount>
+    </recipeMaker>
+  </ThingDef>
+
+  <!-- ============ 鱼钩（90 金属）：直钩 穿刺技能 / 弯钩 钩鱼技能（耐久乘数取材质） ============ -->
+  <ThingDef ParentName="Binguin_RodPartBase">
+    <defName>Binguin_RodHook_Straight</defName>
+    <label>直钩</label>
+    <description>直钩：获得技能「穿刺」——对前方 10 格内所有敌人造成 200% 于武器面板的伤害，冷却 10 秒。（材质决定成品耐久倍率）。</description>
+    <costStuffCount>90</costStuffCount>
+    <graphicData>
+      <texPath>Things/Item/RodParts/RodHookStraight</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <recipeMaker>
+      <workAmount>10000</workAmount>
+    </recipeMaker>
+  </ThingDef>
+
+  <ThingDef ParentName="Binguin_RodPartBase">
+    <defName>Binguin_RodHook_Curved</defName>
+    <label>弯钩</label>
+    <description>弯钩：获得技能「钩鱼」——瞄准半径 31 格内的一个单位，将其拉到自己的身前，冷却 10 秒。（材质决定成品耐久倍率）。</description>
+    <costStuffCount>90</costStuffCount>
+    <graphicData>
+      <texPath>Things/Item/RodParts/RodHookCurved</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <recipeMaker>
+      <workAmount>10000</workAmount>
+    </recipeMaker>
+  </ThingDef>
+
+  <!-- ============ 鱼饵（自定义对话框制作，效果由消耗食物决定，最多 2 种） ============
+       ★ 独立定义（不继承 RodPartBase）——否则会继承 recipeMaker，
+         装配台制作清单里出现"制作鱼饵"（用户 2026-08-19 反馈） -->
+  <ThingDef>
+    <defName>Binguin_RodBait</defName>
+    <label>鱼饵</label>
+    <description>以食物调制的鱼饵，为持竿者提供特殊增益。可在钓竿装配台用 1~2 种食材制作：素（移速+0.2）、肉（近战倍率×105%）、虫肉（免疫中毒）、扭曲肉（征召时不会崩溃）、人肉（击杀敌人后心情+5）、虫胶（心情+3）、无忌口（自愈与免疫速度×200%）。</description>
+    <thingClass>ThingWithComps</thingClass>
+    <category>Item</category>
+    <drawerType>MapMeshOnly</drawerType>
+    <drawGUIOverlay>true</drawGUIOverlay>
+    <altitudeLayer>Item</altitudeLayer>
+    <alwaysHaulable>true</alwaysHaulable>
+    <tickerType>Never</tickerType>
+    <useHitPoints>false</useHitPoints>
+    <selectable>true</selectable>
+    <rotatable>false</rotatable>
+    <pathCost>14</pathCost>
+    <statBases>
+      <Mass>0.2</Mass>
+      <Flammability>0</Flammability>
+      <Beauty>-1</Beauty>
+      <SellPriceFactor>0.5</SellPriceFactor>
+    </statBases>
+    <comps>
+      <li Class="CompProperties_Forbiddable"/>
+    </comps>
+    <graphicData>
+      <texPath>Things/Item/RodParts/RodBait</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+  </ThingDef>
+
+  <!-- ============ 高级钓竿（2 种竿头类型；配件组合属性由 CompBinguinRod 动态计算） ============
+       合成 = 装配台自定义对话框（消耗 竿身+竿头+鱼钩+鱼饵，按材质精确选择）。
+       动态属性：伤害/穿甲 = tool 基础 × pawn.MeleeWeapon_DamageMultiplier（StatPart）
+                  冷却 = tool 基础 × pawn.MeleeWeapon_CooldownMultiplier（StatPart）
+                  耐久 = def 基础 × StatPart（鱼钩材质 MaxHitPoints 乘数） -->
+  <ThingDef ParentName="BaseWeapon">
+    <defName>Binguin_AdvancedRod_Blade</defName>
+    <label>高级钓竿（刀制）</label>
+    <description>冰鹅族以配件组装的定制钓竿：刀制竿头带来割与刺的双重打击。伤害与冷却随竿身、竿头与鱼钩的材质与类型变化，鱼饵还提供额外增益。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponMelee/Binguin/AdvancedRodBlade</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <uiIconScale>1.1</uiIconScale>
+    <techLevel>Industrial</techLevel>
+    <smeltable>false</smeltable>
+    <thingCategories>
+      <li>WeaponsMelee</li>
+    </thingCategories>
+    <weaponClasses>
+      <li>Melee</li>
+    </weaponClasses>
+    <weaponTags>
+      <li>MedievalMeleeAdvanced</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponMelee</li>
+    </tradeTags>
+    <statBases>
+      <WorkToMake>6000</WorkToMake>
+      <Mass>2.5</Mass>
+    </statBases>
+    <tools>
+      <li>
+        <label>竿刃（割）</label>
+        <capacities>
+          <li>Cut</li>
+        </capacities>
+        <power>25</power>
+        <armorPenetration>0.40</armorPenetration>
+        <cooldownTime>1.6</cooldownTime>
+      </li>
+      <li>
+        <label>竿尖（刺）</label>
+        <capacities>
+          <li>Stab</li>
+        </capacities>
+        <power>25</power>
+        <armorPenetration>0.40</armorPenetration>
+        <cooldownTime>1.2</cooldownTime>
+      </li>
+    </tools>
+    <!-- ★ BaseWeapon 已带 Forbiddable/Equippable/Styleable（追加语义），这里只加 Quality -->
+    <comps>
+      <li>
+        <compClass>CompQuality</compClass>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="BaseWeapon">
+    <defName>Binguin_AdvancedRod_Hammer</defName>
+    <label>高级钓竿（锤制）</label>
+    <description>冰鹅族以配件组装的定制钓竿：锤制竿头带来势大力沉的钝击与捅刺。伤害与冷却随竿身、竿头与鱼钩的材质与类型变化，鱼饵还提供额外增益。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponMelee/Binguin/AdvancedRodHammer</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <uiIconScale>1.1</uiIconScale>
+    <techLevel>Industrial</techLevel>
+    <smeltable>false</smeltable>
+    <thingCategories>
+      <li>WeaponsMelee</li>
+    </thingCategories>
+    <weaponClasses>
+      <li>Melee</li>
+    </weaponClasses>
+    <weaponTags>
+      <li>MedievalMeleeAdvanced</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponMelee</li>
+    </tradeTags>
+    <statBases>
+      <WorkToMake>6000</WorkToMake>
+      <Mass>3</Mass>
+    </statBases>
+    <tools>
+      <li>
+        <label>竿锤（钝击）</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>32</power>
+        <armorPenetration>0.45</armorPenetration>
+        <cooldownTime>2.0</cooldownTime>
+      </li>
+      <li>
+        <label>竿柄（捅）</label>
+        <capacities>
+          <li>Poke</li>
+        </capacities>
+        <power>15</power>
+        <armorPenetration>0.30</armorPenetration>
+        <cooldownTime>1.6</cooldownTime>
+      </li>
+    </tools>
+    <!-- ★ BaseWeapon 已带 Forbiddable/Equippable/Styleable（追加语义），这里只加 Quality -->
+    <comps>
+      <li>
+        <compClass>CompQuality</compClass>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- ============ 心情 Thought：虫胶饵 +3（situational，workerClass 静态构造替换） ============ -->
+  <ThoughtDef>
+    <defName>Binguin_RodBaitJellyMood</defName>
+    <label>虫胶饵</label>
+    <!-- ★ 1.6 无 ThoughtWorker_Situational 类；占位用真实存在的 ThoughtWorker_AlwaysActive，
+         运行时由 BinguinDefPatches 替换为 ThoughtWorker_BinguinRodBait（2026-08-20 修） -->
+    <workerClass>ThoughtWorker_AlwaysActive</workerClass>
+    <description>持竿者以虫胶为饵，甜香萦绕。</description>
+    <thoughtClass>Thought_Situational</thoughtClass>
+    <stages>
+      <li>
+        <label>虫胶饵</label>
+        <description>持竿者以虫胶为饵，甜香萦绕。</description>
+        <baseMoodEffect>3</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- ============ 心情 Thought：人肉饵击杀 +5（memory，代码触发） ============
+       ★ durationDays 在 ThoughtDef 顶层（1.6 的 ThoughtStage 没有 durationDays 字段） -->
+  <ThoughtDef>
+    <defName>Binguin_RodBaitHumanKill</defName>
+    <label>以人肉为饵的满足</label>
+    <description>以人肉为饵的钓者，在猎杀中尝到了异样的快感。</description>
+    <thoughtClass>Thought_Memory</thoughtClass>
+    <durationDays>1</durationDays>
+    <stages>
+      <li>
+        <label>以人肉为饵的满足</label>
+        <description>以人肉为饵的钓者，在猎杀中尝到了异样的快感。</description>
+        <baseMoodEffect>5</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+  <!-- ============ 高级钓竿技能（AbilityDef，Bladelink 式：装备时加给 pawn） ============
+       ★ 2026-08-19 用户反馈：鱼竿必须保持近战武器（verbs 会让武器变远程！）
+       → 技能走 Ability 系统：装备（Notify_Equipped）→ pawn.abilities.GainAbility
+       → 命令栏显示能力按钮（AbilityTracker.GetGizmos）；
+       效果 CompAbilityEffect 由静态构造挂载（XML 零自定义类型）。 -->
+  <AbilityDef>
+    <defName>Binguin_AbilityPierce</defName>
+    <label>穿刺</label>
+    <description>对前方 10 格内所有敌人造成 200% 于武器面板的伤害。冷却 10 秒。</description>
+    <cooldownTicksRange>600~600</cooldownTicksRange>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <range>10</range>
+      <warmupTime>0.2</warmupTime>
+      <targetParams>
+        <canTargetLocations>true</canTargetLocations>
+        <canTargetPawns>false</canTargetPawns>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetItems>false</canTargetItems>
+      </targetParams>
+    </verbProperties>
+  </AbilityDef>
+
+  <AbilityDef>
+    <defName>Binguin_AbilityHook</defName>
+    <label>钩鱼</label>
+    <description>瞄准半径 31 格内的一个单位，将其拉到自己的身前。冷却 10 秒。</description>
+    <cooldownTicksRange>600~600</cooldownTicksRange>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <range>31</range>
+      <warmupTime>0.2</warmupTime>
+      <targetParams>
+        <canTargetLocations>false</canTargetLocations>
+        <canTargetPawns>true</canTargetPawns>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetItems>false</canTargetItems>
+      </targetParams>
+    </verbProperties>
+  </AbilityDef>
+
+  <!-- ============ 装配台 WorkGiver（DoBills 注册，仿现有工作台模式） ============ -->
+  <!-- ★ 不继承 WorkGiverBase（直接写字段，同现有 WorkGivers_Binguin.xml 模式） -->
+  <WorkGiverDef>
+    <defName>DoBillsBinguinRodAssembly</defName>
+    <label>在钓竿装配台制造物品</label>
+    <giverClass>WorkGiver_DoBill</giverClass>
+    <workType>Smithing</workType>
+    <priorityInType>80</priorityInType>
+    <fixedBillGiverDefs>
+      <li>Binguin_RodAssemblyTable</li>
+    </fixedBillGiverDefs>
+    <verb>work at</verb>
+    <gerund>working at</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <prioritizeSustains>true</prioritizeSustains>
+  </WorkGiverDef>
+
+  <!-- ========================================================================
+       尚方宝剑（2026-10-06 用户需求）
+       ========================================================================
+       用户规格：「尚方宝剑，用所有鱼类25条制作……宝剑外形是一条鱼，
+                 会类似泰拉瑞亚的天顶剑一样远程进行14条鱼的轮流斩击……
+                 武器面板是30钝器伤害/冷却0.7s。
+                 （注意，远程斩击是测试玩法，要在mod选项打开，常态只能用于近战）」
+
+       ★ 本 def 的定位：**纯近战武器**（只有一个钝击 tool）。
+         远程「天顶鱼斩」不在 verbs 里，而是装备时通过 comp 授予的 Ability
+         —— 给 ThingDef 挂 verbs 会让武器被判定成远程武器，那就做不到
+         "常态只能用于近战"了（与高级钓竿技能同一处理，见
+         `Ability_BinguinRodSkills.cs` 头部注释）。
+       ★ comp 挂载：`CompBinguinVoidSword`（继承 CompEquippable）由
+         `BinguinDefPatches` 静态构造替换掉 BaseWeapon 继承来的 CompEquippable。 -->
+  <ThingDef ParentName="BaseWeapon">
+    <defName>Binguin_VoidSwordFish</defName>
+    <label>尚方宝剑</label>
+    <description>冰鹅族渔道的终点之作：以世界上十四种鱼（）各二十五尾）凝聚而成的一柄剑。剑身就是一条鱼——鳞光为刃、鱼尾为柄。执剑者只要念动真言，十四条鱼的虚影便自天顶轮番斩落，每一尾都带着能击碎骨血的寒能。\n\n（远程斩击属于测试玩法，默认关闭；在【选项 → Mod 设置 → 冰鹅族】里可启用。）</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponMelee/Binguin/VoidSwordFish</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <uiIconScale>1.15</uiIconScale>
+    <techLevel>Spacer</techLevel>
+    <smeltable>false</smeltable>
+    <thingCategories>
+      <li>WeaponsMelee</li>
+    </thingCategories>
+    <weaponClasses>
+      <li>Melee</li>
+    </weaponClasses>
+    <weaponTags>
+      <li>SpacerMeleeAdvanced</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponMelee</li>
+    </tradeTags>
+    <statBases>
+      <WorkToMake>45000</WorkToMake>
+      <Mass>3.5</Mass>
+      <MeleeWeapon_DamageMultiplier>1</MeleeWeapon_DamageMultiplier>
+    </statBases>
+    <tools>
+      <li>
+        <label>鱼身（钝击）</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>30</power>
+        <cooldownTime>0.7</cooldownTime>
+        <armorPenetration>1.0</armorPenetration>
+      </li>
+    </tools>
+    <comps>
+      <li>
+        <compClass>CompQuality</compClass>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Binguin_ResearchUltimateFishing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- 尚方宝剑配方：**每一种鱼各 25 条**（原版 Odyssey 14 种鱼全收齐，共 350 条）
+       ★★ 2026-10-06 用户澄清：「我说的不是25条鱼，是每种鱼各25条，
+          这是终极彩蛋武器，制作要求要大一点」。
+          ⇒ 所以**逐条列出 14 种鱼、每种 25 条**，而不是用 Fish 类目 ×25。
+          逐条列出的两个好处：
+            ① 制作清单上会明确显示"缺哪一种、缺几条"，玩家知道要钓什么
+            ② 不会被其它 mod 往 Fish 类目里塞的鱼"蒙混过关" -->
+  <RecipeDef>
+    <defName>Recipe_Binguin_VoidSwordFish</defName>
+    <label>制作尚方宝剑</label>
+    <description>以寒原上十四种鱼各二十五尾，凝聚成一柄剑。十四条鱼的形意会被收进剑身，成为「天顶鱼斩」的十四道虚影。</description>
+    <jobString>正在凝聚十四种鱼的形意……</jobString>
+    <workAmount>120000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedWeapon</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Salmon</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Bass</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Tilapia</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Cod</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Bluefish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Guppy</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Frostfish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Catfish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Piranha</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Dogfish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Marlin</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Tuna</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Flounder</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Toxfish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_VoidSwordFish>1</Binguin_VoidSwordFish>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <researchPrerequisite>Binguin_ResearchUltimateFishing</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- 尚方宝剑 · 单次鱼斩的损伤：钝击 + 按面板伤害 1:1 累积冰爆
+       ★ workerClass 用原版 DamageWorker_Blunt 占位，静态构造替换成
+         DamageWorker_BinguinFishBlunt（XML 零自定义类型原则）。
+       ★ armorPenetration 也在这里给一份（100% 钝器穿透），
+         技能里另外显式传 cfg.armorPenetration，双保险。 -->
+  <DamageDef>
+    <defName>Binguin_FishBluntDamage</defName>
+    <label>鱼斩</label>
+    <workerClass>DamageWorker_Blunt</workerClass>
+    <externalViolence>true</externalViolence>
+    <deathMessage>{0} 被十四条鱼斩成了碎片。</deathMessage>
+    <hediff>BluntTrauma</hediff>
+    <armorCategory>Blunt</armorCategory>
+    <armorPenetration>1.0</armorPenetration>
+    <combatLogRules>Damage_Blunt</combatLogRules>
+  </DamageDef>
+
+  <!-- ============ 尚方宝剑技能「天顶鱼斩」（测试玩法，mod 选项控制）============
+       ★ 目标锁定：瞄准**地点**（canTargetLocations）—— 椭圆范围以瞄准点为中心，
+         长轴沿"施法者→瞄准点"方向。
+       ★★ `compClass` 必须用**原版可实例化类**占位（这里用
+          CompAbilityEffect_Teleport）：本 mod 的铁律是 **XML 零自定义类型引用**
+          （自定义类型名会让 GenTypes 缓存提前冻结而漏掉后续类型）。
+          `BinguinDefPatches` 静态构造会把它替换成
+          `CompAbilityEffect_BinguinVoidStrike` 并清 CompProperties 的
+          `compClass` 缓存。数值参数（strikes / damagePerStrike / 椭圆半轴…）
+          在 C# 里给默认值，改数值改 `CompProperties_BinguinVoidSword`。 -->
+  <AbilityDef>
+    <defName>Binguin_AbilityVoidStrike</defName>
+    <label>天顶鱼斩</label>
+    <description>十四条鱼的虚影自天顶轮番斩落，对椭圆形范围内的所有敌人造成范围伤害。每次斩击 10 钝击、附带冰爆、100% 钝器穿透，一口气结算 14 次斩击。\n\n（测试玩法：需在【选项 → Mod 设置 → 冰鹅族】中启用，默认关闭。）</description>
+    <cooldownTicksRange>600~600</cooldownTicksRange>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <range>26</range>
+      <warmupTime>0.3</warmupTime>
+      <targetParams>
+        <canTargetLocations>true</canTargetLocations>
+        <canTargetPawns>false</canTargetPawns>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetItems>false</canTargetItems>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li>
+        <compClass>CompAbilityEffect_Teleport</compClass>
+      </li>
+    </comps>
+  </AbilityDef>
+
+</Defs>

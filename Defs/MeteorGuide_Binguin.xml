@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族陨石引导器（星空眺望科技，2026-08-19）
+  ★ 机制：露天放置（盖屋顶无法使用）；研究扫描进度 180,000 tick（3 天），
+    每 10% 判定一次发现（概率=当前进度），100% 保底；陨石存储上限 20 颗，
+    10 天过期；引导坠落 1-2 小时（ticksToImpactRange 3600~7200）。
+  ★ XML 零自定义类型：CompBinguinMeteorGuide 由 BinguinDefPatches 代码挂载
+-->
+<Defs>
+
+  <!-- ============ 冰鹅族陨石引导器（参考原版地质扫描仪结构） ============ -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_MeteorGuide</defName>
+    <label>冰鹅族陨石引导器</label>
+    <description>冰鹅族观测者的杰作：以引力场扫描天穹，捕获坠落的陨石，再按需将它们引导至指定区域。必须露天放置——屋顶会阻挡它的视线。</description>
+    <thingClass>Building</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>Things/Building/Binguin/MeteorGuide</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3.2,3.2)</drawSize>
+      <shadowData>
+        <volume>(3, 0.4, 3)</volume>
+      </shadowData>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <canBeUsedUnderRoof>false</canBeUsedUnderRoof>
+    <passability>PassThroughOnly</passability>
+    <canOverlapZones>false</canOverlapZones>
+    <pathCost>50</pathCost>
+    <blockWind>true</blockWind>
+    <fillPercent>0.5</fillPercent>
+    <size>(3,3)</size>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <uiOrder>180</uiOrder>
+    <placeWorkers>
+      <li>PlaceWorker_NotUnderRoof</li>
+      <li>PlaceWorker_PreventInteractionSpotOverlap</li>
+    </placeWorkers>
+    <!-- ★ v3：互动点（照抄原版地质扫描仪）——殖民者站在这里操作仪器 -->
+    <hasInteractionCell>true</hasInteractionCell>
+    <interactionCellOffset>(0,0,2)</interactionCellOffset>
+    <!-- ★ ResearchBench 不是 ThingDef；原版 scanner 用 DiningChair 作交互格图标（2026-08-20 修） -->
+    <interactionCellIcon>DiningChair</interactionCellIcon>
+    <interactionCellIconReverse>true</interactionCellIconReverse>
+    <statBases>
+      <MaxHitPoints>300</MaxHitPoints>
+      <WorkToBuild>6000</WorkToBuild>
+      <Mass>100</Mass>
+      <Flammability>0.3</Flammability>
+      <Beauty>-8</Beauty>
+      <Cleanliness>-4</Cleanliness>
+    </statBases>
+    <costList>
+      <Steel>200</Steel>
+      <ComponentIndustrial>6</ComponentIndustrial>
+      <ComponentSpacer>2</ComponentSpacer>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>700</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Breakdownable" />
+      <!-- ★ 扫描工作管线（原版地质扫描仪同款）：殖民者来研究工作驱动进度，
+           吃研究速度加成；compClass 由 BinguinDefPatches 换成 CompBinguinMeteorGuide。
+           v5：用 CompProperties_Scanner（基类属性，无 bedrock 检查——
+           CompDeepScanner/ScannerMineralsDeep 会弹「无法在该群落发掘资源」） -->
+      <li Class="CompProperties_Scanner">
+        <scanSpeedStat>ResearchSpeed</scanSpeedStat>
+        <scanFindMtbDays>999</scanFindMtbDays>
+        <scanFindGuaranteedDays>3</scanFindGuaranteedDays>
+        <soundWorking>ScannerGroundPenetrating_Ambience</soundWorking>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Binguin_ResearchStargazing</li>
+    </researchPrerequisites>
+    <constructionSkillPrerequisite>6</constructionSkillPrerequisite>
+  </ThingDef>
+
+  <!-- 操作陨石引导器的工作（原版 WorkGiver_OperateScanner + OperateScanner job）：
+       殖民者按研究（Research）工作类型前来操作 -->
+  <WorkGiverDef>
+    <defName>OperateBinguinMeteorGuide</defName>
+    <label>operate Binguin meteor guide</label>
+    <giverClass>WorkGiver_OperateScanner</giverClass>
+    <workType>Research</workType>
+    <priorityInType>50</priorityInType>
+    <verb>scan at</verb>
+    <gerund>scanning at</gerund>
+    <scannerDef>Binguin_MeteorGuide</scannerDef>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <canBeDoneByMechs>false</canBeDoneByMechs>
+  </WorkGiverDef>
+
+  <!-- ============ 引导陨石坠落体（参考原版 MeteoriteIncoming） ============
+       坠落时长由 ticksToImpactRange (3600, 7200) = 1~2 小时控制；
+       内容物由 SkyfallerMaker.SpawnSkyfaller 传入（矿物堆） -->
+  <ThingDef ParentName="SkyfallerBase">
+    <defName>Binguin_MeteoriteIncoming</defName>
+    <label>陨石（坠落中）</label>
+    <size>(2,2)</size>
+    <graphicData>
+      <texPath>Things/Skyfaller/Meteorite</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+      <drawSize>(10,10)</drawSize>
+    </graphicData>
+    <skyfaller>
+      <shadowSize>(3,3)</shadowSize>
+      <explosionRadius>3</explosionRadius>
+      <explosionDamage>Bomb</explosionDamage>
+      <rotateGraphicTowardsDirection>true</rotateGraphicTowardsDirection>
+      <speed>1.2</speed>
+      <ticksToImpactRange>3600~7200</ticksToImpactRange>
+    </skyfaller>
+  </ThingDef>
+
+</Defs>

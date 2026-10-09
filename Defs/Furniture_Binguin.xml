@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族家具（蓝黑色调；各种效果与对应原版家具相同）。
+  参考原版 Buildings_Furniture.xml：
+    桌子 ← Table2x2c(TableGatherSpotBase) / 椅子·板凳 ← Stool(FurnitureWithQualityBase)
+    矮柜 ← Dresser(ArtableFurnitureBase) / 床头柜 ← EndTable(TableBase) / 床 ← Bed(BasicBedBase)
+  ★ designationCategory=BinguinBuilding：显示在 Architect「冰鹅建筑」类别
+    （不写则继承父类 → 混进原版 Furniture 类别，用户反馈的 bug）
+  ★ 可搬动物品必须显式 Mass（否则 "is haulable but no mass" 报错）
+  ★ 床休息效率继承 Building_Bed 默认 = 100%
+-->
+<Defs>
+
+  <!-- ============ 冰鹅桌（2x2 餐桌） ============ -->
+  <ThingDef ParentName="TableGatherSpotBase">
+    <defName>Binguin_Table</defName>
+    <label>冰鹅桌</label>
+    <description>蓝黑相间的冰雪餐桌，桌面光洁如冰面。冰鹅族人喜欢围坐桌旁，边用餐边记录当天的观测数据。</description>
+    <graphicData>
+      <texPath>Things/Building/Binguin/Table</texPath>
+      <drawSize>(4,4)</drawSize>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>100</MaxHitPoints>
+      <WorkToBuild>1500</WorkToBuild>
+      <Flammability>0.5</Flammability>
+      <Beauty>2</Beauty>
+      <Mass>20</Mass>
+    </statBases>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <size>(2,2)</size>
+    <costList>
+      <Steel>50</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIcyPeaks</li>
+    </researchPrerequisites>
+    <uiOrder>100</uiOrder>
+  </ThingDef>
+
+  <!-- ============ 冰鹅椅 ============ -->
+  <ThingDef ParentName="FurnitureWithQualityBase">
+    <defName>Binguin_Chair</defName>
+    <label>冰鹅椅</label>
+    <description>蓝黑配色的舒适座椅，椅背微微后仰，适合长时间伏案观测。</description>
+    <replaceTags>
+      <li>Chair</li>
+    </replaceTags>
+    <graphicData>
+      <texPath>Things/Building/Binguin/Chair</texPath>
+      <drawSize>(1.2,1.2)</drawSize>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>75</MaxHitPoints>
+      <WorkToBuild>450</WorkToBuild>
+      <Mass>5</Mass>
+      <Flammability>0.5</Flammability>
+      <Beauty>1</Beauty>
+      <Comfort>0.7</Comfort>
+    </statBases>
+    <pathCost>30</pathCost>
+    <fillPercent>0.20</fillPercent>
+    <building>
+      <isSittable>true</isSittable>
+      <paintable>false</paintable>
+    </building>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <costList>
+      <Steel>25</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIcyPeaks</li>
+    </researchPrerequisites>
+    <uiOrder>110</uiOrder>
+  </ThingDef>
+
+  <!-- ============ 冰鹅板凳 ============ -->
+  <ThingDef ParentName="FurnitureWithQualityBase">
+    <defName>Binguin_Stool</defName>
+    <label>冰鹅板凳</label>
+    <description>简单敦实的蓝黑小板凳，谈不上多舒服，但总比站着强。</description>
+    <replaceTags>
+      <li>Chair</li>
+    </replaceTags>
+    <graphicData>
+      <texPath>Things/Building/Binguin/Stool</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>75</MaxHitPoints>
+      <WorkToBuild>450</WorkToBuild>
+      <Mass>5</Mass>
+      <Flammability>0.5</Flammability>
+      <Beauty>0</Beauty>
+      <Comfort>0.5</Comfort>
+    </statBases>
+    <pathCost>30</pathCost>
+    <fillPercent>0.20</fillPercent>
+    <building>
+      <isSittable>true</isSittable>
+      <paintable>false</paintable>
+    </building>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <costList>
+      <Steel>25</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIcyPeaks</li>
+    </researchPrerequisites>
+    <uiOrder>120</uiOrder>
+  </ThingDef>
+
+  <!-- ============ 冰鹅矮柜 ============ -->
+  <ThingDef ParentName="ArtableFurnitureBase">
+    <defName>Binguin_Dresser</defName>
+    <label>冰鹅矮柜</label>
+    <description>蓝黑色调的矮柜，收纳衣物的同时，也用来摆放观测手稿与冰晶标本。</description>
+    <graphicData>
+      <texPath>Things/Building/Binguin/Dresser</texPath>
+      <drawSize>(2,1)</drawSize>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>120</MaxHitPoints>
+      <WorkToBuild>2000</WorkToBuild>
+      <Mass>20</Mass>
+      <Flammability>0.5</Flammability>
+      <Beauty>3</Beauty>
+    </statBases>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <size>(2,1)</size>
+    <costList>
+      <Steel>50</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIcyPeaks</li>
+    </researchPrerequisites>
+    <uiOrder>130</uiOrder>
+  </ThingDef>
+
+  <!-- ============ 冰鹅床头柜 ============ -->
+  <ThingDef ParentName="TableBase">
+    <defName>Binguin_EndTable</defName>
+    <label>冰鹅床头柜</label>
+    <description>蓝黑的小床头柜，搁一盏冰灯、几卷观测笔记，正合适。</description>
+    <graphicData>
+      <texPath>Things/Building/Binguin/EndTable</texPath>
+      <drawSize>(1,1)</drawSize>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>75</MaxHitPoints>
+      <WorkToBuild>1000</WorkToBuild>
+      <Mass>5</Mass>
+      <Flammability>0.5</Flammability>
+      <Beauty>2</Beauty>
+    </statBases>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <size>(1,1)</size>
+    <costList>
+      <Steel>30</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIcyPeaks</li>
+    </researchPrerequisites>
+    <uiOrder>140</uiOrder>
+  </ThingDef>
+
+  <!-- ============ 冰鹅床（单人床，效果同原版 Bed，休息效率 100%） ============ -->
+  <ThingDef ParentName="BasicBedBase">
+    <defName>Binguin_Bed</defName>
+    <label>冰鹅床</label>
+    <description>蓝黑配色的单人床，被褥里絮着晒暖的绒羽，寒夜也能安眠。</description>
+    <graphicData>
+      <texPath>Things/Building/Binguin/Bed</texPath>
+      <drawSize>(2,2)</drawSize>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <statBases>
+      <MaxHitPoints>200</MaxHitPoints>
+      <WorkToBuild>2500</WorkToBuild>
+      <Mass>30</Mass>
+      <BedRestEffectiveness>1.0</BedRestEffectiveness>
+      <Flammability>0.5</Flammability>
+      <Beauty>2</Beauty>
+    </statBases>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <size>(1,2)</size>
+    <costList>
+      <Steel>45</Steel>
+    </costList>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIcyPeaks</li>
+    </researchPrerequisites>
+    <uiOrder>150</uiOrder>
+  </ThingDef>
+
+</Defs>

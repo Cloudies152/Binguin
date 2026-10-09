@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  毒垃圾报复事件 —— 毒血 hediff（2026-09 用户需求）
+  ─────────────────────────────────────────────────────────────
+  用途：冰鹅族被玩家丢了毒垃圾之后报复，空投 10 只发狂的爆炸羊。
+        这些爆炸羊「高受伤、高流血、1~2 小时内必死，但腿不能断（要能移动）」。
+        实现方式：挂上这个 hediff，由 HediffComp_BinguinWasteToxemia 每 tick
+        把原版 BloodLoss 的 severity 按 ticksToDeath 线性推到 1.0
+        （BloodLoss 的 lethalSeverity = 1，见 Core/Defs/HediffDefs/Hediffs_Global_Misc.xml）。
+
+  ★ 为什么用「直接推 BloodLoss」而不是「叠一堆伤口」：
+    伤口叠加的流血速度很难精确控制到 1~2 小时这个窗口，而且很容易不小心
+    打到腿（用户明确要求不能打断腿）。直接推 severity 可以把死亡时间钉死。
+  ★ 羊身上那几道皮外伤只是「看起来惨」，真正的死因是这里推的失血。
+  ★ comps 故意留空：按本 MOD「XML 零自定义类型」的惯例，
+    真正的 compClass 由 BinguinDefPatches.PatchWasteToxemia() 在运行时挂载。
+-->
+<Defs>
+
+  <HediffDef>
+    <defName>Binguin_WasteToxemia</defName>
+    <label>毒垃圾感染</label>
+    <description>毒垃圾里的重金属与有机毒物正在迅速破坏血液。伤口止不住血，意识会随着失血不断下降，最终在数小时内死亡。</description>
+    <hediffClass>HediffWithComps</hediffClass>
+    <isBad>true</isBad>
+    <initialSeverity>0.01</initialSeverity>
+    <maxSeverity>1</maxSeverity>
+    <stages>
+      <li>
+        <label>轻微</label>
+        <becomeVisible>false</becomeVisible>
+      </li>
+      <li>
+        <minSeverity>0.30</minSeverity>
+        <label>明显</label>
+        <capMods>
+          <li><capacity>Consciousness</capacity><offset>-0.10</offset></li>
+        </capMods>
+      </li>
+      <li>
+        <minSeverity>0.60</minSeverity>
+        <label>严重</label>
+        <capMods>
+          <li><capacity>Consciousness</capacity><offset>-0.25</offset></li>
+        </capMods>
+      </li>
+    </stages>
+  </HediffDef>
+
+</Defs>

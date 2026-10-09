@@ -1,0 +1,632 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- ============================================================================
+       武器名覆盖（2026-10-08 用户需求）
+       ★ 这几条同时也放在 Languages\English\DefInjected\ThingDef\Weapons_Binguin.xml，
+         两条路径都生效、不会冲突：
+           · Keyed 目录       → keyedReplacements
+           · DefInjected 目录 → DefInjectionPackage.InjectIntoDefs() 直接改 def 字段
+         放两处是为了保险（万一扁平路径写法在某版本不生效，另一条还能兜住）。
+       ★ 英文名 = GGGGGG；全名 Glacier Goose Giga-Gust Graser Gatling（写在 description 开头）
+       ============================================================================ -->
+  <Binguin_LaserGatling.label>GGGGGG</Binguin_LaserGatling.label>
+  <Binguin_LaserGatling.description>Glacier Goose Giga-Gust Graser Gatling.
+
+The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once it spins up, it trails an aurora that never fades. Each shot is weak (2 damage), yet thirty laser bolts pour out every second, and the ultimate ice burst doubles down on every hit (4% freeze chance per bolt) to sculpt the enemy into snow statues. Suppression 0.5. (Costs 8 advanced components / 60 plasteel / 200 steel)</Binguin_LaserGatling.description>
+  <Recipe_Binguin_LaserGatling.label>Craft GGGGGG</Recipe_Binguin_LaserGatling.label>
+  <Recipe_Binguin_LaserGatling.jobString>crafting GGGGGG.</Recipe_Binguin_LaserGatling.jobString>
+
+  <Binguin_AbilityIceThrow_01              >Only threw </Binguin_AbilityIceThrow_01>
+  <Binguin_AbilityIceThrow_02              > ice rocks.</Binguin_AbilityIceThrow_02>
+  <Binguin_AbilityIceThrow_03              >Remaining </Binguin_AbilityIceThrow_03>
+  <Binguin_AbilityIceThrow_04              > hours</Binguin_AbilityIceThrow_04>
+  <Binguin_AbilityRodSkills_01             >Pierce: </Binguin_AbilityRodSkills_01>
+  <Binguin_AbilityRodSkills_02             > targets</Binguin_AbilityRodSkills_02>
+  <Binguin_AbilityRodSkills_03             >Fish on!</Binguin_AbilityRodSkills_03>
+  <Binguin_DefPatches_01                   >Ice burst x1 (assault rifle/sniper rifle)</Binguin_DefPatches_01>
+  <Binguin_DefPatches_02                   >Penguin flying kick x2 (ultimate, 60 blunt)</Binguin_DefPatches_02>
+  <Binguin_DefPatches_03                   >Graser gatling laser x2 (ultimate)</Binguin_DefPatches_03>
+  <Binguin_ChoiceLetterDiplomacy_01        >We are willing to coexist with the binguin.</Binguin_ChoiceLetterDiplomacy_01>
+  <Binguin_ChoiceLetterDiplomacy_02        >We will remain neutral.</Binguin_ChoiceLetterDiplomacy_02>
+  <Binguin_ChoiceLetterDiplomacy_03        >We are sorry, but we have no wish to coexist.</Binguin_ChoiceLetterDiplomacy_03>
+  <Binguin_CompAutoStone_01                >No power</Binguin_CompAutoStone_01>
+  <Binguin_CompAutoStone_02                >Stonecutting mode</Binguin_CompAutoStone_02>
+  <Binguin_CompAutoStone_03                >Quarrying mode</Binguin_CompAutoStone_03>
+  <Binguin_CompAutoStone_04                >ice rock → ice rock brick</Binguin_CompAutoStone_04>
+  <Binguin_CompAutoStone_05                >ice rock</Binguin_CompAutoStone_05>
+  <Binguin_CompAutoStone_06                >Normal ground: stone type is randomly determined on first use</Binguin_CompAutoStone_06>
+  <Binguin_CompAutoStone_07                >Next stone output: about </Binguin_CompAutoStone_07>
+  <Binguin_CompAutoStone_08                > hours (</Binguin_CompAutoStone_08>
+  <Binguin_CompAutoStone_09                >Will produce:</Binguin_CompAutoStone_09>
+  <Binguin_CompAutoStone_10                >Stonecutting mode</Binguin_CompAutoStone_10>
+  <Binguin_CompAutoStone_11                >When enabled, mined rock is cut directly into stone bricks; when disabled, only raw stone is mined.</Binguin_CompAutoStone_11>
+  <Binguin_CompAutoStone_12                >Produce now</Binguin_CompAutoStone_12>
+  <Binguin_CompAutoStone_13                >Immediately produce one stone (developer tool).</Binguin_CompAutoStone_13>
+  <Binguin_CompBoard_01                    >Slide dash</Binguin_CompBoard_01>
+  <Binguin_CompBoard_02                    >Dash in the chosen direction (radius </Binguin_CompBoard_02>
+  <Binguin_CompBoard_03                    > tiles, cooldown </Binguin_CompBoard_03>
+  <Binguin_CompBoard_04                    > seconds).</Binguin_CompBoard_04>
+  <Binguin_CompBoard_05                    >Cooling down: </Binguin_CompBoard_05>
+  <Binguin_CompBoard_06                    > seconds</Binguin_CompBoard_06>
+  <Binguin_CompBoard_07                    >The slide target must be walkable open ground.</Binguin_CompBoard_07>
+  <Binguin_CompBoard_08                    >The slide target must be walkable open ground.</Binguin_CompBoard_08>
+  <Binguin_CompBoard_09                    >Slide target is out of range (</Binguin_CompBoard_09>
+  <Binguin_CompBoard_10                    > tiles).</Binguin_CompBoard_10>
+  <Binguin_CompBoard_11                    >The slide path is blocked by a wall; the target cannot be reached.</Binguin_CompBoard_11>
+  <Binguin_CompBoard_12                    >Preparing to slide...</Binguin_CompBoard_12>
+  <Binguin_CompCrabTrap_01                 >Fishing in this water</Binguin_CompCrabTrap_01>
+  <Binguin_CompCrabTrap_02                 >Ice surface mode: ocean fish species random</Binguin_CompCrabTrap_02>
+  <Binguin_CompCrabTrap_03                 >Ocean fish species random</Binguin_CompCrabTrap_03>
+  <Binguin_CompCrabTrap_04                 >Next catch: about </Binguin_CompCrabTrap_04>
+  <Binguin_CompCrabTrap_05                 > hours (</Binguin_CompCrabTrap_05>
+  <Binguin_CompCrabTrap_06                 >Manage fish</Binguin_CompCrabTrap_06>
+  <Binguin_CompCrabTrap_07                 >View and manually adjust the fish population of this water (+/- releases or catches,</Binguin_CompCrabTrap_07>
+  <Binguin_CompCrabTrap_08                 >the same fish management as vanilla fishing). Current fish:</Binguin_CompCrabTrap_08>
+  <Binguin_CompCrabTrap_09                 >Catch fish now</Binguin_CompCrabTrap_09>
+  <Binguin_CompCrabTrap_10                 >Catch a fish immediately (dev tool).</Binguin_CompCrabTrap_10>
+  <Binguin_CompCrabTrap_11                 >Set the catch limit for this water body. Population here: </Binguin_CompCrabTrap_11>
+  <Binguin_CompCrabTrap_12                 >, catch limit: </Binguin_CompCrabTrap_12>
+  <Binguin_CompCrabTrap_13                 > (above the limit, fishing normally)</Binguin_CompCrabTrap_13>
+  <Binguin_CompCrabTrap_14                 > (limit reached, paused until it recovers)</Binguin_CompCrabTrap_14>
+  <Binguin_CompFishPond_01                 >Not stocked</Binguin_CompFishPond_01>
+  <Binguin_CompFishPond_02                 >Stock with fry</Binguin_CompFishPond_02>
+  <Binguin_CompFishPond_03                 >Add fry</Binguin_CompFishPond_03>
+  <Binguin_CompFishPond_04                 >Once a species is chosen, a colonist will carry 1 such fish into the pond (settling the species to be raised).\nAdjacent fish ponds connect into one large pond when placed.</Binguin_CompFishPond_04>
+  <Binguin_CompFishPond_05                 >Carry 1 more</Binguin_CompFishPond_05>
+  <Binguin_CompFishPond_06                 >Put into the pond (fish +1).</Binguin_CompFishPond_06>
+  <Binguin_CompFishPond_07                 >Fish</Binguin_CompFishPond_07>
+  <Binguin_CompFishPond_08                 >Assign the nearest colonist to fish at the pond.\n</Binguin_CompFishPond_08>
+  <Binguin_CompFishPond_09                 >Below the reserved fish count (</Binguin_CompFishPond_09>
+  <Binguin_CompFishPond_10                 >) no fishing is done.</Binguin_CompFishPond_10>
+  <Binguin_CompFishPond_11                 >\nTip: colonists with the vanilla "Fish" work type enabled will come to fish on their own.</Binguin_CompFishPond_11>
+  <Binguin_CompFishPond_12                 >Reserved fish</Binguin_CompFishPond_12>
+  <Binguin_CompFishPond_13                 >Catching stops when the fish fall below this number (fishing/crab trap module), letting them breed.\nCurrent: </Binguin_CompFishPond_13>
+  <Binguin_CompFishPond_14                 > / max </Binguin_CompFishPond_14>
+  <Binguin_CompFishPond_15                 >Crab trap module</Binguin_CompFishPond_15>
+  <Binguin_CompFishPond_16                 >When enabled, fish are caught automatically every 6 hours (1 per connected pond; never below the reserved fish count).</Binguin_CompFishPond_16>
+  <Binguin_CompFishPond_17                 >The pond's fish have reached the lower reserved limit (</Binguin_CompFishPond_17>
+  <Binguin_CompFishPond_18                 >), so no fishing for now.</Binguin_CompFishPond_18>
+  <Binguin_CompFishPond_19                 >No colonist is available to fish.</Binguin_CompFishPond_19>
+  <Binguin_CompFishPond_20                 >Fish pond: not stocked (use "Stock with fry" to choose a species; a colonist will carry it in)\n</Binguin_CompFishPond_20>
+  <Binguin_CompFishPond_21                 >Adjacent ponds: </Binguin_CompFishPond_21>
+  <Binguin_CompFishPond_22                 >Fish pond: </Binguin_CompFishPond_22>
+  <Binguin_CompFishPond_23                 > ponds connected)\n</Binguin_CompFishPond_23>
+  <Binguin_CompFishPond_24                 >Fish: </Binguin_CompFishPond_24>
+  <Binguin_CompFishPond_25                 >(reserved </Binguin_CompFishPond_25>
+  <Binguin_CompFishPond_26                 >Fish food: </Binguin_CompFishPond_26>
+  <Binguin_CompFishPond_27                 >(breeding +50%)</Binguin_CompFishPond_27>
+  <Binguin_CompFishPond_28                 >Crab trap module: </Binguin_CompFishPond_28>
+  <Binguin_CompFishPond_29                 >on</Binguin_CompFishPond_29>
+  <Binguin_CompFishPond_30                 >off</Binguin_CompFishPond_30>
+  <Binguin_CompFishingBait_01              >Not in water (invalid)</Binguin_CompFishingBait_01>
+  <Binguin_CompFishingBait_02              >Fish </Binguin_CompFishingBait_02>
+  <Binguin_CompFishingBait_03              >Bait nutrition: </Binguin_CompFishingBait_03>
+  <Binguin_CompFishingBait_04              >Consume bait now</Binguin_CompFishingBait_04>
+  <Binguin_CompFishingBait_05              >Immediately consume 0.5 nutrition to speed up the fish (developer tool).</Binguin_CompFishingBait_05>
+  <Binguin_CompGateShieldField_01          >Gate Shield · outer layer</Binguin_CompGateShieldField_01>
+  <Binguin_CompGateShieldField_02          >Gate Shield outer ice barrier (intercepts bullets/shells):\nRemaining </Binguin_CompGateShieldField_02>
+  <Binguin_CompGateShieldField_03          >.\nOnce broken it must recharge; EMP cuts the power temporarily.</Binguin_CompGateShieldField_03>
+  <Binguin_CompMeteorGuide_01              >The meteor guide's storage is full; newly discovered meteors cannot be saved.</Binguin_CompMeteorGuide_01>
+  <Binguin_CompMeteorGuide_02              >Meteor discovered</Binguin_CompMeteorGuide_02>
+  <Binguin_CompMeteorGuide_03              >Meteor guide: one </Binguin_CompMeteorGuide_03>
+  <Binguin_CompMeteorGuide_04              >meteor has been observed,</Binguin_CompMeteorGuide_04>
+  <Binguin_CompMeteorGuide_05              >captured with the gravity field and stored in the instrument (</Binguin_CompMeteorGuide_05>
+  <Binguin_CompMeteorGuide_06              >Open the instrument panel at any time to choose this meteor and guide it down onto a designated area.</Binguin_CompMeteorGuide_06>
+  <Binguin_CompMeteorGuide_07              >Note: the meteor expires after 10 days as it drifts off course.</Binguin_CompMeteorGuide_07>
+  <Binguin_CompMeteorGuide_08              >Storage management (</Binguin_CompMeteorGuide_08>
+  <Binguin_CompMeteorGuide_09              >View the list of captured meteors: guide one down, or delete the ones you do not need.</Binguin_CompMeteorGuide_09>
+  <Binguin_CompMeteorGuide_10              >Discover meteor now</Binguin_CompMeteorGuide_10>
+  <Binguin_CompMeteorGuide_11              >(Dev) Immediately roll one meteor discovery (at the current progress chance).</Binguin_CompMeteorGuide_11>
+  <Binguin_CompMeteorGuide_12              >Scan progress: </Binguin_CompMeteorGuide_12>
+  <Binguin_CompMeteorGuide_13              >Meteors captured: </Binguin_CompMeteorGuide_13>
+  <Binguin_CompMeteorGuide_14              >(no power)\n</Binguin_CompMeteorGuide_14>
+  <Binguin_CompMeteorGuide_15              >The meteor guide has no power and cannot guide meteors.</Binguin_CompMeteorGuide_15>
+  <Binguin_CompMeteorGuide_16              >The meteor guide is blocked by a roof and cannot guide meteors.</Binguin_CompMeteorGuide_16>
+  <Binguin_CompMeteorGuide_17              >Meteor guided; it will fall on the designated area within 1-2 hours.</Binguin_CompMeteorGuide_17>
+  <Binguin_CompMeteorGuide_18              >Abandoned </Binguin_CompMeteorGuide_18>
+  <Binguin_CompMeteorGuide_19              > meteor.</Binguin_CompMeteorGuide_19>
+  <Binguin_CompMeteorGuide_20              >Meteor storage (</Binguin_CompMeteorGuide_20>
+  <Binguin_CompMeteorGuide_21              >No meteors captured yet. Wait for research scanning to find a meteor.</Binguin_CompMeteorGuide_21>
+  <Binguin_CompMeteorGuide_22              >Expired</Binguin_CompMeteorGuide_22>
+  <Binguin_CompMeteorGuide_23              >Remaining </Binguin_CompMeteorGuide_23>
+  <Binguin_CompMeteorGuide_24              > days</Binguin_CompMeteorGuide_24>
+  <Binguin_CompMeteorGuide_25              >Guide to fall</Binguin_CompMeteorGuide_25>
+  <Binguin_CompMeteorGuide_26              >Delete</Binguin_CompMeteorGuide_26>
+  <Binguin_CompRecycler_01                 >Recycle now</Binguin_CompRecycler_01>
+  <Binguin_CompRecycler_02                 >(Dev) Immediately recycle 1 stored toxic wastepack and produce random minerals.</Binguin_CompRecycler_02>
+  <Binguin_CompRecycler_03                 >There is no toxic wastepack in the recycler.</Binguin_CompRecycler_03>
+  <Binguin_CompRod_01                      >long shaft</Binguin_CompRod_01>
+  <Binguin_CompRod_02                      >short shaft</Binguin_CompRod_02>
+  <Binguin_CompRod_03                      >blade tip</Binguin_CompRod_03>
+  <Binguin_CompRod_04                      >hammer tip</Binguin_CompRod_04>
+  <Binguin_CompRod_05                      >straight hook</Binguin_CompRod_05>
+  <Binguin_CompRod_06                      >bent hook</Binguin_CompRod_06>
+  <Binguin_CompRod_07                      >damage ×</Binguin_CompRod_07>
+  <Binguin_CompRod_08                      > cooldown ×</Binguin_CompRod_08>
+  <Binguin_CompRod_09                      >bait: </Binguin_CompRod_09>
+  <Binguin_CompRodAssembly_01              >Make fish bait</Binguin_CompRodAssembly_01>
+  <Binguin_CompRodAssembly_02              >Choose 1-2 foods (vegetarian/meat/insect meat/twisted meat/human meat/insect jelly/no restriction); the matching food is consumed to make bait.</Binguin_CompRodAssembly_02>
+  <Binguin_CompRodAssembly_03              >Power is required to use the assembly bench.</Binguin_CompRodAssembly_03>
+  <Binguin_CompRodAssembly_04              >Assemble fishing rod</Binguin_CompRodAssembly_04>
+  <Binguin_CompRodAssembly_05              >Click the shaft, tip, hook and bait on the map in order (only that part type highlights as clickable, so you can pick an exact material); the best-crafting colonist then starts assembly automatically (needs 4 advanced components).</Binguin_CompRodAssembly_05>
+  <Binguin_CompRodAssembly_06              >Power is required to use the assembly bench.</Binguin_CompRodAssembly_06>
+  <Binguin_CompRodAssembly_07              >Assembling...</Binguin_CompRodAssembly_07>
+  <Binguin_CompRodAssembly_08              >Missing advanced components (4 needed).</Binguin_CompRodAssembly_08>
+  <Binguin_CompRodAssembly_09              > Starting assembly of the advanced fishing rod...</Binguin_CompRodAssembly_09>
+  <Binguin_CompRodAssembly_10              >Missing advanced components (4 needed); assembly halted.</Binguin_CompRodAssembly_10>
+  <Binguin_CompRodAssembly_11              >Advanced fishing rod assembled (</Binguin_CompRodAssembly_11>
+
+  <!-- ============ 库存选配件 / 选人窗口（2026-10-08 并入正式版）============ -->
+  <Binguin_CompRodAssembly_12              >Assemble rod (pick from stock)</Binguin_CompRodAssembly_12>
+  <Binguin_CompRodAssembly_13              >Open a window to pick all 4 parts and the assembler at once.</Binguin_CompRodAssembly_13>
+  <Binguin_UnfinishedRodRefund         >Unfinished rod destroyed - refunded {0} advanced components.</Binguin_UnfinishedRodRefund>
+  <Binguin_RodStock_01                     >Assemble advanced fishing rod</Binguin_RodStock_01>
+  <Binguin_RodStock_02                     >Pick parts (from the parts you have in the colony)</Binguin_RodStock_02>
+  <Binguin_RodStock_03                     >Pick {0}:</Binguin_RodStock_03>
+  <Binguin_RodStock_04                     >(none)</Binguin_RodStock_04>
+  <Binguin_RodStock_05                     >Pick</Binguin_RodStock_05>
+  <Binguin_RodStock_06                     >Change</Binguin_RodStock_06>
+  <Binguin_RodStock_07                     >Still missing: {0}</Binguin_RodStock_07>
+  <Binguin_RodStock_08                     >Start assembly</Binguin_RodStock_08>
+  <Binguin_RodStock_09                     >Cancel</Binguin_RodStock_09>
+  <Binguin_RodStock_10                     >No such parts on the map.</Binguin_RodStock_10>
+  <Binguin_CompRodBait_01                  >no bait effect</Binguin_CompRodBait_01>
+  <Binguin_CompRodBait_02                  >bait effect: </Binguin_CompRodBait_02>
+  <Binguin_CompWeather_01                  >The atmosphere controller has finished charging and entered low-power mode; the weather can now be controlled.</Binguin_CompWeather_01>
+  <Binguin_CompWeather_02                  >Weather control: charged (low-power mode </Binguin_CompWeather_02>
+  <Binguin_CompWeather_03                  >W), one use available</Binguin_CompWeather_03>
+  <Binguin_CompWeather_04                  >Weather control: charging, </Binguin_CompWeather_04>
+  <Binguin_CompWeather_05                  > hours left (charging draw </Binguin_CompWeather_05>
+  <Binguin_CompWeather_06                  >Charging </Binguin_CompWeather_06>
+  <Binguin_CompWeather_07                  >The atmosphere controller must charge for 24 hours to control the weather once; once full it enters low-power mode automatically. It must stay powered while charging.</Binguin_CompWeather_07>
+  <Binguin_CompWeather_08                  >Charging: </Binguin_CompWeather_08>
+  <Binguin_CompWeather_09                  > hours left.</Binguin_CompWeather_09>
+  <Binguin_CompWeather_10                  >Switch the weather to clear skies.</Binguin_CompWeather_10>
+  <Binguin_CompWeather_11                  >Switch the weather to rain.</Binguin_CompWeather_11>
+  <Binguin_CompWeather_12                  >Switch the weather to a thunderstorm.</Binguin_CompWeather_12>
+  <Binguin_CompWeather_13                  >Switch the weather to light snow.</Binguin_CompWeather_13>
+  <Binguin_CompWeather_14                  >Switch the weather to a snowstorm.</Binguin_CompWeather_14>
+  <Binguin_CompWeather_15                  >Charging: </Binguin_CompWeather_15>
+  <Binguin_CompWeather_16                  > hours left.</Binguin_CompWeather_16>
+  <Binguin_CompWeather_17                  >Power is required to control the weather.</Binguin_CompWeather_17>
+  <Binguin_CompWeather_18                  >The atmosphere controller has no power and cannot control the weather.</Binguin_CompWeather_18>
+  <Binguin_CompWeather_19                  >The atmosphere controller is still charging; </Binguin_CompWeather_19>
+  <Binguin_CompWeather_20                  > hours left.</Binguin_CompWeather_20>
+  <Binguin_CompWeather_21                  >The atmosphere controller has activated: weather switched to </Binguin_CompWeather_21>
+  <Binguin_CompWeather_22                  > (requires 24 hours to recharge).</Binguin_CompWeather_22>
+  <Binguin_CompWillingCannon_01            > · Auto-load: </Binguin_CompWillingCannon_01>
+  <Binguin_CompWillingCannon_02            > · Auto-refuel</Binguin_CompWillingCannon_02>
+  <Binguin_CompWillingCannon_03            >Willing Cannon: </Binguin_CompWillingCannon_03>
+  <Binguin_CompWillingCannon_04            > shells · fuel </Binguin_CompWillingCannon_04>
+  <Binguin_CompWillingCannon_05            > (per shot: </Binguin_CompWillingCannon_05>
+  <Binguin_CompWillingCannon_06            >Load shells</Binguin_CompWillingCannon_06>
+  <Binguin_CompWillingCannon_07            >Load shells or configure auto-loading (magazine </Binguin_CompWillingCannon_07>
+  <Binguin_CompWillingCannon_08            >, fuel </Binguin_CompWillingCannon_08>
+  <Binguin_CompWillingCannon_09            >; auto-loading</Binguin_CompWillingCannon_09>
+  <Binguin_CompWillingCannon_10            >Fire mortar</Binguin_CompWillingCannon_10>
+  <Binguin_CompWillingCannon_11            >Shell the chosen impact point (range </Binguin_CompWillingCannon_11>
+  <Binguin_CompWillingCannon_12            > tiles, 1s aim time, impact point 0-</Binguin_CompWillingCannon_12>
+  <Binguin_CompWillingCannon_13            > tiles of random spread; magazine </Binguin_CompWillingCannon_13>
+  <Binguin_CompWillingCannon_14            >, fuel </Binguin_CompWillingCannon_14>
+  <Binguin_CompWillingCannon_15            >, 30s cooldown).</Binguin_CompWillingCannon_15>
+  <Binguin_CompWillingCannon_16            >Barrel cooling down: </Binguin_CompWillingCannon_16>
+  <Binguin_CompWillingCannon_17            > seconds</Binguin_CompWillingCannon_17>
+  <Binguin_CompWillingCannon_18            >Magazine empty</Binguin_CompWillingCannon_18>
+  <Binguin_CompWillingCannon_19            >Not enough fuel</Binguin_CompWillingCannon_19>
+  <Binguin_CompWillingCannon_20            >Magazine full (</Binguin_CompWillingCannon_20>
+  <Binguin_CompWillingCannon_21            > rounds).</Binguin_CompWillingCannon_21>
+  <Binguin_CompWillingCannon_22            >There is no shell of this type in storage.</Binguin_CompWillingCannon_22>
+  <Binguin_CompWillingCannon_23            >Magazine full (</Binguin_CompWillingCannon_23>
+  <Binguin_CompWillingCannon_24            > rounds).</Binguin_CompWillingCannon_24>
+  <Binguin_CompWillingCannon_25            >Target out of range (</Binguin_CompWillingCannon_25>
+  <Binguin_CompWillingCannon_26            > tiles).</Binguin_CompWillingCannon_26>
+  <Binguin_CompWillingCannon_27            >Cannot begin the bombardment (the colonist is busy and cannot be interrupted).</Binguin_CompWillingCannon_27>
+  <Binguin_CompWillingCannon_28            >Barrel cooling down (remaining </Binguin_CompWillingCannon_28>
+  <Binguin_CompWillingCannon_29            > seconds).</Binguin_CompWillingCannon_29>
+  <Binguin_CompWillingCannon_30            >Magazine empty: load shells first.</Binguin_CompWillingCannon_30>
+  <Binguin_CompWillingCannon_31            >Not enough fuel (each shot needs </Binguin_CompWillingCannon_31>
+  <Binguin_CompWillingCannon_32            >, current </Binguin_CompWillingCannon_32>
+  <Binguin_CompWillingCannon_33            >, refuel first).</Binguin_CompWillingCannon_33>
+  <Binguin_CompWillingCannon_34            >Target out of range (</Binguin_CompWillingCannon_34>
+  <Binguin_CompWillingCannon_35            > tiles).</Binguin_CompWillingCannon_35>
+  <Binguin_CompWillingCannon_36            >Stock </Binguin_CompWillingCannon_36>
+  <Binguin_CompWillingCannon_37            >Load shells and auto-loading (</Binguin_CompWillingCannon_37>
+  <Binguin_CompWillingCannon_38            >Shell · Fuel </Binguin_CompWillingCannon_38>
+  <Binguin_CompWillingCannon_39            >Auto-load shells</Binguin_CompWillingCannon_39>
+  <Binguin_CompWillingCannon_40            >Auto-refuel</Binguin_CompWillingCannon_40>
+  <Binguin_CompWillingCannon_41            >There are no shells in storage.\nGo make some mortar shells at a machining table first.</Binguin_CompWillingCannon_41>
+  <Binguin_CompWillingCannon_42            >Storage </Binguin_CompWillingCannon_42>
+  <Binguin_CompWillingCannon_43            >Magazine full</Binguin_CompWillingCannon_43>
+  <Binguin_CompWillingCannon_44            >Load 1 shell</Binguin_CompWillingCannon_44>
+  <Binguin_CompWillingCannon_45            >Magazine full (</Binguin_CompWillingCannon_45>
+  <Binguin_CompWillingCannon_46            > shells).</Binguin_CompWillingCannon_46>
+  <Binguin_CryoSiege_01                    >(undetectable by anyone with no sapper duty)</Binguin_CryoSiege_01>
+  <Binguin_CryoSiege_02                    >[Detect] detector </Binguin_CryoSiege_02>
+  <Binguin_CryoSiege_03                    >(Building </Binguin_CryoSiege_03>
+  <Binguin_CryoSiege_04                    >Reachable=</Binguin_CryoSiege_04>
+  <Binguin_CryoSiege_05                    > Blocker=</Binguin_CryoSiege_05>
+  <Binguin_CryoSiege_06                    >none</Binguin_CryoSiege_06>
+  <Binguin_CryoSiege_07                    > Deliverable material=</Binguin_CryoSiege_07>
+  <Binguin_CryoSiege_08                    > Completable=</Binguin_CryoSiege_08>
+  <Binguin_CryoSiege_09                    >(no freezer blueprint found)</Binguin_CryoSiege_09>
+  <Binguin_CryoSiege_10                    >(TotalMaterialCost returned null - material resolution failed)</Binguin_CryoSiege_10>
+  <Binguin_CryoSiege_11                    >(Required/Within 30 cells of the site:</Binguin_CryoSiege_11>
+  <Binguin_CryoSiege_12                    >Once the atmosphere freezer has run for a full 24 hours it will self-destruct, and the binguin force will abandon its position for a final assault!</Binguin_CryoSiege_12>
+  <Binguin_CryoSiege_13                    >Every binguin sapper has fallen; the siege force abandons its position and charges!</Binguin_CryoSiege_13>
+  <Binguin_CryoSiege_14                    >The cryo siege force has taken heavy losses and abandons its position to charge!</Binguin_CryoSiege_14>
+  <Binguin_CryoSiege_15                    >The atmosphere freezer begins operating: the temperature will keep falling by </Binguin_CryoSiege_15>
+  <Binguin_CryoSiege_16                    >°C every hour, and after </Binguin_CryoSiege_16>
+  <Binguin_CryoSiege_17                    > hours the device will self-destruct.</Binguin_CryoSiege_17>
+  <Binguin_DialogBait_01                   >Make fish bait</Binguin_DialogBait_01>
+  <Binguin_DialogBait_02                   >Choose 1-2 ingredients (each consumes </Binguin_DialogBait_02>
+  <Binguin_DialogBait_03                   > nutrition worth of the matching food):</Binguin_DialogBait_03>
+  <Binguin_DialogBait_04                   >Ingredient 1</Binguin_DialogBait_04>
+  <Binguin_DialogBait_05                   >Ingredient 2 (optional)</Binguin_DialogBait_05>
+  <Binguin_DialogBait_06                   >Not enough food</Binguin_DialogBait_06>
+  <Binguin_DialogBait_07                   >Make</Binguin_DialogBait_07>
+  <Binguin_DialogBait_08                   >Clear</Binguin_DialogBait_08>
+  <Binguin_DialogBait_09                   >(Available </Binguin_DialogBait_09>
+  <Binguin_DialogBait_10                   > nutrition)</Binguin_DialogBait_10>
+  <Binguin_DialogBait_11                   >(Available </Binguin_DialogBait_11>
+  <Binguin_DialogBait_12                   > nutrition)</Binguin_DialogBait_12>
+  <Binguin_DialogBait_13                   >No ingredients selected.</Binguin_DialogBait_13>
+  <Binguin_DialogBait_14                   >You will get:</Binguin_DialogBait_14>
+  <Binguin_DialogBait_15                   >Not enough food to make fish bait.</Binguin_DialogBait_15>
+  <Binguin_DialogBait_16                   >Fish bait complete!</Binguin_DialogBait_16>
+  <Binguin_DialogManageFish_01             >Manage fish</Binguin_DialogManageFish_01>
+  <Binguin_DialogManageFish_02             >Fish in this water:  </Binguin_DialogManageFish_02>
+  <Binguin_DialogManageFish_03             >Manually add or remove fish (equivalent to stocking/catching):</Binguin_DialogManageFish_03>
+  <Binguin_DialogManageFish_04             >Fill (restore to maximum)</Binguin_DialogManageFish_04>
+  <Binguin_DialogManageFish_05             >Empty</Binguin_DialogManageFish_05>
+  <Binguin_DialogManageFish_06             >Fish population recovers over time; chum speeds it up. In ice mode the trap does not use a water body, so this window is not needed.</Binguin_DialogManageFish_06>
+  <Binguin_DialogManageFish_07             >Catch limit for this water body:</Binguin_DialogManageFish_07>
+  <Binguin_DialogManageFish_08             > (default)</Binguin_DialogManageFish_08>
+  <Binguin_DialogManageFish_09             >Reset</Binguin_DialogManageFish_09>
+  <Binguin_DialogManageFish_10             >⚠ Population has dropped to the limit or below. All crab traps in this water body are paused until it recovers.</Binguin_DialogManageFish_10>
+  <Binguin_DialogManageFish_11             >✓ Population is above the limit. Crab traps are fishing normally (once per 6 hours).</Binguin_DialogManageFish_11>
+  <Binguin_DialogManageFish_12             >Advanced / debug: edit population directly</Binguin_DialogManageFish_12>
+  <Binguin_DialogManageFish_13             >Catch limit for this water body (including default)</Binguin_DialogManageFish_13>
+  <Binguin_DialogPondKeep_01               >Retain fish count (catch floor)</Binguin_DialogPondKeep_01>
+  <Binguin_DialogPondKeep_02               >Current:</Binguin_DialogPondKeep_02>
+  <Binguin_DialogPondKeep_03               > fish (group capacity </Binguin_DialogPondKeep_03>
+  <Binguin_DialogPondKeep_04               >When the fish population falls below this value, fishing and crab pot modules stop catching, letting the fish breed and recover.\nSet 0 = keep none (may fish them out).</Binguin_DialogPondKeep_04>
+  <Binguin_DialogPondKeep_05               >Clear (keep none)</Binguin_DialogPondKeep_05>
+  <Binguin_DialogPondKeep_06               >Keep half (</Binguin_DialogPondKeep_06>
+  <Binguin_DialogRodAssembly_01            >Assemble fishing rod</Binguin_DialogRodAssembly_01>
+  <Binguin_DialogRodAssembly_02            >Rod body (long: x120% damage / short: x80% cooldown)</Binguin_DialogRodAssembly_02>
+  <Binguin_DialogRodAssembly_03            >Rod head (blade: cut 25/stab 25 / hammer: blunt 32/poke 15)</Binguin_DialogRodAssembly_03>
+  <Binguin_DialogRodAssembly_04            >Hook (straight hook: puncture / curved hook: hook fish)</Binguin_DialogRodAssembly_04>
+  <Binguin_DialogRodAssembly_05            >Bait (1-2 effects)</Binguin_DialogRodAssembly_05>
+  <Binguin_DialogRodAssembly_06            >Crafter (quality is generated from crafting skill):</Binguin_DialogRodAssembly_06>
+  <Binguin_DialogRodAssembly_07            >(crafting </Binguin_DialogRodAssembly_07>
+  <Binguin_DialogRodAssembly_08            >Requires advanced components: 4 (available in storage </Binguin_DialogRodAssembly_08>
+  <Binguin_DialogRodAssembly_09            >Must select a crafter</Binguin_DialogRodAssembly_09>
+  <Binguin_DialogRodAssembly_10            >Requires rod body + rod head + hook + 4 advanced components</Binguin_DialogRodAssembly_10>
+  <Binguin_DialogRodAssembly_11            >Begin assembly</Binguin_DialogRodAssembly_11>
+  <Binguin_DialogRodAssembly_12            >(no such part in storage)</Binguin_DialogRodAssembly_12>
+  <Binguin_DialogRodAssembly_13            >Please select a rod body, rod head and hook (bait optional).</Binguin_DialogRodAssembly_13>
+  <Binguin_DialogRodAssembly_14            >\nBait:</Binguin_DialogRodAssembly_14>
+  <Binguin_DialogRodAssembly_15            >\nSkill: puncture (200% panel damage in a 10-tile line ahead, 10s cooldown)</Binguin_DialogRodAssembly_15>
+  <Binguin_DialogRodAssembly_16            >\nSkill: hook fish (pull an enemy within 31 tiles to your front, 10s cooldown)</Binguin_DialogRodAssembly_16>
+  <Binguin_DialogRodAssembly_17            >Damage multiplier: x</Binguin_DialogRodAssembly_17>
+  <Binguin_DialogRodAssembly_18            >(cut/stab 25)</Binguin_DialogRodAssembly_18>
+  <Binguin_DialogRodAssembly_19            >\nCooldown multiplier: x</Binguin_DialogRodAssembly_19>
+  <Binguin_DialogRodAssembly_20            >\nDurability multiplier: x</Binguin_DialogRodAssembly_20>
+  <Binguin_DialogRodAssembly_21            >Damage multiplier: x</Binguin_DialogRodAssembly_21>
+  <Binguin_DialogRodAssembly_22            >(blunt 32/poke 15)</Binguin_DialogRodAssembly_22>
+  <Binguin_DialogRodAssembly_23            >\nCooldown multiplier: x</Binguin_DialogRodAssembly_23>
+  <Binguin_DialogRodAssembly_24            >\nDurability multiplier: x</Binguin_DialogRodAssembly_24>
+  <Binguin_DialogStockFish_01              >Nutrition </Binguin_DialogStockFish_01>
+  <Binguin_DialogStockFish_02              >Stock fingerlings</Binguin_DialogStockFish_02>
+  <Binguin_DialogStockFish_03              >Select a fish species. A colonist will then haul one such fish into the pond.\nAdjacent ponds were already joined into one large pond when placed, so stocking affects the entire pond group.</Binguin_DialogStockFish_03>
+  <Binguin_DialogStockFish_04              >There are no fish in the colony's storage.\nPlease fish in natural water first, or buy fish and try again.</Binguin_DialogStockFish_04>
+  <Binguin_DialogStockFish_05              >Could not find </Binguin_DialogStockFish_05>
+  <Binguin_DialogStockFish_06              > in storage, catch one or buy one first.</Binguin_DialogStockFish_06>
+  <Binguin_DialogStockFish_07              >No available colonist to haul the fingerlings.</Binguin_DialogStockFish_07>
+  <Binguin_FloatMenuOptionProviderDiplomacy_01>Talk with the binguin diplomat</Binguin_FloatMenuOptionProviderDiplomacy_01>
+  <Binguin_FloatMenuOptionProviderDiplomacy_02>No talk quest def found.</Binguin_FloatMenuOptionProviderDiplomacy_02>
+  <Binguin_FloatMenuOptionProviderDiplomacy_03>The diplomat is no longer waiting here.</Binguin_FloatMenuOptionProviderDiplomacy_03>
+  <Binguin_GameComponentDiplomacy_01       >About </Binguin_GameComponentDiplomacy_01>
+  <Binguin_GameComponentDiplomacy_02       > days left (already </Binguin_GameComponentDiplomacy_02>
+  <Binguin_GameComponentDiplomacy_03       > raids)</Binguin_GameComponentDiplomacy_03>
+  <Binguin_GameComponentDiplomacy_04       >Mothership linked</Binguin_GameComponentDiplomacy_04>
+  <Binguin_GameComponentDiplomacy_05       >Not contacted</Binguin_GameComponentDiplomacy_05>
+  <Binguin_GameComponentDiplomacy_06       >Contact with the mothership is already underway or complete.</Binguin_GameComponentDiplomacy_06>
+  <Binguin_GameComponentDiplomacy_07       >Tianwen: signal sent</Binguin_GameComponentDiplomacy_07>
+  <Binguin_GameComponentDiplomacy_08       >The binguin large signal transmitter puts out an immense signal, tearing across the heavens to call the mothership in deep space.\n\n</Binguin_GameComponentDiplomacy_08>
+  <Binguin_GameComponentDiplomacy_09       >Such an immense signal is certain to draw prying eyes - expect within 13 days </Binguin_GameComponentDiplomacy_09>
+  <Binguin_GameComponentDiplomacy_10       > waves of far heavier raids than usual. Hold out until the mothership answers.</Binguin_GameComponentDiplomacy_10>
+  <Binguin_GameComponentDiplomacy_11       >Signal lost</Binguin_GameComponentDiplomacy_11>
+  <Binguin_GameComponentDiplomacy_12       >The large signal transmitter has been destroyed, and contact with the mothership is severed. Build a new transmitter to try again.</Binguin_GameComponentDiplomacy_12>
+  <Binguin_GameComponentDiplomacy_13       >Mothership linked!</Binguin_GameComponentDiplomacy_13>
+  <Binguin_GameComponentDiplomacy_14       >A long answer comes back from deep space. The binguin mothership has confirmed your coordinates, and the course is lit.\n\n</Binguin_GameComponentDiplomacy_14>
+  <Binguin_GameComponentDiplomacy_15       >Now, have your colonists enter the ship-type launch pod, then ignite it—fly to the stars and reach the binguin sky-ending.</Binguin_GameComponentDiplomacy_15>
+  <Binguin_GameComponentDiplomacy_16       >Binguin sky-ending\n\n</Binguin_GameComponentDiplomacy_16>
+  <Binguin_GameComponentDiplomacy_17       >The launch pod ignites, flame lifts the hull, and it pierces the heavens.\n\n</Binguin_GameComponentDiplomacy_17>
+  <Binguin_GameComponentDiplomacy_18       > Aboard the binguin ship, through cloud, ionosphere, and a billion stars—\nthe mothership's gangway is already unfurled beneath the starlight.\n\n</Binguin_GameComponentDiplomacy_18>
+  <Binguin_GameComponentDiplomacy_19       >— Credits —\n\n</Binguin_GameComponentDiplomacy_19>
+  <Binguin_GameComponentDiplomacy_20       >Binguin Race MOD (Binguin Race)\n</Binguin_GameComponentDiplomacy_20>
+  <Binguin_GameComponentDiplomacy_21       >Design / Code / Art / Testing: Binguin\n\n</Binguin_GameComponentDiplomacy_21>
+  <Binguin_GameComponentDiplomacy_22       >And to every colonist who has walked alongside the binguin.\n\n\n</Binguin_GameComponentDiplomacy_22>
+  <Binguin_GameComponentDiplomacy_23       >Thank you for playing!</Binguin_GameComponentDiplomacy_23>
+  <Binguin_GameComponentDiplomacy_24       >The mothership is not yet linked, so launch is impossible.</Binguin_GameComponentDiplomacy_24>
+  <Binguin_GameComponentDiplomacy_25       >No colonist has entered the launch pod.</Binguin_GameComponentDiplomacy_25>
+  <Binguin_GameComponentDiplomacy_26       >The Frostspeaker's cold joke</Binguin_GameComponentDiplomacy_26>
+  <Binguin_GameComponentDiplomacy_27       >Binguin diplomat</Binguin_GameComponentDiplomacy_27>
+  <Binguin_GameComponentDiplomacy_28       >The diplomat pushes the round-framed glasses up her nose, unrolls the scroll, and reads the closing lines of the observation log:\n\n</Binguin_GameComponentDiplomacy_28>
+  <Binguin_GameComponentDiplomacy_29       >"The binguin civilization, from a world of bitter winter, dwells for a time upon a rimworld, and "for now" has no wish to quarrel."\n\n</Binguin_GameComponentDiplomacy_29>
+  <Binguin_GameComponentDiplomacy_30       >She lifts her head and looks to you: "And so—would your colony be willing to coexist with us?"</Binguin_GameComponentDiplomacy_30>
+  <Binguin_GameComponentDiplomacy_31       >The binguin diplomat closes the parchment and gives you a slight bow: "Neutrality, too, may be a neighbor. May we trouble one another not."\n\nAfter a brief stay in the colony, she sets out for the ice fields.</Binguin_GameComponentDiplomacy_31>
+  <Binguin_GameComponentDiplomacy_32       >The binguin diplomat's expression dims at once. She presses her lips together and says softly: "...I understand. May the cold wave knock no more at your door."\n\nShe turns, walks past the colony's edge, and vanishes into the driving snow.</Binguin_GameComponentDiplomacy_32>
+  <Binguin_GameComponentDiplomacy_33       >The binguin diplomat gravely places a roll of parchment in your hands: "This is most well. May our observation posts keep watch over the same starfield together."\n\nAfter lingering in the colony for a time, she sets out for the ice fields.</Binguin_GameComponentDiplomacy_33>
+  <Binguin_GameComponentDiplomacy_34       >The binguin diplomat has departed</Binguin_GameComponentDiplomacy_34>
+  <Binguin_GameComponentDiplomacy_35       >A penguin girl calling herself a binguin diplomat has arrived at the colony's edge. Clad in black and white down, she has come to ask your colony's intent regarding "coexistence."\n\nShe will wait at the colony's edge. Select a colonist, right-click the diplomat, and speak with her.</Binguin_GameComponentDiplomacy_35>
+  <Binguin_GameComponentDiplomacy_36       >Binguin diplomat visits</Binguin_GameComponentDiplomacy_36>
+  <Binguin_JobDriverPondStock_01           >Placed 1 </Binguin_JobDriverPondStock_01>
+  <Binguin_JobDriverPondStock_02           > into the fish pond.</Binguin_JobDriverPondStock_02>
+  <Binguin_JobDriverPondStock_03           >Cannot place: the fish pond already holds another fish species (adjacent ponds must be separated), or the school is full.</Binguin_JobDriverPondStock_03>
+  <Binguin_JobDriverWillingLoad_01         >The target is not wearing Willing Armor.</Binguin_JobDriverWillingLoad_01>
+  <Binguin_JobDriverWillingLoad_02         >Loaded 1 round into the Willing Armor</Binguin_JobDriverWillingLoad_02>
+  <Binguin_Jokes_01                        >Q: What's the scariest weather in RimWorld? A: A solar flare - because once the computer loses power, the game just shuts off.</Binguin_Jokes_01>
+  <Binguin_Jokes_02                        >A colonist dug a pit for the raiders and put up a sign: "Please form an orderly queue to jump in." The raiders were deeply moved, and walked around it.</Binguin_Jokes_02>
+  <Binguin_Jokes_58                        >After a pigskin was made into a backpack, nobody ever asked what was inside it again.</Binguin_Jokes_58>
+  <Binguin_Jokes_03                        >The caravan came and went. The colonist looked at the bill and decided to become a raider next time.</Binguin_Jokes_03>
+  <Binguin_Jokes_04                        >Why do so few people in the RimWorld keep pets? Wait until the dog eats a red candy and you'll understand.</Binguin_Jokes_04>
+  <Binguin_Jokes_59                        >Impids are called devils - not because impids are all that dangerous, but because they genuinely live a hellish life.</Binguin_Jokes_59>
+  <Binguin_Jokes_127                        >Ty made trouble outside as a kid, and his parents found out at the office immediately.</Binguin_Jokes_127>
+  <Binguin_Jokes_05                        >"We have numbers!" the raiders shout. "We have mortars," the colonist replies. "We have hostages!" "We have mortars."</Binguin_Jokes_05>
+  <Binguin_Jokes_06                        >The insectoid swarm arrives and the colonists hide indoors. The bugs chew through the wall for two days and then find the door was unlocked.</Binguin_Jokes_06>
+  <Binguin_Jokes_60                        >A handler tries to train a boomrat. It works - it becomes the colony's most popular "firework".</Binguin_Jokes_60>
+  <Binguin_Jokes_61                        >Eating animal meat is barbaric by yttakin standards, so they live on outsiders instead.</Binguin_Jokes_61>
+  <Binguin_Jokes_07                        >The recipe for nutrient paste is classified, but everyone guesses it's at least 33% "unknown".</Binguin_Jokes_07>
+  <Binguin_Jokes_08                        >When a solar flare hits, the whole colony gropes around in the dark.</Binguin_Jokes_08>
+  <Binguin_Jokes_62                        >How do you make a waster prisoner happy? Kill every other waster prisoner captured alongside him.</Binguin_Jokes_62>
+  <Binguin_Jokes_09                        >Q: Why are there fewer and fewer berries in the RimWorld? A: Because every colonist keeps a pig.</Binguin_Jokes_09>
+  <Binguin_Jokes_10                        >The mortar team aims for three days, finally fires, and hits its own storeroom. "That's how you keep your wealth down," they say.</Binguin_Jokes_10>
+  <Binguin_Jokes_74                        >A prisoner is caught escaping. "Why?" the guard asks. "The food is terrible." "Then why not just die?" "What's the difference between Milila's cooking and death?"</Binguin_Jokes_74>
+  <Binguin_Jokes_63                        >Hussars are called hussars, yet none of them have horses - probably because hussars can't train animals at all.</Binguin_Jokes_63>
+  <Binguin_Jokes_64                        >To fix their stubby fingers, pigskins poured everything into research and fitted their elite with bionic arms. But pigskins only know hands with stubby fingers, so the bionic arms were built with stubby fingers too...</Binguin_Jokes_64>
+  <Binguin_Jokes_75                        >A colonist hears the rattkin tower shields are tough, so he gets one - and finds it only covers his forearm.</Binguin_Jokes_75>
+  <Binguin_Jokes_11                        >A trade caravan arrives and the colonist greets them warmly. The trader checks the manifest: "Your 'fresh human meat' is expired."</Binguin_Jokes_11>
+  <Binguin_Jokes_65                        >If you have an older brother who is a neanderthal, whatever you do, don't call him...</Binguin_Jokes_65>
+  <Binguin_Jokes_66                        >A raider army closes in. The colonist calmly sips tea and calls the mechanoids.</Binguin_Jokes_66>
+  <Binguin_Jokes_12                        >The carnivores of the RimWorld will eat your colonists, but at least they'll say something first... no, they can't talk.</Binguin_Jokes_12>
+  <Binguin_Jokes_67                        >Q: How do you calm a boomrat down? A: Don't touch it. Q: How do you calm it down even more? A: Send it to the raider camp.</Binguin_Jokes_67>
+  <Binguin_Jokes_76                        >Apparently Monoling had a baptismal font custom-made for the rattkin, so they wouldn't drown.</Binguin_Jokes_76>
+  <Binguin_Jokes_13                        >The solar flare ends and the colonists cheer. The freezer says: "What are you so happy about? All my meat thawed for nothing."</Binguin_Jokes_13>
+  <Binguin_Jokes_14                        >A colonist hauls 180 kg of steel into the storeroom and comes out carrying stone blocks, one at a time.</Binguin_Jokes_14>
+  <Binguin_Jokes_15                        >Colonist: "Doctor, I think I've caught a cold." Doctor: "No problem, I'm very good at amputations."</Binguin_Jokes_15>
+  <Binguin_Jokes_128                        >Ty's country can hand-build starships, yet still has to run to the neighbouring country to buy reinforced barrels.</Binguin_Jokes_128>
+  <Binguin_Jokes_16                        >Landmine: "I'm hidden." Raider: "So am I." Colonist: "Stop chatting, you've both blown up."</Binguin_Jokes_16>
+  <Binguin_Jokes_17                        >A colonist child is drawing. That's nothing unusual - except he's doing it in the freezer...</Binguin_Jokes_17>
+  <Binguin_Jokes_68                        >A boomalope faces off against a raider. Raider: "Come at me!" Boomalope: "Come at me!" Raider: "Then let's both stand still."</Binguin_Jokes_68>
+  <Binguin_Jokes_18                        >A colonist keeps a flock of chickens, and the chickens eat the entire freezer. The raiders have since awarded them the title "senior spy".</Binguin_Jokes_18>
+  <Binguin_Jokes_129                        >Ty's elder relative had a heart attack and died on their birthday.</Binguin_Jokes_129>
+  <Binguin_Jokes_19                        >Doctor: "The patient needs surgery." Colonist: "What materials?" Doctor: "A new lung." Colonist: "We've got a 'volunteer' in the storeroom."</Binguin_Jokes_19>
+  <Binguin_Jokes_20                        >Raider scout reports: "The colony has 20 turrets." Leader: "We'll go another day." Next day: "They have 25 now."</Binguin_Jokes_20>
+  <Binguin_Jokes_69                        >Is the dog the RimWorld's most loyal companion? No - it's the metalhorror. Look how much work it does for you, and it never complains.</Binguin_Jokes_69>
+  <Binguin_Jokes_21                        >A colonist asks a wise man: "How do I become happy?" The wise man points at a fresh corpse: "Make your troubles into a hat, and you will be."</Binguin_Jokes_21>
+  <Binguin_Jokes_77                        >An evil Chinese pink four-breasted hexaceratops...</Binguin_Jokes_77>
+  <Binguin_Jokes_130                        >Ty's house caught fire as a kid. The firefighters couldn't put it out because no home area had been drawn.</Binguin_Jokes_130>
+  <Binguin_Jokes_22                        >The colony hits a food crisis. The cook serves a plate of "nutrient paste sashimi". Colonist: "Is this edible?" Cook: "Yes. Just don't ask about the ingredients."</Binguin_Jokes_22>
+  <Binguin_Jokes_23                        >A maddened bison charges into the colony. The colonist's assessment: "It looks like it's in a hurry - probably late to become nutrient paste."</Binguin_Jokes_23>
+  <Binguin_Jokes_24                        >A prisoner writes his memoirs in his cell. Chapter one: why I shouldn't have raided a colony with three people and fifty turrets.</Binguin_Jokes_24>
+  <Binguin_Jokes_25                        >Colonist: "I will conquer the world!" On day four he dies to a maddened rabbit.</Binguin_Jokes_25>
+  <Binguin_Jokes_131                        >Ty wandered the streets as a kid while a gunfight broke out.</Binguin_Jokes_131>
+  <Binguin_Jokes_26                        >A tribal raider is captured. Asked why he attacked, he says: "We're short a good tailor." The colonist: "Perfect timing - I'm short a new coat."</Binguin_Jokes_26>
+  <Binguin_Jokes_27                        >A mechanoid army attacks and the colonists deploy a psychic insanity lance. Mechanoid: "We have no minds." Colonist: "Really."</Binguin_Jokes_27>
+  <Binguin_Jokes_70                        >The chimera was living a comfortable life in its pit, until green rain started falling from the sky.</Binguin_Jokes_70>
+  <Binguin_Jokes_78                        >One binguin asks another: "Why do you think the colonists keep staring at our down?" "Because it's excellent insulation material."</Binguin_Jokes_78>
+  <Binguin_Jokes_79                        >A penguin waddles along. A colonist asks why it doesn't fly. Penguin: "If I could fly, I wouldn't be here."</Binguin_Jokes_79>
+  <Binguin_Jokes_132                        >Ty was shot in the head with a sniper rifle as a kid. Luckily his nose stopped the bullet.</Binguin_Jokes_132>
+  <Binguin_Jokes_80                        >A colonist tries to teach a penguin to fire a mortar. It learns fast - it just has to go "Hmph!" before every shot.</Binguin_Jokes_80>
+  <Binguin_Jokes_81                        >On the ice sheet a penguin meets a polar bear. Penguin: "I skate really fast." Polar bear: "I eat penguins really fast." Penguin: "Then let's race home."</Binguin_Jokes_81>
+  <Binguin_Jokes_28                        >The Frostspeaker tells a joke and the whole colony shivers - then they realise the heater is broken.</Binguin_Jokes_28>
+  <Binguin_Jokes_133                        >Ty's family wanted to carve a road through a mountain. Thirty years later the thick roof is still coming down.</Binguin_Jokes_133>
+  <Binguin_Jokes_82                        >A penguin chick asks its mother: "Why do we live somewhere so cold? We have to wear so many clothes." Mother: "Because in warm places, humans wear us."</Binguin_Jokes_82>
+  <Binguin_Jokes_83                        >A binguin diplomat brings a crate of observation data abroad. Colonist: "What's this?" Diplomat: "We spent ten years counting stars, and finally finished - the stars don't count us."</Binguin_Jokes_83>
+  <Binguin_Jokes_84                        >A colonist wraps a scarf around a penguin. "I'm a binguin, not some cold-shy penguin!" it says, and quietly tightens the scarf.</Binguin_Jokes_84>
+  <Binguin_Jokes_85                        >Why don't binguins keep dogs? Because a dog on the ice sheet becomes a bingo - and a bingo can't fill in for a hotdog.</Binguin_Jokes_85>
+  <Binguin_Jokes_86                        >A penguin chef invents iced nutrient paste. The colonists dig in and declare: "Doesn't burn going down."</Binguin_Jokes_86>
+  <Binguin_Jokes_87                        >A binguin secretly practises cold jokes. After three days of practice, the entire race is frozen solid.</Binguin_Jokes_87>
+  <Binguin_Jokes_88                        >A colonist asks a binguin: "Why are all your houses made of ice?" Binguin: "So I don't have to move the house when I move."</Binguin_Jokes_88>
+  <Binguin_Jokes_134                        >Ty secretly played with his parents' phone as a kid, and found it had a biocode.</Binguin_Jokes_134>
+  <Binguin_Jokes_135                        >Ty was hunted by a warg as a kid. Instead of running, he punched it - so the warg would go manhunter and forget to eat him.</Binguin_Jokes_135>
+  <Binguin_Jokes_89                        >Binguins invented a fridge that needs no power - just leave the door open.</Binguin_Jokes_89>
+  <Binguin_Jokes_136                        >Ty's mother told him to study hard. He said he couldn't, because research is a long-term job.</Binguin_Jokes_136>
+  <Binguin_Jokes_90                        >The sandweaver race can't fart, or they'd be mistaken for a rattlesnake.</Binguin_Jokes_90>
+  <Binguin_Jokes_91                        >A penguin plucks its own feathers at the South Pole, and the polar bear sues it for infringement.</Binguin_Jokes_91>
+  <Binguin_Jokes_29                        >The Frostspeaker eats a mint before telling jokes, because it makes things feel "cooler".</Binguin_Jokes_29>
+  <Binguin_Jokes_92                        >Look, there's a penguin over there... oh wait, no, that's a night heron?</Binguin_Jokes_92>
+  <Binguin_Jokes_30                        >A cold joke, currently in progress...</Binguin_Jokes_30>
+  <Binguin_Jokes_93                        >Binguin warriors never look back - because looking back makes them trip.</Binguin_Jokes_93>
+  <Binguin_Jokes_94                        >Binguins have no aircraft, but they have plenty of air force.</Binguin_Jokes_94>
+  <Binguin_Jokes_95                        >A penguin walks into a barber shop. "What style?" the barber asks. "Give me a tuxedo cut."</Binguin_Jokes_95>
+  <Binguin_Jokes_96                       >All the races hold a summit. The host announces: "Today's agenda is how to make the colony less cold." Everyone votes to have the binguins talk less.</Binguin_Jokes_96>
+  <Binguin_Jokes_97                       >Binguin soldier reports: "Sir, we froze three centipedes!" "Excellent. How?" "They were eavesdropping on our cold jokes!"</Binguin_Jokes_97>
+  <Binguin_Jokes_31                       >Q: Why are there no mosquitoes in the RimWorld? A: They hogged too much TPS and lagged themselves to death.</Binguin_Jokes_31>
+  <Binguin_Jokes_98                       >A dragon girl barges into the colony. Colonist: "Are you here to join us?" Dragon girl: "I'm here to eat your lawn." Colonist: "We only have twisted-meat-flavoured kibble."</Binguin_Jokes_98>
+  <Binguin_Jokes_32                       >A solar panel says to the sun: "Let's do our best again today!" Sun: "I'm clean energy."</Binguin_Jokes_32>
+  <Binguin_Jokes_99                       >How do you know a rattkin raided the kitchen? Because only the bottom shelf is empty.</Binguin_Jokes_99>
+  <Binguin_Jokes_100                       >Does a Monoling without a terminal count as brain-dead?</Binguin_Jokes_100>
+  <Binguin_Jokes_137                       >Ty got treated as an enemy by his parents just for crying a few times.</Binguin_Jokes_137>
+  <Binguin_Jokes_101                       >A jiangshi plays dead during thunderstorms, because feigning death wards off lightning.</Binguin_Jokes_101>
+  <Binguin_Jokes_33                       >Raider asks the surrendering colonist: "What's your secret weapon?" Colonist: "Overtime."</Binguin_Jokes_33>
+  <Binguin_Jokes_34                       >Two colonists argue over which came first, the chicken or the egg. A third says: "Either way it ends up as nutrient paste."</Binguin_Jokes_34>
+  <Binguin_Jokes_138                       >Ty desecrated a peace ritual between two major gangs as a kid, and two hundred enforcers chased him for three blocks.</Binguin_Jokes_138>
+  <Binguin_Jokes_35                       >A colony newbie asks a veteran: "What matters most in a fight?" Veteran: "Surviving." "How do I do that?" "Don't die."</Binguin_Jokes_35>
+  <Binguin_Jokes_102                       >The wolfin insist they're wolves, not dogs - even though they keep saying "I'm dog-tired."</Binguin_Jokes_102>
+  <Binguin_Jokes_36                       >A colonist plants potatoes. That night they're stolen. The next day he plants a field of potato mines.</Binguin_Jokes_36>
+  <Binguin_Jokes_103                       >"Fair-weather friends" is considered a slur against the foxkin and the wolfin.</Binguin_Jokes_103>
+  <Binguin_Jokes_139                       >Ty's family tree has to be rewritten every few days, because every few days he has more relatives.</Binguin_Jokes_139>
+  <Binguin_Jokes_104                       >Someone once tried to stop the foxkin from smoking weed. They failed - because weed is still more normal than streaking.</Binguin_Jokes_104>
+  <Binguin_Jokes_105                       >Which race walks the least steadily? The foxkin - because foxes are sly.</Binguin_Jokes_105>
+  <Binguin_Jokes_37                       >The colonists long deeply for the happy life of hell.</Binguin_Jokes_37>
+  <Binguin_Jokes_106                       >The power goes out and Milila cooks in the dark, mistaking dish soap for soy sauce. The colonists finish the meal and say: "That was refreshingly oil-free."</Binguin_Jokes_106>
+  <Binguin_Jokes_107                       >Q: How do you make Milila's cooking taste good? A: Run it through the nutrient paste dispenser twice.</Binguin_Jokes_107>
+  <Binguin_Jokes_38                       >A colonist tries to teach a parrot to say "Raiders!" The parrot learns to say "We surrender."</Binguin_Jokes_38>
+  <Binguin_Jokes_39                       >The colony children build a snowman in front of a turret. "Is this an attack?" the turret asks. Snowman: "I'm here to apply for the doorman job."</Binguin_Jokes_39>
+  <Binguin_Jokes_108                       >Milila tries to learn stir-fry, and throws a live boomrat into the wok.</Binguin_Jokes_108>
+  <Binguin_Jokes_40                       >A colonist asks a wise man: "How do I tell if someone will do research?" Wise man: "See whether they're still at the hi-tech research bench during a blackout."</Binguin_Jokes_40>
+  <Binguin_Jokes_71                       >Since a pyromaniac set the fuel alight, the colony has one rule: no playing with fire in the storeroom. The next day the quartermaster adds: and no keeping boomrats in there either.</Binguin_Jokes_71>
+  <Binguin_Jokes_41                       >A researcher falls asleep at the bench and dreams up an anti-thermodynamic machine. He wakes up and writes four words: needs air conditioning.</Binguin_Jokes_41>
+  <Binguin_Jokes_109                       >The colony's dragon girl suddenly learns to open the fridge. Investigation reveals the dog taught her.</Binguin_Jokes_109>
+  <Binguin_Jokes_42                       >An air conditioner breaks. "It's sick," the repairman says. Colonist: "An air conditioner can get sick?" Repairman: "It's installed backwards."</Binguin_Jokes_42>
+  <Binguin_Jokes_110                       >A caravan leader asks the colonist: "Why are there so many penguins here?" Colonist: "They're the locals."</Binguin_Jokes_110>
+  <Binguin_Jokes_111                       >Don't worry about dragon girls overhearing your jokes about them. They don't understand them.</Binguin_Jokes_111>
+  <Binguin_Jokes_112                       >When the power goes out, the colonist lights a campfire. The dog comes over, the cat comes over, the penguin comes over. Penguin: "I'm not actually cold, I just wanted to join in."</Binguin_Jokes_112>
+  <Binguin_Jokes_43                       >Why are colony funerals always so short? Because the officiant is afraid of the cold.</Binguin_Jokes_43>
+  <Binguin_Jokes_44                       >There was supposed to be a bass joke here, but I forgot to write it.</Binguin_Jokes_44>
+  <Binguin_Jokes_113                       >Two rattkin were about to freeze to death that winter, until a kind-hearted moose took off her bra and gave it to them, and the two rats made it through the cold.</Binguin_Jokes_113>
+  <Binguin_Jokes_45                       >Q: Why is the maths book always gloomy? A: Because it has too many problems.</Binguin_Jokes_45>
+  <Binguin_Jokes_46                       >A fish dares to surf, but never dares to go online.</Binguin_Jokes_46>
+  <Binguin_Jokes_114                       >Nevalline is a mighty ice dragon - or so everyone thought, until a scyther showed up.</Binguin_Jokes_114>
+  <Binguin_Jokes_115                       >Nevalline are afraid of high temperatures, but they're even more afraid of an awkward silence.</Binguin_Jokes_115>
+  <Binguin_Jokes_47                       >Q: Why do snails run so slow? A: They're carrying a house, and the mortgage isn't paid off.</Binguin_Jokes_47>
+  <Binguin_Jokes_48                       >Q: Why does a phone need a case? A: Because a bare phone gets shy.</Binguin_Jokes_48>
+  <Binguin_Jokes_116                       >The snow-cow girl has horns, is strong, is dumb, gives milk and gives wool. I strongly suspect the snow-cow girl is actually a dragon girl?</Binguin_Jokes_116>
+  <Binguin_Jokes_49                       >Q: Which animal is best at maths? A: The arithmetic (a rat).</Binguin_Jokes_49>
+  <Binguin_Jokes_72                       >A charge lance needs advanced components, but a scyther doesn't. So who's pocketing the kickback?</Binguin_Jokes_72>
+  <Binguin_Jokes_50                       >Q: Why doesn't a moose use a computer? A: It's afraid of stepping on the mouse.</Binguin_Jokes_50>
+  <Binguin_Jokes_51                       >Q: Why do stars always blink? A: The sun is too bright; they can't open their eyes.</Binguin_Jokes_51>
+  <Binguin_Jokes_117                       >Vivi never gets lost, because they have a bee-navigation sense.</Binguin_Jokes_117>
+  <Binguin_Jokes_118                       >Nobody cares where Minqiao's ice cream comes from. All hail the nanomachines.</Binguin_Jokes_118>
+  <Binguin_Jokes_119                       >If hitting is affection and scolding is love, the ant race and the moon rabbit have been married billions of times.</Binguin_Jokes_119>
+  <Binguin_Jokes_120                       >Q: Why doesn't a drunk binguin catch small fish? A: Because the small fish are innocent (not guilty/drunk).</Binguin_Jokes_120>
+  <Binguin_Jokes_140                       >Ty got beaten up by a stranger as a kid, and later found out it was his own uncle.</Binguin_Jokes_140>
+  <Binguin_Jokes_121                       >Q: Which flower blooms the slowest? A: The leisurely orchid.</Binguin_Jokes_121>
+  <Binguin_Jokes_52                       >Q: What gets dirtier the more you wash it? A: Water.</Binguin_Jokes_52>
+  <Binguin_Jokes_122                       >Q: Which race is the quietest? A: The Moyue - nobody can hear her down in the deep sea.</Binguin_Jokes_122>
+  <Binguin_Jokes_123                       >White rain starts falling from the sky. Wait, why are there two ravens?</Binguin_Jokes_123>
+  <Binguin_Jokes_141                       >Ty ran around bare naked in winter as a kid with just a hat on, and didn't get frostbite.</Binguin_Jokes_141>
+  <Binguin_Jokes_124                       >What illness left Epona unable to move? A: A trojan horse virus.</Binguin_Jokes_124>
+  <Binguin_Jokes_53                       >Q: Which mountain is the gentlest? A: The one you can lean on.</Binguin_Jokes_53>
+  <Binguin_Jokes_142                       >Ty confessed to his classmate fifteen times in one day as a kid, got rejected every time, and decided to become a wild man.</Binguin_Jokes_142>
+  <Binguin_Jokes_125                       >Q: Which race loves hide-and-seek the most? A: The qiluo - because they play cat-and-mouse.</Binguin_Jokes_125>
+  <Binguin_Jokes_143                       >When Ty died he was pushed into the crematorium. After the burning, his clothes suddenly appeared and filled the whole chamber.</Binguin_Jokes_143>
+  <Binguin_Jokes_144                       >Ty got bullied by classmates as a kid. The more pocket money he had, the more people came to beat him up.</Binguin_Jokes_144>
+  <Binguin_Jokes_145                       >Ty kept three chicks as a kid. One died. Ty was so sad that he killed the other two as well.</Binguin_Jokes_145>
+  <Binguin_Jokes_126                       >Q: Why doesn't a penguin wear a down jacket? A: Because it is one.</Binguin_Jokes_126>
+  <Binguin_Jokes_54                       >Clouds just love to follow the crowd.</Binguin_Jokes_54>
+  <Binguin_Jokes_55                       >The first person to get a raise is basically adding fuel to the fire.</Binguin_Jokes_55>
+  <Binguin_Jokes_56                       >Q: Which melon is the most bitter? A: The fool (fool-melon).</Binguin_Jokes_56>
+  <Binguin_Jokes_73                       >Q: Why is the mechanoid always cold? A: Because its heart (core) is ice.</Binguin_Jokes_73>
+  <Binguin_Jokes_57                       >Q: Which tea is the most refreshing? A: Po-lice (police).</Binguin_Jokes_57>
+  <Binguin_Mothership_01                   >Must be placed in open air.</Binguin_Mothership_01>
+  <Binguin_Mothership_02                   >Contacting the binguin mothership...</Binguin_Mothership_02>
+  <Binguin_Mothership_03                   >Contact in progress</Binguin_Mothership_03>
+  <Binguin_Mothership_04                   >Try to contact the binguin mothership</Binguin_Mothership_04>
+  <Binguin_Mothership_05                   >Send a vast signal into deep space to try to reach the binguin mothership.\nContact takes 13 days, and will draw many attackers in the meantime.</Binguin_Mothership_05>
+  <Binguin_Mothership_06                   >Transmitter not in place</Binguin_Mothership_06>
+  <Binguin_Mothership_07                   >Must be in open air</Binguin_Mothership_07>
+  <Binguin_Mothership_08                   >Requires an alliance with the binguin</Binguin_Mothership_08>
+  <Binguin_Mothership_09                   >Mothership contact:</Binguin_Mothership_09>
+  <Binguin_Mothership_10                   >Mothership linked—the launch pod can launch</Binguin_Mothership_10>
+  <Binguin_Mothership_11                   >Enter launch pod</Binguin_Mothership_11>
+  <Binguin_Mothership_12                   >Eject occupants</Binguin_Mothership_12>
+  <Binguin_Mothership_13                   >Have the colonists inside leave the launch pod.</Binguin_Mothership_13>
+  <Binguin_Mothership_14                   >Launch the ship!</Binguin_Mothership_14>
+  <Binguin_Mothership_15                   >Ignite and launch toward the binguin mothership (sky-ending).\nThe ship will take every colonist who has entered the launch pod.</Binguin_Mothership_15>
+  <Binguin_Mothership_16                   >No colonist has entered the launch pod</Binguin_Mothership_16>
+  <Binguin_Mothership_17                   >Aboard:</Binguin_Mothership_17>
+  <Binguin_Mothership_18                   >Aboard: empty</Binguin_Mothership_18>
+  <Binguin_Mothership_19                   >(Mothership linked, launch ready)</Binguin_Mothership_19>
+  <Binguin_Mothership_20                   >There is already someone in the launch pod.</Binguin_Mothership_20>
+  <Binguin_Mothership_21                   >Cannot enter the launch bay.</Binguin_Mothership_21>
+  <Binguin_Mothership_22                   > entered the launch bay.</Binguin_Mothership_22>
+  <Binguin_PlaceWorkerFishing_01           >Crab pots must be placed in water or on ice.</Binguin_PlaceWorkerFishing_01>
+  <Binguin_PlaceWorkerFishing_02           >Chum gear must be placed in water.</Binguin_PlaceWorkerFishing_02>
+  <Binguin_PlaceWorkerFishing_03           >Each body of water can hold at most </Binguin_PlaceWorkerFishing_03>
+  <Binguin_PlaceWorkerFishing_04           > chum gear.</Binguin_PlaceWorkerFishing_04>
+  <Binguin_RodShared_01                    >vegetarian</Binguin_RodShared_01>
+  <Binguin_RodShared_02                    >meat</Binguin_RodShared_02>
+  <Binguin_RodShared_03                    >insect meat</Binguin_RodShared_03>
+  <Binguin_RodShared_04                    >twisted meat</Binguin_RodShared_04>
+  <Binguin_RodShared_05                    >human meat</Binguin_RodShared_05>
+  <Binguin_RodShared_06                    >insect jelly</Binguin_RodShared_06>
+  <Binguin_RodShared_07                    >no restrictions</Binguin_RodShared_07>
+  <Binguin_RodShared_08                    >none</Binguin_RodShared_08>
+  <Binguin_RodShared_09                    >Move speed +0.2</Binguin_RodShared_09>
+  <Binguin_RodShared_10                    >Melee multiplier x105%</Binguin_RodShared_10>
+  <Binguin_RodShared_11                    >Immune to toxic buildup</Binguin_RodShared_11>
+  <Binguin_RodShared_12                    >No mental breaks when drafted</Binguin_RodShared_12>
+  <Binguin_RodShared_13                    >Mood +5 after killing an enemy</Binguin_RodShared_13>
+  <Binguin_RodShared_14                    >Mood +3</Binguin_RodShared_14>
+  <Binguin_RodShared_15                    >Injury healing/immunity speed x200%</Binguin_RodShared_15>
+  <Binguin_StatPartRod_01                  >Advanced rod parts (x</Binguin_StatPartRod_01>
+  <Binguin_StatPartRod_02                  >Advanced rod parts (x</Binguin_StatPartRod_02>
+  <Binguin_StatPartRod_03                  >Bait (vegetarian): +0.2</Binguin_StatPartRod_03>
+  <Binguin_StatPartRod_04                  >Bait (insect meat): immune to toxic buildup</Binguin_StatPartRod_04>
+  <Binguin_StatPartRod_05                  >Bait (no restrictions): immunity speed x200%</Binguin_StatPartRod_05>
+  <Binguin_StatPartRod_06                  >Bait (no restrictions): injury healing speed x200%</Binguin_StatPartRod_06>
+  <Binguin_WasteRetaliation_LetterLabel>Toxic waste retaliation</Binguin_WasteRetaliation_LetterLabel>
+  <Binguin_WasteRetaliation_LetterText>The binguin have returned the toxic waste we threw at them, exactly as it came - drop pods slammed straight into the colony, unloading {0} bags of toxic waste and {1} enraged boomalopes.</Binguin_WasteRetaliation_LetterText>
+  <Binguin_BandInvite_Label                >binguin band visit</Binguin_BandInvite_Label>
+  <Binguin_BandInvite_Text                 >A binguin band has sent word through an intermediary: they wish to hold a concert near your colony.\n\nBuild the venue as their marked landmarks show (five instruments), and the band will come and perform. When the performance ends, they will leave a token of thanks on the spot. (It is best to have some chairs to sit on.)\n\nIf the finished parts are torn down midway, the performance cannot take place.</Binguin_BandInvite_Text>
+  <Binguin_BandInvite_Accept               >No problem, we will see to the venue.</Binguin_BandInvite_Accept>
+  <Binguin_BandInvite_Refuse               >Not this time.</Binguin_BandInvite_Refuse>
+  <Binguin_Band_TalkToSinger               >Ask the lead singer to perform</Binguin_Band_TalkToSinger>
+  <Binguin_BandQuest_Name                  >binguin band visit</Binguin_BandQuest_Name>
+  <Binguin_BandQuest_Desc                  >A binguin band has sent word through an intermediary: they wish to hold a concert near your colony.\n\nOnce you accept, they will drop a [venue marker] near your colony by drop pod - build the venue as the blueprints on the marker show (five instruments).\n\nWhen the band arrives, right-click the [lead singer] to talk and begin the performance (it is best to have some chairs to sit on).\n\nNote: if the performance has not begun within 4 hours of the band's arrival, someone will urge you on; if 6 hours pass without a performance, they will leave (quest failed).\n\nWhen the performance ends, the band will leave a token of thanks on the spot.</Binguin_BandQuest_Desc>
+  <Binguin_BandMarkerDropped_Label         >Band venue marker delivered</Binguin_BandMarkerDropped_Label>
+  <Binguin_BandMarkerDropped_Text          >The binguin band has sent the venue marker by drop pod.\n\nIt is an [installable] marker: find a spacious spot on your map and place it (press R to rotate). Once placed, the blueprints will unfold on their own - simply build as they show.\n\nOnce it is built, the band will come.</Binguin_BandMarkerDropped_Text>
+
+  <!-- ====== 钓到企鹅！（2026-09-24）机制见 Source/Fishing_Binguin.cs ======
+       ★ 注意：本文件整体还是中文占位（与 ChineseSimplified 同内容，历史遗留）。
+         下面两条按英文写了；若要统一，需把整个文件一起翻一遍。 -->
+  <Binguin_FishingCatch_01                 >The rod bends hard — whatever is on the line, it is not a fish...</Binguin_FishingCatch_01>
+  <Binguin_FishingCatch_02                 >You reeled in {0}! This Binguin refugee ({1}) is still twitching — it looks like paralytic abasia, and she should recover in about {2} days.\n\nCarry her to a bed and rescue her first; decide whether to keep her afterwards.</Binguin_FishingCatch_02>
+
+  <!-- ====== 钓竿装配台：地图连续点选 4 次配件（2026-09-26）======
+       机制见 Source/RodPartPicker_Binguin.cs。
+       {0} = 当前第几步；{1} = 共几步；{2} = 这一步要选的配件名称。 -->
+  <Binguin_RodPick_01                      >Assemble rod ({0}/{1}): click the {2} on the map, ESC to cancel</Binguin_RodPick_01>
+  <Binguin_RodPick_06                      >No colonist is available to assemble (all downed or dead).</Binguin_RodPick_06>
+  <Binguin_RodPick_07                      >Assembly cancelled.</Binguin_RodPick_07>
+  <Binguin_RodPick_08                      >No usable {0} on the map — assembly cancelled.</Binguin_RodPick_08>
+  <Binguin_RodPick_09                      >Already picking parts — finish it or press ESC to cancel.</Binguin_RodPick_09>
+  <Binguin_RodPick_10                      >Click a colonist to do the assembly, ESC to cancel</Binguin_RodPick_10>
+  <Binguin_RodPick_11                      >{0} can't assemble right now (downed / dead / not here) — pick someone else.</Binguin_RodPick_11>
+  <Binguin_RodPick_12                      >Parts chosen:</Binguin_RodPick_12>
+  <Binguin_RodPick_13                      >No colonist can assemble right now (all downed / dead).</Binguin_RodPick_13>
+  <Binguin_RodPick_14                      >Start assembly</Binguin_RodPick_14>
+  <Binguin_RodPick_15                      >Assembly could not start (may be missing 4 advanced components).</Binguin_RodPick_15>
+
+  <!-- ============ Void Sword · Zenith Fish Strike (2026-10-06) ============ -->
+  <Binguin_VoidSword_01                    >No target was struck.</Binguin_VoidSword_01>
+  <Binguin_VoidSword_02                    >Zenith Fish Strike! {0} slashes · {1} targets · {2} fish cycling</Binguin_VoidSword_02>
+
+  <!-- ============ C# 文案（2026-10-09 从硬编码重构为语言键）============ -->
+  <Binguin_AssembleRod_SpawnFailed         >Failed to create the unfinished rod; assembly aborted (the attachments are still where they were, so you can retry).</Binguin_AssembleRod_SpawnFailed         >
+  <Binguin_BandQuest_Title                 >A binguin band wants to hold a concert at your colony.</Binguin_BandQuest_Title                 >
+  <Binguin_BandQuest_Waiting               >The binguin band has waited 4 hours. It is time to ask the lead singer to begin the concert.</Binguin_BandQuest_Waiting               >
+  <Binguin_Band_Arrived                    >The binguin band and {0} audience members are arriving from the map edge! Talk to the lead singer to begin.</Binguin_Band_Arrived                    >
+  <Binguin_Band_ColonistsAttended          >({0} colonists attended the concert)</Binguin_Band_ColonistsAttended          >
+  <Binguin_Band_ConcertEnd                 >The concert is over. The band and the audience have left.</Binguin_Band_ConcertEnd                 >
+  <Binguin_Band_ConcertStart               >The concert begins! The binguin band takes the stage, and the whole crowd falls silent.</Binguin_Band_ConcertStart               >
+  <Binguin_Band_Declined                   >You politely declined the binguin band's request to perform.</Binguin_Band_Declined                   >
+  <Binguin_Band_Empty                      >(empty)</Binguin_Band_Empty                      >
+  <Binguin_Band_LeftGift                   >The band left behind {0}.</Binguin_Band_LeftGift                   >
+  <Binguin_Band_LeftGift2                  >The band left behind {0} weapons.</Binguin_Band_LeftGift2                  >
+  <Binguin_Band_MarkerSent                 >The binguin band has sent a venue marker. Build it as shown in the blueprint and they will call.</Binguin_Band_MarkerSent                 >
+  <Binguin_Band_MayLeave                   >(these pawns may leave on their own)</Binguin_Band_MayLeave                   >
+  <Binguin_Band_NoVenue                    >The binguin band could not find a suitable place to set up, and will come another day.</Binguin_Band_NoVenue                    >
+  <Binguin_CombinedRaid                    >Frostfang has launched a combined raid of [{0}] and [{1}]!</Binguin_CombinedRaid                    >
+  <Binguin_Concert_EnemyMoved              >The raiders are moved by the music and decide to withdraw.</Binguin_Concert_EnemyMoved              >
+  <Binguin_Concert_EnemyWatching           >The binguin concert is in full swing. The raiders hear it from afar and decide to wait and see.</Binguin_Concert_EnemyWatching           >
+  <Binguin_ResumeRod_NoJobDef              >Cannot continue assembly (job def not found).</Binguin_ResumeRod_NoJobDef              >
+  <Binguin_Ticket_Dropped                  > silver (dropped = {0})</Binguin_Ticket_Dropped                  >
+  <Binguin_Ticket_Income                   >Concert ticket income: {0} silver ({1} viewers x {2} silver x venue factor {3})</Binguin_Ticket_Income                   >
+  <Binguin_Ticket_Income2                  >Concert ticket income {0} silver, but no drop spot was found near the venue; the silver was credited directly.</Binguin_Ticket_Income2                  >
+  <Binguin_UnfinishedRod_Continue          >Continue assembly</Binguin_UnfinishedRod_Continue          >
+  <Binguin_UnfinishedRod_MissingParts      >Still missing required attachments; cannot continue.\nCurrent: {0}</Binguin_UnfinishedRod_MissingParts      >
+  <Binguin_UnfinishedRod_PartsIncomplete   >This rod is missing attachments and cannot be finished.</Binguin_UnfinishedRod_PartsIncomplete   >
+  <Binguin_UnfinishedRod_SendColonist      >Send a colonist to continue assembling this rod.\nCurrent progress: {0} / {1}\nCurrent: {2}</Binguin_UnfinishedRod_SendColonist      >
+  <Binguin_VoidStrike_Disabled             >The "Zenith Fish Slash" is a test feature; enable it in Options -> Mod settings -> Binguin.</Binguin_VoidStrike_Disabled             >
+  <Binguin_Weather_Clear                   >Clear</Binguin_Weather_Clear                   >
+  <Binguin_Weather_Rain                    >Rain</Binguin_Weather_Rain                    >
+  <Binguin_Weather_Snow                    >Snow</Binguin_Weather_Snow                    >
+  <Binguin_Weather_Snowstorm               >Snowstorm</Binguin_Weather_Snowstorm               >
+  <Binguin_Weather_Thunderstorm            >Thunderstorm</Binguin_Weather_Thunderstorm            >
+  <Binguin_WorkOnRod_PartsIncomplete       >This rod is still missing attachments and cannot be worked on.</Binguin_WorkOnRod_PartsIncomplete       >
+</LanguageData>

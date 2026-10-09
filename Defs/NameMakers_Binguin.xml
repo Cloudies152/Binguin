@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  据点命名器：XX观察站，其中 XX 为屈原诗歌（楚辞）中的名词。
+  ★ 1.6 起 NameMakerDef 已移除，据点命名改为 RulePackDef
+    （FactionDef.settlementNameMaker 指向 RulePackDef）。
+  ★ 规则关键词已按原版 RulePacks_Namers_Factions.xml 核对：入口规则为 r_name
+    （如 NamerInitialSettlementColony 的 "r_name->Colony"）。
+  完整词表与出处见仓库根目录 README.md。
+-->
+<Defs>
+  <RulePackDef>
+    <defName>BinguinSettlementNameMaker</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->昆仑观察站</li>
+        <li>r_name->阆风观察站</li>
+        <li>r_name->县圃观察站</li>
+        <li>r_name->增城观察站</li>
+        <li>r_name->不周观察站</li>
+        <li>r_name->阊阖观察站</li>
+        <li>r_name->天津观察站</li>
+        <li>r_name->西极观察站</li>
+        <li>r_name->扶桑观察站</li>
+        <li>r_name->若木观察站</li>
+        <li>r_name->瑶台观察站</li>
+        <li>r_name->白水观察站</li>
+        <li>r_name->赤水观察站</li>
+        <li>r_name->流沙观察站</li>
+        <li>r_name->云霓观察站</li>
+        <li>r_name->九河观察站</li>
+        <li>r_name->龙堂观察站</li>
+        <li>r_name->紫贝观察站</li>
+        <li>r_name->珠宫观察站</li>
+        <li>r_name->文鱼观察站</li>
+        <li>r_name->北斗观察站</li>
+        <li>r_name->天狼观察站</li>
+        <li>r_name->彗星观察站</li>
+        <li>r_name->九州观察站</li>
+        <li>r_name->飘风观察站</li>
+        <li>r_name->赤豹观察站</li>
+        <li>r_name->文狸观察站</li>
+        <li>r_name->辛夷观察站</li>
+        <li>r_name->桂旗观察站</li>
+        <li>r_name->洞庭观察站</li>
+        <li>r_name->沅湘观察站</li>
+        <li>r_name->芳洲观察站</li>
+        <li>r_name->杜若观察站</li>
+        <li>r_name->沧浪观察站</li>
+        <li>r_name->烛龙观察站</li>
+        <li>r_name->雷渊观察站</li>
+        <li>r_name->幽都观察站</li>
+        <li>r_name->飞雪观察站</li>
+        <li>r_name->霰雪观察站</li>
+        <li>r_name->深林观察站</li>
+        <li>r_name->玄武观察站</li>
+        <li>r_name->玄冥观察站</li>
+        <li>r_name->湘灵观察站</li>
+        <li>r_name->冯夷观察站</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+
+  <!-- ★ 2026-09 用户拍板：冰鹅族剧本开局时，玩家派系名固定为「新观察站」
+       （此前玩家派系名走上面的 XX观察站 随机规则）。
+       说明：RulePackDef 里一条 r_name 直出固定串即可当定名器用。 -->
+  <RulePackDef>
+    <defName>BinguinPlayerFactionNameMaker</defName>
+    <rulePack>
+      <rulesStrings>
+        <li>r_name->新观察站</li>
+      </rulesStrings>
+    </rulePack>
+  </RulePackDef>
+</Defs>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>冰鹅族 Binguin Race</name>
+  <author>Binguin</author>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <packageId>binguin.race</packageId>
+  <modDependencies>
+    <li>
+      <packageId>brrainz.harmony</packageId>
+      <displayName>Harmony</displayName>
+      <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+      <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+    </li>
+    <li>
+      <packageId>erdelf.HumanoidAlienRaces</packageId>
+      <displayName>Humanoid Alien Races</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=839005762</steamWorkshopUrl>
+    </li>
+  </modDependencies>
+  <loadAfter>
+    <li>brrainz.harmony</li>
+    <li>erdelf.HumanoidAlienRaces</li>
+    <!-- ★ 2026-09-26：让 Odyssey 先加载。
+         理由：Defs/TraderKinds_Binguin.xml 里的鱼生成器用 <categoryDef>Fish</categoryDef>，
+         而 ThingCategoryDef「Fish」是 Odyssey 的内容，必须先于本 mod 解析出来。
+         （该生成器同时带 MayRequire 兜底：没装 Odyssey 时整条跳过、不报错。） -->
+    <li>ludeon.rimworld.odyssey</li>
+  </loadAfter>
+  <description>来自寒冬星球的企鹅娘种族「冰鹅族」
+兼容全部 DLC（Royalty / Ideology / Biotech / Anomaly / Odyssey），未安装的 DLC 内容自动不加载。
+需要前置：Harmony、Humanoid Alien Races 2.0（外星人框架）。
+
+A race of penguin girls from a frozen winter world: the binguin.
+Compatible with all DLC (Royalty / Ideology / Biotech / Anomaly / Odyssey); content from uninstalled DLC is simply not loaded.
+Requires: Harmony, Humanoid Alien Races 2.0.</description>
+</ModMetaData>

@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
+  <Binguin_RodAssemblyTable.label>Rod assembly table</Binguin_RodAssemblyTable.label>
+  <Binguin_RodAssemblyTable.description>The workbench of the binguin's engineer-fishers: built from steel and plasteel, used to craft rod parts (shafts, tips, hooks) and to assemble the chosen parts and bait into a one-of-a-kind advanced rod.</Binguin_RodAssemblyTable.description>
+  <Binguin_UnfinishedRod.label>Rod (unfinished)</Binguin_UnfinishedRod.label>
+  <Binguin_UnfinishedRod.description>A half-finished rod. The parts are already attached; only the continued fitting and polishing remains - any colonist can take over the work.</Binguin_UnfinishedRod.description>
+  <Binguin_RodShaft_Long.label>Long shaft</Binguin_RodShaft_Long.label>
+  <Binguin_RodShaft_Long.description>Long shaft: melee damage multiplier x120%. (Material determines the cooldown multiplier)</Binguin_RodShaft_Long.description>
+  <Binguin_RodShaft_Short.label>Short shaft</Binguin_RodShaft_Short.label>
+  <Binguin_RodShaft_Short.description>Short shaft: attack interval x80%. (Material determines the cooldown multiplier)</Binguin_RodShaft_Short.description>
+  <Binguin_RodTip_Blade.label>Blade tip</Binguin_RodTip_Blade.label>
+  <Binguin_RodTip_Blade.description>Blade tip: attack type becomes cut/stab. (Material determines damage and armor penetration multipliers)</Binguin_RodTip_Blade.description>
+  <Binguin_RodTip_Hammer.label>Hammer tip</Binguin_RodTip_Hammer.label>
+  <Binguin_RodTip_Hammer.description>Hammer tip: attack type becomes blunt/poke. (Material determines damage and armor penetration multipliers)</Binguin_RodTip_Hammer.description>
+  <Binguin_RodHook_Straight.label>Straight hook</Binguin_RodHook_Straight.label>
+  <Binguin_RodHook_Straight.description>Straight hook: grants the ability "Impale" - deals 200% of the weapon's damage stat to all enemies within 10 cells in front, cooldown 10 seconds. (Material determines the finished item's durability multiplier)</Binguin_RodHook_Straight.description>
+  <Binguin_RodHook_Curved.label>Curved hook</Binguin_RodHook_Curved.label>
+  <Binguin_RodHook_Curved.description>Curved hook: grants the ability "Hook the fish" - target a unit within a 31-cell radius and pull it in front of you, cooldown 10 seconds. (Material determines the finished item's durability multiplier)</Binguin_RodHook_Curved.description>
+  <Binguin_RodBait.label>fish bait</Binguin_RodBait.label>
+  <Binguin_RodBait.description>Bait prepared from food, granting the rod's bearer special bonuses. Made at the fishing rod assembly table from 1-2 foods: vegan (move speed +0.2), meat (melee multiplier x105%), insect meat (poison immunity), twisted meat (no mental breaks when drafted), human meat (+5 mood after killing an enemy), insect jelly (+3 mood), unrestricted (self-heal and immunity speed x200%).</Binguin_RodBait.description>
+  <Binguin_AdvancedRod_Blade.label>advanced fishing rod (blade)</Binguin_AdvancedRod_Blade.label>
+  <Binguin_AdvancedRod_Blade.description>A custom rod assembled by the binguin from parts: a blade head that strikes with both cut and stab. Damage and cooldown vary with the material and type of the shaft, head and hook, and the bait grants further bonuses.</Binguin_AdvancedRod_Blade.description>
+  <Binguin_AdvancedRod_Blade.label>shaft blade (cut)</Binguin_AdvancedRod_Blade.label>
+  <Binguin_AdvancedRod_Blade.label>shaft tip (stab)</Binguin_AdvancedRod_Blade.label>
+  <Binguin_AdvancedRod_Hammer.label>advanced fishing rod (hammer)</Binguin_AdvancedRod_Hammer.label>
+  <Binguin_AdvancedRod_Hammer.description>A custom rod assembled by the binguin from parts: a hammer head that strikes with weighty blunt force and pokes. Damage and cooldown vary with the material and type of the shaft, head and hook, and the bait grants further bonuses.</Binguin_AdvancedRod_Hammer.description>
+  <Binguin_AdvancedRod_Hammer.label>shaft hammer (blunt)</Binguin_AdvancedRod_Hammer.label>
+  <Binguin_AdvancedRod_Hammer.label>shaft handle (poke)</Binguin_AdvancedRod_Hammer.label>
+  <Binguin_VoidSwordFish.label>Void Sword Fish</Binguin_VoidSwordFish.label>
+  <Binguin_VoidSwordFish.description>The final work of the binguin way of fishing: a sword condensed from twenty-five each of the world's fourteen kinds of fish. The blade itself is a fish - scales for an edge, tail for a hilt. When the wielder recites the true words, the phantom shapes of the fourteen fish fall one after another from the zenith, each bearing a cold energy that can shatter bone and blood.\n\n(Ranged strikes are a test feature and are off by default; enable them in Options -> Mod Settings -> Binguin.)</Binguin_VoidSwordFish.description>
+  <Binguin_VoidSwordFish.label>fish body (blunt)</Binguin_VoidSwordFish.label>
+  <Binguin_CrabTrap.label>crab trap</Binguin_CrabTrap.label>
+  <Binguin_CrabTrap.description>A crab trap woven of cold iron by the binguin. Place it in water to catch that water's fish, or on ice to catch marine fish automatically. It catches once at 6am, noon, 6pm and midnight each day.</Binguin_CrabTrap.description>
+  <Binguin_FishingBait.label>groundbait</Binguin_FishingBait.label>
+  <Binguin_FishingBait.description>A bait rack made of cold iron and components by binguin fishers. Put any food into it (up to 5 nutrition) and it will consume 0.5 nutrition per day to scatter bait across the water it stands in, letting the fish population grow 50% faster each day. At most 2 may be placed per body of water.</Binguin_FishingBait.description>
+  <Binguin_FishingRod.label>mass-produced fishing rod</Binguin_FishingRod.label>
+  <Binguin_FishingRod.description>For reasons no one knows, the head of this rod is bound with uranium. Held in hand it serves as a melee weapon: the handle pokes, the head blunts. When used to fish, catch rate is increased by 50%.</Binguin_FishingRod.description>
+  <Binguin_FishingRod.label>handle</Binguin_FishingRod.label>
+  <Binguin_FishingRod.label>head</Binguin_FishingRod.label>
+  <Binguin_FishPond.label>fish pond</Binguin_FishPond.label>
+  <Binguin_FishPond.description>A shallow pool ringed with cold iron by the binguin; place a single fry in it to begin raising fish. Ponds built next to one another join into one larger pond, and capacity grows with the number of ponds (20 fish each). You may assign colonists to fish, add fish food to speed breeding, or switch on the built-in crab trap to catch fish automatically. A fish pond is an unremarkable thing, and raiders will not single it out for attack.</Binguin_FishPond.description>
+  <Binguin_StinkFishCan.label>stinkfish can</Binguin_StinkFishCan.label>
+  <Binguin_StinkFishCan.description>A can of fish left to rot. Smash it open and the whole area is cloaked in a nauseating stench - to a binguin it smells rather fine, but other races can hardly bear it. Load it into a mortar and fire it, or bury it in the ground as a trap.</Binguin_StinkFishCan.description>
+  <Bullet_Binguin_StinkFishCan.label>stinkfish can</Bullet_Binguin_StinkFishCan.label>
+  <Bullet_Binguin_StinkFishCan.label>stinkfish can</Bullet_Binguin_StinkFishCan.label>
+  <Binguin_StinkFishCanTrap.label>Stinkfish can trap</Binguin_StinkFishCanTrap.label>
+  <Binguin_StinkFishCanTrap.description>Two stinkfish cans wired to a trigger. One touch and they blow, and the whole area is swallowed in stench. Because they are hidden within the surrounding terrain, they cannot be placed right next to another trap. Animals at peace can sense them.</Binguin_StinkFishCanTrap.description>
+  <Binguin_ScoutHelmet.label>Scout helmet</Binguin_ScoutHelmet.label>
+  <Binguin_ScoutHelmet.description>A high-tech helmet of the binguin scouts, its blue-and-white ice-etched shell housing a miniature status computer. The composite plating offers astonishing resistance to gunfire and cuts—the whole frostplain is the scout's field of battle.</Binguin_ScoutHelmet.description>
+  <Binguin_ScoutArmor.label>Scout armor</Binguin_ScoutArmor.label>
+  <Binguin_ScoutArmor.description>Light power armor of the binguin scouts. Its ice-woven mesh is light as nothing and harder than cold iron. Padding and shell give double protection, and it endures extreme cold. Vacuum-sealed. Across the Endless Snow, the scouts come and go like the wind.</Binguin_ScoutArmor.description>
+  <Binguin_SpiritRobe.label>Binguin spirit robe</Binguin_SpiritRobe.label>
+  <Binguin_SpiritRobe.description>The weavers of the binguin warp silk cloth and weft plasteel into this robe that shimmers with a faint blue light. Threads of the finest crystal are woven through the fabric, and the cold scatters the moment it touches them—standing in a blizzard in this robe, even your breathing grows gentle, and you become a gust of winter wind.</Binguin_SpiritRobe.description>
+  <Binguin_IceCrown.label>Ice crown</Binguin_IceCrown.label>
+  <Binguin_IceCrown.description>The crown of the binguin Chief Observer: a narrow band of polished frost crystal, with five spikes of differing lengths rising from its front. At a touch of light it breaks into fine blue and white starbursts.</Binguin_IceCrown.description>
+  <Binguin_MilitaryHelmet.label>Binguin helmet</Binguin_MilitaryHelmet.label>
+  <Binguin_MilitaryHelmet.description>A military helmet in blue and black, covering the whole head. Tougher and warmer than a plain flak helmet, but it still will not stop an armor-piercing round from the front.</Binguin_MilitaryHelmet.description>
+  <Binguin_Band_Keyboard.label>Binguin keyboard</Binguin_Band_Keyboard.label>
+  <Binguin_Band_Keyboard.description>The electronic keyboard used by binguin bands. Its tone rings clear as broken ice.</Binguin_Band_Keyboard.description>
+  <Binguin_Band_DrumKit.label>Binguin drum kit</Binguin_Band_DrumKit.label>
+  <Binguin_Band_DrumKit.description>The drum kit of a binguin band. It can set the whole ice sheet humming.</Binguin_Band_DrumKit.description>
+  <Binguin_Band_Microphone.label>Binguin microphone</Binguin_Band_Microphone.label>
+  <Binguin_Band_Microphone.description>The standing microphone used by the lead singer of a binguin band. They say it amplifies the chill in a song as well.</Binguin_Band_Microphone.description>
+  <Binguin_Band_Guitar.label>Binguin guitar</Binguin_Band_Guitar.label>
+  <Binguin_Band_Guitar.description>The electric guitar of a binguin band. It carries a fine metallic quaver when plucked.</Binguin_Band_Guitar.description>
+  <Binguin_Band_Bass.label>Binguin bass</Binguin_Band_Bass.label>
+  <Binguin_Band_Bass.description>The four-string bass of a binguin band. It is the steady backbone of the whole band.</Binguin_Band_Bass.description>
+  <Binguin_BandOutfit.label>Binguin band outfit</Binguin_BandOutfit.label>
+  <Binguin_BandOutfit.description>The stage outfit of a binguin band. Over the everyday dress it is covered in sequins and fringe that scatter fine cold glints with every movement. Step on stage, and you are the focus by your own doing.</Binguin_BandOutfit.description>
+  <Binguin_BandMarker.label>Concert marker</Binguin_BandMarker.label>
+  <Binguin_BandMarker.description>Marks the ground where a binguin band will perform. Once it is built from the blueprint, the band will come calling.</Binguin_BandMarker.description>
+  <Binguin_Recycler.label>Binguin recycler</Binguin_Recycler.label>
+  <Binguin_Recycler.description>A recycler built of steel by the binguin, which breaks toxic waste down into renewable minerals. It runs automatically once connected to power, and can recover steel, plasteel, uranium, gold or silver.</Binguin_Recycler.description>
+  <Binguin_AtmosphereController.label>binguin atmosphere controller</Binguin_AtmosphereController.label>
+  <Binguin_AtmosphereController.description>A device by which the binguin drive the heavens with cold energy. Once powered, it must charge for 24 hours at 700W before it can command the weather once; when fully charged it drops automatically into a low-power mode (10W), in which the weather may be turned to clear, rain, thunderstorm, snow or snowstorm. After each command it must charge again for 24 hours, and while charging the skies cannot be changed a second time.</Binguin_AtmosphereController.description>
+  <Binguin_AutoStoneMachine.label>auto stone machine</Binguin_AutoStoneMachine.label>
+  <Binguin_AutoStoneMachine.description>An automated all-in-one stone machine of binguin make. Once powered it quarries the rock beneath the ground by itself; with stonecutting mode engaged, the rock it takes is cut straight into stone bricks, sparing the hauling and cutting by hand. Takes up two cells, draws 200W.</Binguin_AutoStoneMachine.description>
+  <Binguin_AdvancedPollutionPump.label>advanced pollution pump</Binguin_AdvancedPollutionPump.label>
+  <Binguin_AdvancedPollutionPump.description>A pollution pump improved by the binguin: four times the efficiency of the original pollution pump, with twice the purification radius. The pollution it draws out still congeals into toxic wastepacks, which must be hauled away. Draws 100W.</Binguin_AdvancedPollutionPump.description>
+  <Binguin_MachiningTable.label>binguin machining table</Binguin_MachiningTable.label>
+  <Binguin_MachiningTable.description>A machining table of binguin make, built from steel mechanisms, running as ever in the biting cold. Used to craft weapons and armor.</Binguin_MachiningTable.description>
+  <Binguin_TailoringTable.label>binguin tailoring table</Binguin_TailoringTable.label>
+  <Binguin_TailoringTable.description>The binguin electric tailoring table, its blue-black frame traced with frost patterns, weaving garments from cold-ice fiber. It runs as ever in the cold.</Binguin_TailoringTable.description>
+  <Binguin_Duster.label>binguin duster</Binguin_Duster.label>
+  <Binguin_Duster.description>The long duster worn by binguin observers: its hem falls to the calf, turning wind, turning sand, and turning the noonday sun besides. A layer of fine down is quilted into its seams, keeping off dust and holding in warmth both. When an observer goes out from the observation post to hunt, it is the surest thing to wear.</Binguin_Duster.description>
+  <Binguin_Parka.label>binguin parka</Binguin_Parka.label>
+  <Binguin_Parka.description>The most vital coat on the far northern icefields: thick down lining, cinched cuffs and collar, so that no snowstorm gets in and no warmth gets out. In it, a binguin guard can stand a whole night in the field at minus fifty degrees.</Binguin_Parka.description>
+  <Binguin_Tribalwear.label>binguin tribalwear</Binguin_Tribalwear.label>
+  <Binguin_Tribalwear.description>A one-piece garment of thick cloth sewn by the binguin, covering shoulders, arms, torso and legs. Unhurried even in bitter cold.</Binguin_Tribalwear.description>
+  <Binguin_CosNine.label>(9) outfit</Binguin_CosNine.label>
+  <Binguin_CosNine.description>A dress pieced together in ice blue and pure white, with one enormous bow. It holds a wondrous power: a binguin girl who puts it on cannot help but throw her chest out and speak a few notches louder.</Binguin_CosNine.description>
+  <Binguin_CosDaiyousei.label>Daiyousei outfit</Binguin_CosDaiyousei.label>
+  <Binguin_CosDaiyousei.description>A dress of pale green and white, with a thin blue ribbon at the waist. Beside that ice-blue one, it is far quieter; yet a binguin who wears it can always charm the children and young animals of the icefield into perfect obedience.</Binguin_CosDaiyousei.description>
+  <Binguin_AtmosphereFreezer.label>atmosphere freezer</Binguin_AtmosphereFreezer.label>
+  <Binguin_AtmosphereFreezer.description>A low-temperature device knocked together on the spot by binguin engineers. Cold crystal arrays draw the heat out of everything around them, and once it runs, the temperature of the whole region slides slowly downward—this is how they bring people to yield without shedding blood. The device itself takes no power and no fuel; set down, it goes on drawing heat until it is deconstructed or smashed.</Binguin_AtmosphereFreezer.description>
+  <Binguin_SignalRelay.label>binguin large signal transmitter</Binguin_SignalRelay.label>
+  <Binguin_SignalRelay.description>A tall beacon tower of frost crystal that hurls vast signals into deep space with binguin observation technology. It must work in the open—a roof screens out the whispers of the stars. Only while allied with the binguin may you ask them to call their mothership for you.</Binguin_SignalRelay.description>
+  <Binguin_ShipCapsule.label>binguin ship-type launch pod</Binguin_ShipCapsule.label>
+  <Binguin_ShipCapsule.description>A starship launch pod large enough to hold colonists: a replica of the docking bay of the binguin mothership. Colonists enter it and, once the mothership confirms the course, it can be ignited—bound for the mothership, or out among the stars once more.</Binguin_ShipCapsule.description>
+  <Binguin_FishJerky.label>fish jerky</Binguin_FishJerky.label>
+  <Binguin_FishJerky.description>Strips of fish dried in the binguin fashion. They keep for a long time, salty and chewy, and they are the travel ration of the cold rim.</Binguin_FishJerky.description>
+  <Binguin_CheeseSticks.label>cheese stick</Binguin_CheeseSticks.label>
+  <Binguin_CheeseSticks.description>Cheese curds pressed into sticks. Lightly salted with a sweet finish, honestly nourishing, and a standing snack at the observation post.</Binguin_CheeseSticks.description>
+  <Binguin_Table.label>binguin table</Binguin_Table.label>
+  <Binguin_Table.description>A blue-and-black dining table of ice and snow, its top as smooth as a sheet of ice. The binguin like to gather around it, taking their meal while writing down the day's observations.</Binguin_Table.description>
+  <Binguin_Chair.label>binguin chair</Binguin_Chair.label>
+  <Binguin_Chair.description>A comfortable chair in blue and black, its back tipped slightly rearward - made for long hours bent over one's observations.</Binguin_Chair.description>
+  <Binguin_Stool.label>binguin stool</Binguin_Stool.label>
+  <Binguin_Stool.description>A plain, solid little stool in blue and black. Not what anyone would call comfortable, but better than standing.</Binguin_Stool.description>
+  <Binguin_Dresser.label>binguin dresser</Binguin_Dresser.label>
+  <Binguin_Dresser.description>A low dresser in blue and black tones. It holds clothing, and also serves to display observation manuscripts and ice crystal specimens.</Binguin_Dresser.description>
+  <Binguin_EndTable.label>binguin end table</Binguin_EndTable.label>
+  <Binguin_EndTable.description>A small blue-and-black end table. An ice lamp, a few rolls of observation notes - it suits them exactly.</Binguin_EndTable.description>
+  <Binguin_Bed.label>binguin bed</Binguin_Bed.label>
+  <Binguin_Bed.description>A single bed in blue and black, its quilt stuffed with sun-warmed down. Even a cold night passes in sleep.</Binguin_Bed.description>
+  <Binguin_SnowflakeTuque.label>binguin snowflake tuque</Binguin_SnowflakeTuque.label>
+  <Binguin_SnowflakeTuque.description>A soft knitted cap with a ring of white lace crocheted along the brim and a six-pointed snowflake pinned at the crown - each one, they say, cut by hand by an observer on the day of the first snow. It is thicker than the standard tuque, and it is passable against wind and snow, and passable at keeping the ears warm. As for axes and blades... do not count on it.</Binguin_SnowflakeTuque.description>
+  <Binguin_PlumeCirclet.label>binguin plume circlet</Binguin_PlumeCirclet.label>
+  <Binguin_PlumeCirclet.description>A circlet woven from down, with three white plumes of differing lengths set at the front, each tip bearing an ice crystal the size of a grain of rice. The girls of the observation post say that if you wear it out across the snowfields, even the wind is willing to go around you. Compared with the crude plume circlets of the tribes, it is woven more tightly, so it guards the crown and keeps the forehead warm.</Binguin_PlumeCirclet.description>
+  <Binguin_RedScarf.label>binguin red scarf</Binguin_RedScarf.label>
+  <Binguin_RedScarf.description>A thick red woolen scarf, wound twice around the neck, its two hanging ends tucked into the collar. Nik chong q bi ma?</Binguin_RedScarf.description>
+  <Binguin_SpiritIceRock.label>spirit ice rock</Binguin_SpiritIceRock.label>
+  <Binguin_SpiritIceRock.description>Spirit ice rock condensed by the Ice Crown: hard, cold, enough to stop bullets and blizzard alike - yet after six hours it breaks back into fine shards of ice.</Binguin_SpiritIceRock.description>
+  <Binguin_PenguinJumpsuit.label>penguin jumpsuit</Binguin_PenguinJumpsuit.label>
+  <Binguin_PenguinJumpsuit.description>At once the most ordinary and the most dear of binguin garments: a thick one-piece suit, its hood, cuffs and trouser legs all sewn fast, a pale panel pieced across the front like a white belly, and a short downy tail stitched at the back. Wrapped in it, wind and snow and blowing dust are all kept beyond the down.</Binguin_PenguinJumpsuit.description>
+  <Binguin_MeteorGuide.label>binguin meteor guide</Binguin_MeteorGuide.label>
+  <Binguin_MeteorGuide.description>The masterwork of binguin observers: it scans the heavens with a gravity field, catches the falling meteorites, and guides them at need into a chosen area. It must stand in the open - a roof screens out its line of sight.</Binguin_MeteorGuide.description>
+  <Binguin_MeteoriteIncoming.label>meteorite (falling)</Binguin_MeteoriteIncoming.label>
+  <Binguin_GateShield.label>Gate Shield</Binguin_GateShield.label>
+  <Binguin_GateShield.description>The heaviest protection the binguin bear: a two-layer shield. Its bearer cannot shoot, but stands like a wall in melee - with it they hold every gate of the snowfield.</Binguin_GateShield.description>
+  <Binguin_GateShieldField.label>Gate Shield field</Binguin_GateShieldField.label>
+  <Binguin_GateShieldField.description>The outer ice barrier of a Gate Shield (generated by its wearer; it should not exist on its own).</Binguin_GateShieldField.description>
+  <Binguin_IceRock.label>Ice rock</Binguin_IceRock.label>
+  <Binguin_IceRock.description>A block of ice-blue stone mined from deep within the frozen layers of the cold plains, chill and crystalline. Can be cut into ice rock bricks at a stonecutter's table.</Binguin_IceRock.description>
+  <Binguin_IceRockBrick.label>Ice rock brick</Binguin_IceRockBrick.label>
+  <Binguin_IceRockBrick.description>An ice-blue brick cut from ice rock. Lighter and tougher than ordinary stone, and much favored by binguin architects.</Binguin_IceRockBrick.description>
+  <Binguin_PenguinBoard.label>penguin board</Binguin_PenguinBoard.label>
+  <Binguin_PenguinBoard.description>A gliding board polished by binguin crafters. Strap it to your waist and it is ready to use.</Binguin_PenguinBoard.description>
+  <Binguin_FlakVest.label>binguin flak vest</Binguin_FlakVest.label>
+  <Binguin_FlakVest.description>A blue-and-black flak vest with armor plates set into the chest and back. It gives good protection against bullets and cuts, and is exceptionally warm.</Binguin_FlakVest.description>
+  <Binguin_BoardFlyer.label>Gliding</Binguin_BoardFlyer.label>
+  <Binguin_Turret_Gatling.label>automatic gatling turret</Binguin_Turret_Gatling.label>
+  <Binguin_Turret_Gatling.description>A six-barreled gatling turret forged by the binguin from cold iron: its spinning barrels roar out a steel storm of 20-round bursts. The barrels must be maintained with steel - every shot wears them down, and once they are spent, steel is needed to rebuild them. Its accuracy is only average, but a dense hail of bullets is enough to shred anything in front of it.</Binguin_Turret_Gatling.description>
+  <Binguin_Gun_GatlingTurret.label>gatling barrel</Binguin_Gun_GatlingTurret.label>
+  <Binguin_Gun_GatlingTurret.description>Six gatling barrels, mounted on a turret to fire at extreme speed.</Binguin_Gun_GatlingTurret.description>
+  <Binguin_Bullet_Gatling.label>gatling bullet</Binguin_Bullet_Gatling.label>
+  <Binguin_Turret_Shotgun.label>small automatic shotgun turret</Binguin_Turret_Shotgun.label>
+  <Binguin_Turret_Shotgun.description>The binguin stuffed a shotgun into the shell of an automatic turret. Its range is pitifully short, but once an enemy steps inside it, two barrels of buckshot hit them right in the face - no gunner required, and no mercy either.</Binguin_Turret_Shotgun.description>
+  <Binguin_Gun_ShotgunTurret.label>mini-shotgun</Binguin_Gun_ShotgunTurret.label>
+  <Binguin_Gun_ShotgunTurret.description>Two shotgun barrels, mounted on the turret ring of an automatic turret.</Binguin_Gun_ShotgunTurret.description>
+  <Binguin_Bullet_ShotgunTurret.label>shotgun turret pellet</Binguin_Bullet_ShotgunTurret.label>
+  <Binguin_JKUniform.label>binguin JK uniform</Binguin_JKUniform.label>
+  <Binguin_JKUniform.description>The most popular outfit at the observation post: a sailor-collar blouse in deep blue and pure white with a pleated skirt, a small ice-crystal knot tied at the chest. When a binguin girl wears it out into the snow, even a passing trader will look twice.</Binguin_JKUniform.description>
+  <Binguin_MachinistOverall.label>binguin machinist overalls</Binguin_MachinistOverall.label>
+  <Binguin_MachinistOverall.description>Heavy one-piece overalls, with wear-resistant leather patches sewn at the elbows and knees and chest pockets bristling with wrenches and screwdrivers. Crawl under the machining table in these and work a whole day, and you come out smelling only of machine oil, with not a hint of cold on you.</Binguin_MachinistOverall.description>
+  <Binguin_DoctorCoat.label>binguin doctor coat</Binguin_DoctorCoat.label>
+  <Binguin_DoctorCoat.description>A coat scrubbed white, its cuffs forever rolled up to the elbows. Clean and white, so the blood shows clearly.</Binguin_DoctorCoat.description>
+  <Binguin_ResearchCoat.label>binguin research coat</Binguin_ResearchCoat.label>
+  <Binguin_ResearchCoat.description>The working coat of a binguin observer: pockets of assorted sizes sewn onto pale blue cloth, holding star charts and slide rules. Wear it to plot a star's course or to hack an ancient terminal, and you are a fifth faster than anyone else.</Binguin_ResearchCoat.description>
+  <Binguin_MilitaryUniform.label>binguin military uniform</Binguin_MilitaryUniform.label>
+  <Binguin_MilitaryUniform.description>The standard uniform of the binguin patrol: a small six-pointed snowflake embroidered on the shoulder boards. Much heavier than everyday clothes, with a steel chest plate fixed to the front.</Binguin_MilitaryUniform.description>
+  <Binguin_AssaultRifle.label>binguin assault rifle</Binguin_AssaultRifle.label>
+  <Binguin_AssaultRifle.description>An automatic assault rifle condensed by binguin crafters from cold iron and crystal clusters. A wisp of ice burst cold energy is sealed inside each bullet: every hit gathers ice burst in the target equal to the damage of that shot (1 damage = 1% ice burst, and the higher the quality, the more violent) - when ice burst reaches 100%, the cold energy abruptly shatters one of the target's body parts. Stopping power 0.5.</Binguin_AssaultRifle.description>
+  <Binguin_Bullet_Assault.label>assault rifle bullet</Binguin_Bullet_Assault.label>
+  <Binguin_PrecisionRifle.label>binguin precision rifle</Binguin_PrecisionRifle.label>
+  <Binguin_PrecisionRifle.description>A long-barreled precision rifle beloved by binguin snipers, its frostwood stock set with fine ice crystals. Each shot falls heavy and punches through armor astonishingly well - prey a thousand meters off cannot escape its roll call.</Binguin_PrecisionRifle.description>
+  <Binguin_Bullet_Precision.label>precision rifle bullet</Binguin_Bullet_Precision.label>
+  <Binguin_PenguinKick.label>penguin flying kick!!</Binguin_PenguinKick.label>
+  <Binguin_PenguinKick.description>The signature technique of Endless Snow: the binguin kick their round bullets (willing ones) at the enemy like cannonballs - whatever is struck feels as though it were run over by a cart.</Binguin_PenguinKick.description>
+  <Binguin_PenguinBullet.label>penguin bullet</Binguin_PenguinBullet.label>
+  <Binguin_LaserGatling.label>binguin GGGGGG</Binguin_LaserGatling.label>
+  <Binguin_LaserGatling.description>The ultimate creation of Endless Snow: a six-barreled laser gatling, and once it spins it is an unbroken whip of aurora. ⏎ (Full English name: Glacier Goose Giga-Gust Graser Gatling)</Binguin_LaserGatling.description>
+  <Binguin_LaserBolt.label>Graser bolt</Binguin_LaserBolt.label>
+  <Binguin_SMG.label>binguin SMG</Binguin_SMG.label>
+  <Binguin_SMG.description>A compact submachine gun forged by binguin crafters from cold iron, its body sheathed in blue-black ice patterns. Within its range the firepower is fierce, pouring down bullets like an ice storm.</Binguin_SMG.description>
+  <Binguin_Bullet_SMG.label>binguin SMG bullet</Binguin_Bullet_SMG.label>
+  <Binguin_Shotgun.label>binguin shotgun</Binguin_Shotgun.label>
+  <Binguin_Shotgun.description>A repeating shotgun of binguin make, its blue-black body inlaid with ice-crystal patterns. At close range it spits again and again like hail crashing down, and it is the backbone of firepower for any cold-plains stronghold's defense.</Binguin_Shotgun.description>
+  <Binguin_Bullet_Shotgun.label>binguin shotgun pellet</Binguin_Bullet_Shotgun.label>
+  <Binguin_LeverRifle.label>binguin lever-action rifle</Binguin_LeverRifle.label>
+  <Binguin_LeverRifle.description>A lever-action rifle improved by the binguin, with a blue-black barrel and a frostwood stock, of very long range and heavy single shots. As good for hunting as for patrolling the border, it is a reliable companion to any observer's sentry.</Binguin_LeverRifle.description>
+  <Binguin_Bullet_LeverRifle.label>binguin lever-action rifle bullet</Binguin_Bullet_LeverRifle.label>
+  <Binguin_WillingArmor.label>Willing Armor</Binguin_WillingArmor.label>
+  <Binguin_WillingArmor.description>A war-creation of Endless Snow: powered armor with metal for bones and fuel for tendons. Its armor modules improve with its material, and set within is a mini-mortar cast from a reinforced barrel - it can be loaded with 3 mortar shells. Wherever it walks, the shelling follows.</Binguin_WillingArmor.description>
+  <Binguin_WillingHelmet.label>Willing Helmet</Binguin_WillingHelmet.label>
+  <Binguin_WillingHelmet.description>The helmet of the Willing Armor: a full-face crystal visor guarding the whole head. Its stats follow the same line as the armor itself, yet it is so light you scarcely feel it.</Binguin_WillingHelmet.description>
+</LanguageData>

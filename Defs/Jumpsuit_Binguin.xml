@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  企鹅连体衣（2026-09 用户需求）
+  · 定位：外套（Shell 层，同原版布卡罩袍）· 覆盖大部分身体
+    —— 覆盖组逐条照抄原版布卡罩袍 Apparel_Burka：
+       FullHead / UpperHead / Neck / Shoulders / Torso / Legs / Arms
+  · 材料：120 纤维或皮革（stuffCategories = Fabric + Leathery）
+  · 材质系数（用户给定）：护甲 ×30%、材料隔冷 ×200%、材料隔热 ×100%
+  · 基础数值：与原版布卡罩袍基本相同（HP100 / 工作量4000 / 重量1 / 移速-0.4 等）
+  · 制作：只在冰鹅缝纫台（recipeUsers 加 Inherit="False"）；
+    解锁：支线研究「冰鹅族cos服」Binguin_ResearchCosplay（前置冰鹅族服装，100 点）
+  · 贴图：暂借冰鹅族常服贴图（Things/Apparel/Binguin/Tribalwear），
+    后续若画专属美术，按 <目录>/<前缀>_<体型>_<方向>.png 放好再改两个路径即可
+-->
+<Defs>
+
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_PenguinJumpsuit</defName>
+    <label>企鹅连体衣</label>
+    <description>冰鹅族最寻常也最亲切的一身衣裳：厚实的连体外套，帽兜、袖口与裤腿都缝得严严实实，正面拼着白肚皮似的浅色布片，背后还缀着一条短短的绒尾。裹上它，风雪与尘沙都被挡在绒羽之外。</description>
+    <graphicData>
+      <texPath>Things/Apparel/Binguin/Tribalwear</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>120</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <tradeability>Sellable</tradeability>
+    <!-- tradeTags（Clothing）由 ApparelMakeableBase 继承，无需重复写
+         （XML 的 List 是追加语义，重复写会出现两条 Clothing）。
+         recipeMaker.recipeUsers 用 Inherit="False" 阻断基类继承 →
+         本件只在冰鹅缝纫台制作（2026-09 用户要求）。 -->
+    <statBases>
+      <!-- ★ 基础数值照抄原版布卡罩袍（Apparel_Burka）。
+           仅材质系数按用户给定：护甲 ×30%（罩袍 20%）、隔冷 ×200%（罩袍 10%）、
+           隔热 ×100%（罩袍 20%）。 -->
+      <MaxHitPoints>100</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <DeteriorationRate>2</DeteriorationRate>
+      <Beauty>-3</Beauty>
+      <WorkToMake>4000</WorkToMake>
+      <Mass>1</Mass>
+      <StuffEffectMultiplierArmor>0.3</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>2.0</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>1.0</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>1.5</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <MoveSpeed>-0.4</MoveSpeed>
+    </equippedStatOffsets>
+    <apparel>
+      <bodyPartGroups>
+        <li>FullHead</li>
+        <li>UpperHead</li>
+        <li>Neck</li>
+        <li>Shoulders</li>
+        <li>Torso</li>
+        <li>Legs</li>
+        <li>Arms</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Apparel/Binguin/Tribalwear/Tribalwear</wornGraphicPath>
+      <blocksAddedPartWoundGraphics>true</blocksAddedPartWoundGraphics>
+      <!-- ★ 2026-09 用户实测反馈：只写 Head 时脸与部分头发仍会露出 →
+           把可用的屏蔽标记全用上（Head 头型 / Hair 头发 / Beard 胡须 /
+           Eyes 眼睛），帽兜彻底盖住整个头部。
+           可用标记见 Core/Defs/MapMeshFlagDefs/RenderSkipFlagDefs.xml：
+           None / Head / Hair / Beard / Eyes / Body。 -->
+      <renderSkipFlags>
+        <li>Head</li>
+        <li>Hair</li>
+        <li>Beard</li>
+        <li>Eyes</li>
+      </renderSkipFlags>
+      <layers>
+        <li>Shell</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+      <drawData>
+        <defaultData>
+          <layer>83</layer>
+        </defaultData>
+      </drawData>
+    </apparel>
+    <thingCategories>
+      <li>ApparelMisc</li>
+    </thingCategories>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchCosplay</researchPrerequisite>
+      <!-- Inherit="False"：阻断基类 recipeUsers 继承 → 只在冰鹅缝纫台制作 -->
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>170</displayPriority>
+    </recipeMaker>
+    <!-- ★ 2026-09 用户要求：连体衣（以及同组的 ⑨服 / 大酱服）改由
+         独立支线研究「冰鹅族cos服」Binguin_ResearchCosplay 解锁
+         （前置＝冰鹅族服装，100 点）。 -->
+    <researchPrerequisites>
+      <li>Binguin_ResearchCosplay</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+</Defs>

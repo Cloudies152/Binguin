@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族【头发定义】—— 2026-09-24 新建
+
+  ★ 为什么能跟自绘的企鹅头严丝合缝（《会话交接文档》第 93 条，已考证）：
+      头节点网格   = 原版 HumanlikeHeadWidthForPawn(1.5) × HAR customHeadDrawSize(1,1) = 1.5
+      头发节点网格 = HeadTypeDef.hairMeshSize（Binguin_Head_Average 继承原版 AverageBase）= 1.5
+    ⇒ 两者共用同一套「512 画布 → 世界坐标」映射，所以头发贴图和头共用同一张 512 画布，
+      画的时候对准头就自动对齐，**不需要任何缩放 / 偏移参数**。
+      贴图由 Tools\Make-BinguinHairTextures.py 生成（basis 与头部/FA 两个脚本逐字同源）。
+
+  ★ 配色：HairDef 没有自己的颜色字段，头发的颜色来自 colorType = Hair（发色基因 / 白发），
+    所以**贴图必须是白 / 灰阶**（本 mod 生成的贴图就是纯白 + alpha 蒙版）。
+    想固定成某个颜色（比如黑羽冠）要另加锁色补丁，做法同 Compat_BinguinSkinAndFace.cs 的纯白肤色锁。
+
+  ★ 方向：south / north / east 三张；_west 由 Graphic_Multi 自动镜像 _east，不用画。
+
+  ★ styleTags 必须写 BinguinHair —— Race_Binguin.xml 的 <styleSettings> 用
+    <styleTagsOverride><li>BinguinHair</li></styleTagsOverride> 把冰鹅的可选发型
+    限定到这一组，原版几十种人类发型会自动被排除（比"一律秃头"干净得多）。
+
+  ★ texPath 的规则（与渡鸦族 / 原版一致）：实际文件名 = <texPath>_<方向>.png
+    这里写 Races/Binguin/Hair/BinguinHair_Mop/BinguinHair_Mop
+    → 读 Textures/Races/Binguin/Hair/BinguinHair_Mop/BinguinHair_Mop_south.png 等。
+-->
+<Defs>
+
+  <HairDef>
+    <defName>Binguin_Hair_Mop</defName>
+    <label>冰鹅短发·绒羽</label>
+    <!-- styleGender（1.6 的 StyleItemDef 字段）= 这个发型给谁用；冰鹅约九成为女性，先做成通用 -->
+    <styleGender>Any</styleGender>
+    <texPath>Races/Binguin/Hair/BinguinHair_Mop/BinguinHair_Mop</texPath>
+    <styleTags>
+      <li>BinguinHair</li>
+    </styleTags>
+  </HairDef>
+
+  <HairDef>
+    <defName>Binguin_Hair_Crest</defName>
+    <label>冰鹅羽冠</label>
+    <styleGender>Any</styleGender>
+    <texPath>Races/Binguin/Hair/BinguinHair_Crest/BinguinHair_Crest</texPath>
+    <styleTags>
+      <li>BinguinHair</li>
+    </styleTags>
+  </HairDef>
+
+</Defs>

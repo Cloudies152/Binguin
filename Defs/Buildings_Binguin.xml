@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅建筑：采切石一体机（自动采石+切石）、高级排污泵。
+  ★ 参考原版：PollutionPump（Biotech Buildings_Misc.xml）、BuildingBase。
+-->
+<Defs>
+
+  <!-- ============ 采切石一体机 ============
+       耗电 200W，占两格（2x1）。自动开采附近岩石；切石模式开启时把岩石块切成石砖。
+       切石开关：选中建筑后 gizmo「切石模式」切换（CompBinguinAutoStone 实现）。 -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_AutoStoneMachine</defName>
+    <label>采切石一体机</label>
+    <description>冰鹅族打造的自动化石料一体机。通电后自动开采地底岩石；开启切石模式时，采到的岩石块会直接被切成石砖，省去手工搬运与加工。占地两格，耗电 200W。</description>
+    <tickerType>Normal</tickerType>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <thingCategories>
+      <li>BuildingsProduction</li>
+    </thingCategories>
+    <graphicData>
+      <texPath>Things/Building/Binguin/AutoStoneMachine</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,1)</drawSize>
+    </graphicData>
+    <uiIconScale>0.85</uiIconScale>
+    <rotatable>true</rotatable>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>Standable</passability>
+    <fillPercent>0.5</fillPercent>
+    <building>
+      <ai_chillDestination>false</ai_chillDestination>
+    </building>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <statBases>
+      <MaxHitPoints>250</MaxHitPoints>
+      <WorkToBuild>5000</WorkToBuild>
+      <Mass>50</Mass>
+      <Flammability>0.3</Flammability>
+      <Beauty>-3</Beauty>
+    </statBases>
+    <size>(2,1)</size>
+    <costList>
+      <Steel>120</Steel>
+      <ComponentIndustrial>3</ComponentIndustrial>
+    </costList>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIcyPeaks</li>
+    </researchPrerequisites>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>200</basePowerConsumption>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- ============ 高级排污泵 ============
+       一格，耗电 100W；效率为原版排污泵 4 倍（intervalTicks 15000→3750），
+       半径 2 倍（10.9→21.9）。 -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_AdvancedPollutionPump</defName>
+    <label>高级排污泵</label>
+    <description>冰鹅族改良的污染过滤泵，效率是原版排污泵的四倍，净化半径翻倍。抽出的污染物仍会凝成毒废料包，需要搬走。耗电 100W。</description>
+    <tickerType>Normal</tickerType>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <thingCategories>
+      <li>BuildingsMisc</li>
+    </thingCategories>
+    <graphicData>
+      <texPath>Things/Building/Binguin/AdvancedPollutionPump</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <uiIconScale>0.85</uiIconScale>
+    <rotatable>false</rotatable>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <fillPercent>0.2</fillPercent>
+    <building>
+      <ai_chillDestination>false</ai_chillDestination>
+    </building>
+    <constructionSkillPrerequisite>3</constructionSkillPrerequisite>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <statBases>
+      <MaxHitPoints>200</MaxHitPoints>
+      <WorkToBuild>4000</WorkToBuild>
+      <Mass>15</Mass>
+      <Flammability>0.5</Flammability>
+    </statBases>
+    <size>(1,1)</size>
+    <costList>
+      <Steel>75</Steel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+    </costList>
+    <researchPrerequisites>
+      <li>Binguin_ResearchEnvironment</li>
+    </researchPrerequisites>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>100</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_PollutionPump">
+        <radius>21.9</radius>
+        <pumpEffecterDef>PollutionPumped</pumpEffecterDef>
+        <pumpsPerWastepack>6</pumpsPerWastepack>
+        <intervalTicks>3750</intervalTicks>
+      </li>
+      <li Class="CompProperties_Flickable" />
+    </comps>
+    <placeWorkers>
+      <li>PlaceWorker_PollutionPump</li>
+    </placeWorkers>
+    <drawPlaceWorkersWhileSelected>true</drawPlaceWorkersWhileSelected>
+  </ThingDef>
+
+
+  <!-- ============ 冰鹅族机工台（参考原版机械加工台 TableMachining） ============
+       100 钢 + 3 零部件，占三格（3x1），低温不影响效率（工作台本无温度效率机制）。 -->
+  <ThingDef ParentName="BenchBase">
+    <defName>Binguin_MachiningTable</defName>
+    <label>冰鹅族机工台</label>
+    <description>冰鹅族打造的机械加工台，以钢铁机件制成，在刺骨低温中依旧运转如常。可用于制造武器与装甲。</description>
+    <thingClass>Building_WorkTable</thingClass>
+    <graphicData>
+      <texPath>Things/Building/Binguin/MachiningTable</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3.5,1.5)</drawSize>
+    </graphicData>
+    <castEdgeShadows>true</castEdgeShadows>
+    <staticSunShadowHeight>0.20</staticSunShadowHeight>
+    <costList>
+      <Steel>100</Steel>
+      <ComponentIndustrial>3</ComponentIndustrial>
+    </costList>
+    <altitudeLayer>Building</altitudeLayer>
+    <fillPercent>0.5</fillPercent>
+    <useHitPoints>True</useHitPoints>
+    <statBases>
+      <WorkToBuild>3000</WorkToBuild>
+      <MaxHitPoints>180</MaxHitPoints>
+      <Flammability>0.4</Flammability>
+      <Cleanliness>-2</Cleanliness>
+    </statBases>
+    <size>(3,1)</size>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <uiOrder>160</uiOrder>
+    <passability>PassThroughOnly</passability>
+    <pathCost>50</pathCost>
+    <hasInteractionCell>True</hasInteractionCell>
+    <interactionCellOffset>(0,0,-1)</interactionCellOffset>
+    <surfaceType>Item</surfaceType>
+    <constructionSkillPrerequisite>4</constructionSkillPrerequisite>
+    <inspectorTabs>
+      <li>ITab_Bills</li>
+    </inspectorTabs>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <shortCircuitInRain>true</shortCircuitInRain>
+        <basePowerConsumption>250</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Breakdownable" />
+    </comps>
+    <building>
+      <workTableRoomRole>Workshop</workTableRoomRole>
+      <workTableNotInRoomRoleFactor>0.8</workTableNotInRoomRoleFactor>
+    </building>
+    <constructEffect>ConstructMetal</constructEffect>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMachining</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族缝纫台（参考原版电动缝纫台） ============
+       80 钢 + 2 零部件，占三格（3x1），低温不影响效率。 -->
+  <ThingDef ParentName="BenchBase">
+    <defName>Binguin_TailoringTable</defName>
+    <label>冰鹅族缝纫台</label>
+    <description>冰鹅族的电动缝纫台，蓝黑机身缀着霜纹，以寒冰纤维织就衣物，低温下依旧运转如常。</description>
+    <thingClass>Building_WorkTable</thingClass>
+    <graphicData>
+      <texPath>Things/Building/Binguin/TailoringTable</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3.5,1.5)</drawSize>
+    </graphicData>
+    <castEdgeShadows>true</castEdgeShadows>
+    <staticSunShadowHeight>0.20</staticSunShadowHeight>
+    <costList>
+      <Steel>80</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <altitudeLayer>Building</altitudeLayer>
+    <fillPercent>0.5</fillPercent>
+    <useHitPoints>True</useHitPoints>
+    <statBases>
+      <WorkToBuild>2000</WorkToBuild>
+      <MaxHitPoints>180</MaxHitPoints>
+      <Flammability>0.5</Flammability>
+      <Cleanliness>-2</Cleanliness>
+    </statBases>
+    <size>(3,1)</size>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <uiOrder>170</uiOrder>
+    <passability>PassThroughOnly</passability>
+    <pathCost>50</pathCost>
+    <hasInteractionCell>True</hasInteractionCell>
+    <interactionCellOffset>(0,0,-1)</interactionCellOffset>
+    <surfaceType>Item</surfaceType>
+    <constructionSkillPrerequisite>4</constructionSkillPrerequisite>
+    <inspectorTabs>
+      <li>ITab_Bills</li>
+    </inspectorTabs>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <shortCircuitInRain>true</shortCircuitInRain>
+        <basePowerConsumption>250</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Breakdownable" />
+    </comps>
+    <building>
+      <workTableRoomRole>Workshop</workTableRoomRole>
+      <workTableNotInRoomRoleFactor>0.8</workTableNotInRoomRoleFactor>
+    </building>
+    <constructEffect>ConstructMetal</constructEffect>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+</Defs>

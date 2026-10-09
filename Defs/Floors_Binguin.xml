@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅建筑：Architect 菜单新增顶级类别「冰鹅建筑」，内含三种冰雪地板。
+  ★ 结构依据（对照原版 Core\Defs\TerrainDefs\Terrain_Floors.xml）：
+    - 地板是 TerrainDef（非 FloorDef），ParentName="FloorBase" 继承
+      affordances/tags/drawStyleCategory/fertility/污染处理等
+    - 美观/清洁度/工作量都在 <statBases>（Beauty/Cleanliness/WorkToBuild）
+    - 成本用 <costList>（Steel）
+    - 建造分类用 <designationCategory>（覆盖 FloorBase 的 Floors → 进「冰鹅建筑」）
+    - <pathCost>0</pathCost> = 100% 不减移速
+  ★ 滑冰联动：defName 以 Binguin_ 开头，Harmony 滑冰补丁识别为滑冰表面
+    （冰/雪/水上速度 = 平地速度）。
+-->
+<Defs>
+
+  <!-- Architect 顶级类别：冰鹅建筑（含拆除命令，否则铺了拆不掉） -->
+  <DesignationCategoryDef>
+    <defName>BinguinBuilding</defName>
+    <label>冰鹅建筑</label>
+    <order>650</order>
+    <specialDesignatorClasses>
+      <li>Designator_Cancel</li>
+      <li>Designator_RemoveFloor</li>
+      <li>Designator_RemoveFoundation</li>
+    </specialDesignatorClasses>
+  </DesignationCategoryDef>
+
+  <!-- ============ 冰面地板：蓝色带一点点白色图案 ============
+       4 铁 / 美观 2 / 清洁度 0.6 / 工作量 10 / 不减移速 -->
+  <TerrainDef ParentName="FloorBase">
+    <defName>Binguin_IceFloor</defName>
+    <label>冰面地板</label>
+    <description>光滑的冰面地板，蓝得透亮，表面散布着细碎的白色冰纹。行走其上毫不费力，冰鹅族人更是如履平冰。</description>
+    <texturePath>Things/Floor/Binguin/IceFloor</texturePath>
+    <edgeType>Hard</edgeType>
+    <renderPrecedence>240</renderPrecedence>
+    <pathCost>0</pathCost>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <statBases>
+      <Beauty>2</Beauty>
+      <Cleanliness>0.6</Cleanliness>
+      <WorkToBuild>10</WorkToBuild>
+    </statBases>
+    <costList>
+      <Steel>4</Steel>
+    </costList>
+    <uiOrder>100</uiOrder>
+  </TerrainDef>
+
+  <!-- ============ 雪花地板：雪花图案，蓝色背景 ============
+       4 铁 / 美观 2 / 清洁度 0（默认） / 工作量 10 / 不减移速 -->
+  <TerrainDef ParentName="FloorBase">
+    <defName>Binguin_SnowflakeFloor</defName>
+    <label>雪花地板</label>
+    <description>以蓝色为底、白色雪花为饰的精致地板，让人想起冰鹅族故乡的漫天飞雪。</description>
+    <texturePath>Things/Floor/Binguin/SnowflakeFloor</texturePath>
+    <edgeType>Hard</edgeType>
+    <renderPrecedence>240</renderPrecedence>
+    <pathCost>0</pathCost>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <statBases>
+      <Beauty>2</Beauty>
+      <WorkToBuild>10</WorkToBuild>
+    </statBases>
+    <costList>
+      <Steel>4</Steel>
+    </costList>
+    <uiOrder>110</uiOrder>
+  </TerrainDef>
+
+  <!-- ============ 精致冰雪地板：冰花图案，蓝色背景 ============
+       8 铁 / 美观 3 / 清洁度 0.2 / 工作量 20 / 不减移速 -->
+  <TerrainDef ParentName="FloorBase">
+    <defName>Binguin_FancyIceFloor</defName>
+    <label>精致冰雪地板</label>
+    <description>缀满霜晶冰花的高级冰雪地板，工艺繁复，光洁如镜，是冰鹅族观察站里最体面的地面。</description>
+    <texturePath>Things/Floor/Binguin/FancyIceFloor</texturePath>
+    <edgeType>Hard</edgeType>
+    <renderPrecedence>240</renderPrecedence>
+    <pathCost>0</pathCost>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <statBases>
+      <Beauty>3</Beauty>
+      <Cleanliness>0.2</Cleanliness>
+      <WorkToBuild>20</WorkToBuild>
+    </statBases>
+    <costList>
+      <Steel>8</Steel>
+    </costList>
+    <uiOrder>120</uiOrder>
+  </TerrainDef>
+
+</Defs>

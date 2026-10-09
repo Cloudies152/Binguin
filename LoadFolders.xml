@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- ★ 1.6 的 loadFolders 门控放在 mod 根目录独立文件 LoadFolders.xml
+     （About.xml 里的 <loadFolders> 节点不被解析！会报 "doesn't correspond
+     to any field in type ModMetaDataInternal"）
+     语法（与工坊现役 mod 实例一致）：
+       - 根节点 = <loadFolders>（小写）
+       - 子节点 = 版本组（<v1.6>；<default> 为兜底组）
+       - 组内 <li> 文本 = 文件夹名；"/" = mod 根目录
+       - <li IfModActive="packageId"> = 按 DLC/mod 激活门控（逗号分隔多个）
+     本文件：Odyssey（Ludeon.RimWorld.Odyssey）激活时额外加载
+     AdvancedFishing 文件夹（进阶钓鱼学：蟹笼/打窝/量产型钓竿），
+     否则只加载根目录（现有全部内容）。 -->
+<loadFolders>
+  <v1.6>
+    <li IfModActive="Ludeon.RimWorld.Odyssey">AdvancedFishing</li>
+    <li>/</li>
+  </v1.6>
+  <default>
+    <li IfModActive="Ludeon.RimWorld.Odyssey">AdvancedFishing</li>
+    <li>/</li>
+  </default>
+</loadFolders>

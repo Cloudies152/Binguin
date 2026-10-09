@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族剧本（2026-08-19 用户设计：照抄原版迫降 Crashlanded）
+  - 玩家派系 = 冰鹅（factionDef=Binguin，据点命名「XX观察站」）
+  - 起始 3 名冰鹅族殖民者（Binguin_Colonist，8 选 3，穿常服、带干粮）
+  - 武器替换：栓动步枪→冰鹅族杠杆步枪；玻璃钢匕首→量产型鱼竿；左轮手枪→冰鹅族冲锋枪
+  ★ 2026-08-19 用户定稿：量产鱼竿条目用 li 级 MayRequire="Ludeon.RimWorld.Odyssey"
+    条件引用（不满足时整个条目不加载），剧本移出 AdvancedFishing（不依赖奥德赛）
+  ★ 2026-09 用户定稿：**不再有玻璃钢匕首/短剑**（原代替品条目已删）。
+  ★ 本剧本开局玩家派系 = Binguin_PlayerColony，与 NPC 冰鹅派系【开局即盟友】，
+    因此【不会】触发三天后的外交官共存事件（见 GameComponent_BinguinDiplomacy）。
+  ★ ScenarioBase 的 scenario 字段按子节点继承：未写的 surfaceLayer 等
+    自动继承父类（原版 Crashlanded 同款结构）。
+-->
+<Defs>
+
+  <ScenarioDef ParentName="ScenarioBase">
+    <defName>Binguin_Scenario</defName>
+    <label>冰鹅族迫降</label>
+    <description>你们在低温休眠舱中醒来，警报与撕裂的金属声刺入耳膜。在飞船解体前，你们勉强挤进逃生舱。数小时后，你们坠落在这颗陌生的边缘世界上——三名冰鹅族观测者，带着寒原的干粮与自制的钓竿。</description>
+    <scenario>
+      <summary>三名冰鹅族迫降幸存者——企鹅娘们的经典开局。</summary>
+      <!-- ★ 2026-08-20 修：玩家派系不能用 NPC 派系 def（Binguin），
+           1.6 需独立 isPlayer=true 的 FactionDef（Binguin_PlayerColony） -->
+      <playerFaction>
+        <def>PlayerFaction</def>
+        <factionDef>Binguin_PlayerColony</factionDef>
+      </playerFaction>
+      <parts>
+
+        <!-- 配置页：冰鹅族殖民者 3 人，8 选 3 -->
+        <!-- ★ ScenPartDef 真名 = ConfigurePawnsKindDefs（Biotech 定义，2026-08-20 修）：
+             类名 ScenPart_ConfigPage_ConfigureStartingPawns_KindDefs 不变 -->
+        <li Class="ScenPart_ConfigPage_ConfigureStartingPawns_KindDefs">
+          <def>ConfigurePawnsKindDefs</def>
+          <pawnChoiceCount>8</pawnChoiceCount>
+          <kindCounts>
+            <li>
+              <kindDef>Binguin_Colonist</kindDef>
+              <count>3</count>
+            </li>
+          </kindCounts>
+        </li>
+
+        <!-- 玩家到达方式 -->
+        <li Class="ScenPart_PlayerPawnsArriveMethod">
+          <def>PlayerPawnsArriveMethod</def>
+          <method>DropPods</method>
+          <visible>false</visible>
+        </li>
+
+        <!-- 低温休眠症 -->
+        <li Class="ScenPart_ForcedHediff">
+          <def>ForcedHediff</def>
+          <visible>false</visible>
+          <context>PlayerStarter</context>
+          <chance>0.5</chance>
+          <hediff>CryptosleepSickness</hediff>
+          <hideOffMap>true</hideOffMap>
+          <severityRange>1~1</severityRange>
+        </li>
+
+        <!-- 起始物品 -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Silver</thingDef>
+          <count>800</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MealSurvivalPack</thingDef>
+          <count>50</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>MedicineIndustrial</thingDef>
+          <count>30</count>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>ComponentIndustrial</thingDef>
+          <count>30</count>
+        </li>
+        <!-- ★ 武器替换：栓动步枪 → 冰鹅族杠杆步枪 -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Binguin_LeverRifle</thingDef>
+        </li>
+        <!-- ★ 武器替换：左轮手枪 → 冰鹅族冲锋枪 -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Binguin_SMG</thingDef>
+        </li>
+        <!-- ★ 武器替换：玻璃钢匕首 → 量产型鱼竿（奥德赛专属；
+             无奥德赛时该条目不加载，用下方玻璃钢短剑代替） -->
+        <li Class="ScenPart_StartingThing_Defined" MayRequire="Ludeon.RimWorld.Odyssey">
+          <def>StartingThing_Defined</def>
+          <thingDef>Binguin_FishingRod</thingDef>
+        </li>
+        <!-- ★ 2026-09 用户要求：删掉「玻璃钢匕首」（MeleeWeapon_Knife + Plasteel）。
+             它原本是"没装奥德赛时的量产鱼竿替代品"，但那条 MayRequire 只加在鱼竿上，
+             结果是【装了奥德赛也会同时拿到鱼竿 + 匕首】；用户直接要求去掉匕首。 -->
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Apparel_FlakPants</thingDef>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Apparel_FlakVest</thingDef>
+        </li>
+        <li Class="ScenPart_StartingThing_Defined">
+          <def>StartingThing_Defined</def>
+          <thingDef>Apparel_AdvancedHelmet</thingDef>
+          <stuff>Plasteel</stuff>
+        </li>
+        <li Class="ScenPart_StartingAnimal">
+          <def>StartingAnimal</def>
+          <count>1</count>
+          <bondToRandomPlayerPawnChance>1.0</bondToRandomPlayerPawnChance>
+        </li>
+
+        <!-- 起点附近散落 -->
+        <li Class="ScenPart_ScatterThingsNearPlayerStart">
+          <def>ScatterThingsNearPlayerStart</def>
+          <thingDef>Steel</thingDef>
+          <count>450</count>
+        </li>
+        <li Class="ScenPart_ScatterThingsNearPlayerStart">
+          <def>ScatterThingsNearPlayerStart</def>
+          <thingDef>WoodLog</thingDef>
+          <count>300</count>
+        </li>
+
+        <!-- 全图散落 -->
+        <li Class="ScenPart_ScatterThingsAnywhere">
+          <def>ScatterThingsAnywhere</def>
+          <thingDef>ShipChunk</thingDef>
+          <allowRoofed>false</allowRoofed>
+          <count>3</count>
+        </li>
+        <li Class="ScenPart_ScatterThingsAnywhere">
+          <def>ScatterThingsAnywhere</def>
+          <thingDef>Steel</thingDef>
+          <count>720</count>
+        </li>
+        <li Class="ScenPart_ScatterThingsAnywhere">
+          <def>ScatterThingsAnywhere</def>
+          <thingDef>MealSurvivalPack</thingDef>
+          <count>7</count>
+        </li>
+
+        <!-- 开局对话 -->
+        <li Class="ScenPart_GameStartDialog">
+          <def>GameStartDialog</def>
+          <textKey>GameStartDialog</textKey>
+          <closeSound>GameStartSting</closeSound>
+        </li>
+
+      </parts>
+    </scenario>
+  </ScenarioDef>
+
+</Defs>

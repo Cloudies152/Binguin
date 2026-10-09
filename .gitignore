@@ -1,0 +1,19 @@
+# ---- 构建产物 ----
+obj/
+bin/
+
+# ---- IDE 配置 ----
+.idea/
+Source/.idea/
+*.user
+*.suo
+.vs/
+
+# ---- RimWorld 本地临时 ----
+Player.log
+Player-prev.log
+*.zip
+
+# ---- 系统 ----
+Thumbs.db
+desktop.ini

@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅派系：中立定居型派系。
+  ★ 结构已对照原版 Factions_Misc.xml（Outlander）与真实 1.6 范例（Raven Faction_Fusang）核对：
+    - ParentName="FactionBase" 继承 raidLootValueFromPointsCurve 等基类字段
+    - pawnGroupMakers 为内联 PawnGroupMaker，options 用"PawnKind名->权重"字典式
+      （kindDef 值：Combat / Peaceful / Trader / Settlement）
+    - 商队字段：baseTraderKinds / visitorTraderKinds（traderKinds 字段已不存在）
+    - backstoryFilters / backstoryCategories 满足"人类派系必须有背景故事分类"的配置检查
+    - settlementNameMaker 指向 RulePackDef（1.6 起不再有 NameMakerDef）
+-->
+<Defs>
+  <FactionDef ParentName="FactionBase">
+    <!-- ★ 2026-09：补 categoryTag（原版只有 Outlander / Tribal 两种取值）。
+         用途：① 消除「Binguin_ResearchEndlessSnow: requires techprints but has no
+         heldByFactionCategoryTags」这条红字（霰雪无垠的科技图纸必须声明"哪些派系会卖"）；
+         ② 冰鹅族是工业级外来者派系，归入 Outlander 后，原版外来者/轨道商人的
+         科技图纸池照旧能刷出我们的图纸（与现状一致）。 -->
+    <categoryTag>Outlander</categoryTag>
+    <defName>Binguin</defName>
+    <label>冰鹅</label>
+    <description>来自寒冬星球的冰鹅族文明。世界各处散布着他们的「观察站」。</description>
+    <pawnSingular>冰鹅族人</pawnSingular>
+    <pawnsPlural>冰鹅族人</pawnsPlural>
+    <fixedName>冰鹅</fixedName>
+    <leaderTitle>首席观察员</leaderTitle>
+    <leaderTitleFemale>首席观察员</leaderTitleFemale>
+    <basicMemberKind>Binguin_Settler</basicMemberKind>
+    <!-- 领袖模板（2026-08-18 修复「领袖不存在」）：
+         1.6 的 Faction.TryGenerateNewLeader 只在 pawnGroupMakers 的
+         Combat 组里找 factionLeader=true 的 kind（原版 Outlander 把
+         Town_Councilman 放在 Combat 组）。我们之前把 Binguin_Leader
+         放在 Peaceful/Settlement 组 → 找不到 → leaderCore 恒为 null。
+         修复：Combat 组加入 Binguin_Leader（低权重），并显式指定
+         fixedLeaderKinds（TryGenerateNewLeader 会把 fixedLeaderKinds
+         追加进候选列表，不受 Combat 组过滤限制）。 -->
+    <fixedLeaderKinds>
+      <li>Binguin_Leader</li>
+    </fixedLeaderKinds>
+    <!-- 世界地图上的派系图标与据点贴图（缺失会在地图绘制时抛 ArgumentNullException，Player.log 确认） -->
+    <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
+    <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
+
+    <!-- 据点全名由"屈原词汇 + 观察站"生成（RulePackDef，见 NameMakers_Binguin.xml） -->
+    <settlementNameMaker>BinguinSettlementNameMaker</settlementNameMaker>
+
+    <colorSpectrum>
+      <li>(0.93,0.94,0.96)</li>
+      <li>(0.96,0.96,0.96)</li>
+      <li>(0.6,0.65,0.72)</li>
+    </colorSpectrum>
+
+    <canMakeRandomly>true</canMakeRandomly>
+    <!-- 据点生成权重与原版 Outlander 一致（1），保证据点数量与其他派系相当 -->
+    <settlementGenerationWeight>1</settlementGenerationWeight>
+    <!-- 保证开局至少生成一个据点，外交事件（三天内来访）才不会落空 -->
+    <requiredCountAtGameStart>1</requiredCountAtGameStart>
+    <maxConfigurableAtWorldCreation>3</maxConfigurableAtWorldCreation>
+
+    <techLevel>Industrial</techLevel>
+    <humanlikeFaction>true</humanlikeFaction>
+    <hidden>false</hidden>
+    <permanentEnemy>false</permanentEnemy>
+    <canSiege>true</canSiege>
+
+    <!-- 背景故事分类（Outlander/Offworld 为原版真实存在的分类） -->
+    <backstoryCategories>
+      <li>Outlander</li>
+      <li>Offworld</li>
+    </backstoryCategories>
+    <backstoryFilters>
+      <li>
+        <categories>
+          <li>Outlander</li>
+        </categories>
+      </li>
+      <li>
+        <categories>
+          <li>Offworld</li>
+        </categories>
+      </li>
+    </backstoryFilters>
+
+    <!-- 商队/据点商人（★ 2026-09-26 用户需求：加卖鱼）
+         ★ 不再直接用原版 trader kind，改成用 Defs/TraderKinds_Binguin.xml 里
+           继承原版、只多挂一个"鱼"stockGenerator 的自定义版本：
+             · Base_Outlander_Standard        → Binguin_Settlement_Standard（据点补货卖鱼）
+             · Caravan_Outlander_BulkGoods    → Binguin_Caravan_BulkGoods（商队卖鱼）
+             · Caravan_Outlander_CombatSupplier → Binguin_Caravan_CombatSupplier（商队卖鱼）
+             · Caravan_Outlander_Exotic       → 【保持原版】，用户点名稀有品贸易商不带鱼
+         ★ 商人小人仍由本方 pawnGroupMakers 的 Trader 组生成，不影响种族。 -->
+    <baseTraderKinds>
+      <li>Binguin_Settlement_Standard</li>
+    </baseTraderKinds>
+    <visitorTraderKinds>
+      <li>Visitor_Outlander_Standard</li>
+    </visitorTraderKinds>
+    <caravanTraderKinds>
+      <li>Binguin_Caravan_BulkGoods</li>
+      <li>Binguin_Caravan_CombatSupplier</li>
+      <li>Caravan_Outlander_Exotic</li>
+    </caravanTraderKinds>
+
+    <!-- 配置检查必需的两条曲线（沿用原版 Outlander 数值） -->
+    <maxPawnCostPerTotalPointsCurve>
+      <points>
+        <li>(0, 35)</li>
+        <li>(70, 50)</li>
+        <li>(700, 100)</li>
+        <li>(1300, 150)</li>
+        <li>(100000, 10000)</li>
+      </points>
+    </maxPawnCostPerTotalPointsCurve>
+    <raidLootValueFromPointsCurve>
+      <points>
+        <li>(35, 15)</li>
+        <li>(100, 120)</li>
+        <li>(1000, 500)</li>
+        <li>(2000, 800)</li>
+        <li>(4000, 1000)</li>
+      </points>
+    </raidLootValueFromPointsCurve>
+
+    <!-- 内联人员构成（字典式 options）
+         ★ 2026-09 用户需求：加入新设计的单位（民兵/士兵/哨骑/领袖护卫/coser/商队领袖）。
+         ★ 领袖 kind 必须在 Combat 组里出现，1.6 只在这组找 factionLeader
+           （另有 fixedLeaderKinds 兜底，见上方注释）。 -->
+    <pawnGroupMakers>
+      <li>
+        <kindDef>Combat</kindDef>
+        <options>
+          <Binguin_Militia>10</Binguin_Militia>
+          <Binguin_Soldier>8</Binguin_Soldier>
+          <!-- 工兵：只在破墙/工兵/特殊围攻袭击里保留，其它袭击由代码降级成士兵 -->
+          <Binguin_Sapper>3</Binguin_Sapper>
+          <Binguin_Scout>6</Binguin_Scout>
+          <Binguin_Fighter>4</Binguin_Fighter>
+          <Binguin_LeaderGuard>2</Binguin_LeaderGuard>
+          <Binguin_Leader>1</Binguin_Leader>
+        </options>
+      </li>
+      <li>
+        <kindDef>Peaceful</kindDef>
+        <options>
+          <Binguin_Settler>15</Binguin_Settler>
+          <Binguin_CoserNine>3</Binguin_CoserNine>
+          <Binguin_CoserDaiyousei>3</Binguin_CoserDaiyousei>
+          <Binguin_Merchant>2</Binguin_Merchant>
+          <Binguin_Leader>2</Binguin_Leader>
+        </options>
+      </li>
+      <li>
+        <kindDef>Trader</kindDef>
+        <traders>
+          <Binguin_CaravanLeader>1</Binguin_CaravanLeader>
+          <Binguin_Merchant>1</Binguin_Merchant>
+        </traders>
+        <carriers>
+          <Muffalo>4</Muffalo>
+        </carriers>
+        <guards>
+          <Binguin_Soldier>4</Binguin_Soldier>
+          <Binguin_Militia>3</Binguin_Militia>
+          <Binguin_Scout>2</Binguin_Scout>
+        </guards>
+      </li>
+      <li>
+        <kindDef>Settlement</kindDef>
+        <options>
+          <Binguin_Settler>12</Binguin_Settler>
+          <Binguin_Militia>5</Binguin_Militia>
+          <Binguin_Soldier>4</Binguin_Soldier>
+          <Binguin_Scout>3</Binguin_Scout>
+          <Binguin_CoserNine>2</Binguin_CoserNine>
+          <Binguin_CoserDaiyousei>2</Binguin_CoserDaiyousei>
+          <Binguin_Merchant>2</Binguin_Merchant>
+          <Binguin_LeaderGuard>1</Binguin_LeaderGuard>
+          <Binguin_Leader>1</Binguin_Leader>
+        </options>
+      </li>
+    </pawnGroupMakers>
+  </FactionDef>
+</Defs>

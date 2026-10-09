@@ -1,0 +1,301 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族头饰两件
+    · 冰鹅族雪花绒帽 Binguin_SnowflakeTuque —— 借原版 Tuque(Core) 贴图
+    · 冰鹅族绒羽头冠 Binguin_PlumeCirclet —— 借原版 TribalHeaddress(Core) 贴图
+  ★ 属性规则（2026-09 用户需求：「比原版的帽子多 10% 属性」）：
+     各自按【贴图来源的那顶原版帽子】的数值 ×1.1。
+      · 原版绒线帽 Tuque        ：护甲 0.2  / 隔冷 0.50 / 隔热 0    ，HP 80
+        → 雪花绒帽              ：护甲 0.22 / 隔冷 0.55 / 隔热 0.11 ，HP 88
+        （绒线帽隔热本来就是 0，0×1.1=0 没意义，故隔热改按原版标准帽的 0.10×1.1
+          取 0.11，免得一顶毛线帽在热区毫无用处；不想要可把这行删掉。）
+      · 原版部落头饰 Headdress ：护甲 0.2  / 隔冷 0.10 / 隔热 0.15 ，HP 100
+        → 绒羽头冠              ：护甲 0.22 / 隔冷 0.11 / 隔热 0.165，HP 110
+  ★ 用原版同款"材质倍率"机制（StuffEffectMultiplier* × 材质的 StuffPower_*），
+     换材料自动变强。例：布制雪花绒帽 = 隔冷 0.55×18 = 9.9℃（原版绒线帽 9.0℃）。
+  ★ 无 equippedStatOffsets、无 CompBiocodable，Overhead 层，不挤占其它装备位。
+  ★ 制作：只在冰鹅缝纫台（recipeUsers Inherit="False"）；解锁：冰鹅族服装。
+  ★ 材料：25 / 40 纤维或皮革。
+-->
+<Defs>
+
+  <!-- ============ 冰鹅族雪花绒帽 ============ -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_SnowflakeTuque</defName>
+    <label>冰鹅族雪花绒帽</label>
+    <description>一顶松软的绒线小帽，帽檐勾着一圈白色花边，顶上缀一枚六角雪花——据说每一枚都是观测者在初雪那天亲手剪的。比原版的绒线帽厚实些，挡风雪、护耳朵都还凑合，至于刀砍斧劈……那就别指望它了。</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/Tuque/Tuque</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>25</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <tradeability>Sellable</tradeability>
+    <statBases>
+      <!-- 原版绒线帽 Tuque ×1.1（隔热 0.11 见文件头说明） -->
+      <StuffEffectMultiplierArmor>0.22</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>0.55</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0.11</StuffEffectMultiplierInsulation_Heat>
+      <MaxHitPoints>88</MaxHitPoints>
+      <WorkToMake>800</WorkToMake>
+      <Mass>0.15</Mass>
+      <Flammability>1.0</Flammability>
+      <EquipDelay>0.6</EquipDelay>
+    </statBases>
+    <apparel>
+      <bodyPartGroups>
+        <li>UpperHead</li>
+      </bodyPartGroups>
+      <parentTagDef>ApparelHead</parentTagDef>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/Tuque/Tuque</wornGraphicPath>
+      <layers>
+        <li>Overhead</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+        <li>BinguinHeadwear</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>Headgear</li>
+    </thingCategories>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>12</weight>
+          <only>(0.88,0.94,1.00)</only>
+        </li>
+        <li>
+          <weight>10</weight>
+          <only>(0.62,0.78,0.95)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <only>(0.40,0.58,0.80)</only>
+        </li>
+        <li>
+          <weight>4</weight>
+          <only>(0.85,0.30,0.35)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchClothing</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>206</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族绒羽头冠 ============ -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_PlumeCirclet</defName>
+    <label>冰鹅族绒羽头冠</label>
+    <description>用绒羽编成的环冠，正面插着三片长短不一的白色绒羽，羽尖各缀一颗米粒大的冰晶。观测站的少女们说，戴上它去雪原上走一圈，连风都愿意绕着你走。比起部落里那种粗糙的羽冠，编得细密些，护得住头顶，也暖得住额头。</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/TribalHeaddress/TribalHeaddress</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>40</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <tradeability>Sellable</tradeability>
+    <statBases>
+      <!-- 原版部落头饰 TribalHeaddress ×1.1 -->
+      <StuffEffectMultiplierArmor>0.22</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>0.11</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0.165</StuffEffectMultiplierInsulation_Heat>
+      <MaxHitPoints>110</MaxHitPoints>
+      <WorkToMake>1200</WorkToMake>
+      <Mass>0.2</Mass>
+      <Flammability>1.0</Flammability>
+      <EquipDelay>0.8</EquipDelay>
+    </statBases>
+    <apparel>
+      <bodyPartGroups>
+        <li>UpperHead</li>
+      </bodyPartGroups>
+      <parentTagDef>ApparelHead</parentTagDef>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/TribalHeaddress/TribalHeaddress</wornGraphicPath>
+      <layers>
+        <li>Overhead</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+        <li>BinguinHeadwear</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>Headgear</li>
+    </thingCategories>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>12</weight>
+          <only>(0.92,0.96,1.00)</only>
+        </li>
+        <li>
+          <weight>10</weight>
+          <only>(0.70,0.84,0.98)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <only>(0.48,0.62,0.86)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchClothing</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>207</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族红围巾（2026-10-06 用户需求）============
+       用户需求原文：「添加新衣物：红色围巾：与原版御寒帽类似的御寒装备，
+         但是装备位置和项圈一样，不会占用头盔或者护甲夹层之类的位置。
+         需要15蘑菇布，数值是原版御寒帽2倍。」
+
+       ★ 装备位置（"和项圈一样"）—— 照原版 `Apparel_Collar`（奴隶项圈）：
+           layers         = **Overhead**
+           bodyPartGroups = **Neck**
+           parentTagDef   = ApparelHead
+         ⇒ 和"头盔"（UpperHead / FullHead）是同一层但**部位组不冲突**，
+           所以能同时戴头盔；也不在护甲的 Middle / Shell 层，不占护甲夹层。
+           （原版项圈就是这个写法：Overhead + Neck。）
+
+       ★ 数值 = 原版御寒帽 `Apparel_Tuque` 的 ×2（逐项对照）：
+           项目                          原版御寒帽   本围巾   说明
+           costStuffCount                20          15       用户指定（不是 2 倍）
+           MaxHitPoints                  80          160      ×2
+           WorkToMake                    1200        2400     ×2
+           Mass                          0.07        0.14     ×2
+           StuffEffectMultiplierArmor    0.2         0.4      ×2
+           StuffEffectMultiplierInsulation_Cold  0.50   1.00   ×2
+           StuffEffectMultiplierInsulation_Heat  0      0      ×2（0 的 2 倍仍是 0）
+           EquipDelay                    0.8         1.6      ×2
+         ★ 隔冷换算：`StuffEffectMultiplierInsulation_Cold × 材质 StuffPower_Insulation_Cold`
+           原版御寒帽 0.50×布 18 = 9.0℃；本围巾 1.00×布 18 = 18.0℃ ⇒ 正好 2 倍。
+           换魔鬼菌布/超织布等更好的料子会同步变强（原版材质倍率机制）。
+
+       ★ 材料 15：与其它冰鹅服装一致，写**类目**（Fabric / Leathery）而不是指定
+         "蘑菇布"这一种 —— 原版没有叫"蘑菇布"的物品，用户指的应是
+         **DevilstrandCloth（魔鬼菌布，描述就是"从魔鬼菌提取的纤维纺成的布"）**。
+         写成类目后玩家可自选布料（布/魔鬼菌布/超织布/各种皮革），
+         颜色也随之变化 —— 这与"雪花绒帽 25 / 绒羽头冠 40"的写法完全一致。
+
+       ★ "红色"用 `ColorGenerator_Options` 实现（与雪花绒帽同一套机制），
+         把权重压给红色系 ⇒ 做出来大概率是红的，但不是死锁一种颜色
+         （死锁颜色要写 C# 补丁，本 mod 只在肤色上做过那种锁）。
+         ⚠ 若你要"**永远是同一种红**、完全不随机"，说一声我改成锁色。 -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_RedScarf</defName>
+    <label>冰鹅族红围巾</label>
+    <description>一条厚实的红绒围巾，绕着脖颈缠上两圈，垂下的两端塞进衣领里。尼冲q笔嘛？</description>
+    <graphicData>
+      <!-- ★ 贴图暂借原版御寒帽（Tuque）—— 围巾专属贴图还没画。
+           要换：放 Textures/Things/Pawn/Humanlike/Apparel/RedScarf/RedScarf_<体型>_<方向>.png
+           然后把下面两处 texPath / wornGraphicPath 改成
+           Things/Pawn/Humanlike/Apparel/RedScarf/RedScarf -->
+      <texPath>Things/Pawn/Humanlike/Apparel/Tuque/Tuque</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>15</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <tradeability>Sellable</tradeability>
+    <statBases>
+      <!-- 原版御寒帽 Apparel_Tuque ×2 -->
+      <StuffEffectMultiplierArmor>0.4</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>1.0</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0</StuffEffectMultiplierInsulation_Heat>
+      <MaxHitPoints>160</MaxHitPoints>
+      <WorkToMake>2400</WorkToMake>
+      <Mass>0.14</Mass>
+      <Flammability>1.0</Flammability>
+      <EquipDelay>1.6</EquipDelay>
+    </statBases>
+    <apparel>
+      <!-- ★ 关键：部位组是 Neck（不是 UpperHead）⇒ 不占头盔位 -->
+      <bodyPartGroups>
+        <li>Neck</li>
+      </bodyPartGroups>
+      <parentTagDef>ApparelHead</parentTagDef>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/Tuque/Tuque</wornGraphicPath>
+      <!-- ★ 与御寒帽/项圈同一层（Overhead），不在护甲的 Middle/Shell 层 -->
+      <layers>
+        <li>Overhead</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+        <li>BinguinHeadwear</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>Headgear</li>
+    </thingCategories>
+    <!-- 红色系配色：权重压在红/暗红，留一点砖红/深红的变化 -->
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>14</weight>
+          <only>(0.80, 0.18, 0.20)</only>
+        </li>
+        <li>
+          <weight>8</weight>
+          <only>(0.90, 0.30, 0.28)</only>
+        </li>
+        <li>
+          <weight>5</weight>
+          <only>(0.62, 0.12, 0.16)</only>
+        </li>
+        <li>
+          <weight>3</weight>
+          <only>(0.72, 0.28, 0.22)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchClothing</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>208</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+</Defs>

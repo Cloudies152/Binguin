@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族专用袭击策略：把两种「空投」做成独立策略（2026-09 用户定稿）
+  ─────────────────────────────────────────────────────────────────
+  用户要求袭击按下述百分比出现：
+    低温围攻 20% / 原版围攻 5% / 破墙 10% / 工兵 10% /
+    四散空投 5% / 中心空投 5% / 直接进攻 25% / 等待进攻 20%
+  ★ 关键点：原版的「中心空投 / 四散空投」并不是策略，而是 ImmediateAttack
+    的【到达方式】（arriveModes 里的 CenterDrop / RandomDrop），玩家无法单独
+    调它的概率。所以这里把两种空投各自做成一条独立策略（workerClass 仍用原版
+    RaidStrategyWorker_ImmediateAttack，只有到达方式不同）→ 8 类袭击都有各自
+    的权重，百分比就能精确控制。
+  ★ 默认权重 = 0：其它派系（海盗/外来者/机械族…）根本抽不到这两条，
+    只有【冰鹅】派系由 BinguinDefPatches.PatchRaidStrategyWeights() 挂上
+    派系专用权重曲线（RaidStrategyDef.selectionWeightCurvesPerFaction）。
+-->
+<Defs>
+
+  <!-- ==================== 中心空投（运输舱直接砸进殖民地中心） ==================== -->
+  <RaidStrategyDef>
+    <defName>Binguin_DropCenter</defName>
+    <workerClass>RaidStrategyWorker_ImmediateAttack</workerClass>
+    <selectionWeightPerPointsCurve>
+      <points>
+        <li>(0, 0)</li>
+      </points>
+    </selectionWeightPerPointsCurve>
+    <pointsFactorCurve>
+      <points>
+        <li>0, 1</li>
+      </points>
+    </pointsFactorCurve>
+    <arriveModes>
+      <li>CenterDrop</li>
+    </arriveModes>
+    <letterLabelEnemy>袭击</letterLabelEnemy>
+    <arrivalTextEnemy>敌人的运输舱正从高空直扑你的殖民地中心——他们打算把兵直接送到你的院子里。</arrivalTextEnemy>
+    <letterLabelFriendly>援军</letterLabelFriendly>
+    <arrivalTextFriendly>友军正空投到你的殖民地中心来支援你。</arrivalTextFriendly>
+  </RaidStrategyDef>
+
+  <!-- ==================== 四散空投（运输舱散落全图） ==================== -->
+  <RaidStrategyDef>
+    <defName>Binguin_DropScattered</defName>
+    <workerClass>RaidStrategyWorker_ImmediateAttack</workerClass>
+    <selectionWeightPerPointsCurve>
+      <points>
+        <li>(0, 0)</li>
+      </points>
+    </selectionWeightPerPointsCurve>
+    <pointsFactorCurve>
+      <points>
+        <li>0, 1</li>
+      </points>
+    </pointsFactorCurve>
+    <arriveModes>
+      <li>RandomDrop</li>
+    </arriveModes>
+    <letterLabelEnemy>袭击</letterLabelEnemy>
+    <arrivalTextEnemy>敌人的运输舱散落在这片区域的各处——他们从四面八方同时压了过来。</arrivalTextEnemy>
+    <letterLabelFriendly>援军</letterLabelFriendly>
+    <arrivalTextFriendly>友军的运输舱散落在这片区域各处，正在向你靠拢。</arrivalTextFriendly>
+  </RaidStrategyDef>
+
+</Defs>
