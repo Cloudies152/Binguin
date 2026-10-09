@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
   <name>冰鹅族 Binguin Race</name>
   <author>Binguin</author>
@@ -6,6 +6,14 @@
     <li>1.6</li>
   </supportedVersions>
   <packageId>binguin.race</packageId>
+  <!-- ★ 2026-10-09 加版本号（用户要求「备注版本名字为开发版」）。
+       原版标准字段，游戏【Mod 列表】里会显示成一行 `ModVersion: 0.0.4 开发版`。
+       依据：`Verse/ModMetaData.cs:31` `public string modVersion = "";`
+             + `RimWorld/Page_ModsConfig.cs:664-667`
+               `if (!mod.ModVersion.NullOrEmpty()) Widgets.Label(..., "ModVersion" + ": " + mod.ModVersion)`
+       ★ 故意【不】把它写进 <name>：<name> 是公开显示名，
+         加"开发版"会让玩家以为拿到的是半成品。 -->
+  <modVersion>0.0.4 开发版</modVersion>
   <modDependencies>
     <li>
       <packageId>brrainz.harmony</packageId>
