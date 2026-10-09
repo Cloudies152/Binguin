@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // 冰鹅族【钓到企鹅！】—— 钓鱼时有极小概率钓上一名冰鹅族难民（2026-09-24 用户需求）
 //
 // 用户需求原文：
@@ -59,7 +59,7 @@ namespace Binguin
         public const int AbasiaTicks = AbasiaDays * 60000;
 
         /// <summary>
-        /// 可钓出的兵种池 = 和平派系（Binguin）的平民，照抄 `PawnKinds_Binguin.xml`
+        /// 可钓出的兵种池 = 和平派系（Binguin）的平民，照抄 `Defs/03_PawnKinds/PawnKindDefs_Binguin.xml`
         /// 「和平类」那一节的 defName。
         /// ★ 刻意排除两个领袖：`Binguin_Leader`（&lt;factionLeader&gt;true&lt;/factionLeader&gt;）
         ///   与 `Binguin_CaravanLeader`（商队领袖）—— 用户要求"除了领袖外都有概率"。

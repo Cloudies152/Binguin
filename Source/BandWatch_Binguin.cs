@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // 冰鹅族【看演出】行为（2026-09）
 //
 // 用户需求：观众会【主动找能坐的地方】坐下看演出。
@@ -217,7 +217,7 @@ namespace Binguin
 
         /// <summary>
         /// ★ 乐手顺序 → 乐器 defName（performers[0] = 主唱 = 麦克风）。
-        /// 顺序对应 BandVisit_Binguin.xml 里 BuildSketch 的摆位：
+        /// 顺序对应 Defs/10_FoodAndJoy/BandVisit_Binguin.xml 里 BuildSketch 的摆位：
         ///   麦克风 (0,-8) / 吉他 (+2,-8) / 键盘 (-3,-8) / 鼓 (+2,-11) / 贝斯 (-3,-11)。
         /// </summary>
         private static readonly string[] BandInstruments = new string[]

@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // Def 补丁（静态构造，XML 解析之后执行）
 //
 // 背景：本环境的 GenTypes 类型缓存会在某些 mod 早期触发时固化，
@@ -113,7 +113,7 @@ namespace Binguin
 
                     if (mine == null)
                     {
-                        lines += "\n    [缺失] " + mineName + "（TraderKinds_Binguin.xml 没加载？）";
+                        lines += "\n    [缺失] " + mineName + "（Defs/11_World/TraderKindDefs_Binguin.xml 没加载？）";
                         allOk = false;
                         continue;
                     }
@@ -175,7 +175,7 @@ namespace Binguin
                 {
                     Log.Warning("[冰鹅族] 商人卖鱼自检【异常】：def 继承可能没生效 ——"
                         + "若某个 kind 只剩 1 个生成器就是'只剩鱼'。补救办法：在"
-                        + " TraderKinds_Binguin.xml 里把原版 stockGenerators 整段复制过来再追加鱼。" + lines);
+                        + " Defs/11_World/TraderKindDefs_Binguin.xml 里把原版 stockGenerators 整段复制过来再追加鱼。" + lines);
                 }
             }
             catch (Exception e)
@@ -1646,7 +1646,7 @@ namespace Binguin
             JobDef workJob = DefDatabase<JobDef>.GetNamedSilentFail("Binguin_WorkOnUnfinishedRod");
             if (workJob == null)
             {
-                Log.Warning("[冰鹅族] 未找到 Binguin_WorkOnUnfinishedRod（JobDefs_Binguin.xml 没加载？），"
+                Log.Warning("[冰鹅族] 未找到 Binguin_WorkOnUnfinishedRod（Defs/13_WorkAndRecipes/JobDefs_Binguin.xml 没加载？），"
                     + "半成品无法继续装配！");
             }
             else

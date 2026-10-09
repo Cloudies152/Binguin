@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // 快速滑冰基因 —— Harmony 挂钩实现（方案：直接挂在移动成本计算处）
 //
 // 思路（来自朋友建议）：不轮询地形，而是在 1.6 计算"进入某格所需成本"的
@@ -539,7 +539,7 @@ namespace Binguin
                 return false;
             }
             string name = terrain.defName;
-            // 原版冰面/水面 + 本 MOD 的冰鹅地板（Binguin_*，见 Floors_Binguin.xml）
+            // 原版冰面/水面 + 本 MOD 的冰鹅地板（Binguin_*，见 Defs/07_Buildings/TerrainDefs_Floors.xml）
             return name.StartsWith("Ice", StringComparison.Ordinal)
                 || name.StartsWith("Water", StringComparison.Ordinal)
                 || name.StartsWith("Binguin_", StringComparison.Ordinal);

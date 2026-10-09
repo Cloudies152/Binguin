@@ -41,7 +41,7 @@
     <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
     <settlementTexturePath>World/WorldObjects/DefaultSettlement</settlementTexturePath>
 
-    <!-- 据点全名由"屈原词汇 + 观察站"生成（RulePackDef，见 NameMakers_Binguin.xml） -->
+    <!-- 据点全名由"屈原词汇 + 观察站"生成（RulePackDef，见 Defs/02_Factions/RulePackDefs_SettlementNames.xml） -->
     <settlementNameMaker>BinguinSettlementNameMaker</settlementNameMaker>
 
     <colorSpectrum>

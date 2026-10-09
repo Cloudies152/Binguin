@@ -26,7 +26,7 @@
       <!-- ★ 2026-10-01 用户要求：4.6 → 4.7
            目的：吃到慢性子基因（原版 MoveSpeed_Slow）后正好 4.5，只比智人（4.6）慢一点点。
            验算：4.7 − 0.2 = 4.5 ✓   （改之前是 4.6 − 0.2 = 4.4）
-           ⚠ 注意 MoveSpeed_Slow 是【固定 -0.2 偏移】，不是百分比 —— 详见 Genes_Binguin.xml 的注释。 -->
+           ⚠ 注意 MoveSpeed_Slow 是【固定 -0.2 偏移】，不是百分比 —— 详见 Defs/01_RaceAndAppearance/GeneDefs_Binguin.xml 的注释。 -->
       <MoveSpeed>4.7</MoveSpeed>
       <!-- ★ 2026-10-01 用户要求：营养【储存上限】= 1.2
            （明确不是代谢/消耗速度 —— hungerRate 一个字没动）
@@ -143,7 +143,7 @@
         </alienPartGenerator>
 
         <!-- 种族基因（HAR 的 raceGenes：无论异种如何都带有的基因）
-             原版引用 + 自定义基因（定义见 Genes_Binguin.xml） -->
+             原版引用 + 自定义基因（定义见 Defs/01_RaceAndAppearance/GeneDefs_Binguin.xml） -->
         <raceGenes>
           <!-- 原版：耐寒 -->
           <li><defName>MinTemp_SmallDecrease</defName></li>
@@ -161,7 +161,7 @@
           <li><defName>Aggression_DeadCalm</defName></li>
           <!-- ★ 自定义：纯白绒羽 —— 用 skinColorOverride 把肤色【硬性定死】为纯白。
                这是根治"每只冰鹅肤色都不一样"的关键：只改 colorChannels 治不了本，
-               因为原版会在没有黑色素基因时【随机塞一个】进来（详见 Genes_Binguin.xml 注释）。 -->
+               因为原版会在没有黑色素基因时【随机塞一个】进来（详见 Defs/01_RaceAndAppearance/GeneDefs_Binguin.xml 注释）。 -->
           <li><defName>Binguin_Gene_PureWhiteSkin</defName></li>
           <!-- 自定义：高效研究（研究+20%，破译+30%） -->
           <li><defName>Binguin_Gene_EfficientResearch</defName></li>

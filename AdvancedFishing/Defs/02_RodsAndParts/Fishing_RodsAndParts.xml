@@ -560,7 +560,7 @@
   </AbilityDef>
 
   <!-- ============ 装配台 WorkGiver（DoBills 注册，仿现有工作台模式） ============ -->
-  <!-- ★ 不继承 WorkGiverBase（直接写字段，同现有 WorkGivers_Binguin.xml 模式） -->
+  <!-- ★ 不继承 WorkGiverBase（直接写字段，同现有 Defs/13_WorkAndRecipes/WorkGiverDefs_Binguin.xml 模式） -->
   <WorkGiverDef>
     <defName>DoBillsBinguinRodAssembly</defName>
     <label>在钓竿装配台制造物品</label>

@@ -225,7 +225,7 @@
          MayRequire Royalty：未装 Royalty 时不生成科技图纸，避免科技被硬锁死。 -->
     <!-- ★ 2026-09：声明科技图纸由哪类派系持有（原版必须写，否则每次启动报
          「requires techprints but has no heldByFactionCategoryTags」红字）。
-         配套：Faction_Binguin.xml 补 <categoryTag>Outlander</categoryTag>。 -->
+         配套：Defs/02_Factions/FactionDefs_Binguin.xml 补 <categoryTag>Outlander</categoryTag>。 -->
     <heldByFactionCategoryTags MayRequire="Ludeon.RimWorld.Royalty">
       <li>Outlander</li>
     </heldByFactionCategoryTags>

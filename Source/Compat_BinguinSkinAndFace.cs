@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // 三方兼容补丁（纯 C#，不动 XML 定义）—— 2026-09-23
 //
 // ① 「头部依然是智人头」的真凶：Nals.FacialAnimation（FA）
@@ -32,7 +32,7 @@
 //    原版 RimWorld.Pawn_StoryTracker.get_SkinColor() = skinColorOverride ?? SkinColorBase，
 //    而 get_SkinColorBase() 在 pawn 没有黑色素基因时会调
 //    PawnSkinColors.RandomSkinColorGene(pawn) 【当场随机塞一个黑色素基因进去】
-//    （IL 实证，见 Genes_Binguin.xml 顶部注释）→ 冰鹅的肤色会被那个随机基因改掉。
+//    （IL 实证，见 Defs/01_RaceAndAppearance/GeneDefs_Binguin.xml 顶部注释）→ 冰鹅的肤色会被那个随机基因改掉。
 //    这里直接锁死：冰鹅族的 SkinColor 恒为纯白，任何肤色基因都改不动。
 //    （HAR 的 <colorChannels><li><name>skin</name> first/second 也都是纯白，
 //      两边一致：身体/头部贴图不会被染色。）
@@ -293,7 +293,7 @@ namespace Binguin
                 // 我们的种族是 ParentName="Human" 的 ThingDef_AlienRace，
                 // comps 是继承下来的（补丁先于继承解析生效）→ 正常情况下应该有。
                 // 若这里是"无"，FA 根本不会画冰鹅的脸（会一直用 HAR 自绘头），
-                // 那就需要在 Race_Binguin.xml 里显式补 comps（见交接文档第 85 条）。
+                // 那就需要在 Defs/01_RaceAndAppearance/AlienRace_Binguin.xml 里显式补 comps（见交接文档第 85 条）。
                 bool hasFaComp = false;
                 System.Collections.Generic.List<ThingComp> comps = pawn.AllComps;
                 if (comps != null)

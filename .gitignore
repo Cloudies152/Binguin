@@ -2,7 +2,7 @@
 obj/
 bin/
 
-# ---- IDE 配置 ----
+# ---- IDE 配置（★ 2026-10-08：程序员用 Rider，交付包里混进了 Source\.idea\）----
 .idea/
 Source/.idea/
 *.user

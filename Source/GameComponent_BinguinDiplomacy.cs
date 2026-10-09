@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // 冰鹅族外交事件（RimWorld 1.6.4871 / Humanoid Alien Races 2.0 前置）
 //
 // 功能：游戏开始 3 天内，向玩家殖民地边缘派遣一名冰鹅族外交官
@@ -1334,7 +1334,7 @@ namespace Binguin
 
         // ★ 2026-09：修「老存档里的冰鹅肤色改不过来」。
         //   根因：HAR 把肤色通道【存进了存档】（AlienComp.colorChannels 走 Scribe_Collections），
-        //        所以改 Race_Binguin.xml 只影响【新生成】的小人；老小人会永远保留当初抽到的值。
+        //        所以改 Defs/01_RaceAndAppearance/AlienRace_Binguin.xml 只影响【新生成】的小人；老小人会永远保留当初抽到的值。
         //   本命令把场上所有冰鹅的 skin 通道 first 覆写成纯白（= pawn.story.SkinColor 变白），
         //   second 归零（= 贴图不做 colorTwo 染色），然后刷新渲染。
         //   注意：AlienComp 及其元组类型在 HAR 里是 internal 的，所以走反射，避免编译期依赖。
@@ -1466,7 +1466,7 @@ namespace Binguin
             PawnKindDef kind = DefDatabase<PawnKindDef>.GetNamedSilentFail("Binguin_Leader");
             if (kind == null)
             {
-                Log.Error("[冰鹅族] 找不到 PawnKindDef Binguin_Leader！请检查 PawnKinds_Binguin.xml。");
+                Log.Error("[冰鹅族] 找不到 PawnKindDef Binguin_Leader！请检查 Defs/03_PawnKinds/PawnKindDefs_Binguin.xml。");
                 return;
             }
             Pawn pawn = null;
