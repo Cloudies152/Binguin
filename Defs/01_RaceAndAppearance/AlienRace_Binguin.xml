@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰鹅族种族定义（Humanoid Alien Races 2.0 / RimWorld 1.6.4871）
   ★ 结构已对照 Miho 1.6（用户提供）与 原版 Human 定义（_vanilla_refs）逐字段核对：
@@ -10,7 +10,7 @@
 -->
 <Defs>
   <AlienRace.ThingDef_AlienRace ParentName="Human">
-    <!-- ★★★ 2026-10-09【原版身形 / 头部 / 面部 版 v0.0.3】
+    <!-- ★★★ 2026-10-09【改用原版身形 / 头部 / 面部】
          本版的小人**身体、头、脸全部借用原版贴图**；
          自绘的 Races/Binguin/{Body,Head,FA} 贴图与对应 def 均已移除。
          发型（Races/Binguin/Hair）保留。
@@ -257,7 +257,7 @@
               就是一个纯字符串节点，不是 <path> 子节点。）
              路径不带方向后缀，Graphic_Multi 自己找 _south/_north/_east；
              _west 缺失时自动镜像 _east。 -->
-        <!-- ★★★ 2026-10-09【原版身形/脸版 v0.0.3】改造点 ①：头部改用**原版头型**
+        <!-- ★★★ 2026-10-09【改用原版身形 / 脸版】改造点 ①：头部改用**原版头型**
              原版 HeadTypeDef 的 graphicPath 形如
                Things/Pawn/Humanlike/Heads/Male/Male_Average_Normal
                Things/Pawn/Humanlike/Heads/Female/Female_Average_Normal
