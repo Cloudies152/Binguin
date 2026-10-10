@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰山科技研究线（本文件只含当前已实现的两个基础科技：
   增冰鹅鹅 / 环境保护。其余科技（冰鹅机加工等）后续补充）
@@ -216,7 +216,9 @@
     <tab>Binguin_ResearchTab</tab>
     <techLevel>Spacer</techLevel>
     <baseCost>5000</baseCost>
-    <!-- ★ 2026-09（用户需求）：本科技需要一张【蓝图】才能开始研究——
+    <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ★ 2026-09（用户需求）：本科技需要一张【蓝图】才能开始研究——
          原版科技图纸 Techprint（ThingDefGenerator_Techprints 会依
          techprintCount>0 自动生成 defName = Techprint_Binguin_ResearchEndlessSnow
          的物品，市价取 techprintMarketValue）。

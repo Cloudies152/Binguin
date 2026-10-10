@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Odyssey 加载根：给原版属性追加钓竿计算项，parentStat 由原版 StatWorker 初始化时赋值。 -->
+<Patch>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/StatDef[defName="MeleeWeapon_DamageMultiplier"]/parts</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="MeleeWeapon_DamageMultiplier"]</xpath><value><parts /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="MeleeWeapon_DamageMultiplier"]/parts</xpath><value><li Class="Binguin.Feature.Rods.StatPart_BinguinRod, Binguin" /></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/StatDef[defName="MeleeWeapon_CooldownMultiplier"]/parts</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="MeleeWeapon_CooldownMultiplier"]</xpath><value><parts /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="MeleeWeapon_CooldownMultiplier"]/parts</xpath><value><li Class="Binguin.Feature.Rods.StatPart_BinguinRod, Binguin" /></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/StatDef[defName="MoveSpeed"]/parts</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="MoveSpeed"]</xpath><value><parts /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="MoveSpeed"]/parts</xpath><value><li Class="Binguin.Feature.Rods.StatPart_BinguinRod, Binguin" /></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/StatDef[defName="ToxicResistance"]/parts</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="ToxicResistance"]</xpath><value><parts /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="ToxicResistance"]/parts</xpath><value><li Class="Binguin.Feature.Rods.StatPart_BinguinRod, Binguin" /></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/StatDef[defName="ImmunityGainSpeed"]/parts</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="ImmunityGainSpeed"]</xpath><value><parts /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="ImmunityGainSpeed"]/parts</xpath><value><li Class="Binguin.Feature.Rods.StatPart_BinguinRod, Binguin" /></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/StatDef[defName="InjuryHealingFactor"]/parts</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="InjuryHealingFactor"]</xpath><value><parts /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="InjuryHealingFactor"]/parts</xpath><value><li Class="Binguin.Feature.Rods.StatPart_BinguinRod, Binguin" /></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/StatDef[defName="MaxHitPoints"]/parts</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="MaxHitPoints"]</xpath><value><parts /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/StatDef[defName="MaxHitPoints"]/parts</xpath><value><li Class="Binguin.Feature.Rods.StatPart_BinguinRod, Binguin" /></value></Operation>
+</Patch>

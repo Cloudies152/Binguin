@@ -1,5 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- ============================================================================
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============================================================================
   冰鹅族飞天决战（2026-08-22 用户设计文档）
   · 研究「天问」：解锁大型信号发射器 + 飞船型发射仓（多元分析仪研究）
   · 大型信号发射器（露天 2×2）：与冰鹅族盟友时可"尝试联系母舰"，
@@ -70,6 +72,12 @@
     <researchPrerequisites>
       <li>Binguin_ResearchTianwen</li>
     </researchPrerequisites>
+      <comps>
+      <li Class="Binguin.Feature.Diplomacy.CompProperties_BinguinSignalRelay, Binguin"></li>
+    </comps>
+      <placeWorkers>
+      <li>Binguin.Feature.Diplomacy.PlaceWorker_BinguinOpenAir, Binguin</li>
+    </placeWorkers>
   </ThingDef>
 
   <!-- ============ 冰鹅族飞船型发射仓（4×4） ============
@@ -116,12 +124,15 @@
     <researchPrerequisites>
       <li>Binguin_ResearchTianwen</li>
     </researchPrerequisites>
+      <comps>
+      <li Class="Binguin.Feature.Diplomacy.CompProperties_BinguinShipCapsule, Binguin"></li>
+    </comps>
   </ThingDef>
 
-  <!-- ============ 进入发射仓 job（殖民者走进发射仓登记） ============
-       driverClass 由 BinguinDefPatches 挂载（JobDriver_BinguinBoardCapsule） -->
+  <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
   <JobDef>
     <defName>Binguin_BoardCapsule</defName>
+    <driverClass>Binguin.Feature.Diplomacy.JobDriver_BinguinBoardCapsule, Binguin</driverClass>
     <reportString>boarding the ship capsule.</reportString>
     <casualInterruptible>false</casualInterruptible>
   </JobDef>

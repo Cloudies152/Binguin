@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ============================================================================
   冰鹅族【乐队来访】事件 —— 建筑 / 服装 / 人物（XML 批，2026-09）
@@ -508,7 +508,7 @@
   <!-- ==================== 开演前：主唱站在麦克风前等（头顶问号） ==================== -->
   <JobDef>
     <defName>Binguin_BandWaitAtMic</defName>
-    <driverClass>Binguin.Feature.Band.JobDriver_BinguinBandWaitAtMic</driverClass>
+    <driverClass>Binguin.Feature.Band.JobDriver_BinguinBandWaitAtMic, Binguin</driverClass>
     <reportString>在麦克风前等着开演。</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
@@ -516,7 +516,7 @@
   <!-- ==================== 看演出（观众主动找座位坐下） ==================== -->
   <JobDef>
     <defName>Binguin_WatchConcert</defName>
-    <driverClass>Binguin.Feature.Band.JobDriver_BinguinWatchConcert</driverClass>
+    <driverClass>Binguin.Feature.Band.JobDriver_BinguinWatchConcert, Binguin</driverClass>
     <reportString>在看冰鹅族演出。</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
@@ -529,7 +529,7 @@
          乐手不在自己的乐器前就派这个 job（走到乐器操作点 → 面向乐器演奏到散场）。 -->
   <JobDef>
     <defName>Binguin_PlayInBand</defName>
-    <driverClass>Binguin.Feature.Band.JobDriver_BinguinPlayInstrument</driverClass>
+    <driverClass>Binguin.Feature.Band.JobDriver_BinguinPlayInstrument, Binguin</driverClass>
     <reportString>在冰鹅族乐队里演奏。</reportString>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>

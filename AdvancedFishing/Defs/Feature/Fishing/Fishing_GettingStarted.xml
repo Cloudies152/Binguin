@@ -1,5 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+
   进阶钓鱼学（奥德赛 DLC 专属，2026-08-19 用户需求）：
   ★ 本文件夹（AdvancedFishing/）由 About.xml 的 loadFolders 门控：
     仅当奥德赛 DLC（Ludeon.RimWorld.Odyssey）激活时才加载本文件，
@@ -39,7 +41,9 @@
     </prerequisites>
   </ResearchProjectDef>
 
-  <!-- ============ 蟹笼（25 钢，任意位置自动捕鱼） ============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 蟹笼（25 钢，任意位置自动捕鱼） ============
        每天 6:00 / 12:00 / 18:00 / 24:00 各捕一次（15000 tick 间隔）。
        ★ 2026-08-20 用户改定：任意位置（冰面/陆地/水域）可放置、自动运行，
          不依赖水域。放在水域中→捕该水域鱼群；放在水域外（冰盖冰面等）→
@@ -90,9 +94,17 @@
       <li>Binguin_ResearchAdvancedFishing</li>
     </researchPrerequisites>
     <constructionSkillPrerequisite>3</constructionSkillPrerequisite>
+      <comps>
+      <li Class="Binguin.Feature.Fishing.CompProperties_BinguinCrabTrap, Binguin"><intervalTicks>15000</intervalTicks></li>
+    </comps>
+      <placeWorkers>
+      <li>Binguin.Feature.Fishing.PlaceWorker_BinguinWaterArea, Binguin</li>
+    </placeWorkers>
   </ThingDef>
 
-  <!-- ============ 打窝用具（50 钢 + 1 零部件，放置在水域中） ============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 打窝用具（50 钢 + 1 零部件，放置在水域中） ============
        可放入任意食物（营养值上限 5）；每天消耗 1 营养值，
        以 50%/天 速率加快所在水域鱼群增长速度；每个水域最多放置 2 个。
        XML 用原版 CompProperties_ThingContainer 占位（零自定义类型），
@@ -164,6 +176,7 @@
       <!-- ★ 原版容器占位：stackLimit=5（数量兜底），compClass 由静态构造换成
            CompBinguinFishingBait（营养值容量 5.0 / 每天消耗 1.0 / 增速 50%） -->
       <li Class="CompProperties_ThingContainer">
+        <compClass>Binguin.Feature.Fishing.CompBinguinFishingBait, Binguin</compClass>
         <stackLimit>5</stackLimit>
         <drawContainedThing>false</drawContainedThing>
       </li>
@@ -172,11 +185,12 @@
       <li>Binguin_ResearchAdvancedFishing</li>
     </researchPrerequisites>
     <constructionSkillPrerequisite>3</constructionSkillPrerequisite>
+      <placeWorkers>
+      <li>Binguin.Feature.Fishing.PlaceWorker_BinguinBaitLimit, Binguin</li>
+    </placeWorkers>
   </ThingDef>
 
-  <!-- ============ 打窝投喂 WorkGiver（殖民者自动把食物搬进打窝用具） ============
-       giverClass 用原版 WorkGiver_Scanner 占位（零自定义类型），
-       静态构造替换为 WorkGiver_BinguinFillBait。 -->
+  <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
   <!-- ★ 不继承 HaulToBase（它定义在 Biotech 里，避免对 Biotech 的隐藏依赖），
        字段全部手写，只要求 Odyssey。 -->
   <WorkGiverDef>
@@ -185,7 +199,7 @@
     <!-- ★ 占位 giverClass 必须用可实例化的具体类（WorkGiver_Scanner 是 abstract，
          会被 Worker 属性懒加载实例化而每帧报 MissingMethodException）！
          静态构造会替换为 WorkGiver_BinguinFillBait 并清 workerInt 缓存。 -->
-    <giverClass>WorkGiver_Researcher</giverClass>
+    <giverClass>Binguin.Feature.Fishing.WorkGiver_BinguinFillBait, Binguin</giverClass>
     <workType>Hauling</workType>
     <verb>fill bait</verb>
     <gerund>filling bait</gerund>

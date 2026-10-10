@@ -256,6 +256,7 @@ namespace Binguin.Feature.GateShield
         }
     }
 
+// 加载方式已迁至 XML；下述占位替换描述仅记录旧实现。
     // ============================================================================
     // 寒门盾 apparel 承载 comp（v18 事件驱动）
     //   挂在 Binguin_GateShield 上（BinguinDefPatches 静态构造挂载）。

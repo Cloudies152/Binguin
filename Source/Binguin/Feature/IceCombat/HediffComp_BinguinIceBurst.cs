@@ -12,7 +12,7 @@
 //   - 摧毁方式 = 原版截肢语义：先移除该部位及全部子部位上的旧伤口/hediff，
 //     再添加 MissingBodyPart（子树由原版 PartIsMissing 沿父链判定为缺失）。
 //
-// ★ XML 零自定义类型：comps 由 BinguinDefPatches 静态构造挂载到 HediffDef。
+// ★ 自定义类型由对应功能的 XML 声明，使用完整命名空间和程序集名。
 // ============================================================================
 
 using System.Collections.Generic;

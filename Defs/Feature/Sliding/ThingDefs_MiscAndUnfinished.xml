@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   企鹅滑板（腰部装备）：移动 +50%，并授予「滑行冲刺」能力（半径 10 格滑行，CD 10 秒）。
   ★ 结构依据：原版 Core\Defs\ThingDefs_Misc\Apparel_Belts.xml（ShieldBelt）——
@@ -68,6 +68,11 @@
     <tradeTags>
       <li>Apparel</li>
     </tradeTags>
+      <comps>
+      <li Class="Binguin.Comps.CompProperties_ApparelGrantHediff, Binguin"><hediffDef>Binguin_BoardSpeed</hediffDef></li>
+    <li Class="Binguin.Feature.Sliding.CompProperties_BinguinBoard, Binguin"><range>10</range><cooldownTicks>600</cooldownTicks></li>
+    <li Class="Binguin.Feature.Sliding.CompProperties_BinguinBoardDraw, Binguin"></li>
+    </comps>
   </ThingDef>
 
   <!-- 滑板疾行：穿戴企鹅滑板获得的 hediff，移速 +20% -->
@@ -112,7 +117,9 @@
   </HediffDef>
 
 
-  <!-- ============ 贴地滑行飞行器（2026-08-19 终极方案） ============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 贴地滑行飞行器（2026-08-19 终极方案） ============
        照抄原版 CoreDefsThingDefs_MiscEthereal_Various.xml 的 PawnFlyer def。
        ★ workerClass 先写原版 PawnFlyerWorker 占位（XML 零自定义类型原则），
          BinguinDefPatches 静态构造里用 AccessTools 换成
@@ -131,7 +138,7 @@
     <pawnFlyer>
       <flightDurationMin>0.5</flightDurationMin>
       <flightSpeed>12</flightSpeed>
-      <workerClass>PawnFlyerWorker</workerClass>
+      <workerClass>Binguin.Feature.Sliding.PawnFlyerWorker_BinguinSlide, Binguin</workerClass>
       <heightFactor>0</heightFactor>
       <progressCurve>
         <points>

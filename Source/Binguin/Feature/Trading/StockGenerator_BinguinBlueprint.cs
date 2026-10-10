@@ -11,8 +11,7 @@
 //     · 稀有贸易商（Caravan_Outlander_Exotic 稀有品商队 / Orbital_Exotic
 //       轨道稀有品商）：chance 概率出现
 //     · 冰鹅族据点（Base_Outlander_Standard，仅 faction=Binguin）：70% 概率
-//   实例由 BinguinDefPatches.PatchBinguinBlueprintTraders 运行时挂载
-//   （沿用本项目「XML 零自定义类型」约定，避免 GenTypes 缓存问题）。
+//   实例由 Patches/Feature/Trading/BlueprintStocks_Binguin.xml 声明，Royalty 门控。
 //
 //   ★ 原版 StockGenerator_Techprints 没有任何可配字段（概率写死在内部），
 //     所以这里自写一个带 chance / 派系过滤的生成器。

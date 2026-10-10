@@ -6,9 +6,9 @@
 -->
 <Defs>
 
-  <!-- 与冰鹅族外交官交谈（2026-08-22）：殖民者右键外交官 → 走近 → 弹共存
-       意向选择信；driverClass 由 BinguinDefPatches.PatchDiplomacy 挂载 -->
+  <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
   <JobDef>
     <defName>Binguin_DiplomatTalk</defName>
+    <driverClass>Binguin.Feature.Diplomacy.JobDriver_BinguinDiplomatTalk, Binguin</driverClass>
     <reportString>talking to the Binguin diplomat.</reportString>
   </JobDef></Defs>

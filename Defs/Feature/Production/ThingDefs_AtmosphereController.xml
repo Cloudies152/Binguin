@@ -1,10 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<!--
-  冰鹅族二期建筑（2026-08-19）：垃圾回收器 + 大气控制仪
-  ★ 均由「环境保护」线解锁（垃圾回收 / 大气控制研究）
-  ★ XML 零自定义类型：自定义 Comp（CompBinguinRecycler / CompBinguinWeather）
-    由 BinguinDefPatches 静态构造代码挂载（见 Source）
--->
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
 <Defs>
 
   <!-- ============ 冰鹅族垃圾回收器（参考原版 WastepackAtomizer 机制） ============
@@ -14,7 +9,7 @@
        （铁40% / 玻璃钢20% / 铀20% / 金10% / 银10%）。
        殖民者自动搬运垃圾进来（原版 WorkGiver_HaulToAtomizer 按
        CompProperties_Atomizer.thingDef=Wastepack 匹配）。 -->
-  <ThingDef ParentName="BuildingBase">
+  <ThingDef ParentName="BuildingBase" MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Recycler</defName>
     <label>冰鹅族垃圾回收器</label>
     <description>冰鹅族以钢铁打造的垃圾回收器，将有毒垃圾分解为可再生的矿物。插电后自动运转，可以回收铁、玻璃钢、铀、金或银。</description>
@@ -61,10 +56,9 @@
       </li>
       <li Class="CompProperties_Flickable" />
       <li Class="CompProperties_Breakdownable" />
-      <!-- ★ 垃圾容器（原版原子化器机制）：殖民者用原版 WorkGiver_HaulToAtomizer
-           自动搬运 Wastepack 进来；compClass 由 BinguinDefPatches 换成
-           CompBinguinRecycler。ticksPerAtomize=20000 = 8 小时回收 1 个 -->
+      <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
       <li Class="CompProperties_Atomizer">
+        <compClass>Binguin.Feature.Production.CompBinguinRecycler, Binguin</compClass>
         <thingDef>Wastepack</thingDef>
         <stackLimit>25</stackLimit>
         <ticksPerAtomize>20000</ticksPerAtomize>

@@ -17,7 +17,7 @@
 //   ★ 2026-09 性能：不再每 tick 写 PowerOutput（那只是重复写同一个值）。
 //   功耗只在三个状态跃迁处更新：PostSpawnSetup（含读档）、刚充满、用掉一次充能
 //   （TryChangeWeather）——这三处覆盖了值会变化的全部情形。
-// ★ XML 零自定义类型：compClass 由 BinguinDefPatches 代码挂载
+// ★ 自定义类型由对应功能的 XML 声明，使用完整命名空间和程序集名。
 // ============================================================================
 
 using System.Collections.Generic;

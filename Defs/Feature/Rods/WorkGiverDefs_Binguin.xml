@@ -20,10 +20,10 @@
        ★ 占位 giverClass 必须是可实例化的具体类（`WorkGiver_Scanner` 是 abstract，
          占位会导致每帧实例化异常）；C# 静态构造会替换成
          `WorkGiver_BinguinUnfinishedRod` 并清 `workerInt` 缓存。 -->
-  <WorkGiverDef>
+  <WorkGiverDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_WorkOnUnfinishedRod</defName>
     <label>继续装配半成品钓竿</label>
-    <giverClass>WorkGiver_Researcher</giverClass>
+    <giverClass>Binguin.Feature.Rods.WorkGiver_BinguinUnfinishedRod, Binguin</giverClass>
     <workType>Crafting</workType>
     <verb>continue assembling</verb>
     <gerund>continuing assembling</gerund>

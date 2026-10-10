@@ -1,5 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+
   冰鹅族【商人货物：加卖鱼】—— 2026-09-26 用户需求
 
   用户需求原文：
@@ -185,7 +187,7 @@
           <thingDefCountRange>2</thingDefCountRange>
           <countRange>-2~1</countRange>
         </li>  
-      
+
         <li MayRequire="Ludeon.RimWorld.Anomaly" Class="StockGenerator_Tomes">
           <countRange>-2~1</countRange>
         </li>
@@ -356,8 +358,8 @@
         <li Class="StockGenerator_BuySingleDef" MayRequire="Ludeon.RimWorld.Anomaly"><thingDef>Shard</thingDef></li>
         <li Class="StockGenerator_BuySingleDef" MayRequire="Ludeon.RimWorld.Anomaly"><thingDef>Bioferrite</thingDef></li>
         <li Class="StockGenerator_BuySingleDef" MayRequire="Ludeon.RimWorld.Anomaly"><thingDef>RevenantSpine</thingDef></li>
-      
-    
+
+
       <!-- ★ 2026-09-26 用户需求：补货 2-4 种鱼，每种 10-20 个。
            thingDefCountRange = 抽几种；countRange = 每种多少个。
            IL 实证 StockGenerator.RandomCountOf：countRange.max > 0 时直接用它，
@@ -446,12 +448,12 @@
             <li>Pemmican</li>
           </thingDefs>
         </li>
-      
+
         <!-- Drugs -->
         <li Class="StockGenerator_Category">
           <categoryDef>Drugs</categoryDef>
         </li>
-      
+
         <!-- Techprints -->
         <!-- none -->
 
@@ -470,10 +472,10 @@
           <thingDef>Novel</thingDef>
           <countRange>1~1</countRange>
         </li>
-      
+
         <!-- Weapons -->
         <!-- none -->
-      
+
         <!-- Apparel -->
         <li Class="StockGenerator_MarketValue">
           <tradeTag>BasicClothing</tradeTag>
@@ -483,23 +485,23 @@
           <tradeTag>Clothing</tradeTag>
           <countRange>3~3</countRange>
         </li>
-      
+
         <!-- Implants -->
         <!-- none -->
-      
+
         <!-- Buildings -->
         <li Class="StockGenerator_Category">
           <categoryDef>BuildingsFurniture</categoryDef>
           <thingDefCountRange>3~3</thingDefCountRange>
           <countRange>1~1</countRange>
         </li>
-      
+
         <!-- Exotic -->
         <!-- none -->
-      
+
         <!-- Slaves -->
         <!-- none -->
-      
+
         <!-- Animals -->
         <li Class="StockGenerator_Animals">
           <maxWildness>0.70</maxWildness>
@@ -525,13 +527,13 @@
           <thingDef>Apparel_CeremonialCultistMask</thingDef>
           <countRange>-1~2</countRange> <!-- 50% chance for 1~2 -->
         </li>
-      
+
         <!-- Buying -->
         <li Class="StockGenerator_BuyExpensiveSimple" />
         <li Class="StockGenerator_BuyTradeTag"><tag>Art</tag></li>
         <li Class="StockGenerator_BuyTradeTag"><tag>MusicalInstrument</tag></li>
-      
-    
+
+
       <!-- ★ 2026-09-26 用户需求：补货 2-4 种鱼，每种 10-20 个。
            thingDefCountRange = 抽几种；countRange = 每种多少个。
            IL 实证 StockGenerator.RandomCountOf：countRange.max > 0 时直接用它，
@@ -548,7 +550,9 @@
   </TraderKindDef>
 
 
-  <!-- ==================== 作战商卖的冰鹅族武器（2026-09-26 用户需求） ====================
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ==================== 作战商卖的冰鹅族武器（2026-09-26 用户需求） ====================
        需求：「给作战商加 2-5 把冰鹅族武器出售，只能是冷冻武器及以下的武器
               （霰雪无垠武器不售卖）」
 
@@ -594,10 +598,10 @@
           <thingDef>MedicineIndustrial</thingDef>
           <countRange>10~20</countRange>
         </li>
-      
+
         <!-- Drugs -->
         <!-- none -->
-      
+
         <!-- Techprints -->
         <li Class="StockGenerator_Techprints">
           <countChances>
@@ -610,7 +614,7 @@
 
         <!-- Books -->
         <!-- none -->
-      
+
         <!-- Weapons -->
         <li Class="StockGenerator_MarketValue">
           <tradeTag>WeaponRanged</tradeTag>
@@ -629,19 +633,19 @@
             <li MayRequire="Ludeon.RimWorld.Anomaly">Shell_Deadlife</li>
           </excludedThingDefs>
         </li>
-      
+
         <!-- Apparel -->
         <li Class="StockGenerator_MarketValue">
           <tradeTag>Armor</tradeTag>
           <countRange>5~5</countRange>
         </li>
-      
+
         <!-- Implants -->
         <!-- none -->
-      
+
         <!-- Buildings -->
         <!-- none -->
-      
+
         <!-- Exotic -->
         <!-- none -->
 
@@ -650,13 +654,13 @@
           <thingDef>Genepack</thingDef>
           <countRange>1~1</countRange>
         </li>
-      
+
         <!-- Slaves -->
         <!-- none -->
-      
+
         <!-- Animals -->
         <!-- none -->
-      
+
         <!-- Buying -->
         <li Class="StockGenerator_BuyExpensiveSimple" />
         <li Class="StockGenerator_BuyTradeTag"><tag>Art</tag></li>
@@ -664,8 +668,8 @@
         <li Class="StockGenerator_BuyTradeTag"><tag>MusicalInstrument</tag></li>
         <li Class="StockGenerator_BuyTradeTag"><tag>Drugs</tag></li>
         <li Class="StockGenerator_BuyTradeTag"><tag>HoraxWeapon</tag></li>
-      
-    
+
+
       <!-- ★ 2026-09-26 用户需求：补货 2-4 种鱼，每种 10-20 个。
            thingDefCountRange = 抽几种；countRange = 每种多少个。
            IL 实证 StockGenerator.RandomCountOf：countRange.max > 0 时直接用它，
@@ -678,6 +682,7 @@
         <thingDefCountRange>2~4</thingDefCountRange>
         <countRange>10~20</countRange>
       </li>
+    <li Class="Binguin.Feature.Trading.StockGenerator_BinguinWeapons, Binguin" />
     </stockGenerators>
   </TraderKindDef>
 

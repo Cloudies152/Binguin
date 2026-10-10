@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+
   高级钓鱼学 —— 钓竿制作系统（2026-08-19 用户设计文档：高级钓鱼学.md）
   ★ 本文件在 AdvancedFishing/ 文件夹（Odyssey 门控，LoadFolders.xml）
   ★ XML 零自定义类型原则：自定义 Comp/ThoughtWorker/StatPart 由
@@ -21,7 +23,9 @@
 -->
 <Defs>
 
-  <!-- ========================================================================
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ========================================================================
        尚方宝剑（2026-10-06 用户需求）
        ========================================================================
        用户规格：「尚方宝剑，用所有鱼类25条制作……宝剑外形是一条鱼，
@@ -76,10 +80,15 @@
         <armorPenetration>1.0</armorPenetration>
       </li>
     </tools>
-    <comps>
+    <comps Inherit="false">
+      <!-- 保留 BaseWeapon 的禁用和风格组件，用自定义装备组件替代 Equippable。 -->
+      <li Class="CompProperties_Forbiddable" />
+      <li Class="Binguin.Feature.VoidSword.CompProperties_BinguinVoidSword, Binguin" />
+      <li Class="CompProperties_Styleable" />
       <li>
         <compClass>CompQuality</compClass>
       </li>
+
     </comps>
     <researchPrerequisites>
       <li>Binguin_ResearchUltimateFishing</li>
@@ -227,7 +236,9 @@
     <researchPrerequisite>Binguin_ResearchUltimateFishing</researchPrerequisite>
   </RecipeDef>
 
-  <!-- 尚方宝剑 · 单次鱼斩的损伤：钝击 + 按面板伤害 1:1 累积冰爆
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ 尚方宝剑 · 单次鱼斩的损伤：钝击 + 按面板伤害 1:1 累积冰爆
        ★ workerClass 用原版 DamageWorker_Blunt 占位，静态构造替换成
          DamageWorker_BinguinFishBlunt（XML 零自定义类型原则）。
        ★★ 2026-10-09 修复三个字段错误（用户报"不知道为什么的红字"，日志实证）：
@@ -254,7 +265,7 @@
   <DamageDef>
     <defName>Binguin_FishBluntDamage</defName>
     <label>鱼斩</label>
-    <workerClass>DamageWorker_Blunt</workerClass>
+    <workerClass>Binguin.Feature.VoidSword.DamageWorker_BinguinFishBlunt, Binguin</workerClass>
     <externalViolence>true</externalViolence>
     <deathMessage>{0} 被十四条鱼斩成了碎片。</deathMessage>
     <hediff>Crush</hediff>
@@ -262,7 +273,9 @@
     <defaultArmorPenetration>1.0</defaultArmorPenetration>
   </DamageDef>
 
-  <!-- ============ 尚方宝剑技能「天顶鱼斩」（测试玩法，mod 选项控制）============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 尚方宝剑技能「天顶鱼斩」（测试玩法，mod 选项控制）============
        ★ 目标锁定：瞄准**地点**（canTargetLocations）—— 椭圆范围以瞄准点为中心，
          长轴沿"施法者→瞄准点"方向。
        ★★ `compClass` 必须用**原版可实例化类**占位（这里用
@@ -289,9 +302,7 @@
       </targetParams>
     </verbProperties>
     <comps>
-      <li>
-        <compClass>CompAbilityEffect_Teleport</compClass>
-      </li>
+      <li Class="Binguin.Feature.VoidSword.CompProperties_BinguinVoidStrike, Binguin" />
     </comps>
   </AbilityDef>
 

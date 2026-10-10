@@ -24,7 +24,7 @@
 //   `Pawn_EquipmentTracker.GetGizmos` → 主武器 `TryGetComp&lt;CompEquippable&gt;()`
 //   → `CompGetEquippedGizmosExtra()`（1.6 反编译确认）。
 //
-// ★ XML 零自定义类型：本文件的类型全部由 `BinguinDefPatches` 静态构造挂载。
+// ★ 自定义类型由对应功能的 XML 声明，使用完整命名空间和程序集名。
 // ============================================================================
 
 using System.Collections.Generic;

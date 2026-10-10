@@ -7,7 +7,7 @@
 //   近战伤害与穿甲共用 pawn.MeleeWeapon_DamageMultiplier（VerbProperties.
 //   AdjustedMeleeDamageAmount / AdjustedArmorPenetration 确认），
 //   冷却用 pawn.MeleeWeapon_CooldownMultiplier。
-// 注册：静态构造对 7 个 StatDef.parts Add（每 stat 一个实例，stat 字段区分分支）。
+// 注册：Odyssey 加载根中的 XML Patch 给 7 个 StatDef 添加实例；原版 StatWorker 初始化时赋值 parentStat。
 // ============================================================================
 
 using System;
@@ -18,11 +18,9 @@ namespace Binguin.Feature.Rods
 {
     public class StatPart_BinguinRod : StatPart
     {
-        public StatDef stat;
-
         // ★ 2026-09 性能：本 StatPart 被挂到 7 个 stat 上（含 MoveSpeed /
         //   MaxHitPoints），TransformValue 属于"每次 stat 查询都会跑"的热路径。
-        //   原来每次都做字符串比较 + 字符串 switch → 现在在构造时把 stat 解析成
+        //   原来每次都做字符串比较 + 字符串 switch → 现在在首次查询时把 parentStat 解析成
         //   一个整数种类，运行期只比 int。
         private const int KindNone = 0;
         private const int KindMeleeDamage = 1;
@@ -33,16 +31,23 @@ namespace Binguin.Feature.Rods
         private const int KindInjuryHealing = 6;
         private const int KindMaxHitPoints = 7;
 
-        private int statKind;
+        private int? cachedStatKind;
+
+        // XML 构造时 parentStat 尚未赋值；首次查询时再缓存原版解析好的所属属性。
+        private int statKind
+        {
+            get
+            {
+                if (!cachedStatKind.HasValue && parentStat != null)
+                {
+                    cachedStatKind = KindOf(parentStat);
+                }
+                return cachedStatKind ?? KindNone;
+            }
+        }
 
         public StatPart_BinguinRod()
         {
-        }
-
-        public StatPart_BinguinRod(StatDef statDef)
-        {
-            stat = statDef;
-            statKind = KindOf(statDef);
         }
 
         private static int KindOf(StatDef statDef)
@@ -149,7 +154,7 @@ namespace Binguin.Feature.Rods
             if (explainPawn != null && explainPawn.equipment != null && explainPawn.equipment.Primary != null)
             {
                 CompBinguinRod rod = explainPawn.equipment.Primary.TryGetComp<CompBinguinRod>();
-                // ★ 2026-09：与 TransformValue 统一改用构造时解析好的 statKind
+                // ★ 2026-09：与 TransformValue 统一使用首次查询后缓存的 statKind
                 //   （信息卡每次开合都会调用本方法，不必再做字符串 switch）
                 if (rod != null && statKind != KindNone)
                 {

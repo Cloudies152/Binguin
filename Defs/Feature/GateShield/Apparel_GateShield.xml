@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   寒门盾（2026-08-20 用户需求，冰鹅族护甲线，Binguin_ResearchIceArmor 解锁）
   - 装备栏：腰部（Belt 层 / Waist 部位组）；覆盖全身（体部组全列）
@@ -106,6 +106,7 @@
       <li Class="CompProperties_Shield">
         <startingTicksToReset>2500</startingTicksToReset>
       </li>
+    <li Class="Binguin.Feature.GateShield.CompProperties_BinguinGateShieldBearer, Binguin"></li>
     </comps>
     <tradeTags>
       <li>Armor</li>
@@ -161,7 +162,9 @@
     <researchPrerequisite>Binguin_ResearchIceArmor</researchPrerequisite>
   </RecipeDef>
 
-  <!-- ============ 寒门盾场（v3：外层护盾实体） ============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 寒门盾场（v3：外层护盾实体） ============
        拦截罩组件只对"地图上的生成物"有效（投射物通过地图物列表查询拦截器，
        穿在身上的 apparel 永远查不到）。故寒门盾穿戴者脚下会生成这个隐形
        实体，承载百夫长式拦截罩；它由 CompBinguinGateShieldField 跟随穿戴者
@@ -208,6 +211,7 @@
         <alwaysShowHitpointsGizmo>true</alwaysShowHitpointsGizmo>
         <gizmoTipKey>ProjectileInterceptorTip</gizmoTipKey>
       </li>
+    <li Class="Binguin.Feature.GateShield.CompProperties_BinguinGateShieldField, Binguin"></li>
     </comps>
   </ThingDef>
 

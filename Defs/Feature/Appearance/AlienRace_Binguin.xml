@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰鹅族种族定义（Humanoid Alien Races 2.0 / RimWorld 1.6.4871）
   ★ 结构已对照 Miho 1.6（用户提供）与 原版 Human 定义（_vanilla_refs）逐字段核对：
@@ -161,7 +161,7 @@
 
         <!-- 种族基因（HAR 的 raceGenes：无论异种如何都带有的基因）
              原版引用 + 自定义基因（定义见 Defs/Feature/RaceTraits/GeneDefs_Binguin.xml） -->
-        <raceGenes>
+        <raceGenes MayRequire="Ludeon.RimWorld.Biotech">
           <!-- 原版：耐寒 -->
           <li><defName>MinTemp_SmallDecrease</defName></li>
           <!-- 原版：惧热 -->

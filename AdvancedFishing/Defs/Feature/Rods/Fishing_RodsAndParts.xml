@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+
   高级钓鱼学 —— 钓竿制作系统（2026-08-19 用户设计文档：高级钓鱼学.md）
   ★ 本文件在 AdvancedFishing/ 文件夹（Odyssey 门控，LoadFolders.xml）
   ★ XML 零自定义类型原则：自定义 Comp/ThoughtWorker/StatPart 由
@@ -118,6 +120,7 @@
       </li>
       <li Class="CompProperties_Flickable" />
       <li Class="CompProperties_Breakdownable" />
+    <li Class="Binguin.Feature.Rods.CompProperties_BinguinRodAssembly, Binguin"></li>
     </comps>
     <building>
       <workTableRoomRole>Workshop</workTableRoomRole>
@@ -130,7 +133,9 @@
     <constructionSkillPrerequisite>8</constructionSkillPrerequisite>
   </ThingDef>
 
-  <!-- ============ 钓竿（未完成）· 可搬运半成品（2026-10-06 用户需求）============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 钓竿（未完成）· 可搬运半成品（2026-10-06 用户需求）============
        用户需求原文：「应该是搬运后会变成一个 钓竿（未完成） 这样可以让殖民者不用一次干完」
        → 追问确认：**可搬运的半成品，装配进度跟着物品走**。
 
@@ -201,6 +206,9 @@
     <researchPrerequisites>
       <li>Binguin_ResearchMasterFishing</li>
     </researchPrerequisites>
+      <comps>
+      <li Class="Binguin.Feature.Rods.CompProperties_BinguinUnfinishedRod, Binguin"></li>
+    </comps>
   </ThingDef>
 
   <!-- ============ 配件基类（stuff 物品：材质在制作时选择） ============ -->
@@ -361,6 +369,7 @@
     </statBases>
     <comps>
       <li Class="CompProperties_Forbiddable" />
+    <li Class="Binguin.Feature.Rods.CompProperties_BinguinRodBait, Binguin"></li>
     </comps>
     <graphicData>
       <texPath>Things/Item/RodParts/RodBait</texPath>
@@ -420,11 +429,16 @@
         <cooldownTime>1.2</cooldownTime>
       </li>
     </tools>
-    <!-- ★ BaseWeapon 已带 Forbiddable/Equippable/Styleable（追加语义），这里只加 Quality -->
-    <comps>
+    <!-- ★ 显式保留 BaseWeapon 的 Forbiddable/Styleable 和品质组件，以自定义装备组件替代 Equippable -->
+    <comps Inherit="false">
+      <!-- 保留 BaseWeapon 的禁用和风格组件，用自定义装备组件替代 Equippable。 -->
+      <li Class="CompProperties_Forbiddable" />
+      <li Class="Binguin.Feature.Rods.CompProperties_BinguinRod, Binguin" />
+      <li Class="CompProperties_Styleable" />
       <li>
         <compClass>CompQuality</compClass>
       </li>
+
     </comps>
   </ThingDef>
 
@@ -475,21 +489,28 @@
         <cooldownTime>1.6</cooldownTime>
       </li>
     </tools>
-    <!-- ★ BaseWeapon 已带 Forbiddable/Equippable/Styleable（追加语义），这里只加 Quality -->
-    <comps>
+    <!-- ★ 显式保留 BaseWeapon 的 Forbiddable/Styleable 和品质组件，以自定义装备组件替代 Equippable -->
+    <comps Inherit="false">
+      <!-- 保留 BaseWeapon 的禁用和风格组件，用自定义装备组件替代 Equippable。 -->
+      <li Class="CompProperties_Forbiddable" />
+      <li Class="Binguin.Feature.Rods.CompProperties_BinguinRod, Binguin" />
+      <li Class="CompProperties_Styleable" />
       <li>
         <compClass>CompQuality</compClass>
       </li>
+
     </comps>
   </ThingDef>
 
-  <!-- ============ 心情 Thought：虫胶饵 +3（situational，workerClass 静态构造替换） ============ -->
+  <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
   <ThoughtDef>
     <defName>Binguin_RodBaitJellyMood</defName>
     <label>虫胶饵</label>
-    <!-- ★ 1.6 无 ThoughtWorker_Situational 类；占位用真实存在的 ThoughtWorker_AlwaysActive，
+    <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ★ 1.6 无 ThoughtWorker_Situational 类；占位用真实存在的 ThoughtWorker_AlwaysActive，
          运行时由 BinguinDefPatches 替换为 ThoughtWorker_BinguinRodBait（2026-08-20 修） -->
-    <workerClass>ThoughtWorker_AlwaysActive</workerClass>
+    <workerClass>Binguin.Feature.Rods.ThoughtWorker_BinguinRodBait, Binguin</workerClass>
     <description>持竿者以虫胶为饵，甜香萦绕。</description>
     <thoughtClass>Thought_Situational</thoughtClass>
     <stages>
@@ -518,7 +539,9 @@
     </stages>
   </ThoughtDef>
 
-  <!-- ============ 高级钓竿技能（AbilityDef，Bladelink 式：装备时加给 pawn） ============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 高级钓竿技能（AbilityDef，Bladelink 式：装备时加给 pawn） ============
        ★ 2026-08-19 用户反馈：鱼竿必须保持近战武器（verbs 会让武器变远程！）
        → 技能走 Ability 系统：装备（Notify_Equipped）→ pawn.abilities.GainAbility
        → 命令栏显示能力按钮（AbilityTracker.GetGizmos）；
@@ -551,7 +574,7 @@
           ⇒ ③ `canTargetPawns` 保持 **true** ⇒ 准星能框住 pawn；
               `canTargetLocations` 也保持 true ⇒ 地板照样能点，两种都行。 -->
     <verbProperties>
-      <verbClass>Binguin.Feature.Rods.Verb_BinguinPierce</verbClass>
+      <verbClass>Binguin.Feature.Rods.Verb_BinguinPierce, Binguin</verbClass>
       <range>10</range>
       <warmupTime>0.2</warmupTime>
       <targetParams>
@@ -561,6 +584,9 @@
         <canTargetItems>false</canTargetItems>
       </targetParams>
     </verbProperties>
+      <comps>
+      <li><compClass>Binguin.Feature.Rods.CompAbilityEffect_BinguinPierce, Binguin</compClass></li>
+    </comps>
   </AbilityDef>
 
   <AbilityDef>
@@ -579,6 +605,9 @@
         <canTargetItems>false</canTargetItems>
       </targetParams>
     </verbProperties>
+      <comps>
+      <li><compClass>Binguin.Feature.Rods.CompAbilityEffect_BinguinHook, Binguin</compClass></li>
+    </comps>
   </AbilityDef>
 
   <!-- ============ 装配台 WorkGiver（DoBills 注册，仿现有工作台模式） ============ -->

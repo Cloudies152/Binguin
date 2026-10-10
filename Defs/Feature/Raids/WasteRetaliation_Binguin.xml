@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+
   毒垃圾报复事件 —— 毒血 hediff（2026-09 用户需求）
   ─────────────────────────────────────────────────────────────
   用途：冰鹅族被玩家丢了毒垃圾之后报复，空投 10 只发狂的爆炸羊。
@@ -45,6 +47,9 @@
         </capMods>
       </li>
     </stages>
+      <comps>
+      <li Class="Binguin.Feature.Raids.HediffCompProperties_BinguinWasteToxemia, Binguin"><ticksToDeath>3750</ticksToDeath><makeManhunter>true</makeManhunter></li>
+    </comps>
   </HediffDef>
 
 </Defs>

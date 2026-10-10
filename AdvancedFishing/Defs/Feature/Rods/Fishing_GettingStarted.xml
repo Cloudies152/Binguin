@@ -1,5 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+
   进阶钓鱼学（奥德赛 DLC 专属，2026-08-19 用户需求）：
   ★ 本文件夹（AdvancedFishing/）由 About.xml 的 loadFolders 门控：
     仅当奥德赛 DLC（Ludeon.RimWorld.Odyssey）激活时才加载本文件，

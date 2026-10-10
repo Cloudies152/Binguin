@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰鹅族护甲研究产物（2026-08-20 用户需求）：
   哨骑头盔（参考原版斥候头盔）+ 哨骑装甲（参考原版斥候装甲）
@@ -237,4 +237,7 @@
     <researchPrerequisites>
       <li>Binguin_ResearchIceArmor</li>
     </researchPrerequisites>
+      <comps>
+      <li Class="Binguin.Feature.IceCombat.CompProperties_BinguinIceCrown, Binguin"></li>
+    </comps>
   </ThingDef></Defs>

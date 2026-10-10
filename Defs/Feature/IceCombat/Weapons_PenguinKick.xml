@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   终极研究「霰雪无垠」→ 终极武器「企鹅飞踢！！」（2026-08-20 用户需求）
   - 发射一只企鹅子弹（贴图 企鹅子弹.png → Things/Projectile/Binguin/Penguin）
@@ -171,6 +171,7 @@
        （60 面板伤害 → 120%/发，一踢即冻碎部位） -->
   <DamageDef ParentName="BluntBase">
     <defName>Binguin_PenguinDamage</defName>
+    <workerClass>Binguin.Feature.IceCombat.DamageWorker_BinguinBluntUltra, Binguin</workerClass>
     <label>企鹅飞踢</label>
   </DamageDef>
 

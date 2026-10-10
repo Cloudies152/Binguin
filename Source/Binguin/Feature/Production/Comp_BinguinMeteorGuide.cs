@@ -22,7 +22,7 @@
 //   - WorkGiver_OperateScanner：TryGetComp<CompScanner>()（子类匹配）+ scannerDef
 //   - 进度实现：override TickDoesFind —— 以 "workingDays" 累积进度
 //     （1/speed 天/次），10% 判定制 + 100% 保底
-// ★ XML 零自定义类型：compClass 由 BinguinDefPatches 代码挂载
+// ★ 自定义类型由对应功能的 XML 声明，使用完整命名空间和程序集名。
 // ============================================================================
 
 using System;

@@ -13,7 +13,7 @@
 //   - DoAtomize 不是 virtual（1.6 反射确认），故自己 override CompTick
 //     （virtual）实现计时+回收+产出，不再调用 base 的定时销毁
 // ★ 参数：stackLimit=25、ticksPerAtomize=20000（8 小时处理 1 个垃圾）
-// ★ XML 零自定义类型：compClass 由 BinguinDefPatches 代码挂载
+// ★ 自定义类型由对应功能的 XML 声明，使用完整命名空间和程序集名。
 // ============================================================================
 
 using System.Collections.Generic;

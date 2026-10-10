@@ -8,8 +8,8 @@
 
   <JobDef>
     <defName>Binguin_Slide</defName>
-    <!-- driverClass 由代码挂载（BinguinDefPatches），不在 XML 里引用自定义类型，
-         避免 GenTypes 缓存问题导致 driver 为 null（滑行动画不跑） -->
+    <driverClass>Binguin.Feature.Sliding.JobDriver_Slide, Binguin</driverClass>
+    <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
     <allowOpportunisticPrefix>false</allowOpportunisticPrefix>
   </JobDef>
 

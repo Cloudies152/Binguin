@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 原版商人科技图纸库存；未启用 Royalty 时跳过生成器，不引用尚未生成的 Techprint Def。 -->
+<Patch>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/TraderKindDef[defName="Caravan_Outlander_Exotic"]/stockGenerators</xpath>
+    <value><li Class="Binguin.Feature.Trading.StockGenerator_BinguinBlueprint, Binguin" MayRequire="Ludeon.RimWorld.Royalty"><chance>0.3</chance><countRange>1</countRange></li></value>
+  </Operation>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/TraderKindDef[defName="Orbital_Exotic"]/stockGenerators</xpath>
+    <value><li Class="Binguin.Feature.Trading.StockGenerator_BinguinBlueprint, Binguin" MayRequire="Ludeon.RimWorld.Royalty"><chance>0.3</chance><countRange>1</countRange></li></value>
+  </Operation>
+  <Operation Class="PatchOperationAdd">
+    <xpath>Defs/TraderKindDef[defName="Base_Outlander_Standard"]/stockGenerators</xpath>
+    <value><li Class="Binguin.Feature.Trading.StockGenerator_BinguinBlueprint, Binguin" MayRequire="Ludeon.RimWorld.Royalty"><chance>0.7</chance><countRange>1</countRange><onlyFactionDefName>Binguin</onlyFactionDefName></li></value>
+  </Operation>
+</Patch>

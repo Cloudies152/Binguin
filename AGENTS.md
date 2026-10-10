@@ -21,6 +21,9 @@
 - 移动 XML 不改变 C# 命名空间、defName 或贴图逻辑路径；同步文档和代码中的文件路径说明。
 - `Languages/<语言>/Keyed`、`DefInjected/<Def类型>` 是游戏约定，不改成 Feature 或 C# 命名空间目录。
 - 翻译键使用 defName 和字段路径，不使用 C# 完整类型名；同一语言和类别中不得重复定义同名键。
+- 自定义 Comp、Worker、JobDriver、ThingClass 等直接在 XML 声明，使用程序集限定名，例如 `Binguin.Feature.Rods.CompProperties_BinguinRod, Binguin`。
+- 可选 DLC/mod 内容使用 `MayRequire` 或 `LoadFolders.xml` 门控；不以原版占位类型加启动期替换绕过解析错误，不清理游戏类型缓存来补救错误类型名。
+- 修改原版共享 Def 使用按功能分类的标准 XML Patch；只有 XML 无法表达的运行行为才使用 C# 补丁。迁移时验证继承、字段类型和重复组件。
 
 ## 通用逻辑与工具类
 

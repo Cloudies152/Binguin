@@ -6,17 +6,16 @@
 -->
 <Defs>
 
-  <!-- 装配高级钓竿（2026-08-19）：driverClass 由 PatchMasterFishing 挂载 -->
-  <JobDef>
+  <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
+  <JobDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_AssembleRod</defName>
+    <driverClass>Binguin.Feature.Rods.JobDriver_BinguinAssembleRod, Binguin</driverClass>
     <reportString>assembling a fishing rod.</reportString>
   </JobDef>
 
-  <!-- 对【钓竿（未完成）】干活（2026-10-06 用户需求：「搬运后会变成一个
-       钓竿（未完成），这样可以让殖民者不用一次干完」）。
-       driverClass = JobDriver_BinguinWorkOnUnfinishedRod，由 BinguinDefPatches 挂载。
-       工作量记在半成品身上 ⇒ 可反复中断、任何人可续接。 -->
-  <JobDef>
+  <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
+  <JobDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_WorkOnUnfinishedRod</defName>
+    <driverClass>Binguin.Feature.Rods.JobDriver_BinguinWorkOnUnfinishedRod, Binguin</driverClass>
     <reportString>working on an unfinished fishing rod.</reportString>
   </JobDef></Defs>

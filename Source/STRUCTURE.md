@@ -13,7 +13,7 @@ JobDriver、窗口与工具类；不根据类名前缀把同一功能拆散。
 - `Util`：跨功能可复用的类型或组件，例如 `DefLookup<T>`。
 - `Helper`：跨功能的辅助函数入口，例如种族与派系判定。
 - `Patch`：跨功能的补丁注册或暂时无法归属单一功能的补丁。
-  `BinguinDefPatches` 与 `HarmonyPatches_Binguin` 当前集中注册多个功能，因此保留在这里。
+  `HarmonyPatches_Binguin` 保留跨功能的 Harmony 注册。Def 的组件与类型直接在 XML 声明，原版共享 Def 的调整放在按功能分类的 XML Patch 中。
 - `Comps`：不属于特定玩法的通用 Comp，例如装备时附加 Hediff。
 - `Core`：模组入口与设置。
 
@@ -28,6 +28,7 @@ JobDriver、窗口与工具类；不根据类名前缀把同一功能拆散。
 XML 的完整类型名和跨目录 using 必须同步更新；本项目不保留旧存档兼容层。
 XML 的类型引用、存档与 Harmony 注册依赖类型身份；移动文件改变命名空间时，需检查字符串类型引用和注册入口。
 SDK 自动收集子目录源码，构建入口和输出位置不变。
+Def 声明、程序集限定类型名和 DLC 门控见 [XML 类型与依赖](XML_DEFS.md)。
 
 提取公共逻辑前先核对行为，而不是只看代码形状相似。首次提取的 `DefLookup<T>`
 保留了两个鱼池 WorkGiver 的缺失重试策略，以及 JoyGiver 只查询一次的策略。

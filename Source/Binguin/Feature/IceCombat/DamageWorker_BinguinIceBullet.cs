@@ -1,3 +1,4 @@
+// 加载方式已迁至 XML；下述占位替换描述仅记录旧实现。
 // ============================================================================
 // 冰爆弹损伤 worker 体系（2026-08-20）
 //
@@ -15,7 +16,7 @@
 //   DamageWorker_BinguinIceBulletUltra : 继承上式          ×2（终极激光机枪）
 //   DamageWorker_BinguinBluntUltra   : DamageWorker_Blunt   ×2（终极企鹅飞踢 60 钝伤）
 //
-// ★ XML 零自定义类型：各 DamageDef 的 workerClass 用原版类占位，
+// ★ 自定义类型由对应功能的 XML 声明，使用完整命名空间和程序集名。
 //   BinguinDefPatches 静态构造替换并清 DamageDef.workerInt 缓存。
 // ============================================================================
 

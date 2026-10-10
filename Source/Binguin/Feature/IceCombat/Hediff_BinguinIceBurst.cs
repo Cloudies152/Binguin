@@ -1,3 +1,4 @@
+// 加载方式已迁至 XML；下述占位替换描述仅记录旧实现。
 // ============================================================================
 // 冰爆状态的自定义显示与衰减（2026-08-20 用户需求 v4）：
 //   1) 健康状态里冰爆后面实时显示百分比进度（如「冰爆 (36%)」）；
@@ -13,7 +14,7 @@ using Verse;
 
 namespace Binguin.Feature.IceCombat
 {
-    public class Hediff_BinguinIceBurst : Hediff
+    public class Hediff_BinguinIceBurst : HediffWithComps
     {
         // 每小时下降的严重度（0.5 = 50 个百分点/游戏小时）
         private const float DecayPerHour = 0.5f;

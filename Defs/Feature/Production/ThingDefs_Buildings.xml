@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰鹅建筑：采切石一体机（自动采石+切石）、高级排污泵。
   ★ 参考原版：PollutionPump（Biotech Buildings_Misc.xml）、BuildingBase。
@@ -51,6 +51,7 @@
         <compClass>CompPowerTrader</compClass>
         <basePowerConsumption>200</basePowerConsumption>
       </li>
+    <li Class="Binguin.Feature.Production.CompProperties_BinguinAutoStone, Binguin"><workIntervalTicks>5000</workIntervalTicks><bricksPerStone>20</bricksPerStone></li>
     </comps>
   </ThingDef>
 

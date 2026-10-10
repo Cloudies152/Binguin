@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   霰雪无垠（同终极科技）第二把终极武器：冰鹅级极激急击机枪（2026-08-20 用户需求）
   - 激光武器：弹药伤害 2、穿甲 18%；连发 99999（扫射不停）、间隔 2 tick；
@@ -19,6 +19,7 @@
          20% 伤害；对人/机械体仍是 100%） -->
   <DamageDef ParentName="Bullet">
     <defName>Binguin_LaserDamage</defName>
+    <workerClass>Binguin.Feature.IceCombat.DamageWorker_BinguinIceBulletUltra, Binguin</workerClass>
     <label>极激光</label>
     <buildingDamageFactor>0.2</buildingDamageFactor>
   </DamageDef>

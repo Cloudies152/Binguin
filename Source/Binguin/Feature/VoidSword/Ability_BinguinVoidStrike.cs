@@ -54,6 +54,7 @@ namespace Binguin.Feature.VoidSword
             return true;
         }
 
+// 加载方式已迁至 XML；下述占位替换描述仅记录旧实现。
         /// <summary>
         /// 从代码拿到本次施放的调参。
         /// ★ `CompAbilityEffect.Props` 的类型是 `CompProperties_AbilityEffect`，

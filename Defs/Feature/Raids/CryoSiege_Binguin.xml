@@ -62,11 +62,8 @@
       <Plasteel>20</Plasteel>
     </costList>
     <comps>
-      <!-- 占位：真正的 compClass 由 BinguinDefPatches 在运行时换成 CompBinguinCryoFreezer -->
-      <li Class="CompProperties_Power">
-        <compClass>CompPowerTrader</compClass>
-        <basePowerConsumption>0</basePowerConsumption>
-      </li>
+      <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
+      <li Class="Binguin.Feature.Raids.CompProperties_BinguinCryoFreezer, Binguin" />
     </comps>
     <researchPrerequisites>
       <li>Binguin_ResearchAtmosphere</li>
@@ -93,7 +90,7 @@
     <defName>Binguin_CryoFreeze</defName>
     <label>大气冷冻</label>
     <description>大气冷冻器正在抽走这一带的热量，气温持续下滑。</description>
-    <conditionClass>GameCondition_TemperatureOffset</conditionClass>
+    <conditionClass>Binguin.Feature.Raids.GameCondition_BinguinCryoFreeze, Binguin</conditionClass>
     <canBePermanent>false</canBePermanent>
     <preventRain>false</preventRain>
     <letterText>大气冷冻器开始运转，气温骤降。</letterText>
@@ -107,7 +104,7 @@
   <!-- ==================== 低温围攻策略 ==================== -->
   <RaidStrategyDef>
     <defName>Binguin_CryoSiege</defName>
-    <workerClass>RaidStrategyWorker_Siege</workerClass>
+    <workerClass>Binguin.Feature.Raids.RaidStrategyWorker_BinguinCryoSiege, Binguin</workerClass>
     <minPawns>4</minPawns>
     <raidLootValueFactor>0</raidLootValueFactor>
     <arriveModes>

@@ -24,7 +24,7 @@
 //
 // 贴图：FishPond_l0..l15.png（128x128），由 wiki-tools/Save-BinguinPondLink
 //   Textures.ps1 从 FishPond.png 派生（l0 = 无连接=原图四沿）。
-// ★ XML 零自定义类型：pond.thingClass 由 BinguinDefPatches 静态构造替换。
+// ★ 自定义类型由对应功能的 XML 声明，使用完整命名空间和程序集名。
 // ============================================================================
 
 using System;

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 保留两个冰鹅派系的袭击权重：低温围攻20、围攻5、破墙10、工兵10、两种空投各5、直接进攻25、等待进攻20。 -->
+<Patch>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="Binguin_CryoSiege"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="Binguin_CryoSiege"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="Binguin_CryoSiege"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="Binguin_CryoSiege"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="Binguin_CryoSiege"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 20)</li><li>(100000, 20)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 20)</li><li>(100000, 20)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="Siege"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="Siege"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="Siege"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="Siege"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="Siege"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreaching"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreaching"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreaching"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreaching"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreaching"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreachingSmart"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreachingSmart"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreachingSmart"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreachingSmart"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackBreachingSmart"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSappers"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSappers"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSappers"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSappers"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSappers"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 10)</li><li>(100000, 10)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 10)</li><li>(100000, 10)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="Binguin_DropScattered"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="Binguin_DropScattered"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="Binguin_DropScattered"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="Binguin_DropScattered"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="Binguin_DropScattered"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="Binguin_DropCenter"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="Binguin_DropCenter"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="Binguin_DropCenter"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="Binguin_DropCenter"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="Binguin_DropCenter"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 5)</li><li>(100000, 5)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="ImmediateAttack"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttack"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttack"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttack"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttack"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 25)</li><li>(100000, 25)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 25)</li><li>(100000, 25)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="StageThenAttack"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="StageThenAttack"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="StageThenAttack"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="StageThenAttack"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="StageThenAttack"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 20)</li><li>(100000, 20)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 20)</li><li>(100000, 20)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+  <Operation Class="PatchOperationConditional">
+    <xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSmart"]/selectionWeightCurvesPerFaction</xpath>
+    <nomatch Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSmart"]</xpath><value><selectionWeightCurvesPerFaction /></value></nomatch>
+  </Operation>
+  <Operation Class="PatchOperationConditional"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSmart"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath><match Class="PatchOperationRemove"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSmart"]/selectionWeightCurvesPerFaction/li[faction="Binguin" or faction="BinguinHostile"]</xpath></match></Operation>
+  <Operation Class="PatchOperationAdd"><xpath>Defs/RaidStrategyDef[defName="ImmediateAttackSmart"]/selectionWeightCurvesPerFaction</xpath><value><li><faction>Binguin</faction><selectionWeightPerPointsCurve><points><li>(0, 0)</li><li>(100000, 0)</li></points></selectionWeightPerPointsCurve></li><li><faction>BinguinHostile</faction><selectionWeightPerPointsCurve><points><li>(0, 0)</li><li>(100000, 0)</li></points></selectionWeightPerPointsCurve></li></value></Operation>
+</Patch>

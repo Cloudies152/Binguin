@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰鹅族自定义基因（RimWorld 1.6 + Biotech + Anomaly + Odyssey）
   原版基因引用见 Defs/Feature/Appearance/AlienRace_Binguin.xml 的 raceGenes；
@@ -18,7 +18,7 @@
        ★ randomBrightnessFactor 必须写 0，否则还会叠一层随机明度。
        ★ exclusionTags 写 SkinColor，避免原版再随机塞一个黑色素基因进来。
        ★ 不写 ParentName（原版父类 GeneSkinColorOverride 在 Biotech 里），字段全列出来更稳。 -->
-  <GeneDef>
+  <GeneDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Gene_PureWhiteSkin</defName>
     <label>纯白绒羽</label>
     <labelShortAdj>纯白</labelShortAdj>
@@ -38,7 +38,7 @@
   <!-- ============ 快速滑冰（冰/雪/水面移动不受影响） ============
        实现：Harmony 挂钩 Pawn_PathFollower.CostToMoveIntoCell，
        有本基因时冰/雪/水面成本归零（= 平地速度）。无需 geneClass。 -->
-  <GeneDef>
+  <GeneDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Gene_Skating</defName>
     <label>快速滑冰</label>
     <labelShortAdj>滑冰</labelShortAdj>
@@ -50,13 +50,13 @@
   </GeneDef>
 
   <!-- ============ 鱼类爱好（食用含鱼食物 +8 心情） ============ -->
-  <GeneDef>
+  <GeneDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Gene_FishLover</defName>
     <label>鱼类爱好</label>
     <labelShortAdj>爱鱼</labelShortAdj>
     <description>食用含有鱼类的食物时心情 +8。</description>
     <displayCategory>Miscellaneous</displayCategory>
-    <geneClass>Binguin.Feature.RaceTraits.Gene_BinguinFishLover</geneClass>
+    <geneClass>Binguin.Feature.RaceTraits.Gene_BinguinFishLover, Binguin</geneClass>
     <biostatCpx>1</biostatCpx>
     <iconPath>UI/Icons/Genes/Gene_AnimalWarcall</iconPath>
   </GeneDef>
@@ -75,7 +75,7 @@
   </ThoughtDef>
 
   <!-- ============ 机工高手（纯 statFactors，无需 C#） ============ -->
-  <GeneDef>
+  <GeneDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Gene_MechExpert</defName>
     <label>机工高手</label>
     <labelShortAdj>机工</labelShortAdj>
@@ -93,7 +93,7 @@
   </GeneDef>
 
   <!-- ============ 高效研究（研究 +20%，破译 +30%） ============ -->
-  <GeneDef>
+  <GeneDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Gene_EfficientResearch</defName>
     <label>高效研究</label>
     <labelShortAdj>研究</labelShortAdj>
@@ -109,7 +109,7 @@
   </GeneDef>
 
   <!-- ============ 娱乐至上（娱乐下降 ×110%） ============ -->
-  <GeneDef>
+  <GeneDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Gene_RecreationLover</defName>
     <label>娱乐至上</label>
     <labelShortAdj>享乐</labelShortAdj>

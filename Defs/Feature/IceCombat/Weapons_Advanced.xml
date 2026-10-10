@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰鹅族高级步枪 + 突袭冷冻武器（2026-08-20 用户需求）：
   ★ 研究「突袭冷冻武器」（Binguin_ResearchFrostAssault，前置：冰鹅机加工 +
@@ -25,21 +25,27 @@
 -->
 <Defs>
 
-  <!-- ============ 冰爆弹损伤（继承原版 Bullet 弹伤） ============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 冰爆弹损伤（继承原版 Bullet 弹伤） ============
        ★ 不再用 additionalHediffs（那是按实际结算伤害累积，护甲格挡会削减）！
        workerClass 由 BinguinDefPatches 静态替换为 DamageWorker_BinguinIceBullet：
        在护甲结算前按【武器面板伤害】累积冰爆（1 面板伤害 = 1% 严重度；
        弹头被护甲完全挡掉也照样全额积累，用户 2026-08-20 v2 规格）。 -->
   <DamageDef ParentName="Bullet">
     <defName>Binguin_IceBulletDamage</defName>
+    <workerClass>Binguin.Feature.IceCombat.DamageWorker_BinguinIceBullet, Binguin</workerClass>
     <label>冰爆弹</label>
   </DamageDef>
 
-  <!-- ============ 冰爆状态（0~100%，严重度 0~1） ============
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ============ 冰爆状态（0~100%，严重度 0~1） ============
        到 100% 触发随机摧毁部位（comp 由 BinguinDefPatches 静态构造挂载，
        触发后严重度 -1 重新积累） -->
   <HediffDef>
     <defName>Binguin_IceBurst</defName>
+    <hediffClass>Binguin.Feature.IceCombat.Hediff_BinguinIceBurst, Binguin</hediffClass>
     <label>冰爆</label>
     <description>冰寒能量在体内凝集。达到 100% 时，寒能骤然冻结并崩碎一个身体部位。</description>
     <isBad>true</isBad>
@@ -47,6 +53,9 @@
     <makesAlert>false</makesAlert>
     <scenarioCanAdd>false</scenarioCanAdd>
     <maxSeverity>1</maxSeverity>
+      <comps>
+      <li Class="Binguin.Feature.IceCombat.HediffCompProperties_BinguinIceBurst, Binguin"></li>
+    </comps>
   </HediffDef>
 
   <!-- ============ 冰鹅族突击步枪（研究：突袭冷冻武器） ============ -->

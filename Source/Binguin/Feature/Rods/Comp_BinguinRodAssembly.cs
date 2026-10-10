@@ -658,7 +658,7 @@ namespace Binguin.Feature.Rods
             if (comp == null)
             {
                 BinguinLogUtility.Log("半成品上没有 CompBinguinUnfinishedRod"
-                    + "（BinguinDefPatches 没挂上？），已放弃。", severity: 1, isDebug: false);
+                    + "（检查 XML 的 comps 声明），已放弃。", severity: 1, isDebug: false);
                 if (!rod.Destroyed) rod.Destroy(DestroyMode.Vanish);
                 return null;
             }

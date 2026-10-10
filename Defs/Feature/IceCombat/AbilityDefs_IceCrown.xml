@@ -1,5 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+
   冰冠技能「投掷冰块」+ 灵造冰岩（2026-09 用户需求）
   · AbilityDef Binguin_AbilityThrowIce：charges=3（可储存 3 次）、
     cooldownTicksRange=36000（1 小时）、cooldownPerCharge=true（每次充能单独冷却
@@ -41,6 +43,9 @@
     <building>
       <ai_chillDestination>false</ai_chillDestination>
     </building>
+      <comps>
+      <li Class="Binguin.Feature.IceCombat.CompProperties_BinguinSpiritIce, Binguin"></li>
+    </comps>
   </ThingDef>
 
   <!-- ============ 技能：投掷冰块 ============ -->
@@ -68,6 +73,9 @@
         <canTargetItems>false</canTargetItems>
       </targetParams>
     </verbProperties>
+      <comps>
+      <li Class="Binguin.Feature.IceCombat.CompProperties_BinguinThrowIce, Binguin"></li>
+    </comps>
   </AbilityDef>
 
 </Defs>

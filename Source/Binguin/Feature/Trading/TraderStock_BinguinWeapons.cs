@@ -37,10 +37,7 @@
 //   TraderStock / StockGenerator 路径上 ⇒ 原版商人的武器/衣服就是默认品质。
 //   这里也保持一致，不自己发明"商人卖传奇武器"。
 //
-// ★ 挂载方式：本 mod 的 XML 里【零自定义类型引用】（见 BinguinDefPatches.cs 顶部说明：
-//   GenTypes 缓存会在早期固化导致 "Could not find type"），
-//   所以这个生成器由 C# 在 `BinguinDefPatches` 静态构造里加进
-//   `Binguin_Caravan_CombatSupplier` 的 stockGenerators。
+// ★ 挂载方式：在作战商的 XML stockGenerators 中声明本类型的程序集限定名。
 // ============================================================================
 
 using System;

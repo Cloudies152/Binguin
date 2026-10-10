@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   威灵装甲 + 威灵头盔（2026-08-20 用户需求，霰雪无垠解锁，机工台制作）
   ★ v3 修复（用户实测）：
@@ -25,7 +25,9 @@
 <Defs>
 
   <!-- ============ 威灵装甲 ============ -->
-  <!-- ★ v8（2026-08-21）：放弃原版 ApparelReloadable + verbs（v5-v7 三连败：
+  <!--
+  历史实现记录：以下占位类型与启动期替换说明已废弃，当前使用 XML 直接声明。
+ ★ v8（2026-08-21）：放弃原版 ApparelReloadable + verbs（v5-v7 三连败：
        原生命令/燃料条在这件 stuffable 装甲上不出现——修好 XML 二选一后依然
        无法发射）。炮击改为滑板同款【自绘命令】：三个按钮（装填炮弹/补充
        燃料/发射迫击炮）由 CompBinguinWillingCannon.CompGetWornGizmosExtra
@@ -146,9 +148,8 @@
     </colorGenerator>
     <comps>
       <li Class="CompProperties_Biocodable"/>
-      <!-- ★ v8：reloadable/verbs 已全部移除（见文件头注释）。
-           CompBinguinWillingCannon（3 弹舱 + 60 燃料自管 + 3 自绘命令）
-           由 BinguinDefPatches 静态构造挂载，XML 零自定义类型。 -->
+      <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
+    <li Class="Binguin.Feature.WillingCannon.CompProperties_BinguinWillingCannon, Binguin"></li>
     </comps>
     <thingSetMakerTags>
       <li>RewardStandardHighFreq</li>
@@ -263,23 +264,19 @@
     </researchPrerequisites>
   </ThingDef>
 
-  <!-- ============ 威灵装填 job（小人真实搬运装填）
-       殖民者从库存拿起炮弹/化合燃料 → 走到穿着威灵装甲的 pawn 旁 → 装填
-       driverClass 由 BinguinDefPatches 静态构造挂载 -->
+  <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
   <JobDef>
     <defName>Binguin_WillingLoad</defName>
+    <driverClass>Binguin.Feature.WillingCannon.JobDriver_BinguinWillingLoad, Binguin</driverClass>
     <reportString>loading ammunition.</reportString>
     <casualInterruptible>true</casualInterruptible>
     <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
   </JobDef>
 
-  <!-- ============ 威灵炮击 job（v10：站定瞄准 1s 后开火）
-       选点后派发给穿甲小人：原地站立转向落点 1 秒（原版射击 warmup 手感，
-       期间移动/被命令打断 = 取消本次射击），瞄准完成后 ExecuteShot。
-       casualInterruptible false：站定瞄准期间不会被杂务插队打断。
-       driverClass 由 BinguinDefPatches 静态构造挂载 -->
+  <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
   <JobDef>
     <defName>Binguin_WillingFire</defName>
+    <driverClass>Binguin.Feature.WillingCannon.JobDriver_BinguinWillingFire, Binguin</driverClass>
     <reportString>firing the cannon.</reportString>
     <casualInterruptible>false</casualInterruptible>
   </JobDef>

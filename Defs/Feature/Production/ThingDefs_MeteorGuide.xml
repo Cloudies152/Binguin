@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  冰鹅族陨石引导器（星空眺望科技，2026-08-19）
-  ★ 机制：露天放置（盖屋顶无法使用）；研究扫描进度 180,000 tick（3 天），
-    每 10% 判定一次发现（概率=当前进度），100% 保底；陨石存储上限 20 颗，
-    10 天过期；引导坠落 1-2 小时（ticksToImpactRange 3600~7200）。
-  ★ XML 零自定义类型：CompBinguinMeteorGuide 由 BinguinDefPatches 代码挂载
--->
+<!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
 <Defs>
 
   <!-- ============ 冰鹅族陨石引导器（参考原版地质扫描仪结构） ============ -->
@@ -65,11 +59,9 @@
       </li>
       <li Class="CompProperties_Flickable" />
       <li Class="CompProperties_Breakdownable" />
-      <!-- ★ 扫描工作管线（原版地质扫描仪同款）：殖民者来研究工作驱动进度，
-           吃研究速度加成；compClass 由 BinguinDefPatches 换成 CompBinguinMeteorGuide。
-           v5：用 CompProperties_Scanner（基类属性，无 bedrock 检查——
-           CompDeepScanner/ScannerMineralsDeep 会弹「无法在该群落发掘资源」） -->
+      <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
       <li Class="CompProperties_Scanner">
+        <compClass>Binguin.Feature.Production.CompBinguinMeteorGuide, Binguin</compClass>
         <scanSpeedStat>ResearchSpeed</scanSpeedStat>
         <scanFindMtbDays>999</scanFindMtbDays>
         <scanFindGuaranteedDays>3</scanFindGuaranteedDays>
