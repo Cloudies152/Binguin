@@ -12,7 +12,7 @@
 //     （HeadTypeDef.hairMeshSize）画在头顶的，企鹅头上叠一层人类发型就很难看。
 //     当时的处理是"冰鹅一律返回 Bald"，属于临时封堵。
 //   · 2026-09-24 我们自绘了冰鹅专用头发（Defs/HairDefs_Binguin.xml，
-//     styleTags = BinguinHair），并在 Defs/01_RaceAndAppearance/AlienRace_Binguin.xml 的 <styleSettings> 里
+//     styleTags = BinguinHair），并在 Defs/Feature/Appearance/AlienRace_Binguin.xml 的 <styleSettings> 里
 //     用 styleTagsOverride 把冰鹅的可选发型限定到这一组
 //     ⇒ 原版几十种人类发型【已经自动被排除】，不必再靠"一律秃头"。
 //
@@ -88,7 +88,7 @@ namespace Binguin.Feature.Appearance
                 }
                 if (Prefs.DevMode)
                 {
-                    BinguinLogUtility.Log("没找到任何 BinguinHair 发型（Defs/01_RaceAndAppearance/HairDefs_Binguin.xml 未加载？）"
+                    BinguinLogUtility.Log("没找到任何 BinguinHair 发型（Defs/Feature/Appearance/HairDefs_Binguin.xml 未加载？）"
                                 + "→ 本次退回光头。", severity: 1, isDebug: false);
                 }
                 __result = HairDefOf.Bald;        // 兜底：def 没加载出来就光头

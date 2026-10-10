@@ -70,34 +70,28 @@
 | 文件夹 | 里面装什么 | 大白话 |
 |---|---|---|
 | `About/` | `About.xml` + 封面图 | Mod 的"身份证"（名字、作者、版本、依赖） |
-| `Defs/` | **46 个 `.xml`，分 13 个子目录** | **游戏内容定义**：物品、建筑、武器、服装、科技…（RimWorld 用 XML 描述游戏内容） |
-| `AdvancedFishing/` | 17 个文件 | **钓鱼子模块**（钓竿、配件、鱼池、蟹笼）。装了 Odyssey DLC 才加载 |
-| `Source/` | 89 个 `.cs` | **C# 源代码**（XML 做不到的逻辑，比如外交事件、技能、UI）。工程在 `Source/Binguin/` |
+| `Defs/` | **按功能分类的 XML** | **游戏内容定义**：物品、建筑、武器、服装、科技…（RimWorld 用 XML 描述游戏内容） |
+| `AdvancedFishing/` | 按 Odyssey 门控的内容 | **钓鱼子模块**（钓竿、配件、鱼池、蟹笼）。装了 Odyssey DLC 才加载 |
+| `Source/` | 按功能分类的 `.cs` | **C# 源代码**（XML 做不到的逻辑，比如外交事件、技能、UI）。工程在 `Source/Binguin/` |
 | `Assemblies/` | （空的） | **编译产物落点**。`Binguin.dll` **不进 git**，clone 完要自己编译一次（约 10 秒） |
 | `Textures/` | 100 个 `.png` | **全部贴图**（人物、建筑、武器、服装、UI 图标） |
-| `Languages/` | 30 个 `.xml` | **文案**（中文 / 英文界面文字、物品名、说明） |
+| `Languages/` | 按语言和 Def 类型组织的 XML | **文案**（中文 / 英文界面文字、物品名、说明） |
 | `Sounds/` | `GuGuGaGa.mp3` | 音效（企鹅飞踢的发射音） |
 | `LoadFolders.xml` | 1 个文件 | 控制"装了什么 DLC 就加载哪些文件夹" |
 
-### `Defs/` 里的 13 个子目录
+### `Defs/` 按功能分类
 
-命名照抄原版 `Core/Defs/` 的惯例（用 **Def 类型名**做目录）：
+基础 `Defs` 和 Odyssey 门控的 `AdvancedFishing/Defs` 都采用 `Feature/<功能>`。
+同一功能的物品、任务、配方和效果定义放在一起；共享科技树放 `Core/Research`。
 
-| 目录 | 装什么 | 文件名示例 |
-|---|---|---|
-| `01_RaceAndAppearance/` | 种族本体、头型、发型、面部动画、基因 | `AlienRace_Binguin.xml` |
-| `02_Factions/` | 三个派系、据点命名、信件样式 | `FactionDefs_Binguin.xml` |
-| `03_PawnKinds/` | 单位模板（外交官、士兵、商人…） | `PawnKindDefs_Binguin.xml` |
-| `04_Apparel/` | 职业装、大衣、头饰、连体衣、cos 服 | `Apparel_Coats.xml` |
-| `05_Weapons/` | 4 把远程武器 + 企鹅飞踢 | `Weapons_Basic.xml` |
-| `06_ArmorAndImplants/` | 护甲、威灵套、寒门盾、冰冠技能、仿生眼 | `Armor_Willing.xml` |
-| `07_Buildings/` | 建筑、家具、地板、冰岩石料、陨石引导器 | `ThingDefs_Furniture.xml` |
-| `08_Security/` | 自动炮塔 | `ThingDefs_Turrets.xml` |
-| `09_Research/` | 完整科技树 | `ResearchProjectDefs_Binguin.xml` |
-| `10_FoodAndJoy/` | 食物、乐队来访与演唱会 | `ThingDefs_Foods.xml` |
-| `11_World/` | 开局剧本、叙事者、商队货单 | `Scenarios_Binguin.xml` |
-| `12_Incidents/` | 袭击策略、低温围攻、毒垃圾报复、飞天决战线 | `CryoSiege_Binguin.xml` |
-| `13_WorkAndRecipes/` | 工作定义、工作分配、杂物 | `JobDefs_Binguin.xml` |
+- `Feature/Appearance`、`RaceTraits`：种族外观、基因、仿生眼与臭鱼效果。
+- `Feature/Diplomacy`、`Raids`：派系、外交、母舰、开局和袭击。
+- `Feature/Apparel`、`Weapons`、`IceCombat`：衣物、基础武器、冰系武器和技能。
+- `Feature/GateShield`、`WillingCannon`、`Sliding`：护盾、威灵炮和滑行装备。
+- `Feature/Production`、`Weather`、`Furniture`、`Floors`、`Security`：生产、天气、家具、地板和炮塔。
+- `Feature/Band`、`Food`、`Trading`、`Storytelling`：乐队、食物、交易和叙事者。
+- `AdvancedFishing/Defs/Feature/Fishing`、`Rods`、`VoidSword`：捕鱼设施、鱼竿及尚方宝剑。
+- `Core/Research`：基础功能共用的科技树；功能专用科技随对应功能存放。
 
 > **每个文件装什么，看 [Defs/README.md](../Defs/README.md)**（有逐文件说明）
 

@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  终极研究「霰雪无垠」→ 终极武器「企鹅飞踢！！」（2026-08-20 用户需求）
+  - 发射一只企鹅子弹（贴图 企鹅子弹.png → Things/Projectile/Binguin/Penguin）
+  - 发射声 = 自定义「咕咕嘎嘎」（用户素材 mp3 → Sounds/GuGuGaGa.mp3，
+    1.6 RuntimeAudioClipLoader 按扩展推断 AudioType，mp3 应可直接加载）
+  - 命中造成 60 钝伤；穿甲 93%（用户 2026-08-20 改定）；射程 46；弹速 90
+  - ★ 终极武器冰爆 ×2（用户补充）：企鹅飞踢命中同时积累
+    【面板伤害×2】的冰爆 = 60×2 = 120%/发 → 一踢即触发一次冻碎部位
+  - 制作：4 高级零部件 + 12 零部件 + 60 玻璃钢 + 100 钢铁（冰鹅族机工台）
+  - 属性（用户规格）：精度 22/33/44/90；瞄准 3.25s；冷却 3.25s；抑止 10（注释）
+  ★ 工作量/技能/研究成本用户未给：暂定 60000 / 手工 8 / 研究 5000 点，
+    坐标 (4.4, 0.8) 前置精准步枪；武器贴图为占位（借精确步枪图）。
+-->
+<Defs>
+
+  <!-- ============ 咕咕嘎嘎（企鹅飞踢发射音） ============ -->
+  <SoundDef>
+    <defName>Binguin_Shot_GuGuGaGa</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>GuGuGaGa</clipPath>
+          </li>
+        </grains>
+        <volumeRange>30~30</volumeRange>
+        <pitchRange>1~1</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- ============ 企鹅飞踢！！（霰雪无垠解锁） ============ -->
+  <ThingDef ParentName="BaseGunWithQuality">
+    <defName>Binguin_PenguinKick</defName>
+    <label>企鹅飞踢！！</label>
+    <description>霰雪无垠的绝技：冰鹅族把圆滚滚的子弹（自愿的）像炮弹一样踢向敌人——中者如遭车碾。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/Binguin/PenguinKick</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <soundInteract>Interact_Rifle</soundInteract>
+    <weaponClasses>
+      <li>LongShots</li>
+    </weaponClasses>
+    <thingSetMakerTags>
+      <li>RewardStandardQualitySuper</li>
+    </thingSetMakerTags>
+    <statBases>
+      <WorkToMake>60000</WorkToMake>
+      <Mass>7.5</Mass>
+      <AccuracyTouch>0.30</AccuracyTouch>
+      <AccuracyShort>0.50</AccuracyShort>
+      <AccuracyMedium>0.60</AccuracyMedium>
+      <AccuracyLong>0.90</AccuracyLong>
+      <RangedWeapon_Cooldown>3.25</RangedWeapon_Cooldown>
+    </statBases>
+    <costList>
+      <ComponentSpacer>4</ComponentSpacer>
+      <ComponentIndustrial>12</ComponentIndustrial>
+      <Plasteel>60</Plasteel>
+      <Steel>100</Steel>
+    </costList>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>Binguin_PenguinBullet</defaultProjectile>
+        <warmupTime>3.25</warmupTime>
+        <range>50</range>
+        <burstShotCount>1</burstShotCount>
+        <soundCast>Binguin_Shot_GuGuGaGa</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>12</muzzleFlashScale>
+      </li>
+    </verbs>
+    <weaponTags>
+      <li>Gun</li>
+      <li>IndustrialGunAdvanced</li>
+      <li>LongShots</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponRanged</li>
+    </tradeTags>
+    <tools>
+      <li>
+        <label>stock</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+      <li>
+        <label>barrel</label>
+        <capacities>
+          <li>Blunt</li>
+          <li>Poke</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+    </tools>
+    <researchPrerequisites>
+      <li>Binguin_ResearchEndlessSnow</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <RecipeDef>
+    <defName>Recipe_Binguin_PenguinKick</defName>
+    <label>制作企鹅飞踢！！</label>
+    <jobString>正在制作企鹅飞踢！！……</jobString>
+    <workAmount>60000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedGun</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>4</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>12</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>60</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>100</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_PenguinKick>1</Binguin_PenguinKick>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>8</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchEndlessSnow</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- ============ 企鹅飞踢钝击损伤（继承原版 BluntBase 模板） ============
+       ★ ParentName=BluntBase（原版钝击 Name 模板；写 "Blunt" 曾报找不到父节点）
+       workerClass 由 Patch 替换为 DamageWorker_BinguinBluntUltra：
+       ★ 终极武器冰爆 ×2 —— 护甲结算前按面板伤害×2 累积冰爆
+       （60 面板伤害 → 120%/发，一踢即冻碎部位） -->
+  <DamageDef ParentName="BluntBase">
+    <defName>Binguin_PenguinDamage</defName>
+    <label>企鹅飞踢</label>
+  </DamageDef>
+
+  <!-- ============ 企鹅子弹（60 钝伤 / 穿甲 93% / 弹速 90） ============ -->
+  <ThingDef ParentName="BaseBullet">
+    <defName>Binguin_PenguinBullet</defName>
+    <label>企鹅子弹</label>
+    <graphicData>
+      <texPath>Things/Projectile/Binguin/Penguin</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <!-- 原图 193x247 竖长企鹅；飞踢横飞比例 0.78:1 -->
+      <drawSize>(0.78,1)</drawSize>
+    </graphicData>
+    <projectile>
+      <damageDef>Binguin_PenguinDamage</damageDef>
+      <damageAmountBase>60</damageAmountBase>
+      <armorPenetrationBase>0.93</armorPenetrationBase>
+      <stoppingPower>10</stoppingPower>
+      <speed>90</speed>
+    </projectile>
+  </ThingDef>
+
+</Defs>

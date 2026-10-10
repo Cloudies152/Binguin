@@ -1,0 +1,377 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族护甲研究产物（2026-08-20 用户需求）：
+  哨骑头盔（参考原版斥候头盔）+ 哨骑装甲（参考原版斥候装甲）
+  - 研究 Binguin_ResearchIceArmor（前置：冰鹅机加工 + 冰鹅族服装 + 原版防弹衣 FlakArmor）
+  - 都在冰鹅族机工台制作（独立 RecipeDef，UnfinishedTechArmor）
+  - 头盔：装备 2s；护甲 钝40%/利102%/热66%；隔温 炎4C/寒16C；
+    工作量 20000；压制下降率偏移 -10%（SlaveSuppressionOffset，Ideology）；
+    真空抗性 66%（VacuumResistance，Odyssey）；10 玻璃钢 + 40 钢 + 3 零部件；
+    头部全覆盖（FullHead / Overhead 层）
+  - 装甲：装备 3s；护甲 钝40%/利102%/热66%；隔温 炎12C/寒80C；
+    层 Middle+Shell；覆盖 躯干/颈/肩/臂/腿；成人通用、无性别限制；
+    70 玻璃钢 + 20 铀 + 7 零部件；工作量未给 → 暂定 45000（同原版斥候，可调）
+  - 贴图借用原版斥候（物品图+worn 图路径同原版；颜色随机冰蓝系）
+-->
+<Defs>
+
+  <!-- ============ 哨骑头盔（参考原版斥候头盔） ============ -->
+  <ThingDef ParentName="ApparelBase">
+    <defName>Binguin_ScoutHelmet</defName>
+    <label>哨骑头盔</label>
+    <description>冰鹅族哨骑的高科技头盔，蓝白冰纹外壳内置微型状态电脑。复合板对枪弹与切割有惊人的抗性——寒原皆是哨骑的疆场。</description>
+    <techLevel>Spacer</techLevel>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/ReconArmorHelmet/ReconHelmet</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.9, 0.9)</drawSize>
+    </graphicData>
+    <generateCommonality>2</generateCommonality>
+    <statBases>
+      <WorkToMake>20000</WorkToMake>
+      <!-- ★ 2026-09 用户要求：耐久 ×2（120 → 240） -->
+      <MaxHitPoints>240</MaxHitPoints>
+      <Mass>1.2</Mass>
+      <Flammability>0.4</Flammability>
+      <ArmorRating_Sharp>1.02</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.40</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.66</ArmorRating_Heat>
+      <Insulation_Cold>16</Insulation_Cold>
+      <Insulation_Heat>4</Insulation_Heat>
+      <EquipDelay>2</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- 压制下降率偏移 -10%（同原版斥候头盔） -->
+      <SlaveSuppressionOffset MayRequire="Ludeon.RimWorld.Ideology">-0.1</SlaveSuppressionOffset>
+      <!-- 真空抗性 66%（同原版斥候头盔的 Odyssey 写法） -->
+      <VacuumResistance MayRequire="Ludeon.RimWorld.Odyssey">0.66</VacuumResistance>
+    </equippedStatOffsets>
+    <thingCategories>
+      <li>ArmorHeadgear</li>
+    </thingCategories>
+    <tradeTags>
+      <li>HiTechArmor</li>
+    </tradeTags>
+    <costList>
+      <Plasteel>10</Plasteel>
+      <Steel>40</Steel>
+      <ComponentIndustrial>3</ComponentIndustrial>
+    </costList>
+    <apparel>
+      <bodyPartGroups>
+        <li>FullHead</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/ReconArmorHelmet/ReconHelmet</wornGraphicPath>
+      <layers>
+        <li>Overhead</li>
+      </layers>
+      <tags>
+        <li>SpacerMilitary</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+        <li>Spacefarer</li>
+      </defaultOutfitTags>
+      <useDeflectMetalEffect>true</useDeflectMetalEffect>
+    </apparel>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>10</weight>
+          <only>(0.8,0.9,1,1)</only>
+        </li>
+        <li>
+          <weight>8</weight>
+          <only>(0.55,0.75,0.95,1)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <only>(0.35,0.5,0.7,1)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <comps>
+      <li Class="CompProperties_Biocodable" />
+    </comps>
+    <thingSetMakerTags>
+      <li>RewardStandardHighFreq</li>
+    </thingSetMakerTags>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIceArmor</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- 哨骑头盔配方（冰鹅族机工台） -->
+  <RecipeDef>
+    <defName>Recipe_Binguin_ScoutHelmet</defName>
+    <label>制作哨骑头盔</label>
+    <jobString>正在制作哨骑头盔……</jobString>
+    <workAmount>20000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>10</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>40</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>3</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_ScoutHelmet>1</Binguin_ScoutHelmet>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>6</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchIceArmor</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- ============ 哨骑装甲（参考原版斥候装甲） ============ -->
+  <ThingDef ParentName="ApparelBase">
+    <defName>Binguin_ScoutArmor</defName>
+    <label>哨骑装甲</label>
+    <description>冰鹅族哨骑的轻型动力甲，冰晶织片轻若无物却坚逾寒铁。夹层与外壳双重防护，极耐严寒，附真空密封。在无垠霰雪之间，哨骑来去如风。</description>
+    <techLevel>Spacer</techLevel>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/ReconArmor/ReconArmor</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <generateCommonality>2</generateCommonality>
+    <statBases>
+      <WorkToMake>45000</WorkToMake>
+      <!-- ★ 2026-09 用户要求：耐久 ×2（280 → 560） -->
+      <MaxHitPoints>560</MaxHitPoints>
+      <Mass>8</Mass>
+      <Flammability>0.4</Flammability>
+      <ArmorRating_Sharp>1.02</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.40</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.66</ArmorRating_Heat>
+      <Insulation_Cold>80</Insulation_Cold>
+      <Insulation_Heat>12</Insulation_Heat>
+      <EquipDelay>3</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- ★ 压制下降率偏移 -10%（2026-08-20 用户补充，同头盔） -->
+      <SlaveSuppressionOffset MayRequire="Ludeon.RimWorld.Ideology">-0.1</SlaveSuppressionOffset>
+      <!-- ★ 真空抗性 30%（2026-08-20 用户改定：0.66 → 0.30） -->
+      <VacuumResistance MayRequire="Ludeon.RimWorld.Odyssey">0.30</VacuumResistance>
+    </equippedStatOffsets>
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
+    <tradeTags>
+      <li>HiTechArmor</li>
+    </tradeTags>
+    <costList>
+      <Plasteel>70</Plasteel>
+      <Uranium>20</Uranium>
+      <ComponentIndustrial>7</ComponentIndustrial>
+    </costList>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Legs</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/ReconArmor/ReconArmor</wornGraphicPath>
+      <layers>
+        <li>Middle</li>
+        <li>Shell</li>
+      </layers>
+      <tags>
+        <li>SpacerMilitary</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+        <li>Spacefarer</li>
+      </defaultOutfitTags>
+      <useDeflectMetalEffect>true</useDeflectMetalEffect>
+      <soundWear>Wear_PowerArmor</soundWear>
+      <soundRemove>Remove_PowerArmor</soundRemove>
+    </apparel>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>10</weight>
+          <only>(0.8,0.9,1)</only>
+        </li>
+        <li>
+          <weight>8</weight>
+          <only>(0.55,0.75,0.95)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <only>(0.35,0.5,0.7)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <comps>
+      <li Class="CompProperties_Biocodable" />
+    </comps>
+    <thingSetMakerTags>
+      <li>RewardStandardHighFreq</li>
+    </thingSetMakerTags>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIceArmor</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- 哨骑装甲配方（冰鹅族机工台） -->
+  <RecipeDef>
+    <defName>Recipe_Binguin_ScoutArmor</defName>
+    <label>制作哨骑装甲</label>
+    <jobString>正在制作哨骑装甲……</jobString>
+    <workAmount>45000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>70</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Uranium</li>
+          </thingDefs>
+        </filter>
+        <count>20</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>7</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_ScoutArmor>1</Binguin_ScoutArmor>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>6</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchIceArmor</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- ============ 冰鹅族头盔（2026-09 用户需求） ============
+       ★ 数值 = 原版【防弹头盔 Apparel_AdvancedHelmet（军用/防弹头盔）】× 1.1：
+         装甲倍率 0.7 → 0.77，耐久 120 → 132，工作量 8000 → 8800，
+         质量 1.2 → 1.3，装备时间 1.5 → 1.65，
+         材料【与原版防弹头盔完全一致，2026-09 用户要求"材料不用改"】：
+         40 金属（Metalic 材质）+ 玻璃钢 10 + 零部件 2。
+       ★ 用户指定隔温为【绝对值】：寒抗（Insulation_Cold）20、热抗（Insulation_Heat）10
+         （原版防弹头盔是材质倍率 0.15/0，这里改成绝对值，不再随材质变化）。
+       ★ 覆盖 FullHead（同本 mod 的哨骑头盔；原版防弹头盔只盖 UpperHead），
+         Overhead 层，与其它头盔/头饰互斥。
+       ★ 制作：冰鹅机工台；解锁 = 冰鹅族机加工 + 冰鹅族服装（与冰鹅族防弹背心同一道门槛，
+         两件是一套）。 -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_MilitaryHelmet</defName>
+    <label>冰鹅族头盔</label>
+    <description>蓝黑配色的军用头盔，护住整个头部。比原版防弹头盔更结实、更保暖，但依旧挡不住正面来的穿甲弹。</description>
+    <techLevel>Industrial</techLevel>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/AdvancedHelmet/AdvancedHelmet</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <costStuffCount>40</costStuffCount>
+    <stuffCategories>
+      <li>Metallic</li>
+    </stuffCategories>
+    <statBases>
+      <WorkToMake>8800</WorkToMake>
+      <MaxHitPoints>132</MaxHitPoints>
+      <Mass>1.3</Mass>
+      <Flammability>1.0</Flammability>
+      <DeteriorationRate>2</DeteriorationRate>
+      <Beauty>-3</Beauty>
+      <StuffEffectMultiplierArmor>0.77</StuffEffectMultiplierArmor>
+      <!-- 用户指定：寒抗 20 / 热抗 10（绝对值，不随材质变化） -->
+      <Insulation_Cold>20</Insulation_Cold>
+      <Insulation_Heat>10</Insulation_Heat>
+      <EquipDelay>1.65</EquipDelay>
+    </statBases>
+    <costList>
+      <Plasteel>10</Plasteel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
+    <tradeTags>
+      <li>Armor</li>
+    </tradeTags>
+    <apparel>
+      <bodyPartGroups>
+        <li>FullHead</li>
+      </bodyPartGroups>
+      <parentTagDef>ApparelHead</parentTagDef>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/AdvancedHelmet/AdvancedHelmet</wornGraphicPath>
+      <layers>
+        <li>Overhead</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <recipeMaker>
+      <recipeUsers Inherit="False">
+        <li>Binguin_MachiningTable</li>
+      </recipeUsers>
+      <skillRequirements>
+        <Crafting>5</Crafting>
+      </skillRequirements>
+      <researchPrerequisites>
+        <li>Binguin_ResearchMachining</li>
+        <li>Binguin_ResearchClothing</li>
+      </researchPrerequisites>
+      <displayPriority>210</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMachining</li>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+</Defs>

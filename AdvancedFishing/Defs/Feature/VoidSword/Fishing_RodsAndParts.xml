@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  高级钓鱼学 —— 钓竿制作系统（2026-08-19 用户设计文档：高级钓鱼学.md）
+  ★ 本文件在 AdvancedFishing/ 文件夹（Odyssey 门控，LoadFolders.xml）
+  ★ XML 零自定义类型原则：自定义 Comp/ThoughtWorker/StatPart 由
+    BinguinDefPatches 静态构造挂载。
+  ★ 核心设计（防踩坑记录，详见交接文档）：
+    - 配件 = stuff 物品（costStuffCount + stuffCategories Metallic +
+      内嵌 recipeMaker（本 def 无父类 recipeMaker → 不产生 recipeUsers 追加问题）），
+      制作时玩家用原版材质选择器选金属（铁/玻璃钢/铀/银/金）→ 材质信息存 stuff。
+    - 合成 = 装配台自定义对话框（原版配方筛选无法按材质区分配件——用户点名问题），
+      精确选择仓库中的特定材质配件。
+    - 动态属性 = 全部走原版 pawn stat + StatPart_BinguinRod（静态构造注册到
+      MeleeWeapon_DamageMultiplier / MeleeWeapon_CooldownMultiplier / MoveSpeed /
+      ToxicResistance / Immunity / InjuryHealingFactor / MaxHitPoints）：
+      伤害&穿甲 = tool.power/armorPen × pawn.MeleeWeapon_DamageMultiplier（原版结算）
+      冷却 = tool.cooldown × pawn.MeleeWeapon_CooldownMultiplier（原版结算）
+      材质加成数值直接读原版 stuff 乘数（铀 BluntDamageMultiplier=1.5、
+      玻璃钢 MeleeWeapon_CooldownMultiplier=0.8 —— 与用户设计文档示例完全一致）
+    - 鱼饵 = 自定义对话框制作（效果由消耗食物决定，最多 2 种），comp 存档效果。
+-->
+<Defs>
+
+  <!-- ========================================================================
+       尚方宝剑（2026-10-06 用户需求）
+       ========================================================================
+       用户规格：「尚方宝剑，用所有鱼类25条制作……宝剑外形是一条鱼，
+                 会类似泰拉瑞亚的天顶剑一样远程进行14条鱼的轮流斩击……
+                 武器面板是30钝器伤害/冷却0.7s。
+                 （注意，远程斩击是测试玩法，要在mod选项打开，常态只能用于近战）」
+
+       ★ 本 def 的定位：**纯近战武器**（只有一个钝击 tool）。
+         远程「天顶鱼斩」不在 verbs 里，而是装备时通过 comp 授予的 Ability
+         —— 给 ThingDef 挂 verbs 会让武器被判定成远程武器，那就做不到
+         "常态只能用于近战"了（与高级钓竿技能同一处理，见
+         `Ability_BinguinRodSkills.cs` 头部注释）。
+       ★ comp 挂载：`CompBinguinVoidSword`（继承 CompEquippable）由
+         `BinguinDefPatches` 静态构造替换掉 BaseWeapon 继承来的 CompEquippable。 -->
+  <ThingDef ParentName="BaseWeapon">
+    <defName>Binguin_VoidSwordFish</defName>
+    <label>尚方宝剑</label>
+    <description>冰鹅族渔道的终点之作：以世界上十四种鱼（）各二十五尾）凝聚而成的一柄剑。剑身就是一条鱼——鳞光为刃、鱼尾为柄。执剑者只要念动真言，十四条鱼的虚影便自天顶轮番斩落，每一尾都带着能击碎骨血的寒能。\n\n（远程斩击属于测试玩法，默认关闭；在【选项 → Mod 设置 → 冰鹅族】里可启用。）</description>
+    <graphicData>
+      <!-- 专用鱼剑贴图尚未制作，临时使用 Odyssey 鲑鱼贴图及其堆叠图形加载方式。 -->
+      <texPath>Things/Item/Fish/Salmon</texPath>
+      <graphicClass>Graphic_StackCount</graphicClass>
+    </graphicData>
+    <uiIconScale>1.15</uiIconScale>
+    <techLevel>Spacer</techLevel>
+    <smeltable>false</smeltable>
+    <thingCategories>
+      <li>WeaponsMelee</li>
+    </thingCategories>
+    <weaponClasses>
+      <li>Melee</li>
+    </weaponClasses>
+    <weaponTags>
+      <li>SpacerMeleeAdvanced</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponMelee</li>
+    </tradeTags>
+    <statBases>
+      <WorkToMake>45000</WorkToMake>
+      <Mass>3.5</Mass>
+      <MeleeWeapon_DamageMultiplier>1</MeleeWeapon_DamageMultiplier>
+    </statBases>
+    <tools>
+      <li>
+        <label>鱼身（钝击）</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>30</power>
+        <cooldownTime>0.7</cooldownTime>
+        <armorPenetration>1.0</armorPenetration>
+      </li>
+    </tools>
+    <comps>
+      <li>
+        <compClass>CompQuality</compClass>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Binguin_ResearchUltimateFishing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- 尚方宝剑配方：**每一种鱼各 25 条**（原版 Odyssey 14 种鱼全收齐，共 350 条）
+       ★★ 2026-10-06 用户澄清：「我说的不是25条鱼，是每种鱼各25条，
+          这是终极彩蛋武器，制作要求要大一点」。
+          ⇒ 所以**逐条列出 14 种鱼、每种 25 条**，而不是用 Fish 类目 ×25。
+          逐条列出的两个好处：
+            ① 制作清单上会明确显示"缺哪一种、缺几条"，玩家知道要钓什么
+            ② 不会被其它 mod 往 Fish 类目里塞的鱼"蒙混过关" -->
+  <RecipeDef>
+    <defName>Recipe_Binguin_VoidSwordFish</defName>
+    <label>制作尚方宝剑</label>
+    <description>以寒原上十四种鱼各二十五尾，凝聚成一柄剑。十四条鱼的形意会被收进剑身，成为「天顶鱼斩」的十四道虚影。</description>
+    <jobString>正在凝聚十四种鱼的形意……</jobString>
+    <workAmount>120000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedWeapon</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Salmon</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Bass</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Tilapia</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Cod</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Bluefish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Guppy</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Frostfish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Catfish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Piranha</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Dogfish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Marlin</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Tuna</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Flounder</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Fish_Toxfish</li>
+          </thingDefs>
+        </filter>
+        <count>25</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_VoidSwordFish>1</Binguin_VoidSwordFish>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <researchPrerequisite>Binguin_ResearchUltimateFishing</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- 尚方宝剑 · 单次鱼斩的损伤：钝击 + 按面板伤害 1:1 累积冰爆
+       ★ workerClass 用原版 DamageWorker_Blunt 占位，静态构造替换成
+         DamageWorker_BinguinFishBlunt（XML 零自定义类型原则）。
+       ★★ 2026-10-09 修复三个字段错误（用户报"不知道为什么的红字"，日志实证）：
+         原写法                                   问题 → 现在
+         ─────────────────────────────────────────────────────────────────
+         `<hediff>BluntTrauma</hediff>`           ❌ 原版**没有** `BluntTrauma` 这个 def
+                                                  （那是 DamageDef 名，不是 HediffDef）
+                                                  → 改成 **`Crush`**（原版钝击用的 HediffDef，
+                                                    见 Core `Damages_MeleeWeapon.xml` 的
+                                                    `<DamageDef><defName>Crush</defName>
+                                                     <hediff>Crush</hediff>`）
+         `<armorPenetration>1.0</armorPenetration>` ❌ **DamageDef 里没有这个字段**
+                                                  （RimSage 查 `Verse/DamageDef.cs` 字段表：
+                                                    只有 `defaultArmorPenetration`）
+                                                  → 改成 **`defaultArmorPenetration`**
+         `<combatLogRules>Damage_Blunt</...>`      ❌ 原版**没有** `Damage_Blunt` 这个 RulePackDef
+                                                  → **删掉**（原版绝大多数 DamageDef 都不写，
+                                                    只有 Flame/Smoke/Stun/EMP 等特殊损伤才写）
+       ★ 三条报错原文见 Player.log：
+         `XML error: <armorPenetration>1.0</armorPenetration> doesn't correspond to any field
+          in type DamageDef`
+         `Could not resolve cross-reference: No Verse.RulePackDef named Damage_Blunt`
+         `Could not resolve cross-reference: No Verse.HediffDef named BluntTrauma` -->
+  <DamageDef>
+    <defName>Binguin_FishBluntDamage</defName>
+    <label>鱼斩</label>
+    <workerClass>DamageWorker_Blunt</workerClass>
+    <externalViolence>true</externalViolence>
+    <deathMessage>{0} 被十四条鱼斩成了碎片。</deathMessage>
+    <hediff>Crush</hediff>
+    <armorCategory>Blunt</armorCategory>
+    <defaultArmorPenetration>1.0</defaultArmorPenetration>
+  </DamageDef>
+
+  <!-- ============ 尚方宝剑技能「天顶鱼斩」（测试玩法，mod 选项控制）============
+       ★ 目标锁定：瞄准**地点**（canTargetLocations）—— 椭圆范围以瞄准点为中心，
+         长轴沿"施法者→瞄准点"方向。
+       ★★ `compClass` 必须用**原版可实例化类**占位（这里用
+          CompAbilityEffect_Teleport）：本 mod 的铁律是 **XML 零自定义类型引用**
+          （自定义类型名会让 GenTypes 缓存提前冻结而漏掉后续类型）。
+          `BinguinDefPatches` 静态构造会把它替换成
+          `CompAbilityEffect_BinguinVoidStrike` 并清 CompProperties 的
+          `compClass` 缓存。数值参数（strikes / damagePerStrike / 椭圆半轴…）
+          在 C# 里给默认值，改数值改 `CompProperties_BinguinVoidSword`。 -->
+  <AbilityDef>
+    <defName>Binguin_AbilityVoidStrike</defName>
+    <label>天顶鱼斩</label>
+    <description>十四条鱼的虚影自天顶轮番斩落，对椭圆形范围内的所有敌人造成范围伤害。每次斩击 10 钝击、附带冰爆、100% 钝器穿透，一口气结算 14 次斩击。\n\n（测试玩法：需在【选项 → Mod 设置 → 冰鹅族】中启用，默认关闭。）</description>
+    <cooldownTicksRange>600~600</cooldownTicksRange>
+    <verbProperties>
+      <verbClass>Verb_CastAbility</verbClass>
+      <range>26</range>
+      <warmupTime>0.3</warmupTime>
+      <targetParams>
+        <canTargetLocations>true</canTargetLocations>
+        <canTargetPawns>false</canTargetPawns>
+        <canTargetBuildings>false</canTargetBuildings>
+        <canTargetItems>false</canTargetItems>
+      </targetParams>
+    </verbProperties>
+    <comps>
+      <li>
+        <compClass>CompAbilityEffect_Teleport</compClass>
+      </li>
+    </comps>
+  </AbilityDef>
+
+</Defs>

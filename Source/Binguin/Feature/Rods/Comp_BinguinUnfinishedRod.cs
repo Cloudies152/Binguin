@@ -103,7 +103,7 @@ namespace Binguin.Feature.Rods
         /// ★★ 2026-10-06 用户需求：「我指的是你直接用原版制作的代码和显示，这样比较方便」。
         ///   ⇒ 数值**只有一个来源**：`Binguin_UnfinishedRod` def 上的
         ///     `<recipeMaker><workAmount>N</workAmount>…</recipeMaker>`
-        ///     （见 `AdvancedFishing/Defs/02_RodsAndParts/Fishing_RodsAndParts.xml`）。改数值只改那一处，不再有层层回退。
+        ///     （见 `AdvancedFishing/Defs/Feature/Rods/Fishing_RodsAndParts.xml`）。改数值只改那一处，不再有层层回退。
         ///
         /// ★ 原版语义（IL 实证）：`RecipeDef.WorkAmountForStuff`
         ///   `if (workAmount >= 0) return workAmount;`

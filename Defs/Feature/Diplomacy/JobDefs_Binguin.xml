@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  滑行冲刺的 job 与冰屑拖尾效果。
+  JobDef：驱动 JobDriver_Slide 沿直线滑行（由企鹅滑板的 Verb_SlideDash 派发）。
+  FleckDef：滑行时脚下的冰屑拖尾（FleckBase = 静态 fleck，FleckMaker.Static 使用）。
+-->
+<Defs>
+
+  <!-- 与冰鹅族外交官交谈（2026-08-22）：殖民者右键外交官 → 走近 → 弹共存
+       意向选择信；driverClass 由 BinguinDefPatches.PatchDiplomacy 挂载 -->
+  <JobDef>
+    <defName>Binguin_DiplomatTalk</defName>
+    <reportString>talking to the Binguin diplomat.</reportString>
+  </JobDef></Defs>

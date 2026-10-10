@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  寒门盾（2026-08-20 用户需求，冰鹅族护甲线，Binguin_ResearchIceArmor 解锁）
+  - 装备栏：腰部（Belt 层 / Waist 部位组）；覆盖全身（体部组全列）
+  - ★ v3（2026-08-21）双层盾修法：
+    ① 外层 = 百夫长式弹道拦截罩，半径 6 / 300 盾值：
+       ★★★ 拦截罩组件只对【地图上的生成物】生效（投射物通过地图物列表
+       查询拦截器；穿在身上的 apparel 永远查不到 → v1/v2 两轮失败根因）。
+       因此外层罩改由隐形实体 Binguin_GateShieldField 承载——穿戴者脚下
+       生成、绑定跟随（thingClass=原版 MechShield 同款实体机制，XML 零
+       自定义类型），脱下/死亡/离图由 GameComponent 轮询回收。
+       字段抄百夫长 Mech_Centurion：hitPoints 300 / chargeDurationTicks
+       1800 / 恢复瞬间满 / EMP 断电 1500 tick / drawWithNoSelection。
+    ② 内层 = 原版护盾腰带（CompProperties_Shield）：贴身个人盾。
+  - 装备者无法射击（原版护盾腰带机制）
+  - 属性：移速 -0.6；护甲 钝80%/利80%/热105%；隔温 炎热 10C（寒冷未给=0）
+  - 材料：120 玻璃钢 + 80 铀 + 3 高级零部件；机工台制作；手工 8；
+    工作量 30000
+-->
+<Defs>
+
+  <ThingDef ParentName="ApparelBase">
+    <defName>Binguin_GateShield</defName>
+    <label>寒门盾</label>
+    <description>冰鹅族最重的护具：双层护盾。持盾者无法射击，但近战之姿如墙——她们以此守住雪原的每一道门。</description>
+    <thingClass>Apparel</thingClass>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/ShieldBelt/ShieldBelt</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <!-- ★ 2026-09 核对：此处的 Normal 是【必需】的，勿删——
+         内层的原版个人盾 CompShield 用 CompTick 回充护盾能量
+         （IL 实证 RimWorld.CompShield 声明了 CompTick；对照原版
+         Apparel_ShieldBelt = Normal、Apparel_AdvancedHelmet = Never）。 -->
+    <tickerType>Normal</tickerType>
+    <techLevel>Spacer</techLevel>
+    <statBases>
+      <Mass>8</Mass>
+      <WorkToMake>30000</WorkToMake>
+      <!-- ★ 2026-09 用户要求：耐久 ×3。原先未写 MaxHitPoints → 取原版默认 100，
+           现显式写 300。（注意：这是【物品本身】的耐久，与 6 格护罩 300 护盾值
+           是两回事；护罩值在 Binguin_GateShieldField 上） -->
+      <MaxHitPoints>300</MaxHitPoints>
+      <Flammability>0.2</Flammability>
+      <ArmorRating_Sharp>0.80</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.80</ArmorRating_Blunt>
+      <ArmorRating_Heat>1.05</ArmorRating_Heat>
+      <Insulation_Heat>10</Insulation_Heat>
+      <!-- 内层个人盾 200 护盾值（原版盾腰带能量体系）
+           ★ 恢复速率 50%/秒（2026-08-20 用户改定：EnergyShieldRechargeRate
+           0.5 = 每秒回护盾条 50%，约 2 秒满） -->
+      <EnergyShieldEnergyMax>2</EnergyShieldEnergyMax>
+      <EnergyShieldRechargeRate>0.5</EnergyShieldRechargeRate>
+      <EquipDelay>2</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <MoveSpeed>-0.6</MoveSpeed>
+    </equippedStatOffsets>
+    <thingCategories>
+      <li>ApparelUtility</li>
+    </thingCategories>
+    <costList>
+      <Plasteel>120</Plasteel>
+      <Uranium>80</Uranium>
+      <ComponentSpacer>3</ComponentSpacer>
+    </costList>
+    <apparel>
+      <countsAsClothingForNudity>false</countsAsClothingForNudity>
+      <careIfWornByCorpse>false</careIfWornByCorpse>
+      <careIfDamaged>false</careIfDamaged>
+      <wearPerDay>0</wearPerDay>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+        <li>FullHead</li>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Hands</li>
+        <li>Legs</li>
+        <li>Feet</li>
+      </bodyPartGroups>
+      <layers>
+        <li>Belt</li>
+      </layers>
+      <tags>
+        <li>BeltDefense</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+        <li>Spacefarer</li>
+      </defaultOutfitTags>
+    </apparel>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIceArmor</li>
+    </researchPrerequisites>
+    <comps>
+      <!-- ★ v3（2026-08-21）：外层拦截罩从 apparel 上移除！
+           根因：ProjectileInterceptor 只能挂在地图上的生成物（建筑/机械体/
+           护盾实体）——穿在身上的 apparel 不在地图物列表中，投射物系统
+           （ThingRequestGroup.ProjectileInterceptor）永远查不到它，罩子
+           既不绘制也不拦截（v1/v2 两轮实测失败的原因）。
+           外层护盾改由「寒门盾场」实体承载（见本文件下方 def）：
+           穿戴者脚下自动生成、跟随移动、半径 6 拦截罩，机制照抄百夫长。
+       -->
+      <!-- ★ 内层个人盾（原版护盾腰带；破盾后 2500 tick 开始回充） -->
+      <li Class="CompProperties_Shield">
+        <startingTicksToReset>2500</startingTicksToReset>
+      </li>
+    </comps>
+    <tradeTags>
+      <li>Armor</li>
+    </tradeTags>
+  </ThingDef>
+
+  <!-- 寒门盾配方（冰鹅族机工台） -->
+  <RecipeDef>
+    <defName>Recipe_Binguin_GateShield</defName>
+    <label>制作寒门盾</label>
+    <jobString>正在制作寒门盾……</jobString>
+    <workAmount>30000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Plasteel</li>
+          </thingDefs>
+        </filter>
+        <count>120</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Uranium</li>
+          </thingDefs>
+        </filter>
+        <count>80</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>3</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_GateShield>1</Binguin_GateShield>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>8</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchIceArmor</researchPrerequisite>
+  </RecipeDef>
+
+  <!-- ============ 寒门盾场（v3：外层护盾实体） ============
+       拦截罩组件只对"地图上的生成物"有效（投射物通过地图物列表查询拦截器，
+       穿在身上的 apparel 永远查不到）。故寒门盾穿戴者脚下会生成这个隐形
+       实体，承载百夫长式拦截罩；它由 CompBinguinGateShieldField 跟随穿戴者
+       移动，脱下/死亡即销毁（comps 与 thingClass 由 BinguinDefPatches 挂载，
+       XML 零自定义类型）。 -->
+  <ThingDef>
+    <defName>Binguin_GateShieldField</defName>
+    <label>寒门盾场</label>
+    <description>寒门盾的外层寒冰护罩（由穿戴者携带生成，不应单独存在）。</description>
+    <!-- ★ v20：thingClass = 原版 MechShield——1.6 机械师"随身护盾"实体：
+         自带护盾泡泡绘制（DrawAt）与 SetTarget(pawn) 目标跟随；
+         useHitPoints=false = 无法被命中（用户要求"带护盾的无法命中的
+         实体，跟随在穿戴者脚底"）。
+         拦截罩参数在下方 comps（radius 5 = v22 用户实测 6 太大改小）。
+         跟随/自毁另有 CompBinguinGateShieldField 双保险（patch 挂载）。 -->
+    <thingClass>MechShield</thingClass>
+    <tickerType>Normal</tickerType>
+    <drawerType>RealtimeOnly</drawerType>
+    <drawOffscreen>true</drawOffscreen>
+    <useHitPoints>false</useHitPoints>
+    <comps>
+      <!-- ★ 百夫长同款拦截罩字段（radius 5 / 300 盾值 / 充能 1800 tick）：
+           照抄 Biotech Mech_Centurion；颜色改冰蓝 -->
+      <li Class="CompProperties_ProjectileInterceptor">
+        <!-- ★ v21 修复：删掉 <activated>true</activated>！
+             反编译 Active 判定：设 activated=true 且 activeDuration=0 会走进
+             "激活计时"分支 → Active=false → 罩子不绘制也不拦截。
+             原版百夫长不带 activated（默认 false 分支正常激活）——照抄它。
+             startWithMaxHitPoints=true 保留：开局满盾立即显示（百夫长
+             需要先充能 30 秒，我们不需要）。 -->
+        <radius>5</radius>
+        <interceptGroundProjectiles>true</interceptGroundProjectiles>
+        <color>(0.6, 0.75, 1)</color>
+        <reactivateEffect>BulletShieldGenerator_Reactivate</reactivateEffect>
+        <activeSound>BulletShield_Ambience</activeSound>
+        <hitPoints>300</hitPoints>
+        <startWithMaxHitPoints>true</startWithMaxHitPoints>
+        <hitPointsRestoreInstantlyAfterCharge>true</hitPointsRestoreInstantlyAfterCharge>
+        <chargeDurationTicks>1800</chargeDurationTicks>
+        <rechargeHitPointsIntervalTicks>120</rechargeHitPointsIntervalTicks>
+        <minIdleAlpha>0.2</minIdleAlpha>
+        <drawWithNoSelection>True</drawWithNoSelection>
+        <disarmedByEmpForTicks>1500</disarmedByEmpForTicks>
+        <alwaysShowHitpointsGizmo>true</alwaysShowHitpointsGizmo>
+        <gizmoTipKey>ProjectileInterceptorTip</gizmoTipKey>
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>

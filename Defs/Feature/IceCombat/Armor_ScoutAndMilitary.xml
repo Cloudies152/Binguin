@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族护甲研究产物（2026-08-20 用户需求）：
+  哨骑头盔（参考原版斥候头盔）+ 哨骑装甲（参考原版斥候装甲）
+  - 研究 Binguin_ResearchIceArmor（前置：冰鹅机加工 + 冰鹅族服装 + 原版防弹衣 FlakArmor）
+  - 都在冰鹅族机工台制作（独立 RecipeDef，UnfinishedTechArmor）
+  - 头盔：装备 2s；护甲 钝40%/利102%/热66%；隔温 炎4C/寒16C；
+    工作量 20000；压制下降率偏移 -10%（SlaveSuppressionOffset，Ideology）；
+    真空抗性 66%（VacuumResistance，Odyssey）；10 玻璃钢 + 40 钢 + 3 零部件；
+    头部全覆盖（FullHead / Overhead 层）
+  - 装甲：装备 3s；护甲 钝40%/利102%/热66%；隔温 炎12C/寒80C；
+    层 Middle+Shell；覆盖 躯干/颈/肩/臂/腿；成人通用、无性别限制；
+    70 玻璃钢 + 20 铀 + 7 零部件；工作量未给 → 暂定 45000（同原版斥候，可调）
+  - 贴图借用原版斥候（物品图+worn 图路径同原版；颜色随机冰蓝系）
+-->
+<Defs>
+
+  <!-- ==========================================================================
+       2026-09 用户新增：冰鹅族灵质法袍 + 冰冠（同属【冰鹅族护甲】研究，机工台制作）
+       · 灵质法袍：Shell 外套层；70 纤维或皮革 + 15 玻璃钢 + 2 高级零部件；
+         覆盖 躯干/颈/双肩/双臂/双腿；工作量 10000、装备 3s；
+         基础数值照原版 Robe（HP100/重量0.75/美观-3），材质系数按用户给定：
+         护甲 ×48%、隔冷 ×400%、隔热 ×155%
+       · 冰冠：Overhead 头饰层；45 金属 + 2 高级零部件；
+         覆盖 UpperHead（＝图鉴里的"头/左耳/右耳"，与原版王冠一致）；
+         基础数值照原版 Crown（HP80/重量0.9/装备0.8s），
+         材质系数按用户给定：护甲 ×89%、隔冷 ×200%、隔热 ×100%；
+         加成 社交效果 +20%（SocialImpact 0.2，与原版王冠同款）
+         ★ 工作量用户未给 → 沿用原版王冠 12000（要改说一声）
+       · 两者都用 recipeMaker + recipeUsers Inherit="False" → 只在冰鹅缝纫台之外的
+         【冰鹅族机工台】制作（与哨骑套同台），研究门槛 = 冰鹅族护甲
+       · 贴图暂借原版 Robe（Core）与 Crown（Royalty，与哨骑/威灵借 ReconArmor 同理）
+       ========================================================================== -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_SpiritRobe</defName>
+    <label>冰鹅族灵质法袍</label>
+    <description>冰鹅族织者以丝绸布料编经、以玻璃钢抽纬，织出这一袭泛着幽蓝微光的长袍。衣料里夹着极细的晶丝，冷气一旦触上便四散流走——披着它站在暴风雪里，连呼吸都变得轻缓，整个人化作了一道寒风。</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/Robe/Robe</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <techLevel>Spacer</techLevel>
+    <costStuffCount>70</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <costList>
+      <Plasteel>15</Plasteel>
+      <ComponentSpacer>2</ComponentSpacer>
+    </costList>
+    <statBases>
+      <WorkToMake>10000</WorkToMake>
+      <MaxHitPoints>100</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <DeteriorationRate>2</DeteriorationRate>
+      <Beauty>-3</Beauty>
+      <Mass>0.75</Mass>
+      <StuffEffectMultiplierArmor>0.48</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>4.0</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>1.55</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>3</EquipDelay>
+    </statBases>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Legs</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/Robe/Robe</wornGraphicPath>
+      <layers>
+        <li>Shell</li>
+      </layers>
+      <tags>
+        <li>Robe</li>
+        <li>Binguin</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>ApparelMisc</li>
+    </thingCategories>
+    <!-- ★ 不加 CompBiocodable：法袍是普通衣物，不做个人绑定（哨骑/威灵沿用旧例保留） -->
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>10</weight>
+          <only>(0.80,0.90,1.00)</only>
+        </li>
+        <li>
+          <weight>8</weight>
+          <only>(0.55,0.75,0.95)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <only>(0.35,0.50,0.70)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchIceArmor</researchPrerequisite>
+      <effectWorking>Smith</effectWorking>
+      <soundWorking>Recipe_Machining</soundWorking>
+      <skillRequirements>
+        <Crafting>6</Crafting>
+      </skillRequirements>
+      <recipeUsers Inherit="False">
+        <li>Binguin_MachiningTable</li>
+      </recipeUsers>
+      <displayPriority>245</displayPriority>
+    </recipeMaker>
+    <thingSetMakerTags>
+      <li>RewardStandardHighFreq</li>
+    </thingSetMakerTags>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIceArmor</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_IceCrown</defName>
+    <label>冰冠</label>
+    <description>冰鹅族首席观察员的冠冕：一整圈寒晶打磨的细箍，正面立起五枚长短不一的冰棱，光一照便折出细碎的蓝白星芒。</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/Crown/Crown</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(0.9, 0.9)</drawSize>
+    </graphicData>
+    <techLevel>Spacer</techLevel>
+    <costStuffCount>45</costStuffCount>
+    <stuffCategories>
+      <li>Metallic</li>
+    </stuffCategories>
+    <costList>
+      <ComponentSpacer>2</ComponentSpacer>
+    </costList>
+    <statBases>
+      <!-- ★ 工作量用户未给 → 沿用原版王冠 12000；装备时间同为原版 0.8s -->
+      <WorkToMake>12000</WorkToMake>
+      <MaxHitPoints>80</MaxHitPoints>
+      <Flammability>1.0</Flammability>
+      <DeteriorationRate>2</DeteriorationRate>
+      <Beauty>-3</Beauty>
+      <Mass>0.9</Mass>
+      <StuffEffectMultiplierArmor>0.89</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>2.0</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>1.0</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>0.8</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- 社交效果 +20%（同原版王冠） -->
+      <SocialImpact>0.2</SocialImpact>
+      <!-- ★ 2026-09 用户要求（默认属性）：+20 心灵熵阈值 / +0.1 心灵熵消散速率
+           （消散速率初版写 +2 后用户下调为 +0.1；对比：默认 0.54/秒，
+             原版灵质头饰 0.033~0.091，所以 +0.1 略强于灵质小帽）
+           原版对应 StatDef：PsychicEntropyMax（默认 30）、
+           PsychicEntropyRecoveryRate（默认 0.54/秒）；两者皆 Royalty 属性，
+           故用 MayRequire 门控（未装 Royalty 时不加载该行）。 -->
+      <PsychicEntropyMax MayRequire="Ludeon.RimWorld.Royalty">20</PsychicEntropyMax>
+      <PsychicEntropyRecoveryRate MayRequire="Ludeon.RimWorld.Royalty">0.1</PsychicEntropyRecoveryRate>
+    </equippedStatOffsets>
+    <apparel>
+      <countsAsClothingForNudity>false</countsAsClothingForNudity>
+      <bodyPartGroups>
+        <li>UpperHead</li>
+      </bodyPartGroups>
+      <parentTagDef>ApparelHead</parentTagDef>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/Crown/Crown</wornGraphicPath>
+      <layers>
+        <li>Overhead</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+        <li>BinguinHeadwear</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+      <useDeflectMetalEffect>true</useDeflectMetalEffect>
+    </apparel>
+    <thingCategories>
+      <li>Headgear</li>
+    </thingCategories>
+    <!-- ★ 不加 CompBiocodable（同上） -->
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>10</weight>
+          <only>(0.85,0.93,1.00)</only>
+        </li>
+        <li>
+          <weight>8</weight>
+          <only>(0.60,0.80,0.98)</only>
+        </li>
+        <li>
+          <weight>5</weight>
+          <only>(0.40,0.60,0.85)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchIceArmor</researchPrerequisite>
+      <effectWorking>Smith</effectWorking>
+      <soundWorking>Recipe_Machining</soundWorking>
+      <skillRequirements>
+        <Crafting>6</Crafting>
+      </skillRequirements>
+      <!-- ★ 2026-09 修正：ApparelMakeableBase 的 defaultIngredientFilter 默认禁用了
+           玻璃钢/铀/金/银，会让「45 × 金属」实际只能选钢。这里 Inherit="False"
+           换成原版王冠那套过滤（放行玻璃钢/银/金，只禁玉/铀/异物），
+           使冰冠可用钢(×1.0)/玻璃钢(×2.8)/银(×0.7)/金(×0.6) 等金属。 -->
+      <defaultIngredientFilter Inherit="False">
+        <categories>
+          <li>Root</li>
+        </categories>
+        <!-- ★ 2026-09 用户要求：冰冠可用【铀】与【活铁 Bioferrite（异象 DLC）】制作
+             → 从禁用表里移除这两项（原版王冠禁用它们）；仅保留 Jade
+             （玉属石质，与金属类材质本就无关，留着不影响）。 -->
+        <disallowedThingDefs>
+          <li>Jade</li>
+        </disallowedThingDefs>
+      </defaultIngredientFilter>
+      <recipeUsers Inherit="False">
+        <li>Binguin_MachiningTable</li>
+      </recipeUsers>
+      <displayPriority>246</displayPriority>
+    </recipeMaker>
+    <thingSetMakerTags>
+      <li>RewardStandardHighFreq</li>
+    </thingSetMakerTags>
+    <researchPrerequisites>
+      <li>Binguin_ResearchIceArmor</li>
+    </researchPrerequisites>
+  </ThingDef></Defs>

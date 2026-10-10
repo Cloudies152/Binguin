@@ -1,4 +1,4 @@
-// ============================================================================
+﻿// ============================================================================
 // Def 补丁（静态构造，XML 解析之后执行）
 //
 // 背景：本环境的 GenTypes 类型缓存会在某些 mod 早期触发时固化，
@@ -79,7 +79,7 @@ namespace Binguin.Patch
         //      ⇒ 子 def 一写 <stockGenerators>，父 def 那张表就被【整体替换】，
         //        结果会是"只有鱼的商人"。所以必须整段复制。
         //
-        //   判据（每个自定义 kind）：生成器数量 == 对应原版数量 + 1，且含 Fish 生成器。
+        //   判据：库存不能退化为单个生成器；启用 Odyssey 时须实际包含 Fish。
         //   ★ 读 categoryDef 要反射：该字段在 StockGenerator_Category 上是 private
         //     （只有基类的 countRange 是 public，Mono.Cecil 实证）。
         // ====================================================================
@@ -129,7 +129,7 @@ namespace Binguin.Patch
 
                     if (mine == null)
                     {
-                        lines += "\n    [缺失] " + mineName + "（Defs/11_World/TraderKindDefs_Binguin.xml 没加载？）";
+                        lines += "\n    [缺失] " + mineName + "（Defs/Feature/Trading/TraderKindDefs_Binguin.xml 没加载？）";
                         allOk = false;
                         continue;
                     }
@@ -137,7 +137,7 @@ namespace Binguin.Patch
                     int p = (parent != null && parent.stockGenerators != null) ? parent.stockGenerators.Count : -1;
 
                     bool fishFound = false;
-                    bool sawFishCategory = false;
+
                     if (mine.stockGenerators != null)
                     {
                         for (int g = 0; g < mine.stockGenerators.Count; g++)
@@ -145,35 +145,17 @@ namespace Binguin.Patch
                             if (CategoryDefNameOf(mine.stockGenerators[g]) == "Fish")
                             {
                                 fishFound = true;
-                                sawFishCategory = true;
+
                                 break;
                             }
                         }
                     }
-                    // 反射读不到时（字段改名/权限变化）退回"数量多 1"判据
-                    if (!sawFishCategory && p > 0 && n == p + 1) fishFound = true;
 
                     lines += "\n    " + mineName + " = " + n + " 个生成器（原版 " + parentName + " = " + p
                         + "），含鱼=" + (fishFound ? "有" : "无");
 
-                    // ★ 没装 Odyssey 时鱼生成器带 MayRequire 会被整条跳过 ⇒
-                    //   数量等于"原版 + 武器生成器"，这是【预期】行为，不算异常。
-                    if (!ModsConfig.OdysseyActive)
-                    {
-                        int expectNoOdyssey = (mineName == "Binguin_Caravan_CombatSupplier") ? p + 1 : p;
-                        if (p > 0 && n != expectNoOdyssey)
-                        {
-                            lines += "  ← 无 Odyssey，应等于 " + expectNoOdyssey + " 但不相等，需检查";
-                            allOk = false;
-                        }
-                        continue;
-                    }
-
-                    // 装了 Odyssey 就必须"原版数量 + 1（鱼）"；
-                    // 作战商另外还有 +1（冰鹅族武器生成器，见 PatchCombatSupplierWeapons）
-                    int expect = p + 1;
-                    if (mineName == "Binguin_Caravan_CombatSupplier") expect += 1;
-                    if (!fishFound || n <= 1 || (p > 0 && n != expect))
+                    // 库存 XML 是原版快照，DLC 和补丁会改变数量，不能要求固定差值。
+                    if (n <= 1 || (ModsConfig.OdysseyActive && !fishFound))
                     {
                         allOk = false;
                     }
@@ -191,7 +173,7 @@ namespace Binguin.Patch
                 {
                     BinguinLogUtility.Log("商人卖鱼自检【异常】：def 继承可能没生效 ——"
                         + "若某个 kind 只剩 1 个生成器就是'只剩鱼'。补救办法：在"
-                        + " Defs/11_World/TraderKindDefs_Binguin.xml 里把原版 stockGenerators 整段复制过来再追加鱼。" + lines, severity: 1, isDebug: false);
+                        + " Defs/Feature/Trading/TraderKindDefs_Binguin.xml 里把原版 stockGenerators 整段复制过来再追加鱼。" + lines, severity: 1, isDebug: false);
                 }
             }
             catch (Exception e)
@@ -1662,7 +1644,7 @@ namespace Binguin.Patch
             JobDef workJob = DefDatabase<JobDef>.GetNamedSilentFail("Binguin_WorkOnUnfinishedRod");
             if (workJob == null)
             {
-                BinguinLogUtility.Log("未找到 Binguin_WorkOnUnfinishedRod（Defs/13_WorkAndRecipes/JobDefs_Binguin.xml 没加载？），"
+                BinguinLogUtility.Log("未找到 Binguin_WorkOnUnfinishedRod（Defs/Feature/Rods/JobDefs_Binguin.xml 没加载？），"
                     + "半成品无法继续装配！", severity: 1, isDebug: false);
             }
             else

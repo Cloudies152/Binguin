@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅玩家派系（剧本开局用，2026-08-20 新增）
+  ★ 根因修复：scenario.playerFaction 不能直接指向普通 NPC 派系 def（Binguin）——
+    1.6 世界生成时玩家派系找不到 → "Could not find player faction" +
+    建图 NRE + Ideo 选择页 NRE（Player.log 确认）。正确做法（原版
+    PlayerColony / ResearchExpedition / Raven_PlayerFaction 同款）：
+    独立 <isPlayer>true</isPlayer> 的 FactionDef。
+  ★ 对齐 Anomaly ResearchExpedition（1.6 最新 vanilla 玩家派系范例）字段。
+-->
+<Defs>
+  <FactionDef ParentName="PlayerFactionBase">
+    <defName>Binguin_PlayerColony</defName>
+    <label>冰鹅</label>
+    <description>来自寒冬星球的冰鹅族观测者们。她们乘逃生舱坠落于此，将在陌生的边缘世界建立新的观察站。</description>
+    <isPlayer>true</isPlayer>
+    <basicMemberKind>Binguin_Colonist</basicMemberKind>
+    <pawnSingular>冰鹅族人</pawnSingular>
+    <pawnsPlural>冰鹅族人</pawnsPlural>
+    <techLevel>Industrial</techLevel>
+    <!-- ★ 2026-09 用户拍板：冰鹅族剧本开局时，玩家【派系名】固定为「新观察站」。
+         双保险：fixedName（FactionGenerator 优先取它，原版 Ancients 同款字段）
+         + 定名规则 BinguinPlayerFactionNameMaker（r_name 直出「新观察站」）。
+         据点命名规则 settlementNameMaker（XX观察站 随机）保持不变。 -->
+    <fixedName>新观察站</fixedName>
+    <factionNameMaker>BinguinPlayerFactionNameMaker</factionNameMaker>
+    <settlementNameMaker>BinguinSettlementNameMaker</settlementNameMaker>
+    <allowedCultures><li>Astropolitan</li></allowedCultures>
+    <backstoryFilters>
+      <li>
+        <categories>
+          <li>Outlander</li>
+        </categories>
+      </li>
+      <li>
+        <categories>
+          <li>Offworld</li>
+        </categories>
+      </li>
+    </backstoryFilters>
+    <factionIconPath>World/WorldObjects/Expanding/Town</factionIconPath>
+    <startingResearchTags>
+      <li>ClassicStart</li>
+    </startingResearchTags>
+    <startingTechprintsResearchTags>
+      <li>ClassicStart</li>
+      <li>ClassicStartTechprints</li>
+    </startingTechprintsResearchTags>
+  </FactionDef>
+</Defs>

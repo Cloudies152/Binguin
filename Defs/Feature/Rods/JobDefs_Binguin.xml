@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  滑行冲刺的 job 与冰屑拖尾效果。
+  JobDef：驱动 JobDriver_Slide 沿直线滑行（由企鹅滑板的 Verb_SlideDash 派发）。
+  FleckDef：滑行时脚下的冰屑拖尾（FleckBase = 静态 fleck，FleckMaker.Static 使用）。
+-->
+<Defs>
+
+  <!-- 装配高级钓竿（2026-08-19）：driverClass 由 PatchMasterFishing 挂载 -->
+  <JobDef>
+    <defName>Binguin_AssembleRod</defName>
+    <reportString>assembling a fishing rod.</reportString>
+  </JobDef>
+
+  <!-- 对【钓竿（未完成）】干活（2026-10-06 用户需求：「搬运后会变成一个
+       钓竿（未完成），这样可以让殖民者不用一次干完」）。
+       driverClass = JobDriver_BinguinWorkOnUnfinishedRod，由 BinguinDefPatches 挂载。
+       工作量记在半成品身上 ⇒ 可反复中断、任何人可续接。 -->
+  <JobDef>
+    <defName>Binguin_WorkOnUnfinishedRod</defName>
+    <reportString>working on an unfinished fishing rod.</reportString>
+  </JobDef></Defs>

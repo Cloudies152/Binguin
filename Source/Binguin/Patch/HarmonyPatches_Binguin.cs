@@ -547,7 +547,7 @@ namespace Binguin.Patch
                 return false;
             }
             string name = terrain.defName;
-            // 原版冰面/水面 + 本 MOD 的冰鹅地板（Binguin_*，见 Defs/07_Buildings/TerrainDefs_Floors.xml）
+            // 原版冰面/水面 + 本 MOD 的冰鹅地板（Binguin_*，见 Defs/Feature/Floors/TerrainDefs_Floors.xml）
             return name.StartsWith("Ice", StringComparison.Ordinal)
                 || name.StartsWith("Water", StringComparison.Ordinal)
                 || name.StartsWith("Binguin_", StringComparison.Ordinal);

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
   <Binguin.label>binguin</Binguin.label>
@@ -7,6 +7,6 @@
   <BinguinHostile.description>A radical branch that split from the binguin mother civilization. They are no longer content to look up at the stars; they hold that nothing is finished until the whole frozen plain lies underfoot. Their gear and their tactics are exactly those of their kin—only they send no one to talk.</BinguinHostile.description>
   <Binguin_PlayerColony.label>binguin</Binguin_PlayerColony.label>
   <Binguin_PlayerColony.description>Binguin observers from a world of bitter winter. They have fallen here in escape pods, and will raise a new observation post on this unfamiliar rimworld.</Binguin_PlayerColony.description>
-  <Binguin.label>binguin</Binguin.label>
-  <Binguin.description>The binguin, come from a world of winter.</Binguin.description>
+
+
 </LanguageData>

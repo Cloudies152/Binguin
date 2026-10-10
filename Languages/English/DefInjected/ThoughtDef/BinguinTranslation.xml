@@ -1,14 +1,14 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
   <Binguin_RodBaitJellyMood.label>insect jelly bait</Binguin_RodBaitJellyMood.label>
   <Binguin_RodBaitJellyMood.description>The rod's bearer baits with insect jelly, and a sweet fragrance lingers about.</Binguin_RodBaitJellyMood.description>
-  <Binguin_RodBaitJellyMood.label>insect jelly bait</Binguin_RodBaitJellyMood.label>
-  <Binguin_RodBaitJellyMood.description>The rod's bearer baits with insect jelly, and a sweet fragrance lingers about.</Binguin_RodBaitJellyMood.description>
+
+
   <Binguin_RodBaitHumanKill.label>satisfaction of human meat bait</Binguin_RodBaitHumanKill.label>
   <Binguin_RodBaitHumanKill.description>Baiting with human meat, the angler tastes a strange pleasure in the kill.</Binguin_RodBaitHumanKill.description>
-  <Binguin_RodBaitHumanKill.label>satisfaction of human meat bait</Binguin_RodBaitHumanKill.label>
-  <Binguin_RodBaitHumanKill.description>Baiting with human meat, the angler tastes a strange pleasure in the kill.</Binguin_RodBaitHumanKill.description>
+
+
   <Binguin_StinkFishSmell.label>Reeking of stinkfish</Binguin_StinkFishSmell.label>
   <Binguin_StinkFishSmell.description>Caked in the smell of stinkfish cans, and nothing will wash it off.</Binguin_StinkFishSmell.description>
   <Binguin_AttendedConcert.label>Attended a binguin concert</Binguin_AttendedConcert.label>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <!--
     ============================================================================
@@ -22,13 +22,11 @@
   -->
 
   <!-- ========== 冰鹅级极激急击机枪 ========== -->
-  <Binguin_LaserGatling.label>GGGGGG</Binguin_LaserGatling.label>
-  <Binguin_LaserGatling.description>Glacier Goose Giga-Gust Graser Gatling.
 
-The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once it spins up, it trails an aurora that never fades. Each shot is weak (2 damage), yet thirty laser bolts pour out every second, and the ultimate ice burst doubles down on every hit (4% freeze chance per bolt) to sculpt the enemy into snow statues. Suppression 0.5. (Costs 8 advanced components / 60 plasteel / 200 steel)</Binguin_LaserGatling.description>
+
 
   <!-- ========== 制作配方 ========== -->
-  <Recipe_Binguin_LaserGatling.label>Craft GGGGGG</Recipe_Binguin_LaserGatling.label>
-  <Recipe_Binguin_LaserGatling.jobString>crafting GGGGGG.</Recipe_Binguin_LaserGatling.jobString>
+
+
 
 </LanguageData>

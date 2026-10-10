@@ -61,7 +61,7 @@ namespace Binguin.Feature.Fishing
         public const int AbasiaTicks = AbasiaDays * 60000;
 
         /// <summary>
-        /// 可钓出的兵种池 = 和平派系（Binguin）的平民，照抄 `Defs/03_PawnKinds/PawnKindDefs_Binguin.xml`
+        /// 可钓出的兵种池 = 和平派系（Binguin）的平民，照抄 `Defs/Feature/Diplomacy/PawnKindDefs_Binguin.xml`
         /// 「和平类」那一节的 defName。
         /// ★ 刻意排除两个领袖：`Binguin_Leader`（&lt;factionLeader&gt;true&lt;/factionLeader&gt;）
         ///   与 `Binguin_CaravanLeader`（商队领袖）—— 用户要求"除了领袖外都有概率"。

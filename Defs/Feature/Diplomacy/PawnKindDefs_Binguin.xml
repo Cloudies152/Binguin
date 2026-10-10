@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族的各种职业模板（2026-09）
+  <race> = 冰鹅（Binguin）；xenotypeSet 强制冰鹅种异种。
+  1.6 注意：PawnKindDef 已无 wildSpawnChance / skillGains 字段。
+
+  ★ 袭击点数（combatPower，2026-09 用户二次定稿）：
+      民兵 60 / 士兵 100 / 哨骑 140 / 领袖护卫 180 / 领袖 250 / 巡护员 80。
+      （第一版 50/80/120/150/200 偏弱，用户按装备档次上调）
+  ★ 袭击编成规则（点数门槛、每场上限、武器/背包/防毒面具）全部在
+    Source/RaidComposition_Binguin.cs：
+      · 门槛用【策略计算前的原始点数】：哨骑 ≥2000、领袖护卫 ≥6000、领袖 ≥8000
+        （不满足则降级成士兵）；每场护卫 ≤2、领袖 ≤1。
+      · 民兵/士兵：50% 概率换原版工业级武器；士兵另有 5% 概率换末日火箭/三连发火箭。
+      · 民兵/士兵/哨骑：30% 概率带腰带背包（护盾背包/烟罐包/消防背包），
+        护盾背包每场随机上限 2~4 个。
+      · 领袖：必定带【护盾背包】（腰带位空的）；领袖护卫不再发给腰带装备——
+        ★ 寒门盾本身就是 Belt 层（已核对 Defs/Feature/GateShield/Apparel_GateShield.xml：layers = Belt），
+          护卫的腰带位被寒门盾占住，穿不了原版护盾背包/烟罐包。
+      · 毒环境（地块污染 >0.1 或目标地图毒性落尘）：民兵/士兵戴原版防毒面具。
+  ★ 携带物：食物用原版字段 invNutrition + invFoodDef（包装生存食品）；
+    另按原版外来者给 inventoryOptions（医药/白银/成瘾品）与成瘾率、植入体概率。
+  ★ 武器精确指定靠专属 weaponTags（写在武器 def 里）：BinguinGunSMG/Shotgun/Assault/
+    Precision/Gatling、BinguinMeleeRod、BinguinMachined（机加工武器组）。
+    原版近战只取中世纪档（匕首/斧/短剑/钉头锤/战锤/长剑/长矛），不含新石器与极致科技。
+-->
+<Defs>
+
+  <!-- ==================== 和平类 ==================== -->
+  <PawnKindDef>
+    <defName>Binguin_Settler</defName>
+    <label>冰鹅族定居者</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+
+    <!-- ★★★ 2026-09 用户实测修复：「冰鹅族的访客没有衣服」。
+         这个 kind 原来【完全没写 apparelRequired / apparelMoney】，
+         于是 PawnApparelGenerator 什么都不会发 → 生成出来是【裸的】
+         （乐队事件的观众里就有本方 basicMemberKind = 本 kind 的居民）。
+         照抄外交官那种写法：指定必穿的衣服 + apparelMoney 0~0。 -->
+    <apparelRequired>
+      <li>Binguin_Tribalwear</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>2~8</initialResistanceRange>
+    <initialWillRange>30~70</initialWillRange>
+    <combatPower>60</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族外交官 ==================== -->
+  <PawnKindDef>
+    <defName>Binguin_Diplomat</defName>
+    <label>冰鹅族外交官</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <minGenerationAge>28</minGenerationAge>
+    <itemQuality>Good</itemQuality>
+    <apparelRequired>
+      <li>Binguin_IceCrown</li>
+      <li>Binguin_JKUniform</li>
+      <li>Binguin_Duster</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li MayRequire="Ludeon.RimWorld.Odyssey">BinguinMeleeRod</li>
+    </weaponTags>
+    <weaponMoney>500~99999</weaponMoney>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>2~8</initialResistanceRange>
+    <initialWillRange>40~80</initialWillRange>
+    <combatPower>40</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族商人 ==================== -->
+  <PawnKindDef>
+    <defName>Binguin_Merchant</defName>
+    <label>冰鹅族商人</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <trader>true</trader>
+    <apparelRequired>
+      <li>Binguin_Tribalwear</li>
+      <li>Binguin_Duster</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li>BinguinGunSMG</li>
+      <li>MedievalMeleeBasic</li>
+      <li MayRequire="1">MedievalMeleeDecent</li>
+      <li MayRequire="2">MedievalMeleeAdvanced</li>
+    </weaponTags>
+    <weaponMoney>100~99999</weaponMoney>
+    <chemicalAddictionChance>0.05</chemicalAddictionChance>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>2~8</initialResistanceRange>
+    <initialWillRange>30~70</initialWillRange>
+    <combatPower>50</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族coser（⑨服 / 大酱服） ==================== -->
+  <PawnKindDef>
+    <defName>Binguin_CoserNine</defName>
+    <label>冰鹅族coser</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <apparelRequired>
+      <li>Binguin_CosNine</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li>BinguinGunSMG</li>
+    </weaponTags>
+    <weaponMoney>500~99999</weaponMoney>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>2~8</initialResistanceRange>
+    <initialWillRange>30~70</initialWillRange>
+    <combatPower>45</combatPower>
+  </PawnKindDef>
+
+  <PawnKindDef>
+    <defName>Binguin_CoserDaiyousei</defName>
+    <label>冰鹅族coser</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <apparelRequired>
+      <li>Binguin_CosDaiyousei</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li>BinguinGunSMG</li>
+    </weaponTags>
+    <weaponMoney>500~99999</weaponMoney>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>2~8</initialResistanceRange>
+    <initialWillRange>30~70</initialWillRange>
+    <combatPower>45</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族商队领袖 ==================== -->
+  <PawnKindDef>
+    <defName>Binguin_CaravanLeader</defName>
+    <label>冰鹅族商队领袖</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <trader>true</trader>
+    <minGenerationAge>25</minGenerationAge>
+    <itemQuality>Good</itemQuality>
+    <apparelRequired>
+      <li>Binguin_JKUniform</li>
+      <li>Binguin_Duster</li>
+    </apparelRequired>
+    <apparelTags>
+      <li>BinguinHeadwear</li>
+    </apparelTags>
+    <apparelAllowHeadgearChance>1</apparelAllowHeadgearChance>
+    <apparelMoney>300~1500</apparelMoney>
+    <weaponTags>
+      <li>BinguinGunShotgun</li>
+    </weaponTags>
+    <weaponMoney>500~99999</weaponMoney>
+    <chemicalAddictionChance>0.05</chemicalAddictionChance>
+    <!-- 携带食物：商队领袖吃奢侈食物（2026-09 用户要求） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealLavish</invFoodDef>
+    <initialResistanceRange>3~9</initialResistanceRange>
+    <initialWillRange>35~75</initialWillRange>
+    <combatPower>70</combatPower>
+  </PawnKindDef></Defs>

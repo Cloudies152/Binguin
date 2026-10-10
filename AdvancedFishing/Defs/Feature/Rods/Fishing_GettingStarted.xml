@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  进阶钓鱼学（奥德赛 DLC 专属，2026-08-19 用户需求）：
+  ★ 本文件夹（AdvancedFishing/）由 About.xml 的 loadFolders 门控：
+    仅当奥德赛 DLC（Ludeon.RimWorld.Odyssey）激活时才加载本文件，
+    因此可以放心引用原版 Fishing 研究 / Fish_* 鱼类 / FishingYield stat。
+  ★ XML 零自定义类型原则不变：自定义 Comp / PlaceWorker / WorkGiver
+    由 BinguinDefPatches 静态构造挂载（comps.Add / placeWorkers.Add /
+    giverClass 替换）。
+  ★ 三个新内容（用户定稿）：
+    1. 蟹笼（Binguin_CrabTrap）：25 钢，放置在水域里，自动捕鱼——
+       每天 6:00 / 12:00 / 18:00 / 24:00 各捕一次（每 15000 tick）；
+       若放置在冰盖（地图无水域），则随机从当前任意水域捕捉。
+    2. 打窝用具（Binguin_FishingBait）：50 钢 + 1 零部件，放置在水域里；
+       可放入任意食物（营养值上限 5），每天消耗 1 营养值，
+       以 50%/天 的速率加快该水域鱼群增长速度；每个水域最多放 2 个。
+    3. 量产型钓竿（Binguin_FishingRod）：100 钢 + 3 零部件 + 20 铀；
+       近战武器（竿柄 Poke 18 / 1.5s，竿头 Blunt 25 / 2.5s）；
+       装备时钓鱼收获率 +50%（equippedStatOffsets FishingYield +0.5）。
+  ★ 研究：Binguin_ResearchAdvancedFishing，600 点，
+    前置 = 原版 Fishing + 增冰鹅鹅（Binguin_ResearchIcyPeaks）。
+-->
+<Defs>
+
+  <!-- ============ 量产型钓竿（100 钢 + 3 零部件 + 20 铀） ============
+       近战武器：竿柄（Poke 捅）18 伤害 / 1.5s 冷却；竿头（Blunt 钝击）
+       25 伤害 / 2.5s 冷却。装备时钓鱼收获率 +50%
+       （equippedStatOffsets FishingYield +0.5，基准 1.0 → 1.5 = +50%）。
+       ★ 继承 BaseWeapon（无 recipeMaker！），制作用独立 RecipeDef
+         （recipeUsers=冰鹅机工台，researchPrerequisite=进阶钓鱼学）。 -->
+  <ThingDef ParentName="BaseWeapon">
+    <defName>Binguin_FishingRod</defName>
+    <label>量产型钓竿</label>
+    <description>不知道为什么，这个鱼竿的头部绑着铀。握在手中可以当近战武器：竿柄捅刺，竿头钝击。用它钓鱼时，收获率提高 50%。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponMelee/Binguin/FishingRod</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <uiIconScale>1.1</uiIconScale>
+    <techLevel>Industrial</techLevel>
+    <smeltable>true</smeltable>
+    <relicChance>1</relicChance>
+    <!-- ★ 2026-09 用户要求：冰鹅拿量产钓竿的概率【减半】。
+         原版 PawnWeaponGenerator.GetCommonality（IL 实证）=
+           ThingStuffPair.Commonality（含 generateCommonality）× Price
+           × 意识形态系数 × 异种系数
+         → 把 generateCommonality 设成 0.5 正好把它被抽中的权重减半
+           （同池其它近战/枪械的权重不变）。
+         受影响的是 weaponTags 里带 BinguinMeleeRod 的单位：
+         外交官（池里只有它，不受影响）、哨骑、领袖护卫。
+         ⚠ 工兵袭击里的钓竿是代码【直接指定】的（RaidComposition_Binguin），
+           不走随机池，因此不受本项影响。 -->
+    <generateCommonality>0.5</generateCommonality>
+    <thingCategories>
+      <li>WeaponsMelee</li>
+    </thingCategories>
+    <weaponClasses>
+      <li>Melee</li>
+    </weaponClasses>
+    <weaponTags>
+      <li>MedievalMeleeDecent</li>
+      <li>BinguinMeleeRod</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponMelee</li>
+    </tradeTags>
+    <statBases>
+      <WorkToMake>18000</WorkToMake>
+      <Mass>3</Mass>
+    </statBases>
+    <costList>
+      <Steel>100</Steel>
+      <ComponentIndustrial>3</ComponentIndustrial>
+      <Uranium>20</Uranium>
+    </costList>
+    <!-- ★ 钓鱼收获率 +50%（FishingYield 基准 1.0，+0.5 = 1.5）
+         equippedStatOffsets 是字典式写法（键 = stat defName） -->
+    <equippedStatOffsets>
+      <FishingYield>0.5</FishingYield>
+    </equippedStatOffsets>
+    <tools>
+      <li>
+        <label>竿柄</label>
+        <capacities>
+          <li>Poke</li>
+        </capacities>
+        <power>18</power>
+        <cooldownTime>1.5</cooldownTime>
+      </li>
+      <li>
+        <label>竿头</label>
+        <labelUsedInLogging>false</labelUsedInLogging>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>25</power>
+        <cooldownTime>2.5</cooldownTime>
+      </li>
+    </tools>
+    <comps>
+      <li>
+        <compClass>CompQuality</compClass>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Binguin_ResearchAdvancedFishing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- 量产型钓竿配方：冰鹅机工台制作（工作台解锁需冰鹅机加工） -->
+  <RecipeDef>
+    <defName>Recipe_Binguin_FishingRod</defName>
+    <label>制作量产型钓竿</label>
+    <jobString>正在制作量产型钓竿……</jobString>
+    <workAmount>18000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedWeapon</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>100</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>3</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Uranium</li>
+          </thingDefs>
+        </filter>
+        <count>20</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_FishingRod>1</Binguin_FishingRod>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>4</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchAdvancedFishing</researchPrerequisite>
+  </RecipeDef>
+
+</Defs>

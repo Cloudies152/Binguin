@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
   <Binguin_RodAssemblyTable.label>Rod assembly table</Binguin_RodAssemblyTable.label>
@@ -21,29 +21,29 @@
   <Binguin_RodBait.description>Bait prepared from food, granting the rod's bearer special bonuses. Made at the fishing rod assembly table from 1-2 foods: vegan (move speed +0.2), meat (melee multiplier x105%), insect meat (poison immunity), twisted meat (no mental breaks when drafted), human meat (+5 mood after killing an enemy), insect jelly (+3 mood), unrestricted (self-heal and immunity speed x200%).</Binguin_RodBait.description>
   <Binguin_AdvancedRod_Blade.label>advanced fishing rod (blade)</Binguin_AdvancedRod_Blade.label>
   <Binguin_AdvancedRod_Blade.description>A custom rod assembled by the binguin from parts: a blade head that strikes with both cut and stab. Damage and cooldown vary with the material and type of the shaft, head and hook, and the bait grants further bonuses.</Binguin_AdvancedRod_Blade.description>
-  <Binguin_AdvancedRod_Blade.label>shaft blade (cut)</Binguin_AdvancedRod_Blade.label>
-  <Binguin_AdvancedRod_Blade.label>shaft tip (stab)</Binguin_AdvancedRod_Blade.label>
+
+
   <Binguin_AdvancedRod_Hammer.label>advanced fishing rod (hammer)</Binguin_AdvancedRod_Hammer.label>
   <Binguin_AdvancedRod_Hammer.description>A custom rod assembled by the binguin from parts: a hammer head that strikes with weighty blunt force and pokes. Damage and cooldown vary with the material and type of the shaft, head and hook, and the bait grants further bonuses.</Binguin_AdvancedRod_Hammer.description>
-  <Binguin_AdvancedRod_Hammer.label>shaft hammer (blunt)</Binguin_AdvancedRod_Hammer.label>
-  <Binguin_AdvancedRod_Hammer.label>shaft handle (poke)</Binguin_AdvancedRod_Hammer.label>
+
+
   <Binguin_VoidSwordFish.label>Void Sword Fish</Binguin_VoidSwordFish.label>
-  <Binguin_VoidSwordFish.description>The final work of the binguin way of fishing: a sword condensed from twenty-five each of the world's fourteen kinds of fish. The blade itself is a fish - scales for an edge, tail for a hilt. When the wielder recites the true words, the phantom shapes of the fourteen fish fall one after another from the zenith, each bearing a cold energy that can shatter bone and blood.\n\n(Ranged strikes are a test feature and are off by default; enable them in Options -> Mod Settings -> Binguin.)</Binguin_VoidSwordFish.description>
-  <Binguin_VoidSwordFish.label>fish body (blunt)</Binguin_VoidSwordFish.label>
+  <Binguin_VoidSwordFish.description>The final work of the binguin way of fishing: a sword condensed from twenty-five each of the world's fourteen kinds of fish. The blade itself is a fish - scales for an edge, tail for a hilt. When the wielder recites the true words, the phantom shapes of the fourteen fish fall one after another from the zenith, each bearing a cold energy that can shatter bone and blood.\n\n(Ranged strikes are a test feature and are off by default; enable them in Options -&gt; Mod Settings -&gt; Binguin.)</Binguin_VoidSwordFish.description>
+
   <Binguin_CrabTrap.label>crab trap</Binguin_CrabTrap.label>
   <Binguin_CrabTrap.description>A crab trap woven of cold iron by the binguin. Place it in water to catch that water's fish, or on ice to catch marine fish automatically. It catches once at 6am, noon, 6pm and midnight each day.</Binguin_CrabTrap.description>
   <Binguin_FishingBait.label>groundbait</Binguin_FishingBait.label>
   <Binguin_FishingBait.description>A bait rack made of cold iron and components by binguin fishers. Put any food into it (up to 5 nutrition) and it will consume 0.5 nutrition per day to scatter bait across the water it stands in, letting the fish population grow 50% faster each day. At most 2 may be placed per body of water.</Binguin_FishingBait.description>
   <Binguin_FishingRod.label>mass-produced fishing rod</Binguin_FishingRod.label>
   <Binguin_FishingRod.description>For reasons no one knows, the head of this rod is bound with uranium. Held in hand it serves as a melee weapon: the handle pokes, the head blunts. When used to fish, catch rate is increased by 50%.</Binguin_FishingRod.description>
-  <Binguin_FishingRod.label>handle</Binguin_FishingRod.label>
-  <Binguin_FishingRod.label>head</Binguin_FishingRod.label>
+
+
   <Binguin_FishPond.label>fish pond</Binguin_FishPond.label>
   <Binguin_FishPond.description>A shallow pool ringed with cold iron by the binguin; place a single fry in it to begin raising fish. Ponds built next to one another join into one larger pond, and capacity grows with the number of ponds (20 fish each). You may assign colonists to fish, add fish food to speed breeding, or switch on the built-in crab trap to catch fish automatically. A fish pond is an unremarkable thing, and raiders will not single it out for attack.</Binguin_FishPond.description>
   <Binguin_StinkFishCan.label>stinkfish can</Binguin_StinkFishCan.label>
   <Binguin_StinkFishCan.description>A can of fish left to rot. Smash it open and the whole area is cloaked in a nauseating stench - to a binguin it smells rather fine, but other races can hardly bear it. Load it into a mortar and fire it, or bury it in the ground as a trap.</Binguin_StinkFishCan.description>
   <Bullet_Binguin_StinkFishCan.label>stinkfish can</Bullet_Binguin_StinkFishCan.label>
-  <Bullet_Binguin_StinkFishCan.label>stinkfish can</Bullet_Binguin_StinkFishCan.label>
+
   <Binguin_StinkFishCanTrap.label>Stinkfish can trap</Binguin_StinkFishCanTrap.label>
   <Binguin_StinkFishCanTrap.description>Two stinkfish cans wired to a trigger. One touch and they blow, and the whole area is swallowed in stench. Because they are hidden within the surrounding terrain, they cannot be placed right next to another trap. Animals at peace can sense them.</Binguin_StinkFishCanTrap.description>
   <Binguin_ScoutHelmet.label>Scout helmet</Binguin_ScoutHelmet.label>

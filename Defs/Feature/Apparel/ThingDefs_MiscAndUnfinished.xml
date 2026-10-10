@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  企鹅滑板（腰部装备）：移动 +50%，并授予「滑行冲刺」能力（半径 10 格滑行，CD 10 秒）。
+  ★ 结构依据：原版 Core\Defs\ThingDefs_Misc\Apparel_Belts.xml（ShieldBelt）——
+    - 腰部装备 = <layers><li>Belt</li></layers> + <bodyPartGroups><li>Waist</li></bodyPartGroups>
+    - 装备命令 = <verbs><li><verbClass>Binguin.Verb_SlideDash</verbClass> + hasStandardCommand
+    - 移速加成：穿戴时授予 hediff「滑板疾行」= 移速 +20%（CompApparelGrantHediff，2026-08-18 用户要求）
+    - 冷却 10 秒 = verb 的 <defaultCooldownTime>10</defaultCooldownTime>
+-->
+<Defs>
+
+  <!-- ============ 冰鹅族防弹背心（参考原版防弹背心 FlakVest） ============
+       背心栏（Middle 层），70 金属 + 2 零部件，在冰鹅族机工台制作。
+       护甲-材料系数 x100% / 材料隔冷系数 x300% / 材料隔热系数 x100%。
+       需同时研究「冰鹅机加工」与「冰鹅族服装」（联动解锁）。
+       ★ v2 修复：父类 ArmorMachineableBase 自带 recipeMaker recipeUsers=[TableMachining]
+       （XML List 追加语义 → 原版机工台也能做）→ 改继承无 recipeMaker 的 ApparelBase，
+       制作改用独立 RecipeDef（见文件尾，recipeUsers 精确 = 冰鹅机工台）。 -->
+  <ThingDef ParentName="ApparelBase">
+    <defName>Binguin_FlakVest</defName>
+    <label>冰鹅族防弹背心</label>
+    <description>蓝黑配色的防弹背心，胸背嵌着护板，对枪弹与穿刺有良好的防护，且异常保暖。</description>
+    <techLevel>Industrial</techLevel>
+    <graphicData>
+      <texPath>Things/Apparel/Binguin/FlakVest</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.90</drawSize>
+    </graphicData>
+    <statBases>
+      <WorkToMake>9000</WorkToMake>
+      <MaxHitPoints>200</MaxHitPoints>
+      <Mass>4</Mass>
+      <Flammability>0.6</Flammability>
+      <ArmorRating_Sharp>1.00</ArmorRating_Sharp>
+      <ArmorRating_Blunt>0.36</ArmorRating_Blunt>
+      <ArmorRating_Heat>0.27</ArmorRating_Heat>
+      <Insulation_Cold>1</Insulation_Cold>
+      <StuffEffectMultiplierArmor>1.0</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>3.0</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>1.0</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>5</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <MoveSpeed>-0.12</MoveSpeed>
+    </equippedStatOffsets>
+    <thingCategories>
+      <li>ApparelArmor</li>
+    </thingCategories>
+    <costList>
+      <Steel>70</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <apparel>
+      <bodyPartGroups>
+        <li>Torso</li>
+        <li>Neck</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Apparel/Binguin/FlakVest/FlakVest</wornGraphicPath>
+      <layers>
+        <li>Middle</li>
+      </layers>
+      <tags>
+        <li>IndustrialMilitaryBasic</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMachining</li>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+    <tradeTags>
+      <li>Armor</li>
+    </tradeTags>
+  </ThingDef>
+
+
+  <!-- ============ 冰鹅族防弹背心配方（独立 RecipeDef，2026-08-19 v2） ============
+       双科技联动解锁：researchPrerequisites 同时含机加工+服装。
+       工作量 9000（与原 WorkToMake 一致），Crafting 4。 -->
+  <RecipeDef>
+    <defName>Recipe_Binguin_FlakVest</defName>
+    <label>制作冰鹅族防弹背心</label>
+    <jobString>正在制作冰鹅族防弹背心……</jobString>
+    <workAmount>9000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedTechArmor</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>70</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>2</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_FlakVest>1</Binguin_FlakVest>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>4</Crafting>
+    </skillRequirements>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMachining</li>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </RecipeDef>
+
+</Defs>

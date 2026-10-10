@@ -1,0 +1,409 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族的各种职业模板（2026-09）
+  <race> = 冰鹅（Binguin）；xenotypeSet 强制冰鹅种异种。
+  1.6 注意：PawnKindDef 已无 wildSpawnChance / skillGains 字段。
+
+  ★ 袭击点数（combatPower，2026-09 用户二次定稿）：
+      民兵 60 / 士兵 100 / 哨骑 140 / 领袖护卫 180 / 领袖 250 / 巡护员 80。
+      （第一版 50/80/120/150/200 偏弱，用户按装备档次上调）
+  ★ 袭击编成规则（点数门槛、每场上限、武器/背包/防毒面具）全部在
+    Source/RaidComposition_Binguin.cs：
+      · 门槛用【策略计算前的原始点数】：哨骑 ≥2000、领袖护卫 ≥6000、领袖 ≥8000
+        （不满足则降级成士兵）；每场护卫 ≤2、领袖 ≤1。
+      · 民兵/士兵：50% 概率换原版工业级武器；士兵另有 5% 概率换末日火箭/三连发火箭。
+      · 民兵/士兵/哨骑：30% 概率带腰带背包（护盾背包/烟罐包/消防背包），
+        护盾背包每场随机上限 2~4 个。
+      · 领袖：必定带【护盾背包】（腰带位空的）；领袖护卫不再发给腰带装备——
+        ★ 寒门盾本身就是 Belt 层（已核对 Defs/Feature/GateShield/Apparel_GateShield.xml：layers = Belt），
+          护卫的腰带位被寒门盾占住，穿不了原版护盾背包/烟罐包。
+      · 毒环境（地块污染 >0.1 或目标地图毒性落尘）：民兵/士兵戴原版防毒面具。
+  ★ 携带物：食物用原版字段 invNutrition + invFoodDef（包装生存食品）；
+    另按原版外来者给 inventoryOptions（医药/白银/成瘾品）与成瘾率、植入体概率。
+  ★ 武器精确指定靠专属 weaponTags（写在武器 def 里）：BinguinGunSMG/Shotgun/Assault/
+    Precision/Gatling、BinguinMeleeRod、BinguinMachined（机加工武器组）。
+    原版近战只取中世纪档（匕首/斧/短剑/钉头锤/战锤/长剑/长矛），不含新石器与极致科技。
+-->
+<Defs>
+
+  <!-- ==================== 冰鹅族民兵（袭击点数 60） ====================
+       常服 + 风雪大衣（无防弹背心，2026-09 用户澄清）→ 轻甲 -->
+  <PawnKindDef>
+    <defName>Binguin_Militia</defName>
+    <label>冰鹅族民兵</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <isFighter>true</isFighter>
+    <apparelRequired>
+      <li>Binguin_Tribalwear</li>
+      <li>Binguin_Parka</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li>BinguinMachined</li>
+      <li>MedievalMeleeBasic</li>
+      <li MayRequire="1">MedievalMeleeDecent</li>
+      <li MayRequire="2">MedievalMeleeAdvanced</li>
+    </weaponTags>
+    <weaponMoney>100~99999</weaponMoney>
+    <combatEnhancingDrugsChance>0.05</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~2</combatEnhancingDrugsCount>
+    <chemicalAddictionChance>0.05</chemicalAddictionChance>
+    <techHediffsChance>0.04</techHediffsChance>
+    <!-- 携带物参考原版外来者袭击：skipChance 0.9 + 三选一（医药/白银/成瘾品） -->
+    <inventoryOptions>
+      <skipChance>0.9</skipChance>
+      <subOptionsChooseOne>
+        <li>
+          <thingDef>MedicineIndustrial</thingDef>
+          <countRange>1</countRange>
+        </li>
+        <li>
+          <thingDef>Silver</thingDef>
+          <countRange>20~60</countRange>
+        </li>
+        <li>
+          <thingDef>Yayo</thingDef>
+          <countRange>1</countRange>
+        </li>
+      </subOptionsChooseOne>
+    </inventoryOptions>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>4~10</initialResistanceRange>
+    <initialWillRange>20~50</initialWillRange>
+    <combatPower>60</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族士兵（袭击点数 100） ====================
+       军服 + 冰鹅族防弹背心 + 冰鹅族头盔 + 风尘大衣 -->
+  <PawnKindDef>
+    <defName>Binguin_Soldier</defName>
+    <label>冰鹅族士兵</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <isFighter>true</isFighter>
+    <itemQuality>Normal</itemQuality>
+    <apparelRequired>
+      <li>Binguin_MilitaryUniform</li>
+      <li>Binguin_FlakVest</li>
+      <li>Binguin_MilitaryHelmet</li>
+      <li>Binguin_Duster</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li>BinguinMachined</li>
+      <li>MedievalMeleeBasic</li>
+      <li MayRequire="1">MedievalMeleeDecent</li>
+      <li MayRequire="2">MedievalMeleeAdvanced</li>
+    </weaponTags>
+    <weaponMoney>100~99999</weaponMoney>
+    <combatEnhancingDrugsChance>0.15</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~2</combatEnhancingDrugsCount>
+    <chemicalAddictionChance>0.1</chemicalAddictionChance>
+    <techHediffsChance>0.1</techHediffsChance>
+    <!-- 携带物参考原版外来者袭击：skipChance 0.9 + 三选一（医药/白银/成瘾品） -->
+    <inventoryOptions>
+      <skipChance>0.9</skipChance>
+      <subOptionsChooseOne>
+        <li>
+          <thingDef>MedicineIndustrial</thingDef>
+          <countRange>1</countRange>
+        </li>
+        <li>
+          <thingDef>Silver</thingDef>
+          <countRange>30~90</countRange>
+        </li>
+        <li>
+          <thingDef>Yayo</thingDef>
+          <countRange>1</countRange>
+        </li>
+      </subOptionsChooseOne>
+    </inventoryOptions>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>8~14</initialResistanceRange>
+    <initialWillRange>10~40</initialWillRange>
+    <combatPower>100</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族工兵（袭击点数 110，特殊士兵） ====================
+       ★ 2026-09 用户需求：只会出现在【破墙袭击 / 工兵袭击 / 特殊围攻袭击（后续做）】里，
+         建造技能必定 >10（由 RaidComposition_Binguin 在袭击生成后设为 11~20）。
+       ★ 装备按袭击类型在代码里替换：
+         · 破墙袭击 → 手榴弹（原版 Weapon_GrenadeFrag）
+         · 工兵袭击 → 护盾腰带（Apparel_ShieldBelt）+ 量产型钓竿（Binguin_FishingRod）
+         · 其它允许的袭击（如特殊围攻）→ 保持默认的士兵式装备
+       服装与士兵相同：军服 + 冰鹅族防弹背心 + 冰鹅族头盔 + 风尘大衣 -->
+  <PawnKindDef>
+    <defName>Binguin_Sapper</defName>
+    <label>冰鹅族工兵</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <isFighter>true</isFighter>
+    <itemQuality>Normal</itemQuality>
+    <apparelRequired>
+      <li>Binguin_MilitaryUniform</li>
+      <li>Binguin_FlakVest</li>
+      <li>Binguin_MilitaryHelmet</li>
+      <li>Binguin_Duster</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li>BinguinMachined</li>
+      <li>MedievalMeleeBasic</li>
+      <li>MedievalMeleeDecent</li>
+      <li>MedievalMeleeAdvanced</li>
+    </weaponTags>
+    <weaponMoney>100~99999</weaponMoney>
+    <combatEnhancingDrugsChance>0.15</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~2</combatEnhancingDrugsCount>
+    <chemicalAddictionChance>0.1</chemicalAddictionChance>
+    <techHediffsChance>0.1</techHediffsChance>
+    <!-- 携带物参考原版外来者袭击 -->
+    <inventoryOptions>
+      <skipChance>0.9</skipChance>
+      <subOptionsChooseOne>
+        <li>
+          <thingDef>MedicineIndustrial</thingDef>
+          <countRange>1</countRange>
+        </li>
+        <li>
+          <thingDef>Silver</thingDef>
+          <countRange>30~90</countRange>
+        </li>
+      </subOptionsChooseOne>
+    </inventoryOptions>
+    <!-- 携带食物（袭击时由代码改成 1~3 份简单/精致食物） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>8~14</initialResistanceRange>
+    <initialWillRange>10~40</initialWillRange>
+    <combatPower>110</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族哨骑（袭击点数 140，≥2000 点出现） ==================== -->
+  <PawnKindDef>
+    <defName>Binguin_Scout</defName>
+    <label>冰鹅族哨骑</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <isFighter>true</isFighter>
+    <itemQuality>Good</itemQuality>
+    <apparelRequired>
+      <li>Binguin_MilitaryUniform</li>
+      <li>Binguin_ScoutArmor</li>
+      <li>Binguin_ScoutHelmet</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li MayRequire="Ludeon.RimWorld.Odyssey">BinguinMeleeRod</li>
+      <li>BinguinGunAssault</li>
+      <li>BinguinGunPrecision</li>
+    </weaponTags>
+    <weaponMoney>500~99999</weaponMoney>
+    <combatEnhancingDrugsChance>0.15</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~2</combatEnhancingDrugsCount>
+    <chemicalAddictionChance>0.1</chemicalAddictionChance>
+    <techHediffsChance>0.2</techHediffsChance>
+    <!-- 携带物参考原版外来者袭击：skipChance 0.9 + 三选一（医药/白银/成瘾品） -->
+    <inventoryOptions>
+      <skipChance>0.9</skipChance>
+      <subOptionsChooseOne>
+        <li>
+          <thingDef>MedicineIndustrial</thingDef>
+          <countRange>1</countRange>
+        </li>
+        <li>
+          <thingDef>Silver</thingDef>
+          <countRange>40~120</countRange>
+        </li>
+        <li>
+          <thingDef>Yayo</thingDef>
+          <countRange>1</countRange>
+        </li>
+      </subOptionsChooseOne>
+    </inventoryOptions>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>10~16</initialResistanceRange>
+    <initialWillRange>5~30</initialWillRange>
+    <combatPower>140</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族领袖护卫（袭击点数 180，≥6000 点出现，每场最多 2 个） ====================
+       ★ 不带原版护盾背包/烟罐包：腰带位已被【寒门盾】占住（寒门盾 layers = Belt） -->
+  <PawnKindDef>
+    <defName>Binguin_LeaderGuard</defName>
+    <label>冰鹅族领袖护卫</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <isFighter>true</isFighter>
+    <itemQuality>Excellent</itemQuality>
+    <apparelRequired>
+      <li>Binguin_MilitaryUniform</li>
+      <li>Binguin_ScoutArmor</li>
+      <li>Binguin_ScoutHelmet</li>
+      <li>Binguin_GateShield</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li MayRequire="Ludeon.RimWorld.Odyssey">BinguinMeleeRod</li>
+    </weaponTags>
+    <weaponMoney>500~99999</weaponMoney>
+    <forceWeaponQuality>Excellent</forceWeaponQuality>
+    <combatEnhancingDrugsChance>1</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>1~2</combatEnhancingDrugsCount>
+    <chemicalAddictionChance>0.1</chemicalAddictionChance>
+    <techHediffsChance>0.3</techHediffsChance>
+    <!-- 携带物参考原版外来者袭击：skipChance 0.9 + 三选一（医药/白银/成瘾品） -->
+    <inventoryOptions>
+      <skipChance>0.9</skipChance>
+      <subOptionsChooseOne>
+        <li>
+          <thingDef>MedicineIndustrial</thingDef>
+          <countRange>1</countRange>
+        </li>
+        <li>
+          <thingDef>Silver</thingDef>
+          <countRange>50~150</countRange>
+        </li>
+        <li>
+          <thingDef>GoJuice</thingDef>
+          <countRange>1</countRange>
+        </li>
+      </subOptionsChooseOne>
+    </inventoryOptions>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>15~24</initialResistanceRange>
+    <initialWillRange>2~10</initialWillRange>
+    <combatPower>180</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族领袖（袭击点数 250，≥8000 点出现，每场最多 1 个） ====================
+       ★ 必定带【护盾背包】（原版 Apparel_ShieldBelt，腰带位是空的） -->
+  <PawnKindDef>
+    <defName>Binguin_Leader</defName>
+    <label>冰鹅族领袖</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <factionLeader>true</factionLeader>
+    <isFighter>true</isFighter>
+    <itemQuality>Masterwork</itemQuality>
+    <minGenerationAge>30</minGenerationAge>
+    <apparelRequired>
+      <li>Binguin_MilitaryUniform</li>
+      <li>Binguin_WillingArmor</li>
+      <li>Binguin_WillingHelmet</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li>BinguinGunGatling</li>
+    </weaponTags>
+    <weaponMoney>3000~99999</weaponMoney>
+    <forceWeaponQuality>Excellent</forceWeaponQuality>
+    <combatEnhancingDrugsChance>0.5</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>1~2</combatEnhancingDrugsCount>
+    <chemicalAddictionChance>0.1</chemicalAddictionChance>
+    <techHediffsChance>0.35</techHediffsChance>
+    <!-- 携带物参考原版外来者袭击：skipChance 0.9 + 三选一（医药/白银/成瘾品） -->
+    <inventoryOptions>
+      <skipChance>0.9</skipChance>
+      <subOptionsChooseOne>
+        <li>
+          <thingDef>MedicineIndustrial</thingDef>
+          <countRange>1</countRange>
+        </li>
+        <li>
+          <thingDef>Silver</thingDef>
+          <countRange>80~200</countRange>
+        </li>
+        <li>
+          <thingDef>GoJuice</thingDef>
+          <countRange>1</countRange>
+        </li>
+      </subOptionsChooseOne>
+    </inventoryOptions>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealLavish</invFoodDef>
+    <initialResistanceRange>15~24</initialResistanceRange>
+    <initialWillRange>2~8</initialWillRange>
+    <combatPower>250</combatPower>
+  </PawnKindDef>
+
+  <!-- ==================== 冰鹅族巡护员（保留） ==================== -->
+  <PawnKindDef>
+    <defName>Binguin_Fighter</defName>
+    <label>冰鹅族巡护员</label>
+    <race>Binguin</race>
+    <defaultFactionDef>Binguin</defaultFactionDef>
+    <xenotypeSet>
+      <xenotypeChances>
+        <Binguin_Xenotype>1.0</Binguin_Xenotype>
+      </xenotypeChances>
+    </xenotypeSet>
+    <isFighter>true</isFighter>
+    <apparelRequired>
+      <li>Binguin_Tribalwear</li>
+      <li>Binguin_Parka</li>
+    </apparelRequired>
+    <apparelAllowHeadgearChance>0</apparelAllowHeadgearChance>
+    <apparelMoney>0~0</apparelMoney>
+    <weaponTags>
+      <li>BinguinMachined</li>
+    </weaponTags>
+    <weaponMoney>500~99999</weaponMoney>
+    <combatEnhancingDrugsChance>0.05</combatEnhancingDrugsChance>
+    <combatEnhancingDrugsCount>0~2</combatEnhancingDrugsCount>
+    <chemicalAddictionChance>0.05</chemicalAddictionChance>
+    <!-- 携带食物（原版同款字段：invNutrition = 要带多少营养，invFoodDef = 食物种类） -->
+    <invNutrition>1.8</invNutrition>
+    <invFoodDef>MealSimple</invFoodDef>
+    <initialResistanceRange>2~8</initialResistanceRange>
+    <initialWillRange>30~70</initialWillRange>
+    <combatPower>80</combatPower>
+  </PawnKindDef>
+
+</Defs>

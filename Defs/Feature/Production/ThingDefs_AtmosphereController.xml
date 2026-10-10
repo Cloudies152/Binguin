@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族二期建筑（2026-08-19）：垃圾回收器 + 大气控制仪
+  ★ 均由「环境保护」线解锁（垃圾回收 / 大气控制研究）
+  ★ XML 零自定义类型：自定义 Comp（CompBinguinRecycler / CompBinguinWeather）
+    由 BinguinDefPatches 静态构造代码挂载（见 Source）
+-->
+<Defs>
+
+  <!-- ============ 冰鹅族垃圾回收器（参考原版 WastepackAtomizer 机制） ============
+       2x1，100 铁 + 20 玻璃钢 + 4 零部件，200W。
+       内部容器存有毒垃圾（Wastepack）最多 25 个；每 6000 tick（2.5 小时）
+       自动回收 1 个 → 5 个 / 12 小时；每次产出 25-50 个随机矿物
+       （铁40% / 玻璃钢20% / 铀20% / 金10% / 银10%）。
+       殖民者自动搬运垃圾进来（原版 WorkGiver_HaulToAtomizer 按
+       CompProperties_Atomizer.thingDef=Wastepack 匹配）。 -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_Recycler</defName>
+    <label>冰鹅族垃圾回收器</label>
+    <description>冰鹅族以钢铁打造的垃圾回收器，将有毒垃圾分解为可再生的矿物。插电后自动运转，可以回收铁、玻璃钢、铀、金或银。</description>
+    <thingClass>Building</thingClass>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <tickerType>Normal</tickerType>
+    <graphicData>
+      <texPath>Things/Building/Binguin/Recycler</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,1.2)</drawSize>
+      <shadowData>
+        <volume>(2, 0.3, 1.2)</volume>
+      </shadowData>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <canOverlapZones>false</canOverlapZones>
+    <pathCost>42</pathCost>
+    <blockWind>true</blockWind>
+    <fillPercent>0.5</fillPercent>
+    <size>(2,1)</size>
+    <designationCategory>BinguinBuilding</designationCategory>
+    <uiOrder>170</uiOrder>
+    <building>
+      <ai_chillDestination>false</ai_chillDestination>
+    </building>
+    <statBases>
+      <MaxHitPoints>300</MaxHitPoints>
+      <WorkToBuild>4000</WorkToBuild>
+      <Mass>60</Mass>
+      <Flammability>0.4</Flammability>
+      <Cleanliness>-3</Cleanliness>
+    </statBases>
+    <costList>
+      <Steel>100</Steel>
+      <Plasteel>20</Plasteel>
+      <ComponentIndustrial>4</ComponentIndustrial>
+    </costList>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>200</basePowerConsumption>
+        <shortCircuitInRain>true</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable" />
+      <li Class="CompProperties_Breakdownable" />
+      <!-- ★ 垃圾容器（原版原子化器机制）：殖民者用原版 WorkGiver_HaulToAtomizer
+           自动搬运 Wastepack 进来；compClass 由 BinguinDefPatches 换成
+           CompBinguinRecycler。ticksPerAtomize=20000 = 8 小时回收 1 个 -->
+      <li Class="CompProperties_Atomizer">
+        <thingDef>Wastepack</thingDef>
+        <stackLimit>25</stackLimit>
+        <ticksPerAtomize>20000</ticksPerAtomize>
+        <drawContainedThing>false</drawContainedThing>
+      </li>
+    </comps>
+    <researchPrerequisites>
+      <li>Binguin_ResearchRecycling</li>
+    </researchPrerequisites>
+    <constructionSkillPrerequisite>4</constructionSkillPrerequisite>
+  </ThingDef></Defs>

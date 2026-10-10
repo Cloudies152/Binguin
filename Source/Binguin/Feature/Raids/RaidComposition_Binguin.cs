@@ -465,7 +465,7 @@ namespace Binguin.Feature.Raids
                 // (2) 背包（腰带层）
                 //   ★ 2026-09 用户确认：
                 //     · 领袖护卫【不】发腰带装备 —— 寒门盾本身就是 Belt 层
-                //       （Defs/06_ArmorAndImplants/Apparel_GateShield.xml layers=Belt 已核对），腰带位被占住，
+                //       （Defs/Feature/GateShield/Apparel_GateShield.xml layers=Belt 已核对），腰带位被占住，
                 //       原版护盾背包/烟罐包根本穿不上去；
                 //     · 改由【领袖】必定携带护盾背包（领袖的腰带位是空的）。
                 if (leader)

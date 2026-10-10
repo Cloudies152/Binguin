@@ -14,6 +14,14 @@
 - 移动、重命名类型时同步更新跨目录 `using`、XML 完整类型名、反射字符串及补丁注册入口。
 - 当前无需旧存档兼容；不添加旧命名空间或类型兼容层。程序集名称仍为 `Binguin`。
 
+## Defs 与翻译路径
+
+- `Defs` 与 `AdvancedFishing/Defs` 内均按 `Feature/<功能>` 分类；共享科技树放 `Core/Research`。
+- 保留两个加载根和 `LoadFolders.xml` 的 Odyssey 门控；按功能拆分混合 XML 时保留定义身份、字段、父定义与说明注释。
+- 移动 XML 不改变 C# 命名空间、defName 或贴图逻辑路径；同步文档和代码中的文件路径说明。
+- `Languages/<语言>/Keyed`、`DefInjected/<Def类型>` 是游戏约定，不改成 Feature 或 C# 命名空间目录。
+- 翻译键使用 defName 和字段路径，不使用 C# 完整类型名；同一语言和类别中不得重复定义同名键。
+
 ## 通用逻辑与工具类
 
 - 新增逻辑前搜索已有实现；种族判定使用 `BinguinRaceUtility`，派系判定使用 `BinguinFactions`。

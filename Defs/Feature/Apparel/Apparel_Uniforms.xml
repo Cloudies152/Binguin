@@ -1,0 +1,443 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族职业装五件（2026-09 用户需求）
+    · 冰鹅族JK服      Binguin_JKUniform          +1 魅力（PawnBeauty +1）
+    · 冰鹅族机工装    Binguin_MachinistOverall   +10% 手工（GeneralLaborSpeed +0.1）
+                                                 +10% 机械维修速度（MechRepairSpeed +0.1，Biotech）
+    · 冰鹅族医生服    Binguin_DoctorCoat         +10% 治疗速度（MedicalTendSpeed +0.1）
+                                                 +10% 治疗质量（MedicalTendQuality +0.1）
+    · 冰鹅族研究服    Binguin_ResearchCoat       +10% 研究速度（ResearchSpeed +0.1）
+                                                 +10% 骇入效率（HackingSpeed +0.1）
+    · 冰鹅族军服      Binguin_MilitaryUniform    护甲材料系数 30%（常服 0.22，约 ×1.36）
+                                                 额外材料：25 钢铁
+    ★ 2026-09 用户二次调整：效率类加成 +20% → +10%；军服防御改为固定 30%。
+  ★ 除军服外，五件的基础数值【全部参考冰鹅族常服 Binguin_Tribalwear】：
+    OnSkin 层、覆盖 双肩/双臂/躯干/双腿/双脚、60 纤维或皮革、HP 110、工作量 2000、
+    重量 0.55、护甲材料系数 0.22、隔冷 1.10、隔热 0.60、装备 1.5s。
+  ★ 制作：只在冰鹅缝纫台（recipeUsers Inherit="False"）；解锁：冰鹅族服装
+    （Binguin_ResearchClothing）。
+  ★ 贴图暂借原版：JK服=BasicShirt(Core)、机工装=TribalA(Core)、
+    医生/研究服=LabCoat(Anomaly)、军服=FlakVest(Core)；各配一套主色调便于区分，
+    待专属美术到位后改 texPath/wornGraphicPath 并删掉 colorGenerator。
+  ★ 属性量级参考：原版白大褂只给 ResearchSpeed +0.05、帽子给 SocialImpact +0.1~0.2，
+    本组 +0.2 属明显强化（用户指定值）。
+-->
+<Defs>
+
+  <!-- ============ 冰鹅族JK服（+1 魅力） ============ -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_JKUniform</defName>
+    <label>冰鹅族JK服</label>
+    <description>观测站里最受欢迎的一身：深蓝与纯白拼色的水手领上衣配百褶裙，胸前系着一枚小小的冰晶结。穿上它的冰鹅族少女走在雪地里，连路过的行商都会多看一眼。</description>
+    <graphicData>
+      <!-- ★ 原版 T 恤的内部路径是 ShirtBasic（不是 BasicShirt），已核对 def -->
+      <texPath>Things/Pawn/Humanlike/Apparel/ShirtBasic/ShirtBasic</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>60</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <tradeability>Sellable</tradeability>
+    <statBases>
+      <MaxHitPoints>110</MaxHitPoints>
+      <WorkToMake>2000</WorkToMake>
+      <Mass>0.55</Mass>
+      <StuffEffectMultiplierArmor>0.22</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>1.10</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0.60</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>1.5</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- +1 魅力（原版 PawnBeauty，默认 0，范围 -4~+4；对照：俊俏特性 +1、美学鼻 +1） -->
+      <PawnBeauty>1</PawnBeauty>
+    </equippedStatOffsets>
+    <apparel>
+      <bodyPartGroups>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Torso</li>
+        <li>Legs</li>
+        <li>Feet</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/ShirtBasic/ShirtBasic</wornGraphicPath>
+      <layers>
+        <li>OnSkin</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>ApparelMisc</li>
+    </thingCategories>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>12</weight>
+          <only>(0.20,0.28,0.45)</only>
+        </li>
+        <li>
+          <weight>10</weight>
+          <only>(0.94,0.96,1.00)</only>
+        </li>
+        <li>
+          <weight>5</weight>
+          <only>(0.75,0.18,0.22)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchClothing</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>201</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族机工装（+20% 手工 / +20% 机械维修速度） ============ -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_MachinistOverall</defName>
+    <label>冰鹅族机工装</label>
+    <description>厚实的连体工装，肘部与膝部缝着耐磨的皮革补丁，胸前口袋插满扳手与螺丝刀。穿着它钻进机工台底下修一整天，出来时身上只有机油味，没有半点寒气。</description>
+    <graphicData>
+      <texPath>Things/Apparel/Binguin/Tribalwear</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>60</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <tradeability>Sellable</tradeability>
+    <statBases>
+      <MaxHitPoints>110</MaxHitPoints>
+      <WorkToMake>2000</WorkToMake>
+      <Mass>0.55</Mass>
+      <StuffEffectMultiplierArmor>0.22</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>1.10</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0.60</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>1.5</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- +10% 手工：原版手工/机加工台的工作速度统计（GeneralLaborSpeed，默认 1）
+           ★ 2026-09 用户下调：+20% → +10% -->
+      <GeneralLaborSpeed>0.1</GeneralLaborSpeed>
+      <!-- +10% 机械维修速度（MechRepairSpeed，Biotech 属性 → 门控） -->
+      <MechRepairSpeed MayRequire="Ludeon.RimWorld.Biotech">0.1</MechRepairSpeed>
+    </equippedStatOffsets>
+    <apparel>
+      <bodyPartGroups>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Torso</li>
+        <li>Legs</li>
+        <li>Feet</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Apparel/Binguin/Tribalwear/Tribalwear</wornGraphicPath>
+      <layers>
+        <li>OnSkin</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>ApparelMisc</li>
+    </thingCategories>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>12</weight>
+          <only>(0.72,0.45,0.20)</only>
+        </li>
+        <li>
+          <weight>10</weight>
+          <only>(0.35,0.38,0.42)</only>
+        </li>
+        <li>
+          <weight>8</weight>
+          <only>(0.55,0.58,0.62)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchClothing</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>202</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族医生服（+20% 治疗速度 / +10% 治疗质量） ============ -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_DoctorCoat</defName>
+    <label>冰鹅族医生服</label>
+    <description>浆洗得发白的长袍，袖口永远卷到手肘。白得干净，血才看得清楚。</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/LabCoat/LabCoat</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <!-- 照原版白大褂的 drawSize -->
+      <drawSize>0.85</drawSize>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>60</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <tradeability>Sellable</tradeability>
+    <statBases>
+      <MaxHitPoints>110</MaxHitPoints>
+      <WorkToMake>2000</WorkToMake>
+      <Mass>0.55</Mass>
+      <StuffEffectMultiplierArmor>0.22</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>1.10</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0.60</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>1.5</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- +10% 治疗速度（MedicalTendSpeed，默认 1）★ 用户下调：+20% → +10% -->
+      <MedicalTendSpeed>0.1</MedicalTendSpeed>
+      <!-- +10% 治疗质量（MedicalTendQuality，默认 1） -->
+      <MedicalTendQuality>0.1</MedicalTendQuality>
+    </equippedStatOffsets>
+    <apparel>
+      <bodyPartGroups>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Torso</li>
+        <li>Legs</li>
+        <li>Feet</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/LabCoat/LabCoat</wornGraphicPath>
+      <layers>
+        <li>OnSkin</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>ApparelMisc</li>
+    </thingCategories>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>14</weight>
+          <only>(0.95,0.97,0.98)</only>
+        </li>
+        <li>
+          <weight>8</weight>
+          <only>(0.85,0.88,0.90)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <only>(0.80,0.90,0.92)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchClothing</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>203</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族研究服（+20% 研究速度 / +20% 骇入效率） ============ -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_ResearchCoat</defName>
+    <label>冰鹅族研究服</label>
+    <description>冰鹅族观测者的工作长袍：浅蓝布料上缝着几只大小不一的口袋，装着星图、算尺。穿上它，无论是推演星轨还是骇入古旧终端，都比旁人快上两成。</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/LabCoat/LabCoat</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>0.85</drawSize>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>60</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <tradeability>Sellable</tradeability>
+    <statBases>
+      <MaxHitPoints>110</MaxHitPoints>
+      <WorkToMake>2000</WorkToMake>
+      <Mass>0.55</Mass>
+      <StuffEffectMultiplierArmor>0.22</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>1.10</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0.60</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>1.5</EquipDelay>
+    </statBases>
+    <equippedStatOffsets>
+      <!-- +10% 研究速度（ResearchSpeed，默认 1；原版白大褂 +0.05）
+           ★ 2026-09 用户下调：+20% → +10% -->
+      <ResearchSpeed>0.1</ResearchSpeed>
+      <!-- +10% 骇入效率（HackingSpeed，默认 1） -->
+      <HackingSpeed>0.1</HackingSpeed>
+    </equippedStatOffsets>
+    <apparel>
+      <bodyPartGroups>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Torso</li>
+        <li>Legs</li>
+        <li>Feet</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/LabCoat/LabCoat</wornGraphicPath>
+      <layers>
+        <li>OnSkin</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>ApparelMisc</li>
+    </thingCategories>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>12</weight>
+          <only>(0.88,0.94,1.00)</only>
+        </li>
+        <li>
+          <weight>10</weight>
+          <only>(0.62,0.78,0.95)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <only>(0.40,0.58,0.80)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchClothing</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>204</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 冰鹅族军服（防御 = 常服 ×1.2，额外 25 钢铁） ============ -->
+  <ThingDef ParentName="ApparelMakeableBase">
+    <defName>Binguin_MilitaryUniform</defName>
+    <label>冰鹅族军服</label>
+    <description>冰鹅族巡护队的制式军装：肩章上绣着一枚小小的六角雪花。比常服厚实得多，胸口还缀了一块钢制护板。</description>
+    <graphicData>
+      <texPath>Things/Pawn/Humanlike/Apparel/FlakVest/FlakVest</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <!-- 照原版防弹背心的 drawSize -->
+      <drawSize>0.90</drawSize>
+    </graphicData>
+    <techLevel>Industrial</techLevel>
+    <costStuffCount>60</costStuffCount>
+    <stuffCategories>
+      <li>Fabric</li>
+      <li>Leathery</li>
+    </stuffCategories>
+    <!-- ★ 用户要求：军服额外消耗 25 钢铁 -->
+    <costList>
+      <Steel>25</Steel>
+    </costList>
+    <tradeability>Sellable</tradeability>
+    <statBases>
+      <MaxHitPoints>110</MaxHitPoints>
+      <WorkToMake>2000</WorkToMake>
+      <Mass>0.55</Mass>
+      <!-- ★ 2026-09 用户改定：护甲材料系数 = 30%（初版按"常服×1.2"写 0.264，
+           现改为固定 0.30；常服为 0.22，即约 ×1.36） -->
+      <StuffEffectMultiplierArmor>0.30</StuffEffectMultiplierArmor>
+      <StuffEffectMultiplierInsulation_Cold>1.10</StuffEffectMultiplierInsulation_Cold>
+      <StuffEffectMultiplierInsulation_Heat>0.60</StuffEffectMultiplierInsulation_Heat>
+      <EquipDelay>1.5</EquipDelay>
+    </statBases>
+    <apparel>
+      <bodyPartGroups>
+        <li>Shoulders</li>
+        <li>Arms</li>
+        <li>Torso</li>
+        <li>Legs</li>
+        <li>Feet</li>
+      </bodyPartGroups>
+      <wornGraphicPath>Things/Pawn/Humanlike/Apparel/FlakVest/FlakVest</wornGraphicPath>
+      <layers>
+        <li>OnSkin</li>
+      </layers>
+      <tags>
+        <li>Binguin</li>
+      </tags>
+      <defaultOutfitTags>
+        <li>Worker</li>
+        <li>Soldier</li>
+      </defaultOutfitTags>
+    </apparel>
+    <thingCategories>
+      <li>ApparelMisc</li>
+    </thingCategories>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>12</weight>
+          <only>(0.24,0.32,0.22)</only>
+        </li>
+        <li>
+          <weight>10</weight>
+          <only>(0.18,0.24,0.35)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <only>(0.45,0.48,0.42)</only>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <researchPrerequisite>Binguin_ResearchClothing</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>Binguin_TailoringTable</li>
+      </recipeUsers>
+      <displayPriority>205</displayPriority>
+    </recipeMaker>
+    <researchPrerequisites>
+      <li>Binguin_ResearchClothing</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+</Defs>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族工作台 WorkGiver 注册（2026-08-19 修复）：
+  ★ 1.6 殖民者"使用工作台执行任务清单"依赖 WorkGiverDef 的 fixedBillGiverDefs 白名单
+    （WorkGiver_DoBill 按此匹配工作台）。原版 DoBillsMachiningTable 只列 TableMachining、
+    DoBillsMakeApparel 只列原版缝纫台 → 冰鹅族机工台/缝纫台"Can't find a WorkGiver"
+    （日志实测报错，殖民者不来使用）。这里为两个冰鹅工作台注册专属 WorkGiver。
+-->
+<Defs>
+
+  <!-- 冰鹅族机工台：仿 DoBillsMachiningTable（Smithing 75） -->
+  <WorkGiverDef>
+    <defName>DoBillsBinguinMachiningTable</defName>
+    <label>在冰鹅族机工台制造物品</label>
+    <giverClass>WorkGiver_DoBill</giverClass>
+    <workType>Smithing</workType>
+    <priorityInType>75</priorityInType>
+    <fixedBillGiverDefs>
+      <li>Binguin_MachiningTable</li>
+    </fixedBillGiverDefs>
+    <verb>work at</verb>
+    <gerund>working at</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <prioritizeSustains>true</prioritizeSustains>
+  </WorkGiverDef>
+
+  <!-- 冰鹅族缝纫台：仿 DoBillsMakeApparel（Tailoring 110） -->
+  <WorkGiverDef>
+    <defName>DoBillsBinguinTailoringTable</defName>
+    <label>在冰鹅族缝纫台制作衣物</label>
+    <giverClass>WorkGiver_DoBill</giverClass>
+    <workType>Tailoring</workType>
+    <priorityInType>110</priorityInType>
+    <fixedBillGiverDefs>
+      <li>Binguin_TailoringTable</li>
+    </fixedBillGiverDefs>
+    <verb>tailor at</verb>
+    <gerund>tailoring at</gerund>
+    <requiredCapacities>
+      <li>Manipulation</li>
+    </requiredCapacities>
+    <prioritizeSustains>true</prioritizeSustains>
+  </WorkGiverDef></Defs>
