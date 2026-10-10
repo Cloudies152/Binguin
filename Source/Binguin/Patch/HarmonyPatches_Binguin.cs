@@ -10,8 +10,8 @@
 //   - Pawn_PathFollower 有两个 CostToMoveIntoCell：
 //       [static]  float CostToMoveIntoCell(Pawn pawn, IntVec3 c)   ← 真正的成本计算
 //       [instance] float CostToMoveIntoCell(IntVec3 c)             ← 转发：return 静态版(pawn, c)
-//   - 因此补丁同时挂到实例版与静态版（幂等，双重保险）。
-//   - 用 [HarmonyPatch] 属性会因同名歧义 AmbiguousMatch 崩静态构造，必须手动 Patch。
+//   - 只挂静态版，实例版会转发到它，避免同一次移动重复执行。
+//   - 手动注册和 [HarmonyPatch] 都应指定重载参数类型；歧义不代表特性注册不可用。
 //
 // ★ 其他踩坑：
 //   - Harmony 版本：官方 brrainz.harmony = 工坊 2009463077（0Harmony v2.4.1 / HarmonyLib 2.x）。
@@ -464,7 +464,7 @@ namespace Binguin.Patch
         }
     }
 
-    // 补丁方法：不再用 [HarmonyPatch] 属性类（会 AmbiguousMatch），由上方手动 Patch 注册
+    // 补丁方法由上方显式注册；如迁移为特性注册，应指定重载并移除对应的手动注册。
     public static class Patch_PawnPathFollower_CostToMoveIntoCell
     {
         private static GeneDef cachedSkatingGene;
