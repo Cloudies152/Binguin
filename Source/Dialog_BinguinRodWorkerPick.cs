@@ -171,12 +171,14 @@ namespace Binguin
         {
             if (table == null || worker == null)
             {
+                BinguinRodPartPicker.NotifyWorkerDialogCommitted();//参数不全复位
                 return;
             }
             CompBinguinRodAssembly comp = table.TryGetComp<CompBinguinRodAssembly>();
             if (comp == null)
             {
                 Log.Warning("[冰鹅族] 选谁装配：装配台上没有 CompBinguinRodAssembly，已放弃。");
+                BinguinRodPartPicker.NotifyWorkerDialogCommitted();//依旧复位
                 return;
             }
             bool ok = comp.StartAssembly(worker, shaft, tip, hook, bait);
@@ -190,6 +192,7 @@ namespace Binguin
             else
             {
                 Messages.Message("Binguin_RodPick_15".Translate(), MessageTypeDefOf.RejectInput, false);
+                BinguinRodPartPicker.NotifyWorkerDialogCommitted();//同是复位
             }
         }
 

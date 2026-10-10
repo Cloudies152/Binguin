@@ -108,6 +108,7 @@ if (Test-Path $netstandardDll) {
 #   游戏启动 TypeLoadException 黑屏（2026-08-17 实测踩坑记录）
 $harmonyDll = $null
 $harmonyCandidates = @(
+    "$PSScriptRoot\0Harmony.dll",
     (Join-Path $GameDir '..\..\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll'),
     (Join-Path $GameDir '..\..\workshop\content\294100\2009463077\1.6\Assemblies\0Harmony.dll'),
     (Join-Path $GameDir '..\..\workshop\content\294100\2009463077\1.5\Assemblies\0Harmony.dll'),
