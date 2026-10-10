@@ -7,6 +7,11 @@ bin/
 Assemblies/Binguin.dll
 Assemblies/*.pdb
 
+# ---- 每台电脑自己的配置（不进 git，避免互相覆盖路径）----
+# 复制 Binguin.local.props.example 成 Binguin.local.props 来写自己的 RimWorld 路径
+Binguin.local.props
+Source/Binguin/Binguin.local.props
+
 # ---- IDE 配置（★ 2026-10-08：程序员用 Rider，交付包里混进了 Source\.idea\）----
 .idea/
 Source/.idea/

@@ -1,0 +1,39 @@
+<!-- ============================================================================
+       本机配置模板 —— 复制成 Binguin.local.props 然后改路径
+       ============================================================================
+
+       ★ 怎么用（30 秒）：
+         1) 把这个文件【复制】一份，改名成   Binguin.local.props
+            （同一目录下，即 Source\Binguin\）
+         2) 把下面的路径改成你自己的 RimWorld 安装位置
+         3) 完事，直接编译
+
+       ★ 为什么要有这个文件：
+         每个合作者的 RimWorld 装在哪都不一样。如果大家都去改
+         Binguin.Race.csproj 里那一行，`git status` 会一直是脏的，
+         手滑提交还会**覆盖别人的路径**。
+         放在这个文件里，`.gitignore` 已经把它挡掉 ⇒ 你改你的，不会冲突。
+
+       ★ 怎么找自己的 RimWorld 路径：
+         Steam → 库 → 右键 RimWorld → 管理 → 浏览本地文件
+         地址栏里那一串就是（例：G:\SteamLibrary\steamapps\common\RimWorld）
+
+       ★ 不想建这个文件也行：
+         编译时加参数 ——  dotnet build -p:RimWorldDir="D:\RimWorld"
+         或者直接在 VS 里改 Binguin.Race.csproj 那一行（记得别提交）。
+============================================================================ -->
+<Project>
+
+  <PropertyGroup>
+    <!-- ★★★ 把这行改成你自己的路径 ★★★ -->
+    <RimWorldDir>D:\RimWorld</RimWorldDir>
+  </PropertyGroup>
+
+  <!-- 如果还想顺手把编译完的 dll 自动复制到游戏目录，
+       把下面这段的注释去掉，并把路径改成你的（注意末尾不要加反斜杠）：
+  <PropertyGroup>
+    <GameModsDir>D:\RimWorld\Mods\Binguin_Race_Mod</GameModsDir>
+  </PropertyGroup>
+  -->
+
+</Project>

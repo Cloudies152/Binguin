@@ -80,30 +80,28 @@
   </PropertyGroup>
 
   <!-- ===================== ① 找 RimWorld 安装目录 ===================== -->
-  <PropertyGroup>
-    <!-- ★ 探测不到时，直接改这一行成你自己的路径即可（例：D:\RimWorld） -->
-    <RimWorldDir Condition="'$(RimWorldDir)' == ''"></RimWorldDir>
+  <!-- ★★★ 2026-10-10 简化（协作者 CiÇo 要求）：
+       原来这里有一大串「猜你在哪装的」候选路径（_Rw1~_Rw9 九种常见位置 +
+       九条自动探测），CiÇo 说「把这一块也删掉吧 没用了」——
+       确实没用：每台电脑就在一个地方，猜九次不如直接填一次。
+       ⇒ **现在只有一行，填你自己的 RimWorld 路径即可。**
 
-    <_Rw1>$(SystemDrive)\SteamLibrary\steamapps\common\RimWorld</_Rw1>
-    <_Rw2>$(SystemDrive)\Steam\steamapps\common\RimWorld</_Rw2>
-    <_Rw3>C:\Program Files (x86)\Steam\steamapps\common\RimWorld</_Rw3>
-    <_Rw4>C:\Program Files\Steam\steamapps\common\RimWorld</_Rw4>
-    <_Rw5>D:\SteamLibrary\steamapps\common\RimWorld</_Rw5>
-    <_Rw6>E:\SteamLibrary\steamapps\common\RimWorld</_Rw6>
-    <_Rw7>F:\SteamLibrary\steamapps\common\RimWorld</_Rw7>
-    <_Rw8>G:\SteamLibrary\steamapps\common\RimWorld</_Rw8>
-    <_Rw9>D:\RimWorld</_Rw9>
+       ★ 为什么不用 git 跟踪这个文件、而是推荐下面那个 local 文件：
+         如果每个人都直接改这一行，改完 `git status` 就一直是脏的，
+         而且一旦手滑提交，**会去覆盖别人的路径** ⇒ 互相打架。
+         ⇒ 所以推荐把路径写进 `Binguin.local.props`（已被 .gitignore 挡掉），
+           那个文件是**每个人自己本地的**，永远不会冲突。
+           临时改这一行也行，只是记得**别提交**。 -->
+  <PropertyGroup>
+    <!-- ★ 填你自己的 RimWorld 路径（例：D:\RimWorld 或 G:\SteamLibrary\steamapps\common\RimWorld）
+         ⚠️ 改完别提交（除非你真要改全项目的默认值） -->
+    <RimWorldDir Condition="'$(RimWorldDir)' == ''"></RimWorldDir>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw1)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw1)</RimWorldDir></PropertyGroup>
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw2)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw2)</RimWorldDir></PropertyGroup>
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw3)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw3)</RimWorldDir></PropertyGroup>
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw4)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw4)</RimWorldDir></PropertyGroup>
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw5)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw5)</RimWorldDir></PropertyGroup>
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw6)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw6)</RimWorldDir></PropertyGroup>
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw7)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw7)</RimWorldDir></PropertyGroup>
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw8)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw8)</RimWorldDir></PropertyGroup>
-  <PropertyGroup Condition="'$(RimWorldDir)' == '' AND Exists('$(_Rw9)\RimWorldWin64_Data\Managed')"><RimWorldDir>$(_Rw9)</RimWorldDir></PropertyGroup>
+  <!-- ★ 每台电脑自己的路径写这儿 → Source\Binguin\Binguin.local.props
+       （模板见 Binguin.local.props.example；这个文件不进 git，改它不会冲突）
+       放在这一行是为了让本机路径能**覆盖**上面的默认值。 -->
+  <Import Project="Binguin.local.props" Condition="Exists('Binguin.local.props')" />
 
   <PropertyGroup>
     <ManagedDir>$(RimWorldDir)\RimWorldWin64_Data\Managed</ManagedDir>
@@ -114,7 +112,7 @@
   <Target Name="CheckRimWorld" BeforeTargets="ResolveAssemblyReferences">
     <Error Condition="!Exists('$(ManagedDir)\Assembly-CSharp.dll')"
            Code="BINGUIN001"
-           Text="找不到 RimWorld。任选一种方式指定后重试：&#xD;&#xA;  1) 命令行： dotnet build -p:RimWorldDir=&quot;你的RimWorld路径&quot;&#xD;&#xA;  2) 或改 Source\Binguin.Race.csproj 里 &lt;RimWorldDir&gt; 那一行的默认值&#xD;&#xA;  当前探测到：$(RimWorldDir)&#xD;&#xA;  需要的文件：$(ManagedDir)\Assembly-CSharp.dll" />
+           Text="找不到 RimWorld 的 Managed 目录。三种指定方式，任选一种：&#xD;&#xA;  1) 命令行（临时）： dotnet build -p:RimWorldDir=&quot;D:\RimWorld&quot;&#xD;&#xA;  2) 推荐：复制 Binguin.local.props.example 为 Binguin.local.props，把里面的路径改成你自己的&#xD;&#xA;     （这个文件不进 git，改它不会和别人的路径打架）&#xD;&#xA;  3) 或直接改 Binguin.Race.csproj 里 &lt;RimWorldDir&gt; 那一行（⚠️ 记得别提交）&#xD;&#xA;  当前的值：[$(RimWorldDir)]&#xD;&#xA;  需要的文件：$(ManagedDir)\Assembly-CSharp.dll" />
   </Target>
 
   <!-- ===================== ② 源码 ===================== -->
