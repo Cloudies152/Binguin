@@ -72,7 +72,8 @@
 
 ### 编译 C#（三种方式随便挑一种，结果一样）
 
-> ⚠️ **必须先编译一次** —— 仓库里**不带** `Assemblies\Binguin.dll`（编译产物不进 git）。
+> 仓库里**已带编译好的 `Assemblies\Binguin.dll`**，clone 下来直接玩即可；
+> 只有改了 `Source/**/*.cs` 才需要重新编译。
 
 ```powershell
 # ① Visual Studio / Rider：双击 Source\Binguin\Binguin.Race.sln → 生成解决方案

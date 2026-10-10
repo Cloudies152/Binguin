@@ -2,9 +2,11 @@
 obj/
 bin/
 
-# 编译产物：留在本地，不进 git（作者 2026-10-10 要求）
-# 配合 csproj 的 CopyToCustomDirectory —— 它会把编好的 dll 铺到这个目录
-Assemblies/Binguin.dll
+# ★ 2026-10-10 更正：`Assemblies/Binguin.dll` 【要】进 git，别加忽略规则。
+#   作者原话是「不用每次都上传」，意思是**别每次编译都跟着提交**，
+#   不是"不要上传"。DLL 必须留在仓库里 —— 否则别人 clone 下来 mod 加载不了
+#   （没有 DLL = 所有 C# 功能都没有，会表现成"没有装配按钮"这类怪现象）。
+#   仍然忽略：pdb 和中间产物。
 Assemblies/*.pdb
 
 # ---- 每台电脑自己的配置（不进 git，避免互相覆盖路径）----
