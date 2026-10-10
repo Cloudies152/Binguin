@@ -48,10 +48,14 @@
     <RootNamespace>Binguin</RootNamespace>
     <OutputType>Library</OutputType>
 
-    <!-- 输出到 mod 根目录的 Assemblies\（与 build.ps1 完全一致） -->
-    <OutputPath>..\Assemblies\</OutputPath>
+    <!-- 输出到 mod 根目录的 Assemblies\（与 build.ps1 完全一致）
+         ★ 本文件在  Source\Binguin\  下 ⇒ 要到仓库根要退**两层**（..\..\） -->
+    <OutputPath>..\..\Assemblies\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+
+    <!-- mod 根目录的绝对/相对位置：本文件在 Source\Binguin\ ⇒ 退两层 -->
+    <CustomOutputDir>..\..\</CustomOutputDir>
 
     <!-- mod 不需要 pdb，别往仓库里塞 -->
     <DebugType>none</DebugType>
@@ -164,7 +168,54 @@
        反而又回到 IReadOnlyList 找不到的老问题上。
        ⇐ 所以这里刻意留空，只作说明。 -->
 
-  <!-- ============ ⑤ 可选：编译完顺手复制到游戏 Mods 目录 ============ -->
+  <!-- ============ ⑤ 编译完把产物铺到 mod 根目录 ============ -->
+  <!-- ★ 这是原作者（Cloudies152）指定的做法：
+       把 $(TargetDir) 下所有 dll 复制到 <mod根>\Assemblies\，
+       并把 About.xml 复制到 <mod根>\About\。
+       这样 VS / dotnet build 出来的中间产物在 Source\Binguin\bin\ 里，
+       而 mod 该有的文件照样落在正确位置（游戏只认 <mod根>\Assemblies\Binguin.dll）。
+
+       ★ 关于 About.xml：
+         真正的 About.xml 在 mod 根目录（不在 Source 下），
+         所以这里加了一层「找得到才复制」——找不到就跳过，并给个提示，
+         不会因为没有 About.xml 就让整个编译失败。
+         （原作者贴来的写法是直接 <Copy SourceFiles="About.xml">，
+           在「About.xml 就在项目目录里」的工程上是对的；
+           咱们的工程目录是 Source\Binguin\，所以补了这一层判断。）
+
+       ★ **每次都跑**（不像 DeployToGame 要 -p:DeployToGame=true）——
+         因为它的作用就是保证「编译完 mod 目录一定是新的」，不该还要额外加参数。 -->
+  <Target Name="CopyToCustomDirectory" AfterTargets="Build">
+    <ItemGroup>
+      <!-- 本工程只产出 Binguin.dll；通配写法和原作者给的一致
+           （TargetDir 里目前没有别的 dll，不影响；
+            将来真要引用别的库，这里不用改就能带上） -->
+      <MyOutputFiles Include="$(TargetDir)**\*.dll" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(MyOutputFiles)"
+          DestinationFolder="$(CustomOutputDir)Assemblies\%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
+
+    <!-- About.xml：优先用工程目录里的（如果有人放了一份），否则用 mod 根目录的 -->
+    <PropertyGroup>
+      <_AboutSrc Condition="Exists('About.xml')">About.xml</_AboutSrc>
+      <_AboutSrc Condition="'$(_AboutSrc)' == '' AND Exists('$(CustomOutputDir)About\About.xml')">$(CustomOutputDir)About\About.xml</_AboutSrc>
+    </PropertyGroup>
+    <Copy SourceFiles="$(_AboutSrc)"
+          DestinationFolder="$(CustomOutputDir)About\"
+          SkipUnchangedFiles="true"
+          Condition="'$(_AboutSrc)' != ''" />
+
+    <Message Importance="high"
+             Text="✅ 已铺到 mod 目录：$(CustomOutputDir)Assemblies\ + About\"
+             Condition="'$(_AboutSrc)' != ''" />
+    <Message Importance="normal"
+             Text="已复制 dll 到 $(CustomOutputDir)Assemblies\（About.xml 未找到，已跳过）"
+             Condition="'$(_AboutSrc)' == ''" />
+  </Target>
+
+  <!-- ============ ⑥ 可选：再顺手复制到游戏 Mods 目录 ============ -->
   <!-- 打开方式： dotnet build -p:DeployToGame=true
        默认关（免得在 CI / 别人机器上找不到 Mods 目录就报错）。 -->
   <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(DeployToGame)' == 'true'">

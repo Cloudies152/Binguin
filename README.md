@@ -45,7 +45,7 @@
 
 - **外观**：体型走原版 Human 默认（不覆盖 `baseBodySize`，即 **1.0**）；
   **肤色恒为纯白**（`Race_Binguin.xml` 的 `colorChannels/skin` first+second 都写 `(1,1,1)`，
-  再由 `Source/Compat_BinguinSkinAndFace.cs` 打 `Pawn_StoryTracker.get_SkinColor` 补丁**锁死**，
+  再由 `Source/Binguin/Compat_BinguinSkinAndFace.cs` 打 `Pawn_StoryTracker.get_SkinColor` 补丁**锁死**，
   任何肤色基因都改不动）；性别比 9:1 女:男（`maleGenderProbability=0.1`）。
   > 视觉身高另有一套：自绘身体贴图按原版 512 画布对齐，`Tools/Make-BinguinBodyTextures.py`
   > 的 `SCALE = 1.04`（比原版高 4%，脚底线不变）——**那是贴图缩放，不是实体型**，别和上面混。
@@ -73,7 +73,7 @@
 ### 编译 C#（三种方式随便挑一种，结果一样）
 
 ```powershell
-# ① Visual Studio / Rider：双击仓库根目录的 Binguin.Race.sln → 生成解决方案
+# ① Visual Studio / Rider：双击 Source\Binguin\Binguin.Race.sln → 生成解决方案
 # ② 命令行：
 cd Binguin_Race_Mod\Source
 dotnet build

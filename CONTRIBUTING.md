@@ -40,7 +40,7 @@
 
 | 方式 | 怎么用 | 需要装什么 |
 |---|---|---|
-| **Visual Studio / Rider**（推荐） | 双击仓库根目录的 **`Binguin.Race.sln`** → 生成解决方案 | VS 2022 或 Rider |
+| **Visual Studio / Rider**（推荐） | 双击**`Source\Binguin\Binguin.Race.sln`** → 生成解决方案 | VS 2022 或 Rider |
 | **命令行** | `dotnet build` | .NET SDK |
 | **老办法** | `Source\build.ps1` | **什么都不用装**（靠系统自带 csc.exe） |
 

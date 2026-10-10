@@ -146,13 +146,13 @@ jobs:
           "rimworld_dir=$fakeRw" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: 还原
-        run: dotnet restore Binguin.Race.sln
+        run: dotnet restore Source/Binguin/Binguin.Race.sln
 
       - name: 编译
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          dotnet build Binguin.Race.sln `
+          dotnet build Source/Binguin/Binguin.Race.sln `
             -c Release `
             --no-restore `
             -p:RimWorldDir="${{ steps.rimref.outputs.rimworld_dir }}" `

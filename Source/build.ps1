@@ -143,8 +143,15 @@ if ($harmonyDll) {
 $refArgs = $refs | ForEach-Object { "/reference:`"$_`"" }
 
 # ---------- 4. 源码 ----------
-$src = Get-ChildItem -Path $PSScriptRoot -Filter "*.cs" | ForEach-Object { "`"$($_.FullName)`"" }
-if (-not $src) { Write-ErrorAndPause "Source 目录下没有 .cs 文件。" }
+# ★ 2026-10-10：.cs 挪进了子目录 Source\Binguin\（配合 Binguin.Race.csproj），
+#   所以这里要 -Recurse，否则一个都找不到（报"Source 目录下没有 .cs 文件"）。
+#   排除 obj/bin/\.idea，免得把中间产物或 IDE 缓存里的 .cs 也编进去。
+$src = Get-ChildItem -Path $PSScriptRoot -Filter "*.cs" -Recurse -ErrorAction SilentlyContinue |
+       Where-Object { $_.FullName -notmatch '\\(obj|bin|\.idea|\.vs)\\' } |
+       Sort-Object FullName |
+       ForEach-Object { "`"$($_.FullName)`"" }
+if (-not $src) { Write-ErrorAndPause "Source 目录（含子目录）下没有 .cs 文件。" }
+Write-Host ("源码文件：{0} 个" -f $src.Count)
 
 # ---------- 5. 编译 ----------
 $outDir = Join-Path (Split-Path $PSScriptRoot -Parent) "Assemblies"
