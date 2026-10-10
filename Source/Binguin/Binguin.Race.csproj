@@ -48,13 +48,20 @@
     <RootNamespace>Binguin</RootNamespace>
     <OutputType>Library</OutputType>
 
-    <!-- 输出到 mod 根目录的 Assemblies\（与 build.ps1 完全一致）
-         ★ 本文件在  Source\Binguin\  下 ⇒ 要到仓库根要退**两层**（..\..\） -->
-    <OutputPath>..\..\Assemblies\</OutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <!-- ★★★ 2026-10-10：**不要**加 `<OutputPath>`（协作者 CiÇo 明确要求删掉）
+         编译输出就走默认的  Source\Binguin\bin\Release\  —— **留在本地**，
+         `.gitignore` 已经挡掉 `bin/` `obj/`。
+         真正要让 mod 目录拿到 dll，靠下面 ⑤ 的 `CopyToCustomDirectory` 复制过去，
+         而不是把编译输出**直接指向** mod 目录。
+         好处：
+           · 编译中间产物不会散落在 mod 根，仓库永远干净
+           · `bin\` 里只有我们自己那几个文件，一眼就能看出有没有多带东西
+             （★ CiÇo 提醒的「不做剥离会带一堆 Unity 自己的 dll」就属于要盯的点；
+               本项目 6 个游戏引用全是 `<Private>false</Private>`、
+               Harmony 用 `ExcludeAssets=runtime`，实测 bin\ 里确实干净）
+         别再把它加回来。 -->
 
-    <!-- mod 根目录的绝对/相对位置：本文件在 Source\Binguin\ ⇒ 退两层 -->
+    <!-- mod 根目录的位置：本文件在 Source\Binguin\ ⇒ 退两层 -->
     <CustomOutputDir>..\..\</CustomOutputDir>
 
     <!-- mod 不需要 pdb，别往仓库里塞 -->
@@ -184,14 +191,32 @@
            咱们的工程目录是 Source\Binguin\，所以补了这一层判断。）
 
        ★ **每次都跑**（不像 DeployToGame 要 -p:DeployToGame=true）——
-         因为它的作用就是保证「编译完 mod 目录一定是新的」，不该还要额外加参数。 -->
+         因为它的作用就是保证「编译完 mod 目录一定是新的」，不该还要额外加参数。
+
+       ★ 关于 `$(TargetDir)**\*.dll`：
+         因为上面**没有设 `<OutputPath>`**，TargetDir = 默认的
+         `Source\Binguin\bin\Release\net48\`，里面只有我们自己的产物。
+         6 个游戏引用是 `<Private>false</Private>`、Harmony 是 `ExcludeAssets=runtime`
+         ⇒ 游戏/第三方 dll **不会**被带进来（实测确认）。
+         下面还加了一道「混进非本 mod 的 dll 就告警」的守卫，
+         防止以后有人给引用去掉了 Private=false 却没人发现。 -->
   <Target Name="CopyToCustomDirectory" AfterTargets="Build">
     <ItemGroup>
-      <!-- 本工程只产出 Binguin.dll；通配写法和原作者给的一致
-           （TargetDir 里目前没有别的 dll，不影响；
-            将来真要引用别的库，这里不用改就能带上） -->
       <MyOutputFiles Include="$(TargetDir)**\*.dll" />
     </ItemGroup>
+
+    <!-- ★ 守卫：输出目录里混进了游戏/第三方 dll 就告警
+         （CiÇo 提醒过：「output 如果不做剥离会带一堆 unity 自己的，那些必须去掉」） -->
+    <ItemGroup>
+      <_StrayDll Include="@(MyOutputFiles)"
+                 Condition="$([System.String]::Copy('%(Filename)').StartsWith('Unity'))
+                         OR '%(Filename)' == '0Harmony'
+                         OR '%(Filename)' == 'mscorlib'
+                         OR $([System.String]::Copy('%(Filename)').StartsWith('System'))" />
+    </ItemGroup>
+    <Warning Code="BINGUIN004"
+             Condition="'@(_StrayDll)' != ''"
+             Text="输出目录里混进了不该带的 dll：@(_StrayDll)。&#xD;&#xA;  说明某个 &lt;Reference&gt; 少了 &lt;Private&gt;false&lt;/Private&gt;，或某个 PackageReference 少了 ExcludeAssets=runtime。&#xD;&#xA;  这些游戏/第三方 dll **绝不能**跟着 mod 一起发出去。" />
 
     <Copy SourceFiles="@(MyOutputFiles)"
           DestinationFolder="$(CustomOutputDir)Assemblies\%(RecursiveDir)"
@@ -219,7 +244,8 @@
   <!-- 打开方式： dotnet build -p:DeployToGame=true
        默认关（免得在 CI / 别人机器上找不到 Mods 目录就报错）。 -->
   <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(DeployToGame)' == 'true'">
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll"
+    <!-- 用 $(TargetDir)（默认编译输出目录），不是 $(OutputPath) —— 见上面「不要加 OutputPath」的说明 -->
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll"
           DestinationFolder="$(GameModsDir)\Assemblies"
           SkipUnchangedFiles="true"
           Condition="Exists('$(GameModsDir)')" />
