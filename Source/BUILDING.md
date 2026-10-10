@@ -27,8 +27,10 @@ dotnet build Source/Binguin/Binguin.Race.sln -c Release
 ## VS Code 构建任务
 
 在 VS Code 中打开模组根目录，完成上述本机配置后，按 `Ctrl+Shift+B`，
-或通过“终端 → 运行生成任务”执行默认的 `build` 任务。
-任务使用 PATH 中的 `dotnet`，构建 Release，并将编译诊断显示在“问题”面板。
+执行默认的 `build: Release` 任务。通过“终端 → 运行任务”可选择
+`build: Debug` 或 `build: Release`；“终端 → 配置默认生成任务”可更改默认项。
+两个任务均使用 PATH 中的 `dotnet`，并将编译诊断显示在“问题”面板。
+两种配置都会更新模组的 `Assemblies/Binguin.dll`，以最后一次构建为准。
 任务不包含个人绝对路径；协作者共用 `.vscode/tasks.json`，各自维护本机 props。
 
 临时覆盖路径（命令行属性优先于本机配置）：
@@ -51,3 +53,7 @@ CI 使用固定的 RimWorld 参考包 `Krafs.Rimworld.Ref 1.6.4871`，
 CI 通过命令行传入临时依赖路径，不需要个人配置。
 协作者应使用同一 RimWorld 版本和对应的 HAR 1.6；更新依赖时同步更新 CI。
 Steam 工坊可能自动更新 HAR，本机路径一致并不意味着 DLL 版本完全一致。
+
+## 源码结构
+
+C# 文件按功能组织，目录职责与重构约束见 [STRUCTURE.md](STRUCTURE.md)。

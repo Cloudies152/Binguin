@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build",
+      "label": "build: Release",
       "type": "process",
       "command": "dotnet",
       "args": [
@@ -14,11 +14,48 @@
         "--verbosity",
         "minimal"
       ],
-      "options": { "cwd": "${workspaceFolder}" },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": "$msCompile",
-      "group": { "kind": "build", "isDefault": true },
-      "presentation": { "reveal": "always", "panel": "shared", "clear": true },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
       "detail": "构建 Release 并复制 Binguin.dll 到 Assemblies；依赖路径读取 Binguin.local.props。"
+    },
+    {
+      "label": "build: Debug",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/Source/Binguin/Binguin.Race.sln",
+        "--configuration",
+        "Debug",
+        "--nologo",
+        "--verbosity",
+        "minimal"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true
+      },
+      "detail": "构建 Debug 并复制 Binguin.dll 到 Assemblies；依赖路径读取 Binguin.local.props。"
     }
   ]
 }

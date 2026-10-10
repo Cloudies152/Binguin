@@ -56,7 +56,7 @@
     <labelShortAdj>爱鱼</labelShortAdj>
     <description>食用含有鱼类的食物时心情 +8。</description>
     <displayCategory>Miscellaneous</displayCategory>
-    <geneClass>Binguin.Gene_BinguinFishLover</geneClass>
+    <geneClass>Binguin.Feature.RaceTraits.Gene_BinguinFishLover</geneClass>
     <biostatCpx>1</biostatCpx>
     <iconPath>UI/Icons/Genes/Gene_AnimalWarcall</iconPath>
   </GeneDef>

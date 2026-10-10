@@ -337,7 +337,7 @@
     <defName>Binguin_StinkFishSmell</defName>
     <!-- ★ workerClass 用【程序集限定名】：最稳（不依赖"哪个程序集定义了 Binguin 命名空间"的推断）。
          本 mod 里 `ThoughtWorker_BinguinRodBait` 是同样写法（那个一直正常工作）。 -->
-    <workerClass>Binguin.ThoughtWorker_BinguinStinkFish, Binguin</workerClass>
+    <workerClass>Binguin.Feature.RaceTraits.ThoughtWorker_BinguinStinkFish, Binguin</workerClass>
     <stages>
       <li>
         <label>浑身臭鱼味</label>

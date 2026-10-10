@@ -557,7 +557,7 @@
          ★ 注意：`compClass` 仍然用原版可实例化类占位，效果类由静态构造挂载
            （XML 零自定义类型原则）—— 只有 gizmoClass 是例外，因为 gizmo 不需要
            XML 序列化字段，只是"按钮行为"，RimWorld 就是用 Activator 直接 new 的。 -->
-    <gizmoClass>Binguin.Command_BinguinPierce</gizmoClass>
+    <gizmoClass>Binguin.Feature.Rods.Command_BinguinPierce</gizmoClass>
     <verbProperties>
       <verbClass>Verb_CastAbility</verbClass>
       <range>10</range>
