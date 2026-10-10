@@ -1,131 +1,45 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <!-- ==========================================================================
-       冰鹅族 Binguin Race —— 项目文件（Visual Studio 2022 / Rider / dotnet CLI 通用）
-
-       ┌── 怎么用 ─────────────────────────────────────────────────────────┐
-       │ VS 2022：双击上一级的  Binguin.Race.sln  →  生成解决方案（Ctrl+Shift+B）│
-       │ 命令行  ：在 Source 目录里跑  dotnet build                          │
-       │ 老办法  ：.\\build.ps1（不需要 .NET SDK，只靠系统自带 csc.exe）        │
-       └───────────────────────────────────────────────────────────────────┘
-       三条路**引用同一批 dll、输出同一个位置**（..\Assemblies\Binguin.dll），
-       用哪条都一样，不冲突。
-
-       ─────────────────────────────────────────────────────────────────────
-       ★★ 为什么必须是 net40 + C# 5（别改！）
-          RimWorld 1.6 跑在 .NET Framework 4.0 上。
-          - TargetFramework 必须 net40：写 net48 也能编译过，
-            但会引用到 4.8 才有的 API ⇒ 进游戏 MissingMethodException
-          - LangVersion 必须 5：C# 5 没有 ?. / $"插值" / 表达式体成员 等语法糖
-       ─────────────────────────────────────────────────────────────────────
-       ★★ 动手前请注意
-          1) 游戏目录每台电脑不一样，见下面「① 找 RimWorld」
-          2) 只想改 mod 内容的话，**不用碰这个文件**
-       ========================================================================== -->
-
+  <!--
+    冰鹅族构建配置（Visual Studio / Rider / dotnet 共用）。
+    从模组根目录执行：dotnet build Source/Binguin/Binguin.Race.sln -c Release
+    或执行 Source/build.ps1。两种方式都需要 .NET SDK。
+    每位协作者复制 Binguin.local.props.example 为 Binguin.local.props，
+    填写自己的游戏与 HAR 路径。只提交模板，不提交本机配置。
+    详细说明见 Source/BUILDING.md。
+  -->
   <PropertyGroup>
-    <!-- ★★ 为什么是 net48（而不是 net40）
-         实测（2026-10-09）踩坑记录，别改回去：
-           一开始用 <TargetFramework>net40</TargetFramework> ⇒ 编译报
-             error CS0518: 预定义类型"System.Collections.Generic.IReadOnlyList`1"未定义或导入
-           原因：`IReadOnlyList<T>` / `IReadOnlyCollection<T>` 是 .NET **4.5** 引入的，
-             **net40 的官方参考程序集里根本没有**；
-             但 Windows 上 .NET Framework 4.x 的**运行时** mscorlib 里是有的
-             （4.5/4.6/4.7/4.8 都是**原地升级**同一个目录
-               `%WINDIR%\Microsoft.NET\Framework64\v4.0.30319`，
-               AssemblyVersion 一直显示 4.0.0.0，但类型集是 4.8 的）。
-           `build.ps1` 用的是 csc.exe 的默认引用（就是那个运行时 mscorlib）⇒ 它从来没这问题。
-         ⇒ 所以这里跟运行时对齐，用 **net48**（= 开发机上的 .NET Framework 4.x 运行时）。
-         ⇒ 进游戏仍然是 .NET Framework 4.x 运行时，**目标框架没变**，
-            只是"编译期参考程序集"从 4.0 换成了 4.8。
-         ⚠️ 副作用（要自觉）：这么一改，**4.5+ 才有的 API 会编译通过**，
-            而游戏运行时可能没有 ⇒ 进游戏 MissingMethodException。
-            ⇒ 写代码时尽量只用 4.0 就有的 API；
-              真不确定就先用 `build.ps1` 编一遍对比（它更严格）。 -->
+    <!-- 本机 HAR 1.6 的目标框架为 net48；使用 net472 会拒绝该引用（MSB3274）。
+         程序集版本 4.0.0.0 不等于目标框架 net40。新增 API 仍需游戏内验证。 -->
     <TargetFramework>net48</TargetFramework>
+    <!-- 保留 C# 5 以兼容已有源码；它不是 RimWorld 的硬性要求。 -->
     <LangVersion>5</LangVersion>
     <AssemblyName>Binguin</AssemblyName>
     <RootNamespace>Binguin</RootNamespace>
     <OutputType>Library</OutputType>
-
-    <!-- ★★★ 2026-10-10：**不要**加 `<OutputPath>`（协作者 CiÇo 明确要求删掉）
-         编译输出就走默认的  Source\Binguin\bin\Release\  —— **留在本地**，
-         `.gitignore` 已经挡掉 `bin/` `obj/`。
-         真正要让 mod 目录拿到 dll，靠下面 ⑤ 的 `CopyToCustomDirectory` 复制过去，
-         而不是把编译输出**直接指向** mod 目录。
-         好处：
-           · 编译中间产物不会散落在 mod 根，仓库永远干净
-           · `bin\` 里只有我们自己那几个文件，一眼就能看出有没有多带东西
-             （★ CiÇo 提醒的「不做剥离会带一堆 Unity 自己的 dll」就属于要盯的点；
-               本项目 6 个游戏引用全是 `<Private>false</Private>`、
-               Harmony 用 `ExcludeAssets=runtime`，实测 bin\ 里确实干净）
-         别再把它加回来。 -->
-
-    <!-- mod 根目录的位置：本文件在 Source\Binguin\ ⇒ 退两层 -->
-    <CustomOutputDir>..\..\</CustomOutputDir>
-
-    <!-- mod 不需要 pdb，别往仓库里塞 -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!-- 当前不生成 PDB；调试时可按需调整。 -->
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
-
-    <!-- 关自动通配：.cs 在本目录、obj 在别处，ItemGroup 里手写更可控 -->
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
-    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-
-    <!-- 「没写 XML 注释」之类不刷警告 -->
-    <NoWarn>$(NoWarn);CS1591;CS0618;CS1685;CS1684</NoWarn>
+    <!-- 保留原有的文档与过时 API 警告抑制；程序集冲突警告不再隐藏。 -->
+    <NoWarn>$(NoWarn);CS1591;CS0618</NoWarn>
   </PropertyGroup>
 
-  <!-- ===================== ① 找 RimWorld 安装目录 ===================== -->
-  <!-- ★★★ 2026-10-10 简化（协作者 CiÇo 要求）：
-       原来这里有一大串「猜你在哪装的」候选路径（_Rw1~_Rw9 九种常见位置 +
-       九条自动探测），CiÇo 说「把这一块也删掉吧 没用了」——
-       确实没用：每台电脑就在一个地方，猜九次不如直接填一次。
-       ⇒ **现在只有一行，填你自己的 RimWorld 路径即可。**
-
-       ★ 为什么不用 git 跟踪这个文件、而是推荐下面那个 local 文件：
-         如果每个人都直接改这一行，改完 `git status` 就一直是脏的，
-         而且一旦手滑提交，**会去覆盖别人的路径** ⇒ 互相打架。
-         ⇒ 所以推荐把路径写进 `Binguin.local.props`（已被 .gitignore 挡掉），
-           那个文件是**每个人自己本地的**，永远不会冲突。
-           临时改这一行也行，只是记得**别提交**。 -->
-  <PropertyGroup>
-    <!-- ★ 填你自己的 RimWorld 路径（例：D:\RimWorld 或 G:\SteamLibrary\steamapps\common\RimWorld）
-         ⚠️ 改完别提交（除非你真要改全项目的默认值） -->
-    <RimWorldDir Condition="'$(RimWorldDir)' == ''"></RimWorldDir>
-  </PropertyGroup>
-
-  <!-- ★ 每台电脑自己的路径写这儿 → Source\Binguin\Binguin.local.props
-       （模板见 Binguin.local.props.example；这个文件不进 git，改它不会冲突）
-       放在这一行是为了让本机路径能**覆盖**上面的默认值。 -->
+  <!-- 本机配置在默认目录推导之前导入；命令行 -p 属性优先。
+       RimWorldDir 为游戏根目录；ManagedDir 可直接指定引用程序集目录。
+       HarDir 为 HAR 根目录；HarAssemblyPath 可覆盖默认的 1.6 DLL 路径。
+       各默认值只在属性为空时设置，避免覆盖协作者的本机配置。 -->
   <Import Project="Binguin.local.props" Condition="Exists('Binguin.local.props')" />
-
   <PropertyGroup>
-    <ManagedDir>$(RimWorldDir)\RimWorldWin64_Data\Managed</ManagedDir>
-    <GameModsDir>$(RimWorldDir)\Mods\Binguin_Race_Mod</GameModsDir>
+    <ManagedDir Condition="'$(ManagedDir)' == '' and '$(RimWorldDir)' != ''">$(RimWorldDir)\RimWorldWin64_Data\Managed</ManagedDir>
+    <HarAssemblyPath Condition="'$(HarAssemblyPath)' == '' and '$(HarDir)' != ''">$(HarDir)\1.6\Assemblies\AlienRace.dll</HarAssemblyPath>
+    <CustomOutputDir Condition="'$(CustomOutputDir)' == ''">$(MSBuildProjectDirectory)\..\..\</CustomOutputDir>
+    <GameModsDir Condition="'$(GameModsDir)' == ''">$(CustomOutputDir)</GameModsDir>
   </PropertyGroup>
 
-  <!-- 找不到 ⇒ 给一条**能看懂**的错，而不是一堆 CS0006 -->
-  <Target Name="CheckRimWorld" BeforeTargets="ResolveAssemblyReferences">
-    <Error Condition="!Exists('$(ManagedDir)\Assembly-CSharp.dll')"
-           Code="BINGUIN001"
-           Text="找不到 RimWorld 的 Managed 目录。三种指定方式，任选一种：&#xD;&#xA;  1) 命令行（临时）： dotnet build -p:RimWorldDir=&quot;D:\RimWorld&quot;&#xD;&#xA;  2) 推荐：复制 Binguin.local.props.example 为 Binguin.local.props，把里面的路径改成你自己的&#xD;&#xA;     （这个文件不进 git，改它不会和别人的路径打架）&#xD;&#xA;  3) 或直接改 Binguin.Race.csproj 里 &lt;RimWorldDir&gt; 那一行（⚠️ 记得别提交）&#xD;&#xA;  当前的值：[$(RimWorldDir)]&#xD;&#xA;  需要的文件：$(ManagedDir)\Assembly-CSharp.dll" />
-  </Target>
-
-  <!-- ===================== ② 源码 ===================== -->
+  <!-- SDK 自动收集本项目及子目录的 .cs，并排除 bin/obj。
+       游戏和 HAR 引用均设 Private=false，不复制进构建输出。 -->
   <ItemGroup>
-    <Compile Include="*.cs" />
-    <Compile Remove=".idea\**\*.cs" />
-    <Compile Remove="obj\**\*.cs" />
-    <Compile Remove="bin\**\*.cs" />
-  </ItemGroup>
-
-  <!-- ===================== ③ 引用 ===================== -->
-  <ItemGroup>
-    <!-- 游戏专属程序集（mscorlib / System / System.Core 由 net40 目标自动带） -->
     <Reference Include="Assembly-CSharp">
       <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
@@ -150,106 +64,40 @@
       <HintPath>$(ManagedDir)\Unity.Mathematics.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="AlienRace">
+      <HintPath>$(HarAssemblyPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- Harmony 版本由公共项目统一；仅用于编译，游戏运行时由 Harmony 前置提供。 -->
+    <PackageReference Include="Lib.Harmony" Version="2.4.1" PrivateAssets="all" ExcludeAssets="runtime" />
+    <!-- 官方参考程序集包，避免每人另装 .NET Framework Developer Pack。 -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
 
-  <!-- ===================== ④ NuGet 包 ===================== -->
-  <ItemGroup>
-    <!-- ★★ Harmony 用 NuGet 包，**不从创意工坊目录引**。
-         实测（2026-10-09）：`<Reference><HintPath>工坊路径\0Harmony.dll` 在
-         `dotnet build` 下**根本解析不到**（正斜杠、反斜杠、无条件引用全试过，
-         全部 CS0246 找不到 HarmonyLib），换成这个包一次就过。
-         版本 2.4.1 与游戏里跑的 0Harmony 一致（工坊 2009463077 = 2.4.1.0）。
-         ★ ExcludeAssets=runtime：编译要它，但**不要**复制进 Assemblies
-           （游戏自带 Harmony mod，重复投放会冲突）。 -->
-    <PackageReference Include="Lib.Harmony" Version="2.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </PackageReference>
-  </ItemGroup>
+  <!-- 在解析引用前检查全部文件；缺失时直接报路径错误，避免未解析引用被忽略。 -->
+  <Target Name="CheckDependencyPaths" BeforeTargets="ResolveAssemblyReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="'$(ManagedDir)' == ''"
+           Code="BINGUIN001" Text="请在 Binguin.local.props 中设置 RimWorldDir，或通过 -p:RimWorldDir 指定游戏目录（也可直接设置 ManagedDir）。" />
+    <Error Condition="'$(HarAssemblyPath)' == ''"
+           Code="BINGUIN002" Text="请在 Binguin.local.props 中设置 HarDir（HAR 模组根目录），或设置 HarAssemblyPath 指向 RimWorld 1.6 的 AlienRace.dll。" />
+    <ItemGroup>
+      <_RequiredDependency Include="@(Reference->'%(HintPath)')" />
+    </ItemGroup>
+    <Error Condition="!Exists('%(_RequiredDependency.Identity)')"
+           Code="BINGUIN003" Text="找不到引用 DLL：%(_RequiredDependency.Identity)。请检查 Binguin.local.props 中的路径和依赖版本。" />
+  </Target>
 
-  <!-- ============ ④b 基础程序集（mscorlib / System / … ）============ -->
-  <!-- 用 net48 目标后，这些由 SDK 自动带（官方 net48 参考程序集），
-       **不要**再手工指向运行时目录 —— 实测那样会被 SDK 的隐式引用盖掉，
-       反而又回到 IReadOnlyList 找不到的老问题上。
-       ⇐ 所以这里刻意留空，只作说明。 -->
-
-  <!-- ============ ⑤ 编译完把产物铺到 mod 根目录 ============ -->
-  <!-- ★ 这是原作者（Cloudies152）指定的做法：
-       把 $(TargetDir) 下所有 dll 复制到 <mod根>\Assemblies\，
-       并把 About.xml 复制到 <mod根>\About\。
-       这样 VS / dotnet build 出来的中间产物在 Source\Binguin\bin\ 里，
-       而 mod 该有的文件照样落在正确位置（游戏只认 <mod根>\Assemblies\Binguin.dll）。
-
-       ★ 关于 About.xml：
-         真正的 About.xml 在 mod 根目录（不在 Source 下），
-         所以这里加了一层「找得到才复制」——找不到就跳过，并给个提示，
-         不会因为没有 About.xml 就让整个编译失败。
-         （原作者贴来的写法是直接 <Copy SourceFiles="About.xml">，
-           在「About.xml 就在项目目录里」的工程上是对的；
-           咱们的工程目录是 Source\Binguin\，所以补了这一层判断。）
-
-       ★ **每次都跑**（不像 DeployToGame 要 -p:DeployToGame=true）——
-         因为它的作用就是保证「编译完 mod 目录一定是新的」，不该还要额外加参数。
-
-       ★ 关于 `$(TargetDir)**\*.dll`：
-         因为上面**没有设 `<OutputPath>`**，TargetDir = 默认的
-         `Source\Binguin\bin\Release\net48\`，里面只有我们自己的产物。
-         6 个游戏引用是 `<Private>false</Private>`、Harmony 是 `ExcludeAssets=runtime`
-         ⇒ 游戏/第三方 dll **不会**被带进来（实测确认）。
-         下面还加了一道「混进非本 mod 的 dll 就告警」的守卫，
-         防止以后有人给引用去掉了 Private=false 却没人发现。 -->
+  <!-- 保留 SDK 默认 bin 输出，再仅将本项目 DLL 复制到模组 Assemblies。
+       不扫描整个输出目录，避免把游戏、HAR 或 Harmony DLL 随模组发布。
+       About.xml 已在模组目录中，无需复制给自己。 -->
   <Target Name="CopyToCustomDirectory" AfterTargets="Build">
-    <ItemGroup>
-      <MyOutputFiles Include="$(TargetDir)**\*.dll" />
-    </ItemGroup>
-
-    <!-- ★ 守卫：输出目录里混进了游戏/第三方 dll 就告警
-         （CiÇo 提醒过：「output 如果不做剥离会带一堆 unity 自己的，那些必须去掉」） -->
-    <ItemGroup>
-      <_StrayDll Include="@(MyOutputFiles)"
-                 Condition="$([System.String]::Copy('%(Filename)').StartsWith('Unity'))
-                         OR '%(Filename)' == '0Harmony'
-                         OR '%(Filename)' == 'mscorlib'
-                         OR $([System.String]::Copy('%(Filename)').StartsWith('System'))" />
-    </ItemGroup>
-    <Warning Code="BINGUIN004"
-             Condition="'@(_StrayDll)' != ''"
-             Text="输出目录里混进了不该带的 dll：@(_StrayDll)。&#xD;&#xA;  说明某个 &lt;Reference&gt; 少了 &lt;Private&gt;false&lt;/Private&gt;，或某个 PackageReference 少了 ExcludeAssets=runtime。&#xD;&#xA;  这些游戏/第三方 dll **绝不能**跟着 mod 一起发出去。" />
-
-    <Copy SourceFiles="@(MyOutputFiles)"
-          DestinationFolder="$(CustomOutputDir)Assemblies\%(RecursiveDir)"
-          SkipUnchangedFiles="true" />
-
-    <!-- About.xml：优先用工程目录里的（如果有人放了一份），否则用 mod 根目录的 -->
-    <PropertyGroup>
-      <_AboutSrc Condition="Exists('About.xml')">About.xml</_AboutSrc>
-      <_AboutSrc Condition="'$(_AboutSrc)' == '' AND Exists('$(CustomOutputDir)About\About.xml')">$(CustomOutputDir)About\About.xml</_AboutSrc>
-    </PropertyGroup>
-    <Copy SourceFiles="$(_AboutSrc)"
-          DestinationFolder="$(CustomOutputDir)About\"
-          SkipUnchangedFiles="true"
-          Condition="'$(_AboutSrc)' != ''" />
-
-    <Message Importance="high"
-             Text="✅ 已铺到 mod 目录：$(CustomOutputDir)Assemblies\ + About\"
-             Condition="'$(_AboutSrc)' != ''" />
-    <Message Importance="normal"
-             Text="已复制 dll 到 $(CustomOutputDir)Assemblies\（About.xml 未找到，已跳过）"
-             Condition="'$(_AboutSrc)' == ''" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(CustomOutputDir)\Assemblies" SkipUnchangedFiles="true" />
+    <Message Importance="high" Text="已复制 $(TargetFileName) 到 $(CustomOutputDir)\Assemblies" />
   </Target>
 
-  <!-- ============ ⑥ 可选：再顺手复制到游戏 Mods 目录 ============ -->
-  <!-- 打开方式： dotnet build -p:DeployToGame=true
-       默认关（免得在 CI / 别人机器上找不到 Mods 目录就报错）。 -->
-  <Target Name="DeployToGame" AfterTargets="Build" Condition="'$(DeployToGame)' == 'true'">
-    <!-- 用 $(TargetDir)（默认编译输出目录），不是 $(OutputPath) —— 见上面「不要加 OutputPath」的说明 -->
-    <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll"
-          DestinationFolder="$(GameModsDir)\Assemblies"
-          SkipUnchangedFiles="true"
-          Condition="Exists('$(GameModsDir)')" />
-    <Message Importance="high" Text="已复制 $(AssemblyName).dll → $(GameModsDir)\Assemblies"
-             Condition="Exists('$(GameModsDir)')" />
-    <Warning Text="Mods 目录不存在，没复制：$(GameModsDir)" Condition="!Exists('$(GameModsDir)')" />
+  <!-- 可选：-p:DeployToGame=true 更新 GameModsDir 中的 DLL。目标须为已安装的完整模组目录。 -->
+  <Target Name="DeployToGame" AfterTargets="CopyToCustomDirectory" Condition="'$(DeployToGame)' == 'true'">
+    <Error Condition="!Exists('$(GameModsDir)')" Text="部署目录不存在：$(GameModsDir)。请设置 GameModsDir 为完整模组目录。" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GameModsDir)\Assemblies" SkipUnchangedFiles="true" />
   </Target>
-
 </Project>

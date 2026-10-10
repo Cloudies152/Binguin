@@ -62,6 +62,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      # Pin HAR so CI does not silently compile against a changing master branch.
+      - name: 准备 HAR 1.6
+        uses: actions/checkout@v4
+        with:
+          repository: erdelf/AlienRaces
+          ref: ae8412cdb4a047cb1a5d3945bebca44d061da569
+          path: .build-dependencies/HAR
+
       # ── 让 csproj 能找到游戏程序集 ────────────────────────────────────────
       # 思路：用 Krafs.Rimworld.Ref 包把游戏 dll 拉到 NuGet 缓存里，
       #       再按 csproj 期望的目录结构（<RimWorldDir>\RimWorldWin64_Data\Managed）
@@ -156,6 +164,7 @@ jobs:
             -c Release `
             --no-restore `
             -p:RimWorldDir="${{ steps.rimref.outputs.rimworld_dir }}" `
+            -p:HarDir="$env:GITHUB_WORKSPACE/.build-dependencies/HAR" `
             -v:minimal
           if ($LASTEXITCODE -ne 0) { throw "编译失败（退出码 $LASTEXITCODE）" }
 

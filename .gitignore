@@ -30,3 +30,6 @@ Player-prev.log
 # ---- 系统 ----
 Thumbs.db
 desktop.ini
+
+# CI 临时依赖，不提交下载的 HAR 仓库
+.build-dependencies/
