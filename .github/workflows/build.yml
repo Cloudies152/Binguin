@@ -63,57 +63,85 @@ jobs:
           dotnet-version: '8.0.x'
 
       # ── 让 csproj 能找到游戏程序集 ────────────────────────────────────────
-      # Krafs.Rimworld.Ref 把游戏 dll 放在
-      #   <包目录>\ref\<版本>\Assemblies\
-      # 这里把版本号找出来，拼成 RimWorldDir 传进去（csproj 里拼
-      # `<RimWorldDir>\RimWorldWin64_Data\Managed`，所以这里指向包根即可）。
+      # 思路：用 Krafs.Rimworld.Ref 包把游戏 dll 拉到 NuGet 缓存里，
+      #       再按 csproj 期望的目录结构（<RimWorldDir>\RimWorldWin64_Data\Managed）
+      #       造一个目录，用符号链接指过去，最后把路径传给 -p:RimWorldDir=...
+      #
+      # ★ 踩坑（2026-10-10，第一次 CI 就栽在这）：
+      #     `dotnet new classlib --framework net48` 会直接失败 ——
+      #     **.NET 8 SDK 的 classlib 模板不支持 net48**。
+      #   现在改成：写一个极简 .csproj（TargetFramework=net48 + PackageReference），
+      #     跑 `dotnet restore` 把包拉下来即可，不需要真的编译它。
       - name: 准备 RimWorld 参考程序集
         id: rimref
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
 
-          # 1) 先把这个包下到一个临时目录（不进仓库）
-          $pkgDir = Join-Path $env:RUNNER_TEMP 'rimref'
-          New-Item -ItemType Directory -Force -Path $pkgDir | Out-Null
+          # 1) 拉包（只为填充 NuGet 缓存）
+          $proj = Join-Path $env:RUNNER_TEMP 'rimref'
+          New-Item -ItemType Directory -Force -Path $proj | Out-Null
+          @'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <TargetFramework>net48</TargetFramework>
+              <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+            </PropertyGroup>
+            <ItemGroup>
+              <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" />
+            </ItemGroup>
+          </Project>
+          '@ | Set-Content (Join-Path $proj 'rimref.csproj') -Encoding utf8
 
-          dotnet new classlib -n RefDummy -o (Join-Path $env:RUNNER_TEMP 'refdummy') --framework net48 | Out-Null
-          Push-Location (Join-Path $env:RUNNER_TEMP 'refdummy')
-          # ★ 锁定版本 = 本项目对应的 RimWorld 版本（1.6.4871 rev591），
-          #   不用浮动的 latest，免得哪天上游发新版把 CI 编崩。
-          dotnet add package Krafs.Rimworld.Ref --version 1.6.4871 --no-restore | Out-Null
-          dotnet restore | Out-Null
-          Pop-Location
+          dotnet restore (Join-Path $proj 'rimref.csproj') -v:minimal
+          if ($LASTEXITCODE -ne 0) { throw "restore Krafs.Rimworld.Ref 失败（退出码 $LASTEXITCODE）" }
 
-          # 2) 从 NuGet 缓存里找出 ref\<版本>\Assemblies 的实际路径
+          # 2) 从 NuGet 缓存里找出放游戏 dll 的目录
+          # ★★ 踩坑（2026-10-10，CI 第二次失败的原因）：
+          #   一开始按 `-Directory -Filter 'Assemblies'` 找 —— **这个包根本没有
+          #   `Assemblies` 目录**！实测它的真实结构是：
+          #       <包根>\<版本>\ref\net472\Assembly-CSharp.dll
+          #   现在改成：直接找 `Assembly-CSharp.dll`，再从它的位置往上推目录；
+          #   并且**限定在目标版本目录里找**（缓存里可能残留别的版本，
+          #   实测本机就同时有 1.6.4817-beta 和 1.6.4871）。
           $root = Join-Path $env:USERPROFILE '.nuget\packages\krafs.rimworld.ref'
           if (-not (Test-Path $root)) { throw "没找到 Krafs.Rimworld.Ref 包：$root" }
 
-          $asm = Get-ChildItem $root -Recurse -Directory -Filter 'Assemblies' |
-                 Where-Object { Test-Path (Join-Path $_.FullName 'Assembly-CSharp.dll') } |
-                 Select-Object -First 1
-          if (-not $asm) { throw "Krafs.Rimworld.Ref 里找不到 Assembly-CSharp.dll" }
-
-          # ★ 确认拿到的正是 1.6.4871（防止 restore 解析到别的版本）
-          Write-Host "RimWorld 参考程序集：$($asm.FullName)"
-          if ($asm.FullName -notmatch '1\.6\.4871') {
-            Write-Warning "参考程序集版本不是 1.6.4871，请检查：$($asm.FullName)"
+          $verDir = Join-Path $root '1.6.4871'
+          if (-not (Test-Path $verDir)) {
+            throw "包里没有 1.6.4871 版本。实际有：$((Get-ChildItem $root -Directory | ForEach-Object { $_.Name }) -join ', ')"
           }
 
-          # 3) csproj 会去找 <RimWorldDir>\RimWorldWin64_Data\Managed
-          #    ⇒ 造一个符合该结构的目录，用符号链接把 dll 指过去
-          $fakeRw    = Join-Path $env:RUNNER_TEMP 'RimWorld'
-          $fakeMng   = Join-Path $fakeRw 'RimWorldWin64_Data\Managed'
+          $core = Get-ChildItem $verDir -Recurse -Filter 'Assembly-CSharp.dll' -ErrorAction SilentlyContinue |
+                  Select-Object -First 1
+          if (-not $core) {
+            Write-Host "1.6.4871 目录结构："
+            Get-ChildItem $verDir -Recurse -Depth 3 | ForEach-Object { Write-Host ("  " + $_.FullName) }
+            throw "1.6.4871 里找不到 Assembly-CSharp.dll"
+          }
+          $asm = $core.Directory
+          Write-Host "RimWorld 参考程序集：$($asm.FullName)"
+          Write-Host "其中 dll 数：$((Get-ChildItem $asm.FullName -Filter '*.dll').Count)"
+
+          # 3) 造出 csproj 期望的目录结构
+          #    （csproj 会去找 <RimWorldDir>\RimWorldWin64_Data\Managed）
+          # ★ 这里用**复制**而不是符号链接：
+          #   实测符号链接在 `ForEach-Object { try { New-Item ... } catch {...} }` 里
+          #   会因为 `$_.FullName` 在 try 作用域里取不到而整段失败；
+          #   参考程序集总共就几 MB，CI 临时目录复制一下最省事、最不容易出错。
+          $fakeRw  = Join-Path $env:RUNNER_TEMP 'RimWorld'
+          $fakeMng = Join-Path $fakeRw 'RimWorldWin64_Data\Managed'
           New-Item -ItemType Directory -Force -Path $fakeMng | Out-Null
 
-          Get-ChildItem $asm.FullName -Filter '*.dll' | ForEach-Object {
-            $dest = Join-Path $fakeMng $_.Name
-            if (-not (Test-Path $dest)) {
-              try   { New-Item -ItemType SymbolicLink -Path $dest -Target $_.FullName -ErrorAction Stop | Out-Null }
-              catch { Copy-Item $_.FullName $dest -Force }
-            }
+          $files = Get-ChildItem $asm.FullName -Filter '*.dll'
+          foreach ($f in $files) {
+            Copy-Item -LiteralPath $f.FullName -Destination (Join-Path $fakeMng $f.Name) -Force
           }
-          Write-Host "已就绪的 Managed 目录文件数：$((Get-ChildItem $fakeMng -Filter '*.dll').Count)"
+          $have = (Get-ChildItem $fakeMng -Filter '*.dll').Count
+          Write-Host "已就绪 $have 个 dll → $fakeMng"
+          if (-not (Test-Path (Join-Path $fakeMng 'Assembly-CSharp.dll'))) {
+            throw "Assembly-CSharp.dll 没就位"
+          }
 
           "rimworld_dir=$fakeRw" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
