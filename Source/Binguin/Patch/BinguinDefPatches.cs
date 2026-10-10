@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // Def 补丁（静态构造，XML 解析之后执行）
 //
 // 背景：本环境的 GenTypes 类型缓存会在某些 mod 早期触发时固化，
@@ -1478,6 +1478,9 @@ namespace Binguin.Patch
             //    （ThingDef.verbs 会让鱼竿变成远程武器——用户反馈！），
             //    技能 = AbilityDef + CompAbilityEffect（装备时 Notify_Equipped
             //    → pawn.abilities.GainAbility，命令栏显示能力按钮）
+            //    ★★ 2026-10：穿刺的「瞄准 + 直线范围绘制」由
+            //    `Verb_BinguinPierce : Verb_CastAbility` 负责（XML 的
+            //    `<verbClass>` 指向它）；这里只挂施法结算用的 CompAbilityEffect。
             AbilityDef pierceAbility = DefDatabase<AbilityDef>.GetNamedSilentFail("Binguin_AbilityPierce");
             if (pierceAbility == null)
             {

@@ -527,9 +527,13 @@ namespace Binguin.Feature.Diplomacy
             // ★ 威灵炮站定瞄准视觉（v10）：JobDriver 瞄准期间每帧画
             //   瞄准扇形（角度随进度张开 = 蓄力进度条）+ 落点圈
             CompBinguinWillingCannon.DrawAimVisualTick();
-            // ★ 2026-10-09 直钩「穿刺」技能：瞄准时画一条【直线】射程预览
-            //   （替代原版的圆形高亮 —— 那个跟实际射线范围不一致）
-            BinguinPierceAim.DrawAimVisualTick();
+            // ★★★ 2026-10 用户需求：直钩「穿刺」的瞄准改用继承 Verb 的组件
+            //   （`Verb_BinguinPierce : Verb_CastAbility`，override DrawHighlight
+            //   画「施法者 → 准星」直线），预览交给原版 Targeter 每帧回调 verb，
+            //   这里那套「GameComponent 代画」的做法已停用。
+            //   ⇒ `BinguinPierceAim` 与 `Command_BinguinPierce` 整段注释保留在
+            //     `Command_BinguinAbility.cs`，调用点一并注释掉。
+            // BinguinPierceAim.DrawAimVisualTick();
         }
 
         private Pawn diplomat;
