@@ -6,6 +6,13 @@
 //   装备（CompBinguinRod.Notify_Equipped）→ pawn.abilities.GainAbility →
 //   AbilityTracker.GetGizmos 显示能力按钮（近战武器完全不受影响）。
 //   效果 = CompAbilityEffect 子类（静态构造挂到 AbilityDef.comps）。
+//
+// ★★ 2026-10 用户需求：穿刺的「瞄准 + 范围绘制」改由继承 Verb 的组件负责
+//   （`Verb_BinguinPierce : Verb_CastAbility`，见 Verb_BinguinPierce.cs），
+//   AbilityDef 的 `<verbClass>` 指向它。本文件只保留**施法结算**：
+//   `CompAbilityEffect_BinguinPierce.Apply` 走上原版 Ability 管线
+//   （前摇 → 冷却 → 特效 → 伤害），范围格子与 Verb 的预览共用同一份
+//   `Verb_BinguinPierce.LineCells`。
 // ============================================================================
 
 using System.Collections.Generic;
@@ -15,7 +22,8 @@ using Verse;
 
 namespace Binguin.Feature.Rods
 {
-    // 直钩技能：对前方 10 格内所有敌人造成 200% 于武器面板的伤害（Stab）
+    // 直钩技能：沿「施法者 → 准星」这条直线，对路径上所有非友好 pawn 造成
+    // 200% 于武器面板的伤害（Stab）。范围与预览由 Verb_BinguinPierce 给出。
     public class CompAbilityEffect_BinguinPierce : CompAbilityEffect
     {
         // ★ 基类 Valid/CanApplyOn 内部对特定子类型做硬 cast（InvalidCastException，
@@ -38,23 +46,26 @@ namespace Binguin.Feature.Rods
             {
                 return;
             }
-            // ★★ 2026-10-09 用户需求：可以瞄准 pawn 了（不再只能点地板）。
-            //   `LocalTargetInfo.Pawn` 是 `Thing as Pawn`（RimSage 查
-            //   `Verse/LocalTargetInfo.cs` 实证），瞄准 pawn 时 `target.Cell`
-            //   就是那个 pawn 所在的格，所以下面统一取 `.Cell` 即可。
+            Map map = pawn.Map;
+            // ★ 可以瞄准 pawn 了（不再只能点地板）。`LocalTargetInfo.Pawn` 是
+            //   `Thing as Pawn`；瞄准 pawn 时 `target.Cell` 就是那个 pawn 所在的格，
+            //   所以下面统一取 `.Cell` 即可。
             IntVec3 aimCell = target.Cell;
-            // ★★ 方向算法**必须与瞄准预览共用同一份**
-            //   （`BinguinPierceAim.DirectionTo`）—— 否则又会变成
-            //   "看到一条线、实际打另一个方向"。用户报的正是这个问题的观感版本。
-            IntVec3 dir = BinguinPierceAim.DirectionTo(pawn.Position, aimCell);
-            if (dir == IntVec3.Zero)
+
+            // ★★ 范围格子必须与瞄准预览**共用同一份算法**
+            //   （`Verb_BinguinPierce.LineCells`，由 `Verb_BinguinPierce.DrawHighlight`
+            //   同步调用）—— 否则又会变成"看到一条线、实际打另一个方向"。
+            //   射程也取 `Verb.EffectiveRange`（= 预览与射程校验用的同一个值），
+            //   不再把 10 写死在循环里。
+            float range = Verb_BinguinPierce.RangeOf(parent);
+            List<IntVec3> cells = Verb_BinguinPierce.LineCells(pawn.Position, aimCell, range, map);
+            if (cells.Count == 0)
             {
                 return;
             }
 
-            Map map = pawn.Map;
             float panelDamage = PanelDamage(pawn);
-            // ★ 2026-09 性能：伤害乘数在两层循环外只取一次（原来每个命中目标
+            // ★ 2026-09 性能：伤害乘数在循环外只取一次（原来每个命中目标
             //   都要重新查一次 StatDef + 算一次 stat）。
             float damageMult = pawn.GetStatValue(DamageMultStat);
             ThingDef weaponDef = pawn.equipment != null && pawn.equipment.Primary != null ? pawn.equipment.Primary.def : null;
@@ -64,18 +75,14 @@ namespace Binguin.Feature.Rods
                 damageDef = DamageDefOf.Cut;
             }
 
-            // ★ 特效：施法者脚下尘土 + 直线路径冰屑拖尾
+            // ★ 特效：施法者脚下尘土 + 直线路径冰屑拖尾（冰刺飞出去的表现）
             FleckMaker.ThrowDustPuff(pawn.Position.ToVector3Shifted(), map, 1.2f);
             FleckDef iceFleck = DefDatabase<FleckDef>.GetNamedSilentFail("Binguin_IceDust");
             int hitCount = 0;
-            for (int i = 1; i <= 10; i++)
+            for (int i = 0; i < cells.Count; i++)
             {
-                IntVec3 cell = pawn.Position + dir * i;
-                if (!cell.InBounds(map))
-                {
-                    break;
-                }
-                if (i % 2 == 0)
+                IntVec3 cell = cells[i];
+                if ((i + 1) % 2 == 0)
                 {
                     if (iceFleck != null)
                     {
@@ -94,7 +101,8 @@ namespace Binguin.Feature.Rods
                     {
                         continue;
                     }
-                    // ★ 目标：所有敌人 + 中立生物（含动物），不打友军与盟友
+                    // ★ 目标：路径上的所有【非友好】pawn —— 排除玩家派系与玩家盟友，
+                    //   其余（敌人 / 中立生物 / 动物）全打。
                     if (enemy.Faction == pawn.Faction)
                     {
                         continue;

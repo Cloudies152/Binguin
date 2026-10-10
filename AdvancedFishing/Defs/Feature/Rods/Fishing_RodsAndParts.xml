@@ -528,21 +528,30 @@
     <label>穿刺</label>
     <description>对前方 10 格内所有敌人造成 200% 于武器面板的伤害。冷却 10 秒。</description>
     <cooldownTicksRange>600~600</cooldownTicksRange>
-    <!-- ★★ 2026-10-09 用户需求：「让它瞄准的时候，显示范围变成一条直线，
-         然后可以瞄准 pawn 而不是地板」
-         ⇒ ① 换成自定义 command：瞄准时由 GameComponent 每帧画【直线】射程预览，
-              不再用原版那个跟实际范围对不上的圆（XML 画不了，必须代码）
-              见 `Source/Command_BinguinAbility.cs`
-              挂载方式：`Ability.cs:1047` 用
-                `Activator.CreateInstance(def.gizmoClass, this, pawn)`
-         ⇒ ② `canTargetPawns` 改成 **true**（原来是 false ⇒ 只能点地板）。
-              `canTargetLocations` 保持 true ⇒ 地板照样能点，两种都行。
-         ★ 注意：`compClass` 仍然用原版可实例化类占位，效果类由静态构造挂载
-           （XML 零自定义类型原则）—— 只有 gizmoClass 是例外，因为 gizmo 不需要
-           XML 序列化字段，只是"按钮行为"，RimWorld 就是用 Activator 直接 new 的。 -->
-    <gizmoClass>Binguin.Feature.Rods.Command_BinguinPierce</gizmoClass>
+    <!-- ★★ 2026-10 用户需求：瞄准改成「继承 Verb 的组件」。
+         ⇒ ① `verbClass` 指向自定义的 `Verb_BinguinPierce`
+              （继承 `Verb_CastAbility`，override `DrawHighlight`：
+               画【施法范围圈】（原版白色那圈，最大射程）
+               + 【施法者 → 准星】的一条直线，
+               并把沿线的每一格整格高亮 = 这一发实际命中的格）。
+               挂载链路（rw16 反编译实证）：
+                 `VerbTracker.InitVerbsFromZero()` 用
+                   `Activator.CreateInstance(verbProperties.verbClass)` 造 Verb；
+                 `Ability.Initialize()` 里
+                   `if (VerbTracker.PrimaryVerb is IAbilityVerb av) av.Ability = this;`
+          ⇒ ② 不再写 `gizmoClass`：回到原版 `Command_Ability`
+              （`AbilityDef.gizmoClass` 默认值就是它，IL 实证），
+              它的 `ProcessInput` 会自己
+                `Find.Targeter.BeginTargeting(ability.verb)`，
+              而 `Targeter.TargeterUpdate()` 每帧调
+                `verb.DrawHighlight(CurrentTargetUnderMouse(true))`
+              —— 预览由 verb 负责，所以原来那套
+              「自定义 gizmoClass + GameComponent 每帧画」已停用
+              （`Command_BinguinAbility.cs` 里整段注释保留）。
+          ⇒ ③ `canTargetPawns` 保持 **true** ⇒ 准星能框住 pawn；
+              `canTargetLocations` 也保持 true ⇒ 地板照样能点，两种都行。 -->
     <verbProperties>
-      <verbClass>Verb_CastAbility</verbClass>
+      <verbClass>Binguin.Feature.Rods.Verb_BinguinPierce</verbClass>
       <range>10</range>
       <warmupTime>0.2</warmupTime>
       <targetParams>

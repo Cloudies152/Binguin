@@ -1,5 +1,21 @@
 // ============================================================================
-// 钓竿技能 · 自定义命令 gizmo + 直线瞄准预览（2026-10-09 用户需求）
+// 钓竿技能 · 【已停用】自定义命令 gizmo + 直线瞄准预览（2026-10-09）
+//
+// ★★★ 2026-10 用户需求：穿刺的瞄准改成「继承 Verb 的组件」。
+//   ⇒ 本文件的 `BinguinPierceAim`（瞄准状态 + 每帧手绘直线）与
+//     `Command_BinguinPierce`（自定义 gizmo）**整段注释保留**，不再使用。
+//   ⇒ 现在的实现见 `Verb_BinguinPierce.cs`：
+//       · AbilityDef.verbProperties.verbClass = Binguin.Feature.Rods.Verb_BinguinPierce
+//       · 该 Verb 继承 Verb_CastAbility，override DrawHighlight 画直线；
+//       · AbilityDef 不再写 gizmoClass（回到原版 Command_Ability），
+//         原版 `Command_Ability.ProcessInput` 会自己
+//         `Find.Targeter.BeginTargeting(ability.verb)`，
+//         而 `Targeter.TargeterUpdate` 每帧调 `verb.DrawHighlight(...)`
+//         —— 预览由 verb 自己负责，不需要 GameComponent 代劳。
+//   ⇒ 原来「GameComponent 每帧画」的调用点也已从
+//     `GameComponent_BinguinDiplomacy.cs` 注释掉。
+//
+// ---- 以下是停用前的原始实现（保留备查）----
 //
 // ★ 用户原话：
 //   「你看一下能不能修复一下直钩钓竿的穿刺技能，让它瞄准的时候，显示范围变成一条
@@ -41,6 +57,7 @@ using Verse;
 
 namespace Binguin.Feature.Rods
 {
+#if false // ★★★ 2026-10 停用：改用 Verb_BinguinPierce（继承 Verb），见文件头说明
     /// <summary>
     /// 穿刺瞄准状态 + 直线预览绘制。
     /// ★ 由 `Command_BinguinPierce` 置位，`GameComponent_BinguinDiplomacy`
@@ -309,4 +326,5 @@ namespace Binguin.Feature.Rods
             }
         }
     }
+#endif // ★★★ 2026-10 停用：改用 Verb_BinguinPierce（继承 Verb），见文件头说明
 }
