@@ -70,13 +70,21 @@
 2. 将整个 `Binguin_Race_Mod` 文件夹复制到 `RimWorld/Mods/` 下。
 3. 游戏内「Mods」列表启用本 MOD（排在 HAR2 之后，`loadAfter` 已声明）。
 
-### 编译 C#
+### 编译 C#（三种方式随便挑一种，结果一样）
+
 ```powershell
+# ① Visual Studio / Rider：双击仓库根目录的 Binguin.Race.sln → 生成解决方案
+# ② 命令行：
 cd Binguin_Race_Mod\Source
+dotnet build
+dotnet build -p:DeployToGame=true          # 编译并自动复制到游戏目录
+# ③ 老办法（什么都不用装）：
 .\build.ps1 -GameDir "你的 RimWorld 安装目录"
 ```
-> 使用 Windows 自带的 .NET Framework csc.exe，无需 VS。产物为 `Assemblies\Binguin.dll`。
+
+> 产物都是 `Assemblies\Binguin.dll`。
 > 仓库里**已带编译好的 DLL**，clone 下来直接玩即可；只有改了 `Source/*.cs` 才需要重新编译。
+> 📄 游戏目录怎么指定、常见报错 → [任务/参考/编译方式.md](任务/参考/编译方式.md)
 
 ## 4. 兼容性说明（全部 DLC）
 

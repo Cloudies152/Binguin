@@ -36,6 +36,33 @@
 
 ---
 
+## 💻 写 C# 的看这里：两种编译方式，随便挑
+
+| 方式 | 怎么用 | 需要装什么 |
+|---|---|---|
+| **Visual Studio / Rider**（推荐） | 双击仓库根目录的 **`Binguin.Race.sln`** → 生成解决方案 | VS 2022 或 Rider |
+| **命令行** | `dotnet build` | .NET SDK |
+| **老办法** | `Source\build.ps1` | **什么都不用装**（靠系统自带 csc.exe） |
+
+**三条路等价** —— 引用同一批 dll、输出同一个位置（`Assemblies\Binguin.dll`）。
+
+> 🆕 **2026-10-10 新增**：`.sln` / `.csproj` / GitHub 自动编译。
+> 以前只有 `build.ps1`（PowerShell），很多人不习惯，现在用 VS 打开就能编。
+> 详细说明（含"游戏目录怎么指定"）→ [任务/参考/编译方式.md](任务/参考/编译方式.md)
+
+### 编译完记得部署
+
+`Assemblies\Binguin.dll` 要复制到游戏目录的对应位置才会生效：
+
+```
+...\RimWorld\Mods\Binguin_Race_Mod\Assemblies\Binguin.dll
+```
+
+VS 里可以加个生成后事件，或者用 `Tools\Deploy-BinguinToGame.ps1`。
+也可以 `dotnet build -p:DeployToGame=true`（自动复制，见编译方式文档）。
+
+---
+
 ## 交东西的方式
 
 最省事：**GitHub 网页直接改**（贴图也能拖进去）

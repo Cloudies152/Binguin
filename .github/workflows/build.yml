@@ -1,0 +1,189 @@
+name: 编译校验
+
+# ============================================================================
+# 冰鹅族 Binguin Race —— 自动编译 + 校验
+#
+# 什么时候跑：
+#   · 推到 main 分支
+#   · 任何人发 Pull Request
+#   · 也可以在 Actions 页面手动点「Run workflow」
+#
+# 它做什么：
+#   1) 在 Windows 上还原 + 编译（用仓库里的 Binguin.Race.csproj）
+#   2) ★ 校验编译产物：确认 Binguin.dll 真的生成了、且里面的类型数是合理的
+#      （防「编译显示成功但产物是空的/旧的」这类假成功）
+#   3) 把 Binguin.dll 存成 Artifact，可以直接从 Actions 页面下载
+#
+# ---------------------------------------------------------------------------
+# ★★ 为什么 CI 里要额外准备 RimWorld 的 dll
+#    mod 必须引用游戏的 Assembly-CSharp.dll / UnityEngine.*.dll 才能编译，
+#    而这些是**有版权的游戏文件**，不能放进这个仓库。
+#    ⇒ 这里从 nuget.org 拉公开的 `Krafs.Rimworld.Ref` 包（只含引用用的
+#      「参考程序集」，是 RimWorld mod 社区的标准做法）。
+#    ⇒ **别人自己电脑上编译不需要这个包** —— 直接用本地装好的游戏即可
+#      （csproj 会自动探测，或传 -p:RimWorldDir=...）。
+#
+# ★★ 为什么是 windows-latest
+#    mod 目标是 .NET Framework，而 .NET Framework 的编译/引用
+#    只在 Windows 上开箱可用。用 ubuntu 要额外折腾 Mono，没必要。
+# ============================================================================
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      # 只改文档 / 贴图时不必跑编译
+      - '**.md'
+      - '任务/**'
+      - 'About/**'
+      - 'Languages/**'
+      - 'Textures/**'
+      - 'Sounds/**'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+# 同一个分支上只保留最新一次运行（推得快时不必排队跑旧的）
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: 编译 Binguin.dll
+    runs-on: windows-latest
+
+    steps:
+      - name: 取出仓库
+        uses: actions/checkout@v4
+
+      - name: 装 .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ── 让 csproj 能找到游戏程序集 ────────────────────────────────────────
+      # Krafs.Rimworld.Ref 把游戏 dll 放在
+      #   <包目录>\ref\<版本>\Assemblies\
+      # 这里把版本号找出来，拼成 RimWorldDir 传进去（csproj 里拼
+      # `<RimWorldDir>\RimWorldWin64_Data\Managed`，所以这里指向包根即可）。
+      - name: 准备 RimWorld 参考程序集
+        id: rimref
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          # 1) 先把这个包下到一个临时目录（不进仓库）
+          $pkgDir = Join-Path $env:RUNNER_TEMP 'rimref'
+          New-Item -ItemType Directory -Force -Path $pkgDir | Out-Null
+
+          dotnet new classlib -n RefDummy -o (Join-Path $env:RUNNER_TEMP 'refdummy') --framework net48 | Out-Null
+          Push-Location (Join-Path $env:RUNNER_TEMP 'refdummy')
+          # ★ 锁定版本 = 本项目对应的 RimWorld 版本（1.6.4871 rev591），
+          #   不用浮动的 latest，免得哪天上游发新版把 CI 编崩。
+          dotnet add package Krafs.Rimworld.Ref --version 1.6.4871 --no-restore | Out-Null
+          dotnet restore | Out-Null
+          Pop-Location
+
+          # 2) 从 NuGet 缓存里找出 ref\<版本>\Assemblies 的实际路径
+          $root = Join-Path $env:USERPROFILE '.nuget\packages\krafs.rimworld.ref'
+          if (-not (Test-Path $root)) { throw "没找到 Krafs.Rimworld.Ref 包：$root" }
+
+          $asm = Get-ChildItem $root -Recurse -Directory -Filter 'Assemblies' |
+                 Where-Object { Test-Path (Join-Path $_.FullName 'Assembly-CSharp.dll') } |
+                 Select-Object -First 1
+          if (-not $asm) { throw "Krafs.Rimworld.Ref 里找不到 Assembly-CSharp.dll" }
+
+          # ★ 确认拿到的正是 1.6.4871（防止 restore 解析到别的版本）
+          Write-Host "RimWorld 参考程序集：$($asm.FullName)"
+          if ($asm.FullName -notmatch '1\.6\.4871') {
+            Write-Warning "参考程序集版本不是 1.6.4871，请检查：$($asm.FullName)"
+          }
+
+          # 3) csproj 会去找 <RimWorldDir>\RimWorldWin64_Data\Managed
+          #    ⇒ 造一个符合该结构的目录，用符号链接把 dll 指过去
+          $fakeRw    = Join-Path $env:RUNNER_TEMP 'RimWorld'
+          $fakeMng   = Join-Path $fakeRw 'RimWorldWin64_Data\Managed'
+          New-Item -ItemType Directory -Force -Path $fakeMng | Out-Null
+
+          Get-ChildItem $asm.FullName -Filter '*.dll' | ForEach-Object {
+            $dest = Join-Path $fakeMng $_.Name
+            if (-not (Test-Path $dest)) {
+              try   { New-Item -ItemType SymbolicLink -Path $dest -Target $_.FullName -ErrorAction Stop | Out-Null }
+              catch { Copy-Item $_.FullName $dest -Force }
+            }
+          }
+          Write-Host "已就绪的 Managed 目录文件数：$((Get-ChildItem $fakeMng -Filter '*.dll').Count)"
+
+          "rimworld_dir=$fakeRw" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: 还原
+        run: dotnet restore Binguin.Race.sln
+
+      - name: 编译
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          dotnet build Binguin.Race.sln `
+            -c Release `
+            --no-restore `
+            -p:RimWorldDir="${{ steps.rimref.outputs.rimworld_dir }}" `
+            -v:minimal
+          if ($LASTEXITCODE -ne 0) { throw "编译失败（退出码 $LASTEXITCODE）" }
+
+      # ── 校验产物 ─────────────────────────────────────────────────────────
+      # ★ 这一步是**故意加的**：光是 "dotnet build 成功" 不能说明产物是对的
+      #   （可能引用没进去、可能编出空壳）。这里直接读元数据核实。
+      - name: 校验编译产物
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dll = 'Assemblies\Binguin.dll'
+          if (-not (Test-Path $dll)) { throw "没有生成 $dll" }
+
+          $size = (Get-Item $dll).Length
+          Write-Host "产物大小：$([Math]::Round($size/1KB,1)) KB"
+          if ($size -lt 100KB) { throw "产物太小（$size 字节），肯定不对" }
+
+          # 用 System.Reflection.Metadata 读类型表（不加载依赖，避开 Unity 程序集）
+          $proj = Join-Path $env:RUNNER_TEMP 'verify'
+          New-Item -ItemType Directory -Force -Path $proj | Out-Null
+          @'
+          <Project Sdk="Microsoft.NET.Sdk">
+            <PropertyGroup>
+              <OutputType>Exe</OutputType>
+              <TargetFramework>net8.0</TargetFramework>
+            </PropertyGroup>
+          </Project>
+          '@ | Set-Content (Join-Path $proj 'v.csproj') -Encoding utf8
+          @'
+          using System; using System.Linq; using System.Reflection.Metadata;
+          using System.Reflection.PortableExecutable;
+          class V {
+            static int Main(string[] a) {
+              using var pe = new PEReader(System.IO.File.OpenRead(a[0]));
+              var md = pe.GetMetadataReader();
+              int total = 0, mod = 0;
+              foreach (var h in md.TypeDefinitions) {
+                var td = md.GetTypeDefinition(h);
+                string ns = md.GetString(td.Namespace);
+                string nm = md.GetString(td.Name);
+                if (nm.StartsWith("<") || nm.StartsWith("__")) continue;
+                total++;
+                if (ns.StartsWith("Binguin") || nm.StartsWith("Binguin")) mod++;
+              }
+              Console.WriteLine($"真实类型 {total} 个，其中 Binguin.* {mod} 个");
+              if (mod < 150) { Console.WriteLine("!! Binguin 类型太少，产物可疑"); return 1; }
+              return 0;
+            }
+          }
+          '@ | Set-Content (Join-Path $proj 'Program.cs') -Encoding utf8
+          dotnet run --project $proj -c Release -- $dll
+          if ($LASTEXITCODE -ne 0) { throw "产物校验不通过" }
+
+      - name: 保存 Binguin.dll
+        uses: actions/upload-artifact@v4
+        with:
+          name: Binguin-dll
+          path: Assemblies/Binguin.dll
+          if-no-files-found: error
