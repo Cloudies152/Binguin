@@ -72,8 +72,8 @@
 | `About/` | `About.xml` + 封面图 | Mod 的"身份证"（名字、作者、版本、依赖） |
 | `Defs/` | **46 个 `.xml`，分 13 个子目录** | **游戏内容定义**：物品、建筑、武器、服装、科技…（RimWorld 用 XML 描述游戏内容） |
 | `AdvancedFishing/` | 17 个文件 | **钓鱼子模块**（钓竿、配件、鱼池、蟹笼）。装了 Odyssey DLC 才加载 |
-| `Source/` | 89 个 `.cs` | **C# 源代码**（XML 做不到的逻辑，比如外交事件、技能、UI） |
-| `Assemblies/` | `Binguin.dll` | `Source/` 编译出来的成品。**已自带，不用自己编译** |
+| `Source/` | 89 个 `.cs` | **C# 源代码**（XML 做不到的逻辑，比如外交事件、技能、UI）。工程在 `Source/Binguin/` |
+| `Assemblies/` | （空的） | **编译产物落点**。`Binguin.dll` **不进 git**，clone 完要自己编译一次（约 10 秒） |
 | `Textures/` | 100 个 `.png` | **全部贴图**（人物、建筑、武器、服装、UI 图标） |
 | `Languages/` | 30 个 `.xml` | **文案**（中文 / 英文界面文字、物品名、说明） |
 | `Sounds/` | `GuGuGaGa.mp3` | 音效（企鹅飞踢的发射音） |

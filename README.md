@@ -72,18 +72,20 @@
 
 ### 编译 C#（三种方式随便挑一种，结果一样）
 
+> ⚠️ **必须先编译一次** —— 仓库里**不带** `Assemblies\Binguin.dll`（编译产物不进 git）。
+
 ```powershell
 # ① Visual Studio / Rider：双击 Source\Binguin\Binguin.Race.sln → 生成解决方案
 # ② 命令行：
-cd Binguin_Race_Mod\Source
+cd Binguin_Race_Mod\Source\Binguin
 dotnet build
 dotnet build -p:DeployToGame=true          # 编译并自动复制到游戏目录
 # ③ 老办法（什么都不用装）：
+cd Binguin_Race_Mod\Source
 .\build.ps1 -GameDir "你的 RimWorld 安装目录"
 ```
 
-> 产物都是 `Assemblies\Binguin.dll`。
-> 仓库里**已带编译好的 DLL**，clone 下来直接玩即可；只有改了 `Source/*.cs` 才需要重新编译。
+> 产物都是 `Assemblies\Binguin.dll`（编译完自动铺过去，不用手动复制）。
 > 📄 游戏目录怎么指定、常见报错 → [任务/参考/编译方式.md](任务/参考/编译方式.md)
 
 ## 4. 兼容性说明（全部 DLC）

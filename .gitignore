@@ -2,6 +2,11 @@
 obj/
 bin/
 
+# 编译产物：留在本地，不进 git（作者 2026-10-10 要求）
+# 配合 csproj 的 CopyToCustomDirectory —— 它会把编好的 dll 铺到这个目录
+Assemblies/Binguin.dll
+Assemblies/*.pdb
+
 # ---- IDE 配置（★ 2026-10-08：程序员用 Rider，交付包里混进了 Source\.idea\）----
 .idea/
 Source/.idea/
@@ -14,9 +19,9 @@ Player.log
 Player-prev.log
 *.zip
 
+# ---- Windows 快捷方式（协作者不小心拖进来的）----
+*.lnk
+
 # ---- 系统 ----
 Thumbs.db
 desktop.ini
-
-# ---- Windows 快捷方式（协作者不小心拖进来的）----
-*.lnk
