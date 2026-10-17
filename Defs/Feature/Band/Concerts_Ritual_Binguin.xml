@@ -153,7 +153,7 @@
     <defName>BinguinConcertOutcome</defName>
     <description>依仪式质量，参与者在 {MOODDAYS} 天内获得 {MINMOOD}~{MAXMOOD} 心情。</description>
     <workerClass>RitualOutcomeEffectWorker_FromQuality</workerClass>
-    <startingQuality>0.5</startingQuality>
+    <startingQuality>0</startingQuality>
     <minQuality>0</minQuality>
     <maxQuality>1</maxQuality>
     <givesDevelopmentPoints>false</givesDevelopmentPoints>
@@ -168,7 +168,14 @@
          ⇒ null 列表直接 NullReferenceException，窗口每帧报错画不出来。
          （原版 85% 的 RitualOutcomeEffectDef 都写 <comps>，就是因为不写会崩。）
          其他 List 字段同理，一并给空列表。 -->
-    <comps />
+    <!-- ★ 2026-10-17：三个自定义 comp ⇒ 仪式界面的"效果乘数"会显示这三条，
+         加起来正好等于总质量（startingQuality 已设为 0）。
+         权重依据作者要求：人数 30% / 艺术总和 50% / 灯光 20%。 -->
+    <comps>
+      <li Class="Binguin.Feature.Band.RitualOutcomeComp_BinguinPersonnel, Binguin" />
+      <li Class="Binguin.Feature.Band.RitualOutcomeComp_BinguinArtistic, Binguin" />
+      <li Class="Binguin.Feature.Band.RitualOutcomeComp_BinguinLights, Binguin" />
+    </comps>
     <!-- ★ 2026-10-17：`outcomeChances` 也**不能空**。
          仪式界面的“预计效果 / 心情”就是从这里算出来的
          （RitualOutcomeEffectWorker_FromQuality 按质量在这些条目里选）。
