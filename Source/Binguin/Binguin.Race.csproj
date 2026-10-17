@@ -31,8 +31,17 @@
        各默认值只在属性为空时设置，避免覆盖协作者的本机配置。 -->
   <Import Project="Binguin.local.props" Condition="Exists('Binguin.local.props')" />
   <PropertyGroup>
-    <ManagedDir Condition="'$(ManagedDir)' == '' and '$(RimWorldDir)' != ''">$(RimWorldDir)\RimWorldWin64_Data\Managed</ManagedDir>
-    <HarAssemblyPath Condition="'$(HarAssemblyPath)' == '' and '$(HarDir)' != ''">$(HarDir)\1.6\Assemblies\AlienRace.dll</HarAssemblyPath>
+    <!-- ★ 2026-10-11：兼容 1.6 与 1.7 两种安装布局。
+         1.6 及以前：引用程序集在 <游戏根>\RimWorldWin64_Data\Managed\
+         1.7（Waylith 新引擎）：没有 RimWorldWin64_Data，Assembly-CSharp.dll
+           和 UnityStubs.dll 都在【游戏根目录】。
+         两级 Condition：先试旧的 Managed 目录，不存在就退回游戏根。 -->
+    <ManagedDir Condition="'$(ManagedDir)' == '' and '$(RimWorldDir)' != '' and Exists('$(RimWorldDir)\RimWorldWin64_Data\Managed')">$(RimWorldDir)\RimWorldWin64_Data\Managed</ManagedDir>
+    <ManagedDir Condition="'$(ManagedDir)' == '' and '$(RimWorldDir)' != ''">$(RimWorldDir)</ManagedDir>
+    <!-- 1.7 用 UnityStubs.dll 一次性提供 UnityEngine / Unity.Mathematics 全部类型 -->
+    <UsesUnityStubs Condition="Exists('$(ManagedDir)\UnityStubs.dll')">true</UsesUnityStubs>
+    <HarAssemblyPath Condition="'$(HarAssemblyPath)' == '' and '$(HarDir)' != '' and Exists('$(HarDir)\1.7\Assemblies\AlienRace.dll')">$(HarDir)\1.7\Assemblies\AlienRace.dll</HarAssemblyPath>
+    <HarAssemblyPath Condition="'$(HarAssemblyPath)' == '' and '$(HarDir)' != '' and '$(HarAssemblyPath)' == ''">$(HarDir)\1.6\Assemblies\AlienRace.dll</HarAssemblyPath>
     <CustomOutputDir Condition="'$(CustomOutputDir)' == ''">$(MSBuildProjectDirectory)\..\..\</CustomOutputDir>
     <GameModsDir Condition="'$(GameModsDir)' == ''">$(CustomOutputDir)</GameModsDir>
   </PropertyGroup>
@@ -44,6 +53,29 @@
       <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <!-- ★ 1.7（Waylith）：Unity 被移出游戏本体，由 UnityStubs.dll 提供兼容层。
+       实测该 DLL 含 UnityEngine 命名空间下的 Vector2/3、Color、Rect、Mathf、
+       Texture2D、Font、GUI、Material、Shader、Matrix4x4、Quaternion、Time
+       以及 Unity.Mathematics —— 本模组用到的类型全部覆盖。
+       ⇒ 1.7 下**不需要安装 Unity**，只引用这一个 DLL 即可。 -->
+  <ItemGroup Condition="'$(UsesUnityStubs)' == 'true'">
+    <Reference Include="UnityStubs">
+      <HintPath>$(ManagedDir)\UnityStubs.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- ★ 1.7 的渲染层搬到了 Waylith（`Material` / `DrawPropertyBlock`
+         等类型定义在 Waylith.dll 里，UnityStubs 只是转发声明）。
+         缺它会在 `Comp_BinguinBoardDraw` / `BandVisitFlow` 报 CS0012。 -->
+    <Reference Include="Waylith">
+      <HintPath>$(ManagedDir)\Waylith.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- ★ 1.6 及以前：Unity 是游戏自带的若干模块 DLL（逐个引用）。 -->
+  <ItemGroup Condition="'$(UsesUnityStubs)' != 'true'">
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
@@ -64,6 +96,9 @@
       <HintPath>$(ManagedDir)\Unity.Mathematics.dll</HintPath>
       <Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="AlienRace">
       <HintPath>$(HarAssemblyPath)</HintPath>
       <Private>false</Private>

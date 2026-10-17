@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <!-- ============================================================================
        武器名覆盖（2026-10-08 用户需求）
@@ -614,6 +614,35 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_CombinedRaid                    >Frostfang has launched a combined raid of [{0}] and [{1}]!</Binguin_CombinedRaid                    >
   <Binguin_Concert_EnemyMoved              >The raiders are moved by the music and decide to withdraw.</Binguin_Concert_EnemyMoved              >
   <Binguin_Concert_EnemyWatching           >The binguin concert is in full swing. The raiders hear it from afar and decide to wait and see.</Binguin_Concert_EnemyWatching           >
+  <!-- ★ 2026-10-11 self-hosted concert (scheduled) -->
+  <Binguin_ConcertSong_NoSkill             >This pawn has no skill data and cannot perform.</Binguin_ConcertSong_NoSkill             >
+  <Binguin_ConcertSong_LevelTooLow         >Artistic skill too low (needs {0}, has {1}).</Binguin_ConcertSong_LevelTooLow         >
+  <Binguin_ConcertSong_Label               >Song</Binguin_ConcertSong_Label               >
+  <Binguin_ConcertSong_None                >(no songs available)</Binguin_ConcertSong_None                >
+  <Binguin_ConcertVenue_NoMic              >The venue has no microphone.</Binguin_ConcertVenue_NoMic              >
+  <Binguin_ConcertVenue_TooFewInstruments  >Too few instruments (need at least 1 microphone and 2 other instruments).</Binguin_ConcertVenue_TooFewInstruments  >
+  <Binguin_ConcertVenue_Unreachable        >The lead singer's spot cannot be reached.</Binguin_ConcertVenue_Unreachable        >
+  <Binguin_ConcertVenue_OK                 >Venue is valid: {0} instruments, seating for {1}.</Binguin_ConcertVenue_OK                 >
+  <Binguin_ConcertSetup_Gizmo              >Prepare concert</Binguin_ConcertSetup_Gizmo              >
+  <Binguin_ConcertSetup_GizmoDesc          >Prepare a concert here: pick a lead singer and musicians, choose a song, and set the date. Afterwards, invite other factions from the comms console.</Binguin_ConcertSetup_GizmoDesc          >
+  <Binguin_ConcertSetup_Disabled           >Invalid venue: {0}</Binguin_ConcertSetup_Disabled           >
+  <Binguin_ConcertSetup_AlreadyBooked      >A concert is already scheduled in {0} day(s). Cancel it or wait for it to finish.</Binguin_ConcertSetup_AlreadyBooked      >
+  <Binguin_ConcertSetup_Title              >Prepare concert</Binguin_ConcertSetup_Title              >
+  <Binguin_ConcertSetup_LeadSinger         >Lead singer (required)</Binguin_ConcertSetup_LeadSinger         >
+  <Binguin_ConcertSetup_Musicians          >Musicians (optional)</Binguin_ConcertSetup_Musicians          >
+  <Binguin_ConcertSetup_Days               >Scheduled date</Binguin_ConcertSetup_Days               >
+  <Binguin_ConcertSetup_DaysValue          >in {0} day(s)</Binguin_ConcertSetup_DaysValue          >
+  <Binguin_ConcertSetup_Confirm            >Schedule this concert</Binguin_ConcertSetup_Confirm            >
+  <Binguin_ConcertSetup_Cancel             >Cancel</Binguin_ConcertSetup_Cancel             >
+  <Binguin_ConcertSetup_LeadLost           >The lead singer can no longer perform; the concert was cancelled.</Binguin_ConcertSetup_LeadLost           >
+  <Binguin_ConcertSetup_Booked             >The concert is scheduled in {0} day(s) ({1}). It will start automatically. Meanwhile, invite other factions from the comms console.</Binguin_ConcertSetup_Booked             >
+  <Binguin_ConcertSetup_NoSongs            >No songs defined yet - check Defs/Feature/Band/Concerts_Songs_Binguin.xml.</Binguin_ConcertSetup_NoSongs            >
+  <Binguin_ConcertInvite_Menu               >Concert invitation ({0})</Binguin_ConcertInvite_Menu               >
+  <Binguin_ConcertInvite_MenuDesc          >Invite {0} to send guests to watch the concert. They will pay for their tickets.</Binguin_ConcertInvite_MenuDesc          >
+  <Binguin_ConcertInvite_Sent              >A concert invitation has been sent to {0}; they are considering it.</Binguin_ConcertInvite_Sent              >
+  <Binguin_ConcertInvite_Accepted          >{0} accepted the invitation and will send {1} guests.</Binguin_ConcertInvite_Accepted          >
+  <Binguin_ConcertInvite_Declined          >{0} politely declined the concert invitation.</Binguin_ConcertInvite_Declined          >
+  <Binguin_ConcertInvite_NoBooking         >(prepare a concert and set a date first)</Binguin_ConcertInvite_NoBooking         >
   <Binguin_ResumeRod_NoJobDef              >Cannot continue assembly (job def not found).</Binguin_ResumeRod_NoJobDef              >
   <Binguin_Ticket_Dropped                  > silver (dropped = {0})</Binguin_Ticket_Dropped                  >
   <Binguin_Ticket_Income                   >Concert ticket income: {0} silver ({1} viewers x {2} silver x venue factor {3})</Binguin_Ticket_Income                   >
@@ -629,4 +658,18 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_Weather_Snowstorm               >Snowstorm</Binguin_Weather_Snowstorm               >
   <Binguin_Weather_Thunderstorm            >Thunderstorm</Binguin_Weather_Thunderstorm            >
   <Binguin_WorkOnRod_PartsIncomplete       >This rod is still missing attachments and cannot be worked on.</Binguin_WorkOnRod_PartsIncomplete       >
+  <Binguin_ConcertSelf_Quality_Terrible      >Terrible</Binguin_ConcertSelf_Quality_Terrible      >
+  <Binguin_ConcertSelf_Quality_Boring        >Underwhelming</Binguin_ConcertSelf_Quality_Boring        >
+  <Binguin_ConcertSelf_Quality_Fun           >Great</Binguin_ConcertSelf_Quality_Fun           >
+  <Binguin_ConcertSelf_Quality_Unforgettable >Unforgettable</Binguin_ConcertSelf_Quality_Unforgettable >
+  <Binguin_ConcertArrived_Title              >Binguin concert is ready</Binguin_ConcertArrived_Title              >
+  <Binguin_ConcertArrived_Text               >Lead singer {0}, {1} musicians and all colonists are on site.\nSet list: {2}\n\nClick "Start concert" on the microphone to begin.\nIf you do not start within 6 hours, the concert is cancelled automatically.</Binguin_ConcertArrived_Text               >
+  <Binguin_ConcertSetup_StartNow             >Start concert</Binguin_ConcertSetup_StartNow             >
+  <Binguin_ConcertSetup_StartNowDesc         >Everyone is on site (waiting {0} hours). Click to begin.</Binguin_ConcertSetup_StartNowDesc         >
+  <Binguin_ConcertSetup_TimeoutCancelled     >No concert started within 6 hours; it has been cancelled.</Binguin_ConcertSetup_TimeoutCancelled     >
+  <Binguin_ConcertSetup_CancelBooking        >Cancel concert</Binguin_ConcertSetup_CancelBooking        >
+  <Binguin_ConcertSetup_CancelBookingDesc    >Cancel the concert that is already scheduled.</Binguin_ConcertSetup_CancelBookingDesc    >
+  <Binguin_ConcertSetup_Edit                 >Reschedule / change lineup</Binguin_ConcertSetup_Edit                 >
+  <Binguin_ConcertSetup_EditDesc             >Still {0} day(s) away; you can pick people and a date again.</Binguin_ConcertSetup_EditDesc             >
+  <Binguin_ConcertSetup_Cooldown             >The last concert just ended; {0} more day(s) of cooldown.</Binguin_ConcertSetup_Cooldown             >
 </LanguageData>

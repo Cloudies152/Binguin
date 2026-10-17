@@ -26,6 +26,7 @@ using Verse;
 using Verse.AI;
 
 using Binguin.Feature.Appearance;
+using Binguin.Feature.Band;
 using Binguin.Feature.Diplomacy;
 using Binguin.Feature.Fishing;
 using Binguin.Feature.RaceTraits;
@@ -451,6 +452,34 @@ namespace Binguin.Patch
             {
                 BinguinLogUtility.Log("未找到 LordToil_Siege.LordToilTick，冲锋判定未挂载。", severity: 1, isDebug: false);
             }
+
+            // ══════════════════════════════════════════════════════════════════
+            // ★★★ 2026-10-11 自办演唱会（`Feature/Band/BinguinConcert*.cs`）★★★
+            //
+            // ⚠️⚠️ 这里必须**显式注册**，不能只靠类上的 `[HarmonyPatch]` 特性：
+            //   本工程**从来没有调用过 `PatchAll()`**（全仓库无此调用），
+            //   特性只是元数据、不会自动生效。
+            //   我第一次写完演唱会忘了在这里注册 ⇒ 游戏里**完全没有**
+            //   「准备演唱会」按钮、通讯台也没有邀请项。这就是那次的表现。
+            //   ⇒ 以后新增任何带 `[HarmonyPatch]` 的类，**都要在这里补一条 SafePatch**。
+            // ══════════════════════════════════════════════════════════════════
+
+            // ① 麦克风上的「准备演唱会」gizmo
+            //    挂 `Building_MusicalInstrument.GetGizmos`（它 override 了 Building 的虚方法，
+            //    调用方走虚分发 ⇒ 挂在这个 override 上对所有乐器都生效，我们在
+            //    Postfix 里只对 `Binguin_Band_Microphone` 追加按钮）。
+            MethodInfo musicGizmos = AccessTools.Method(typeof(Building_MusicalInstrument), "GetGizmos");
+            SafePatch(harmony, musicGizmos,
+                "自办演唱会：Building_MusicalInstrument.GetGizmos（麦克风上的「准备演唱会」）",
+                null, null,
+                typeof(Patch_BinguinConcertMicGizmo), "Postfix");
+
+            // ② 通讯台聊天选项里的「演唱会邀请」
+            MethodInfo commsMenu = AccessTools.Method(typeof(Building_CommsConsole), "GetFloatMenuOptions");
+            SafePatch(harmony, commsMenu,
+                "自办演唱会：Building_CommsConsole.GetFloatMenuOptions（聊天选项里的演唱会邀请）",
+                null, null,
+                typeof(Patch_BinguinConcertInvite), "Postfix");
 
             // ★ 汇总：以后只要看到「失败/跳过 > 0」就说明有条补丁没挂上（日志上方有具体原因）
             if (patchFail > 0)

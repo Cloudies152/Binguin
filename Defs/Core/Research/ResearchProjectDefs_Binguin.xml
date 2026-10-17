@@ -14,6 +14,49 @@
     <label>冰山科技</label>
   </ResearchTabDef>
 
+  <!-- ============ 冰鹅音乐（200 点） ============
+       ★ 2026-10-11 作者需求（两轮）：
+         第一轮：「加个 音乐 的研究 在冰鹅的科技树里独立放置，包含所有冰鹅乐器和相关的
+                 建筑，前置是微电子基础」，点数后来定为 **200**。
+         第二轮：「音乐这个科技改为『**冰鹅音乐**』，然后**放到增冰鹅鹅上面**」
+
+       ★ 前置（按第二轮要求改）：**增冰鹅鹅** `Binguin_ResearchIcyPeaks`
+         —— 不再是微电子基础。它自己无前置，是本 mod 最基础的科技（600 点）。
+         ★ 注意：原版 `MicroelectronicsBasics`（微电子基础）是**原版**科技，
+           它才是解锁【通讯台】的那一个。改成挂"增冰鹅鹅"后，
+           请确保你自己已经能研究微电子基础（通讯台是发邀请函的前提）。
+
+       ★ 位置（按"放到增冰鹅鹅上面"）：增冰鹅鹅在 x=0.00, y=1.60。
+         现有同列的节点：x=1.40 有 y=0.80/1.60/3.20/4.00/4.80。
+         ⇒ 放在 **x=1.40, y=0.00**：与增冰鹅鹅同一条线向右、且落在最上方的空位，
+           不与任何现有节点（y=0.80 起）重叠。
+
+       ★ 解锁（反向引用 —— 1.6 已无 unlockThings 字段，见文件头说明）：
+         ① 5 件乐器（`Defs/Feature/Band/BandVisit_Binguin.xml` 的
+            `<researchPrerequisites>`）：
+              冰鹅族键盘   Binguin_Band_Keyboard
+              冰鹅族架子鼓 Binguin_Band_DrumKit
+              冰鹅族麦克风 Binguin_Band_Microphone
+              冰鹅族吉他   Binguin_Band_Guitar
+              冰鹅族贝斯   Binguin_Band_Bass
+         ② 2 件演唱会灯光（`Defs/Feature/Band/Concerts_Buildings_Binguin.xml`）：
+              临时演唱会灯组 Binguin_ConcertLightRigTemp
+              演唱会灯组     Binguin_ConcertLight
+         后续新增的冰鹅乐器 / 演出建筑都挂这个前置。 -->
+  <ResearchProjectDef>
+    <defName>Binguin_ResearchMusic</defName>
+    <label>冰鹅音乐</label>
+    <description>冰鹅族把寒原上的歌声带进了工坊。他们造出键盘、架子鼓、吉他、贝斯与麦克风，也懂得给舞台架上灯光。从此殖民地能举办自己的演唱会。</description>
+    <tab>Binguin_ResearchTab</tab>
+    <techLevel>Industrial</techLevel>
+    <baseCost>200</baseCost>
+    <prerequisites>
+      <li>Binguin_ResearchIcyPeaks</li>
+    </prerequisites>
+    <researchViewX>1.40</researchViewX>
+    <researchViewY>0.00</researchViewY>
+  </ResearchProjectDef>
+
   <!-- ============ 增冰鹅鹅（最基础科技，600 点） ============
        ★ 双关名：化用《楚辞·招魂》「增冰峨峨，飞雪千里些。」之音，
          「峨」→「鹅」接冰鹅族（用户 2026-08-20 定名）。

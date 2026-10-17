@@ -3,7 +3,12 @@
   <name>冰鹅族 Binguin Race</name>
   <author>Binguin</author>
   <supportedVersions>
+    <!-- ★ 2026-10-11：游戏升到 1.7（Waylith 新引擎）后实测本模组可直接编译，
+         所以同时声明 1.6 与 1.7。
+         1.7 下 Unity 由游戏自带的 UnityStubs.dll 提供兼容层，
+         构建只需引用 Assembly-CSharp + UnityStubs + Waylith（见 csproj 注释）。 -->
     <li>1.6</li>
+    <li>1.7</li>
   </supportedVersions>
   <packageId>binguin.race</packageId>
   <!-- ★ 2026-10-09 加版本号（用户要求「备注版本名字为开发版」）。

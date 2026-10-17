@@ -721,36 +721,8 @@ namespace Binguin.Feature.Rods
             //   绑定后：只有他能**自动**回来续做（其它人不会抢），
             //   但玩家仍可手动用「继续装配」换人（换人时会重新绑定）。
             comp.boundMaker = pendingPawn;
-            // ★★★ 2026-10-10 回滚（作者报「合并半成品时，搬过去的 4 个和仓库的 4 个都消耗了」）：
-            //
-            // 【曾经在这里写过什么】
-            //   2026-10-09 我为了解决「搬高级零部件只搬一个，却消耗四个」，除了修搬运，
-            //   还在 L743 附近加了一段"差额补扣"：
-            //       if (spacersAbsorbed < SpacersNeeded2) { gap = 4 - spacersSpent;
-            //           if (gap > 0) ConsumeComponentsFromMap(map, gap); ... }
-            //   ——**这段是我自己加的，原始代码里根本不存在**。原始代码只有一行
-            //     `comp.spacersSpent = 4;`，从来不碰仓库。
-            //
-            // 【为什么撤掉】
-            //   那是**唯一**一条"从地图/仓库扣零部件"的路径，而作者报的症状正好是
-            //   「搬过去的 4 个 + 仓库的 4 个都被消耗」—— 与它的行为完全吻合。
-            //   触发条件 `spacersAbsorbed < 4` 只要判断偏一点，就会正好多扣 4 个。
-            //   ⇒ **作者要求直接撤掉，不再从仓库补扣任何东西。**
-            //
-            // 【撤掉之后的行为】—— 宁可少扣，绝不白扣
-            //   · `spacersSpent` 完全由 `TryAbsorbPart` 按**实际吸进容器的数量**累加
-            //     （见 `Comp_BinguinUnfinishedRod.cs:303` `spacersSpent += part.stackCount;`）
-            //   · 这里**一个字都不改**，也不碰地图上的东西
-            //   · 收尾时 `Comp_BinguinUnfinishedRod.FinishIntoRod` 按 `spacerParts.Count > 0`
-            //     销毁容器里那几个实物 ⇒ **不碰仓库**
-            //   · 最坏情况（搬运不足 4 个）= 玩家**少扣**（略微白拿），而不会多扣。
-            //     ★ 多扣比少扣严重得多，这是刻意的取舍。
-            //
-            // ⚠️ 以后**不要再往这里加"从地图补扣"**。要补也得先拿到实测日志证明哪条路径
-            //    真的没吸进去，否则只会重新引入这个 bug。
-
-            // ★ 记下这根半成品【实际】付过几个高级零部件 —— 半成品被销毁时要按这个数退回来
-            //   （数量由 `TryAbsorbPart` 累加，这里不写死）
+            // ★ 记下这根半成品已经付过 4 个高级零部件 —— 半成品被销毁时要退回来
+            comp.spacersSpent = 4;
 
             BinguinLogUtility.Log("已生成【钓竿（未完成）】于 " + rod.Position
                 + "，装入配件 " + absorbed + " 件：" + comp.PartsSummary());

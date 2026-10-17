@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ============================================================================
+     冰鹅族【演唱会】· 曲目库（2026-10-11 作者需求）
+
+     本 mod 已在用的 &lt;SoundDef&gt; 范式见 `Defs/Feature/IceCombat/Weapons_PenguinKick.xml`
+     （`Binguin_Shot_GuGuGaGa`，指向 Sounds/GuGuGaGa.mp3）：
+       SoundDef → subSounds → li → grains → li Class="AudioGrain_Clip" → clipPath
+     ★ SoundDef **没有**顶层 clipPath 字段，必须走 grains；
+       clipPath 写**不含扩展名**的相对路径（相对 Sounds/）。
+     ★ mp3 / ogg / wav 都能用（RuntimeAudioClipLoader 按扩展名推断）。
+
+     ══════ 给玩家：怎么塞自己的歌 ══════
+       1) 把 .mp3 / .ogg / .wav 放进  Binguin_Race_Mod/Sounds/ConcertSongs/
+       2) 在本文件照下面模板补两条（SoundDef + SongDef），改 defName / clipPath / label
+       3) 一首歌只需一个 SongDef；同一场演唱会最多选 4 首
+
+     ── 模板 ──
+       <SoundDef>
+         <defName>Binguin_SongClip_你的名字</defName>
+         <context>MapOnly</context>
+         <maxSimultaneous>1</maxSimultaneous>
+         <subSounds>
+           <li>
+             <grains>
+               <li Class="AudioGrain_Clip">
+                 <clipPath>ConcertSongs/你的文件名</clipPath>
+               </li>
+             </grains>
+             <volumeRange>12~12</volumeRange>
+             <pitchRange>1~1</pitchRange>
+           </li>
+         </subSounds>
+       </SoundDef>
+
+       <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+         <defName>Binguin_Song_你的名字</defName>
+         <label>显示名</label>
+         <style>风格</style>
+         <durationTicks>10000</durationTicks>          （1 小时 = 2500 tick）
+         <moodOffset>5</moodOffset>
+         <requiredArtisticLevel>3</requiredArtisticLevel>
+         <soundDef>Binguin_SongClip_你的名字</soundDef>
+       </li>
+
+     ★ 技能：原版没有"音乐"技能，统一用 **Artistic（艺术）**。
+     ============================================================================ -->
+<Defs>
+
+  <!-- ═══════════ MyGO!!!!! 四首（2026-10-11 作者提供）═══════════ -->
+
+  <SoundDef>
+    <defName>Binguin_SongClip_Mayoiuta</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_Mayoiuta</clipPath></li>
+        </grains>
+        <volumeRange>12~12</volumeRange>
+        <pitchRange>1~1</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Binguin_SongClip_Utakotoba</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_Utakotoba</clipPath></li>
+        </grains>
+        <volumeRange>12~12</volumeRange>
+        <pitchRange>1~1</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Binguin_SongClip_SilhouetteDance</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_SilhouetteDance</clipPath></li>
+        </grains>
+        <volumeRange>12~12</volumeRange>
+        <pitchRange>1~1</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Binguin_SongClip_Harumikage</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_Harumikage</clipPath></li>
+        </grains>
+        <volumeRange>12~12</volumeRange>
+        <pitchRange>1~1</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+    <defName>Binguin_Song_Mayoiuta</defName>
+    <label>迷星叫</label>
+    <description>在迷途中喊出的歌。哪怕脚下没有路，也要把声音送到星星那里去。</description>
+    <style>抒情</style>
+    <durationTicks>10000</durationTicks>
+    <moodOffset>6</moodOffset>
+    <requiredArtisticLevel>4</requiredArtisticLevel>
+    <soundDef>Binguin_SongClip_Mayoiuta</soundDef>
+  </li>
+
+  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+    <defName>Binguin_Song_Utakotoba</defName>
+    <label>詩超絆</label>
+    <description>把说不出口的话写成诗，再把诗唱成羁绊。冰鹅族听完会安静很久。</description>
+    <style>抒情</style>
+    <durationTicks>10000</durationTicks>
+    <moodOffset>7</moodOffset>
+    <requiredArtisticLevel>5</requiredArtisticLevel>
+    <soundDef>Binguin_SongClip_Utakotoba</soundDef>
+  </li>
+
+  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+    <defName>Binguin_Song_SilhouetteDance</defName>
+    <label>影色舞</label>
+    <description>影子也会跳舞。鼓点一起来，全场就没人坐得住了。</description>
+    <style>激昂</style>
+    <durationTicks>9000</durationTicks>
+    <moodOffset>8</moodOffset>
+    <requiredArtisticLevel>6</requiredArtisticLevel>
+    <soundDef>Binguin_SongClip_SilhouetteDance</soundDef>
+  </li>
+
+  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+    <defName>Binguin_Song_Harumikage</defName>
+    <label>春日影</label>
+    <description>春天的影子落在雪原上。这首唱完，冰鹅族的观众会想起很久以前的家。</description>
+    <style>民谣</style>
+    <durationTicks>11000</durationTicks>
+    <moodOffset>9</moodOffset>
+    <requiredArtisticLevel>7</requiredArtisticLevel>
+    <soundDef>Binguin_SongClip_Harumikage</soundDef>
+  </li>
+
+  <!-- ═══════════ 冰鹅族原创示范曲（音频暂借 MyGO 占位，待专门作曲）═══════════ -->
+
+  <SoundDef>
+    <defName>Binguin_SongClip_FrostMoon</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_Mayoiuta</clipPath></li>
+        </grains>
+        <volumeRange>12~12</volumeRange>
+        <pitchRange>1~1</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+    <defName>Binguin_Song_FrostMoon</defName>
+    <label>霜月</label>
+    <description>冰鹅族最古老的摇篮曲。唱的是长夜尽头那轮冷月，和雪原上等归人的灯。</description>
+    <style>抒情</style>
+    <durationTicks>10000</durationTicks>
+    <moodOffset>4</moodOffset>
+    <requiredArtisticLevel>0</requiredArtisticLevel>
+    <soundDef>Binguin_SongClip_FrostMoon</soundDef>
+  </li>
+
+  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+    <defName>Binguin_Song_IceShardConcerto</defName>
+    <label>碎冰协奏</label>
+    <description>鼓点像冰层在脚下炸裂，贝斯推着旋律一路向前。冰鹅族最吵、也最痛快的一首。</description>
+    <style>激昂</style>
+    <durationTicks>10000</durationTicks>
+    <moodOffset>7</moodOffset>
+    <requiredArtisticLevel>5</requiredArtisticLevel>
+    <soundDef>Binguin_SongClip_FrostMoon</soundDef>
+  </li>
+
+  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+    <defName>Binguin_Song_FishermanBallad</defName>
+    <label>渔者谣</label>
+    <description>老渔者在冰窟边哼的调子，词全是钓竿、鱼线和回家路上的雪。谁都会唱两句。</description>
+    <style>民谣</style>
+    <durationTicks>7500</durationTicks>
+    <moodOffset>3</moodOffset>
+    <requiredArtisticLevel>0</requiredArtisticLevel>
+    <soundDef>Binguin_SongClip_FrostMoon</soundDef>
+  </li>
+
+  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+    <defName>Binguin_Song_EndlessSnowfield</defName>
+    <label>无垠雪原</label>
+    <description>献给霰雪无垠的赞歌。全曲四个乐章，只有真正练过的人撑得下来。</description>
+    <style>史诗</style>
+    <durationTicks>12500</durationTicks>
+    <moodOffset>12</moodOffset>
+    <requiredArtisticLevel>10</requiredArtisticLevel>
+    <soundDef>Binguin_SongClip_FrostMoon</soundDef>
+  </li>
+
+</Defs>
