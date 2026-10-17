@@ -96,11 +96,31 @@ namespace Binguin.Feature.Band
                 {
                     ritual.Init(ideo, null);
                     ritual.PostMake();                       // ② 设 sourcePattern
-                    if (ritual.sourcePattern != null
-                        && ritual.sourcePattern.ritualBehavior != null
-                        && ritual.behavior == null)
+
+                    // ③ ★★ 关键：`PreceptMaker.MakePrecept` 只造空壳，
+                    //   `Precept_Ritual` 有 **4 个实例字段**全都要从
+                    //   `sourcePattern` 里手动造出来，一个不建就 NRE：
+                    //     behavior               → RitualBehaviorDef.GetInstance()
+                    //     outcomeEffect          → RitualOutcomeEffectDef.GetInstance()
+                    //     obligationTargetFilter → RitualObligationTargetFilterDef.GetInstance()
+                    //     targetFilter           → RitualTargetFilterDef.GetInstance()
+                    //   历史崩溃对应：
+                    //     obligationTargetFilter 为空 ⇒ ShouldShowGizmo NRE ⇒ 全图物体无按键
+                    //     outcomeEffect 为空          ⇒ Dialog_BeginRitual.PredictedQuality NRE
+                    //     behavior 为空               ⇒ 仪式窗口无法初始化
+                    RitualPatternDef pat = ritual.sourcePattern;
+                    if (pat != null)
                     {
-                        ritual.behavior = ritual.sourcePattern.ritualBehavior.GetInstance();   // ③
+                        if (ritual.behavior == null && pat.ritualBehavior != null)
+                            ritual.behavior = pat.ritualBehavior.GetInstance();
+                        if (ritual.outcomeEffect == null && pat.ritualOutcomeEffect != null)
+                            ritual.outcomeEffect = pat.ritualOutcomeEffect.GetInstance();
+                        if (ritual.obligationTargetFilter == null
+                            && pat.ritualObligationTargetFilter != null)
+                            ritual.obligationTargetFilter =
+                                pat.ritualObligationTargetFilter.GetInstance();
+                        if (ritual.targetFilter == null && pat.ritualTargetFilter != null)
+                            ritual.targetFilter = pat.ritualTargetFilter.GetInstance();
                     }
                 }
                 catch (System.Exception e1)
