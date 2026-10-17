@@ -109,6 +109,16 @@ namespace Binguin.Feature.Band
         private static List<Binguin_SongDef> cached;
 
         /// <summary>
+        /// 清空曲目缓存。
+        /// ★ 2026-10-17：运行时给 DefDatabase 加了玩家自定义曲目之后必须调一次，
+        ///   否则 `All` 还是加载期那份旧列表，新歌不会出现在选曲界面。
+        /// </summary>
+        public static void ResetCache()
+        {
+            cached = null;
+        }
+
+        /// <summary>
         /// 取全部曲目。★ 缓存一次即可 —— Def 在游戏运行期不会变。
         /// ★ 用 `DefDatabase<T>.AllDefsListForReading` 而不是 `AllDefs`：
         ///   后者每次调用都新建列表。

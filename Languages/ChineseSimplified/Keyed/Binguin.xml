@@ -680,4 +680,5 @@
   <Binguin_ConcertQuality_Message            >演唱会开始！质量 {0}%【{1}】
 {2}</Binguin_ConcertQuality_Message            >
   <Binguin_ConcertGoodwill_Message           >{0} 的来宾听完演唱会很满意，好感 +8。</Binguin_ConcertGoodwill_Message           >
+  <Binguin_UserSongs_NoFolder                >没找到歌曲库文件夹，请先在 Mod 选项里点「打开歌曲库文件夹」。</Binguin_UserSongs_NoFolder                >
 </LanguageData>

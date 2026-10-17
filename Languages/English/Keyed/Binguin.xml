@@ -679,4 +679,5 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_ConcertQuality_Message            >The concert begins! Quality {0}% [{1}]
 {2}</Binguin_ConcertQuality_Message            >
   <Binguin_ConcertGoodwill_Message           >The guests from {0} enjoyed the concert. Goodwill +8.</Binguin_ConcertGoodwill_Message           >
+  <Binguin_UserSongs_NoFolder                >Song library folder not found. Use "Open song library folder" in mod options first.</Binguin_UserSongs_NoFolder                >
 </LanguageData>
