@@ -578,59 +578,134 @@ namespace Binguin.Feature.Rods
         ///   `Verse.ThingComp` 里**没有** `PostDeSpawn(Map)` 单参版本，
         ///   写成单参会 CS0115「没有找到适合的方法来重写」（已实测踩坑）。
         /// </summary>
-        public override void PostDeSpawn(Map map, DestroyMode mode)
+        //public override void PostDeSpawn(Map map, DestroyMode mode)
+        //{
+        //    base.PostDeSpawn(map, mode);
+        //    try
+        //    {
+        //        if (finishedSuccessfully)
+        //        {
+        //            return;
+        //        }
+        //        // ★★★ 关键判据（实测踩坑，连查了两处 IL 才定下来）：
+        //        //   `ThingWithComps.DeSpawn()` 会给**每个 comp** 调
+        //        //   `PostDeSpawn(Map, DestroyMode)`，而**小人把半成品搬起来**
+        //        //   （carryTracker 接管）**也会走 DeSpawn**！
+        //        //   所以不能一进这里就退款 —— 否则"边搬边退款"。
+        //        //
+        //        //   ★ 为什么不能用 `parent.Map == null` 判断：
+        //        //     `Thing.DeSpawn` 的 IL 最后一句是
+        //        //       `stfld mapIndexOrState = -1`
+        //        //     ⇒ 无论"被搬起来"还是"被销毁"，`parent.Map` **都是 null**
+        //        //     ⇒ 这个判据根本区分不出来（我第一版就是错在这里）。
+        //        //
+        //        //   ★ 正确的区分点是 **`ParentHolder`**：
+        //        //     · 被小人提着 / 放进容器 / 塞进背包
+        //        //       ⇒ `Spawned=false`，但 **`ParentHolder` != null**
+        //        //       ⇒ 东西还在，**不退款**
+        //        //     · 被销毁（`Thing.Destroy` 先 DeSpawn 再调 PostDeSpawn）
+        //        //       ⇒ `ParentHolder == null` 且 `Spawned == false`
+        //        //       ⇒ **退款**
+        //        //     · 被商队/远征队带离地图 ⇒ 同上 ⇒ 退款（符合预期）
+        //        //
+        //        //   ★ `ParentHolder` 的真身（2026-10-09 用 RimSage 核实，
+        //        //     见 `Source/Verse/Thing.cs`）：
+        //        //       `public IThingHolder ParentHolder => holdingOwner?.Owner;`   (L388)
+        //        //     它是**计算属性**，没有自己的存储。
+        //        //     ⇒ 我先前写的「`Thing.DeSpawn` 结尾会把 `holder` 设成
+        //        //       `holdingOwner.Owner`」是**编的** ——
+        //        //       `Thing` 里根本没有 `holder` 这个字段，而且 `DeSpawn` 没碰 `holdingOwner`。
+        //        //     真正给 `holdingOwner` 赋值的是 `ThingOwner.TryAdd`
+        //        //     （`ThingOwner.cs:193` `item.holdingOwner = this`），
+        //        //     小人搬运时走的就是 `Pawn_CarryTracker.innerContainer.TryAdd`
+        //        //     （`Pawn_CarryTracker.cs:76`），而 `Pawn_CarryTracker : IThingHolder`
+        //        //     ⇒ `Owner` 就是那个小人 ⇒ `ParentHolder` 非 null。
+        //        //     ★ 结论不变（判断是对的），只是机制要按上面这样讲。
+        //        if (parent == null)
+        //        {
+        //            return;
+        //        }
+        //        if (parent.Spawned || parent.ParentHolder != null)
+        //        {
+        //            return;   // 还在地图上、或被提着/装着 —— 东西还在，不退款
+        //        }
+        //        int refund = spacersSpent;
+        //        // ★ 容器里还有实物就按实物退，没有就按记账数量退
+        //        if (spacerParts != null && spacerParts.Count > 0)
+        //        {
+        //            int sum = 0;
+        //            for (int i = 0; i < spacerParts.Count; i++)
+        //            {
+        //                Thing sp = spacerParts[i];
+        //                if (sp != null && !sp.Destroyed)
+        //                {
+        //                    sum += sp.stackCount;
+        //                    sp.Destroy(DestroyMode.Vanish);
+        //                }
+        //            }
+        //            if (sum > 0)
+        //            {
+        //                refund = sum;
+        //            }
+        //            spacerParts.Clear();
+        //        }
+        //        if (refund <= 0)
+        //        {
+        //            return;
+        //        }
+        //        spacersSpent = 0;
+
+        //        ThingDef spacerDef = ThingDefOf.ComponentSpacer;
+        //        if (spacerDef == null)
+        //        {
+        //            spacerDef = DefDatabase<ThingDef>.GetNamedSilentFail("ComponentSpacer");
+        //        }
+        //        if (spacerDef == null)
+        //        {
+        //            BinguinLogUtility.Log("半成品退款失败：找不到 ComponentSpacer def，"
+        //                + "需要退 " + refund + " 个。", severity: 1, isDebug: false);
+        //            return;
+        //        }
+        //        IntVec3 pos = parent != null ? parent.Position : IntVec3.Invalid;
+        //        if (map == null || !pos.IsValid)
+        //        {
+        //            BinguinLogUtility.Log("半成品退款：地图或坐标无效，"
+        //                + "需要退 " + refund + " 个高级零部件。", severity: 1, isDebug: false);
+        //            return;
+        //        }
+        //        Thing give = ThingMaker.MakeThing(spacerDef);
+        //        give.stackCount = refund;
+        //        GenPlace.TryPlaceThing(give, pos, map, ThingPlaceMode.Near, null);
+        //        Messages.Message("Binguin_UnfinishedRodRefund".Translate(refund).ToString(),
+        //            give, MessageTypeDefOf.NeutralEvent, false);
+        //        BinguinLogUtility.Log("半成品被销毁，已退还 " + refund + " 个高级零部件。");
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        BinguinLogUtility.Log("半成品退款异常：" + e, severity: 2, isDebug: false);
+        //    }
+        //}
+
+
+        /// <summary>
+        /// 半成品被**真正销毁**时调用（玩家右键销毁 / 被烧 / 被拆）。
+        ///  用 `PostDestroy` 而不是 `PostDeSpawn`：
+        ///   `DeSpawn` 是"东西还在、只是离开地图"（搬运、装容器、切存档都用它），
+        ///   不该退款。而 `Pawn_CarryTracker.TryStartCarry` 的顺序是
+        ///   **先 `DeSpawn` 后 `TryAdd`** ⇒ 在 `PostDeSpawn` 里判断 `ParentHolder`
+        ///   永远判不出来（`holdingOwner` 还没设上）⇒ 会**误退款**。
+        ///   `PostDestroy` 只在真正销毁时调，判据干净。
+        /// </summary>
+        public override void PostDestroy(DestroyMode mode, Map previousMap)
         {
-            base.PostDeSpawn(map, mode);
+            base.PostDestroy(mode, previousMap);
             try
             {
                 if (finishedSuccessfully)
                 {
-                    return;
-                }
-                // ★★★ 关键判据（实测踩坑，连查了两处 IL 才定下来）：
-                //   `ThingWithComps.DeSpawn()` 会给**每个 comp** 调
-                //   `PostDeSpawn(Map, DestroyMode)`，而**小人把半成品搬起来**
-                //   （carryTracker 接管）**也会走 DeSpawn**！
-                //   所以不能一进这里就退款 —— 否则"边搬边退款"。
-                //
-                //   ★ 为什么不能用 `parent.Map == null` 判断：
-                //     `Thing.DeSpawn` 的 IL 最后一句是
-                //       `stfld mapIndexOrState = -1`
-                //     ⇒ 无论"被搬起来"还是"被销毁"，`parent.Map` **都是 null**
-                //     ⇒ 这个判据根本区分不出来（我第一版就是错在这里）。
-                //
-                //   ★ 正确的区分点是 **`ParentHolder`**：
-                //     · 被小人提着 / 放进容器 / 塞进背包
-                //       ⇒ `Spawned=false`，但 **`ParentHolder` != null**
-                //       ⇒ 东西还在，**不退款**
-                //     · 被销毁（`Thing.Destroy` 先 DeSpawn 再调 PostDeSpawn）
-                //       ⇒ `ParentHolder == null` 且 `Spawned == false`
-                //       ⇒ **退款**
-                //     · 被商队/远征队带离地图 ⇒ 同上 ⇒ 退款（符合预期）
-                //
-                //   ★ `ParentHolder` 的真身（2026-10-09 用 RimSage 核实，
-                //     见 `Source/Verse/Thing.cs`）：
-                //       `public IThingHolder ParentHolder => holdingOwner?.Owner;`   (L388)
-                //     它是**计算属性**，没有自己的存储。
-                //     ⇒ 我先前写的「`Thing.DeSpawn` 结尾会把 `holder` 设成
-                //       `holdingOwner.Owner`」是**编的** ——
-                //       `Thing` 里根本没有 `holder` 这个字段，而且 `DeSpawn` 没碰 `holdingOwner`。
-                //     真正给 `holdingOwner` 赋值的是 `ThingOwner.TryAdd`
-                //     （`ThingOwner.cs:193` `item.holdingOwner = this`），
-                //     小人搬运时走的就是 `Pawn_CarryTracker.innerContainer.TryAdd`
-                //     （`Pawn_CarryTracker.cs:76`），而 `Pawn_CarryTracker : IThingHolder`
-                //     ⇒ `Owner` 就是那个小人 ⇒ `ParentHolder` 非 null。
-                //     ★ 结论不变（判断是对的），只是机制要按上面这样讲。
-                if (parent == null)
-                {
-                    return;
-                }
-                if (parent.Spawned || parent.ParentHolder != null)
-                {
-                    return;   // 还在地图上、或被提着/装着 —— 东西还在，不退款
+                    return;   // 正常收尾销毁自己，不退款
                 }
                 int refund = spacersSpent;
-                // ★ 容器里还有实物就按实物退，没有就按记账数量退
                 if (spacerParts != null && spacerParts.Count > 0)
                 {
                     int sum = 0;
@@ -666,8 +741,9 @@ namespace Binguin.Feature.Rods
                         + "需要退 " + refund + " 个。", severity: 1, isDebug: false);
                     return;
                 }
+                Map placeMap = previousMap;
                 IntVec3 pos = parent != null ? parent.Position : IntVec3.Invalid;
-                if (map == null || !pos.IsValid)
+                if (placeMap == null || !pos.IsValid)
                 {
                     BinguinLogUtility.Log("半成品退款：地图或坐标无效，"
                         + "需要退 " + refund + " 个高级零部件。", severity: 1, isDebug: false);
@@ -675,7 +751,7 @@ namespace Binguin.Feature.Rods
                 }
                 Thing give = ThingMaker.MakeThing(spacerDef);
                 give.stackCount = refund;
-                GenPlace.TryPlaceThing(give, pos, map, ThingPlaceMode.Near, null);
+                GenPlace.TryPlaceThing(give, pos, placeMap, ThingPlaceMode.Near, null);
                 Messages.Message("Binguin_UnfinishedRodRefund".Translate(refund).ToString(),
                     give, MessageTypeDefOf.NeutralEvent, false);
                 BinguinLogUtility.Log("半成品被销毁，已退还 " + refund + " 个高级零部件。");
@@ -685,7 +761,30 @@ namespace Binguin.Feature.Rods
                 BinguinLogUtility.Log("半成品退款异常：" + e, severity: 2, isDebug: false);
             }
         }
-
+        public override void PostDeSpawn(Map map, DestroyMode mode)
+        {
+            // base.PostDeSpawn(map, mode);
+        }
+        /// <summary>
+        ///  2026-10-16 修复 `InvalidCastException: Specified cast is not valid`：
+        ///   完整堆栈：
+        ///     PawnRenderUtility.DrawCarriedThing
+        ///       → ThingWithComps.Comps_PostDraw
+        ///         → RimWorld.CompThingContainer.PostDraw   ← 崩在这
+        ///   原因：`CompThingContainer` 是给**固定容器**（冰箱/棺材）用的，
+        ///   它的 `PostDraw` 尝试在"容器所在格"画内部物品。
+        ///   我们的半成品是**可搬运**的 —— 被小人拿起来（ParentHolder 是 carryTracker）时
+        ///   容器不在图上、位置信息无效，它的渲染 cast 失败 ⇒ 每 tick 刷一次异常。
+        ///   ⇒ 修复：**不在图上 / 被拿着时不画**，只在真正落在地图上时渲染。
+        /// </summary>
+        public override void PostDraw()
+        {
+            if (parent == null || !parent.Spawned)
+            {
+                return;   // 被搬起 / 被装容器 / 不在图上 —— 跳过渲染
+            }
+            base.PostDraw();
+        }
         public override void PostExposeData()
         {
             base.PostExposeData();
