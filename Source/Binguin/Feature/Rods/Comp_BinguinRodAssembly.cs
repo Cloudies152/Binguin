@@ -350,8 +350,6 @@ namespace Binguin.Feature.Rods
         public bool StartAssembly(Pawn worker, Thing shaft, Thing tip, Thing hook, Thing bait)
         {
             Map map = parent.Map;
-            //  已有待装配任务时直接拒绝：否则同一台装配台被点两次会派两个 job、
-            //   生成两根半成品（实测："两根 + 两个小人各做各的 + 第二根被挤到台边"）。
             if (HasPendingAssembly)
             {
                 Messages.Message("Binguin_CompRodAssembly_07".Translate(),
@@ -373,6 +371,7 @@ namespace Binguin.Feature.Rods
                 Messages.Message("Binguin_CompRodAssembly_08".Translate(), parent, MessageTypeDefOf.RejectInput, false);
                 return false;
             }
+            BinguinLogUtility.Log("[诊断-Start] HasComponents(4)=true，通过", severity: 1, isDebug: false);
             pendingShaft = shaft;
             pendingTip = tip;
             pendingHook = hook;
@@ -865,6 +864,14 @@ namespace Binguin.Feature.Rods
             return HasComponentsOnMap(parent.Map, count);
         }
         /// 这台装配台是否已经有一根【未完成】的钓竿。
+        /// <summary>
+        /// 这台台子是不是"正在被工作"（有小人当前 job 或队列里有 WorkOnUnfinishedRod 指向它）。
+        /// ★ 2026-10-17 改：不再是"有未完成半成品就锁"，而是"有小人正在做就锁"。
+        ///   效果：
+        ///     · 有小人在台子上干活 → 锁（防止两人抢同一台）
+        ///     · 半成品在旁边但没人做 → 不锁，可以开新项目
+        ///     · 半成品被搬走 → 不锁
+        /// </summary>
         private bool HasActiveUnfinishedRod()
         {
             Map map = parent != null ? parent.Map : null;
@@ -872,31 +879,38 @@ namespace Binguin.Feature.Rods
             {
                 return false;
             }
-            ThingDef rodDef = DefDatabase<ThingDef>.GetNamedSilentFail("Binguin_UnfinishedRod");
-            if (rodDef == null)
+            JobDef workDef = DefDatabase<JobDef>.GetNamedSilentFail("Binguin_WorkOnUnfinishedRod");
+            if (workDef == null)
             {
                 return false;
             }
-            List<Thing> all = map.listerThings.ThingsInGroup(ThingRequestGroup.HaulableEver);
+
+            IReadOnlyList<Pawn> all = map.mapPawns.AllPawnsSpawned;
             for (int i = 0; i < all.Count; i++)
             {
-                Thing t = all[i];
-                if (t == null || t.def != rodDef || t.Destroyed)
+                Pawn p = all[i];
+                if (p == null || p.jobs == null)
                 {
                     continue;
                 }
-                CompBinguinUnfinishedRod comp = t.TryGetComp<CompBinguinUnfinishedRod>();
-                if (comp == null)
-                {
-                    continue;
-                }
-                if (comp.IsFinished)
-                {
-                    continue;   // 已完成等收尾，不算占用
-                }
-                if (comp.workTable == parent)
+                // 当前 job
+                Job cur = p.jobs.curJob;
+                if (cur != null && cur.def == workDef && cur.targetB.Thing == parent)
                 {
                     return true;
+                }
+                // 队列
+                JobQueue q = p.jobs.jobQueue;
+                if (q != null)
+                {
+                    for (int j = 0; j < q.Count; j++)
+                    {
+                        Job queued = q[j].job;
+                        if (queued != null && queued.def == workDef && queued.targetB.Thing == parent)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
             return false;
