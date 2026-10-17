@@ -164,7 +164,18 @@ namespace Binguin.Feature.Band
                         return false;
                     },
                     null,      // organizer：让玩家自己在角色槽里选主唱
-                    null);     // obligation：非意识形态仪式没有义务
+                    null,      // obligation：非意识形态仪式没有义务
+                    // ★★★ 2026-10-17 最后一个坑：**必须传 outcome**。
+                    //   构造函数签名（Dialog_BeginRitual.cs:245）：
+                    //     (ritualLabel, ritual, target, map, action, organizer, obligation,
+                    //      filter=null, okButtonText=null, requiredPawns=null,
+                    //      forcedForRole=null, outcome=null, extraInfoText=null, selectedPawn=null)
+                    //   `outcome` 没传 ⇒ 窗口字段 `outcome` 为 null ⇒
+                    //   `PredictedQuality()` 第一行 `outcome.startingQuality` 直接 NRE
+                    //   （Dialog_BeginRitual.cs:301）⇒ 每帧报错、界面画不出来。
+                    //   历史日志：PredictedQuality 的 NRE 刷了 1441+400 次。
+                    null, null, null, null,
+                    ritual.sourcePattern != null ? ritual.sourcePattern.ritualOutcomeEffect : null);
                 Find.WindowStack.Add(dlg);
                 return true;
             }
