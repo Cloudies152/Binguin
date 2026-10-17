@@ -111,6 +111,15 @@
          ⇒ 全图物体按键消失。
          `AnyRitualSpot` 是最宽松的原版过滤器。 -->
     <ritualObligationTargetFilter>AnyRitualSpot</ritualObligationTargetFilter>
+    <!-- ★★ 2026-10-17 关键修复（第四个缺失字段）：
+         `Dialog_BeginRitual.PredictedQuality(List<RitualOutcomeEffectDef>)` 会读取
+         outcome effect，**没写它就会 NullReferenceException**，导致整个仪式窗口
+         每帧报错、画不出来：
+           NullReferenceException
+             at RimWorld.Dialog_BeginRitual.PredictedQuality(...)
+             at RimWorld.Dialog_BeginLordJob.DoDescription(...)
+         ⇒ 借用原版 `CelebrationPartyDanceDrum`（鼓乐庆祝派对，语义最接近演唱会）。 -->
+    <ritualOutcomeEffect>CelebrationPartyDanceDrum</ritualOutcomeEffect>
     <ritualOnlyForIdeoMembers>false</ritualOnlyForIdeoMembers>
     <playsIdeoMusic>false</playsIdeoMusic>
     <alwaysStartAnytime>true</alwaysStartAnytime>
