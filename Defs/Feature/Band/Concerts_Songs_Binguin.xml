@@ -32,7 +32,7 @@
          </subSounds>
        </SoundDef>
 
-       <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+       <Binguin_SongDef>
          <defName>Binguin_Song_你的名字</defName>
          <label>显示名</label>
          <style>风格</style>
@@ -40,7 +40,7 @@
          <moodOffset>5</moodOffset>
          <requiredArtisticLevel>4</requiredArtisticLevel>
          <soundDef>Binguin_SongClip_你的名字</soundDef>
-       </li>
+       </Binguin_SongDef>
 
      ★ 技能：原版没有"音乐"技能，统一用 **Artistic（艺术）**。
      ============================================================================ -->
@@ -108,7 +108,7 @@
     </subSounds>
   </SoundDef>
 
-  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+  <Binguin_SongDef>
     <defName>Binguin_Song_Mayoiuta</defName>
     <label>迷星叫</label>
     <description>在迷途中喊出的歌。哪怕脚下没有路，也要把声音送到星星那里去。</description>
@@ -117,9 +117,9 @@
     <moodOffset>6</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
     <soundDef>Binguin_SongClip_Mayoiuta</soundDef>
-  </li>
+  </Binguin_SongDef>
 
-  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+  <Binguin_SongDef>
     <defName>Binguin_Song_Utakotoba</defName>
     <label>詩超絆</label>
     <description>把说不出口的话写成诗，再把诗唱成羁绊。冰鹅族听完会安静很久。</description>
@@ -128,9 +128,9 @@
     <moodOffset>7</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
     <soundDef>Binguin_SongClip_Utakotoba</soundDef>
-  </li>
+  </Binguin_SongDef>
 
-  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+  <Binguin_SongDef>
     <defName>Binguin_Song_SilhouetteDance</defName>
     <label>影色舞</label>
     <description>影子也会跳舞。鼓点一起来，全场就没人坐得住了。</description>
@@ -139,9 +139,9 @@
     <moodOffset>8</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
     <soundDef>Binguin_SongClip_SilhouetteDance</soundDef>
-  </li>
+  </Binguin_SongDef>
 
-  <li Class="Binguin.Feature.Band.Binguin_SongDef, Binguin">
+  <Binguin_SongDef>
     <defName>Binguin_Song_Harumikage</defName>
     <label>春日影</label>
     <description>春天的影子落在雪原上。这首唱完，冰鹅族的观众会想起很久以前的家。</description>
@@ -150,6 +150,6 @@
     <moodOffset>9</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
     <soundDef>Binguin_SongClip_Harumikage</soundDef>
-  </li>
+  </Binguin_SongDef>
 
   </Defs>
