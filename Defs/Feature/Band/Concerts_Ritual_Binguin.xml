@@ -169,7 +169,21 @@
          （原版 85% 的 RitualOutcomeEffectDef 都写 <comps>，就是因为不写会崩。）
          其他 List 字段同理，一并给空列表。 -->
     <comps />
-    <outcomeChances />
+    <!-- ★ 2026-10-17：`outcomeChances` 也**不能空**。
+         仪式界面的“预计效果 / 心情”就是从这里算出来的
+         （RitualOutcomeEffectWorker_FromQuality 按质量在这些条目里选）。
+         给空列表 ⇒ 界面上没有任何预计结果可显示。 -->
+    <outcomeChances>
+      <!-- 正面：演唱会本身就是好事，所以只给一个条目、概率 1。
+           记忆复用模组已有的 Binguin_AttendedConcert。 -->
+      <li>
+        <label>冰鹅演唱会</label>
+        <chance>1</chance>
+        <memory>Binguin_AttendedConcert</memory>
+        <description>大家在演唱会上得到了很好的享受。</description>
+        <positivityIndex>1</positivityIndex>
+      </li>
+    </outcomeChances>
     <extraPredictedOutcomeDescriptions />
     <extraOutcomeDescriptions />
     <extraInfoLines />

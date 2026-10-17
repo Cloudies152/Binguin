@@ -145,11 +145,24 @@ namespace Binguin.Feature.Band
                     return false;
                 }
 
-                Dialog_BeginRitual dlg = new Dialog_BeginRitual(
+                // ★★ ★ 2026-10-17：回调里要把仪式窗口**关掉**。
+                //    之前只弹 FloatMenu 选天数，窗口一直挂在上面，
+                //    玩家感觉“点完了还在同一页”。
+                Dialog_BeginRitual dlg = null;
+                RimWorld.Dialog_BeginRitual.ActionCallback onConfirm =
+                    delegate (RitualRoleAssignments assignments)
+                {
+                    OnAssignmentsConfirmed(assignments, map, micCell);
+                    if (dlg != null) Find.WindowStack.TryRemove(dlg, true);
+                    return false;
+                };
+                dlg = new Dialog_BeginRitual(
                     "Binguin_ConcertSetup_Title".Translate(),   // ritualLabel
                     ritual,
                     new TargetInfo(micCell, map),
                     map,
+                    onConfirm
+                    /*
                     delegate (RitualRoleAssignments assignments)
                     {
                         OnAssignmentsConfirmed(assignments, map, micCell);
@@ -162,7 +175,7 @@ namespace Binguin.Feature.Band
                         //     自己驱动 —— 两套并行会互相干扰。
                         //   ⇒ 我们只把这个窗口当**选人界面**用，返回 false 阻止仪式启动。
                         return false;
-                    },
+                    }*/,
                     null,      // organizer：让玩家自己在角色槽里选主唱
                     null,      // obligation：非意识形态仪式没有义务
                     // ★★★ 2026-10-17 最后一个坑：**必须传 outcome**。
