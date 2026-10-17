@@ -210,15 +210,13 @@ namespace Binguin.Feature.Band
                         //   "Tried to play ... on camera but it has no on-camera subSounds."
                         //   ⇒ 改用 `PlayOneShot(clip, SoundInfo.InMap(...))`，
                         //     从场地那一格发声，与 MapOnly 一致。
-                        IntVec3 at = b.venueCenter.IsValid ? b.venueCenter
-                            : (b.leadSinger != null ? b.leadSinger.Position : IntVec3.Invalid);
-                        Verse.Sound.SoundInfo info;
-                        if (at.IsValid)
-                            info = Verse.Sound.SoundInfo.InMap(new TargetInfo(at, b.Map),
-                                Verse.Sound.MaintenanceType.None);
-                        else
-                            info = Verse.Sound.SoundInfo.OnCamera(Verse.Sound.MaintenanceType.None);
-                        Verse.Sound.SoundStarter.PlayOneShot(clip, info);
+                        // ★★ 2026-10-17 终于找到原因：
+                        //   SubSoundDef.TryPlay 里有一道静默闸门（不报错直接 return），
+                        //   而 `SoundInfo.InMap(格子)` 会按**离镜头距离衰减音量** ——
+                        //   演唱会场地经常不在镜头里 ⇒ 播放成功但听不见。
+                        //   ⇒ 改用 on-camera 通道（XML 已给 subSounds 标了 onCamera=True），
+                        //     不受距离衰减，只要玩家在这张地图上看着就能听到。
+                        Verse.Sound.SoundStarter.PlayOneShotOnCamera(clip, b.Map);
                         // 诊断：告诉我们音频到底装载到了什么
                         int subN = clip.subSounds != null ? clip.subSounds.Count : -1;
                         int grainN = -1;
