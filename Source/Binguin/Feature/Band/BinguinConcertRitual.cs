@@ -72,10 +72,20 @@ namespace Binguin.Feature.Band
                     return false;
                 }
 
-                // ★★ 2026-10-17 关键：必须 `Init` 过，否则 `behavior` / `sourcePattern`
-                //   这些字段是空的，后面任何 ShouldShowGizmo / 窗口逻辑都会 NRE。
-                //   `Precept_Ritual.Init(Ideo ideo, FactionDef generatingFor)` 是 public virtual。
-                //   ⇒ 用玩家派系的 ideo 初始化；没有 ideo（未装 Ideology）就传 null。
+                // ★★ 2026-10-17 关键：`PreceptMaker.MakePrecept` 只造了个空壳，
+                //   三个字段必须按原版顺序手动补齐，否则行为空、窗口打不开：
+                //
+                //   ① `Init(Ideo, FactionDef)`          —— 只做 base.Init + RegenerateName
+                //   ② `PostMake()`                      —— **sourcePattern = def.ritualPatternBase**
+                //      （源码 Precept_Ritual.cs:421-424 实证）
+                //   ③ `sourcePattern.ritualBehavior.GetInstance()` —— **创建 behavior**
+                //      （源码 RitualBehaviorDef.cs:79 GetInstance() =
+                //        (RitualBehaviorWorker)Activator.CreateInstance(workerClass, this)）
+                //
+                //   ★ 玩家实测日志曾出现：
+                //     「[冰鹅族] 仪式 behavior 仍为空（RitualBehaviorDef 的 workerClass
+                //       未被实例化），回退到自建窗口。」
+                //     原因就是漏了第 ②③ 步 ⇒ sourcePattern 与 behavior 都是 null。
                 Ideo ideo = null;
                 Faction player = Faction.OfPlayer;
                 if (player != null && player.ideos != null && player.ideos.PrimaryIdeo != null)
@@ -85,17 +95,33 @@ namespace Binguin.Feature.Band
                 try
                 {
                     ritual.Init(ideo, null);
+                    ritual.PostMake();                       // ② 设 sourcePattern
+                    if (ritual.sourcePattern != null
+                        && ritual.sourcePattern.ritualBehavior != null
+                        && ritual.behavior == null)
+                    {
+                        ritual.behavior = ritual.sourcePattern.ritualBehavior.GetInstance();   // ③
+                    }
                 }
                 catch (System.Exception e1)
                 {
-                    BinguinLogUtility.Log("Precept_Ritual.Init 失败（回退到自建窗口）：" + e1,
+                    BinguinLogUtility.Log("Precept_Ritual 初始化失败（回退到自建窗口）：" + e1,
+                        severity: 1, isDebug: false);
+                    return false;
+                }
+                if (ritual.sourcePattern == null)
+                {
+                    BinguinLogUtility.Log("仪式的 sourcePattern 为空（PostMake 没生效？），回退到自建窗口。",
                         severity: 1, isDebug: false);
                     return false;
                 }
                 if (ritual.behavior == null)
                 {
-                    BinguinLogUtility.Log("仪式 behavior 仍为空（RitualBehaviorDef 的 workerClass 未被实例化），"
-                        + "回退到自建窗口。", severity: 1, isDebug: false);
+                    BinguinLogUtility.Log("仪式 behavior 仍为空（"
+                        + (ritual.sourcePattern.ritualBehavior == null
+                            ? "RitualPatternDef.ritualBehavior 未指向 RitualBehaviorDef"
+                            : "GetInstance 未返回实例")
+                        + "），回退到自建窗口。", severity: 1, isDebug: false);
                     return false;
                 }
 
@@ -107,7 +133,15 @@ namespace Binguin.Feature.Band
                     delegate (RitualRoleAssignments assignments)
                     {
                         OnAssignmentsConfirmed(assignments, map, micCell);
-                        return true;
+                        // ★★ 返回 **false** 是刻意的：
+                        //   `Dialog_BeginRitual.TryStartRitual()` 里的写法是
+                        //     if (actionCallback != null && actionCallback(assignments)) { ...启动仪式... }
+                        //   （源码 Dialog_BeginRitual.cs:292-293 实证）
+                        //   ⇒ 返回 true 会真的启动一个原版仪式 LordJob，
+                        //     而我们的演唱会由 `BinguinConcert` / `BinguinConcertDirector`
+                        //     自己驱动 —— 两套并行会互相干扰。
+                        //   ⇒ 我们只把这个窗口当**选人界面**用，返回 false 阻止仪式启动。
+                        return false;
                     },
                     null,      // organizer：让玩家自己在角色槽里选主唱
                     null);     // obligation：非意识形态仪式没有义务
