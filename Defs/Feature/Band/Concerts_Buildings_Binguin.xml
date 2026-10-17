@@ -84,6 +84,10 @@
 
     <!-- 可搬运（临时性质 ⇒ 能拆下来带走） -->
     <minifiedDef>MinifiedThing</minifiedDef>
+    <!-- ★ 2026-10-17 修 Config error：可搬运建筑必须归属某个 thingCategory -->
+    <thingCategories>
+      <li>BuildingsFurniture</li>
+    </thingCategories>
 
     <comps>
       <li Class="CompProperties_Power">
@@ -157,6 +161,10 @@
 
     <constructEffect>ConstructMetal</constructEffect>
     <minifiedDef>MinifiedThing</minifiedDef>
+    <!-- ★ 2026-10-17 修 Config error：可搬运建筑必须归属某个 thingCategory -->
+    <thingCategories>
+      <li>BuildingsFurniture</li>
+    </thingCategories>
 
     <building>
       <isEdifice>false</isEdifice>

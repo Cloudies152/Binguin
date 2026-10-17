@@ -54,9 +54,29 @@ namespace Binguin.Feature.Band
                 Audience = new List<Pawn>();
                 Performers = new List<Pawn>();
 
-                // ① 主唱 → 麦克风（找不到麦克风就退回场地中心，不阻断演出）
+                // ① 主唱 → 麦克风（必须传**麦克风建筑**，不能传格子！）
+                //   ★★ 2026-10-17 修玩家日志里的致命红字：
+                //     `JobDriver threw exception in toil GotoThing's initAction for
+                //      driver=JobDriver_BinguinPlayInstrument -> NullReferenceException`
+                //   原因：`JobDriver_BinguinPlayInstrument` 的 toil 是
+                //     `Toils_Goto.GotoThing(TargetIndex.A, ...)` —— 它要求 A 是 **Thing**。
+                //     我之前对主唱传的是 `LocalTargetInfo(IntVec3)`（只有格子），
+                //     `targetA.Thing` 为 null ⇒ GotoThing 的 initAction 直接 NRE
+                //     ⇒ 主唱永远走不到麦克风、演出异常。
+                //   ⇒ 改成按 defName 找**麦克风的 Building 实例**再派 job。
                 IntVec3 micCell = b.venueCenter.IsValid ? b.venueCenter : b.leadSinger.Position;
-                SendPlayJob(b.leadSinger, micCell);
+                Thing mic = FindNearestInstrument(map, Dialog_BinguinConcertSetup.MicDefName, micCell);
+                if (mic != null)
+                {
+                    SendPlayJob(b.leadSinger, mic);
+                }
+                else
+                {
+                    // 兜底：真找不到麦克风时至少让他走过去（用 Goto，不碰 PlayInBand）
+                    BinguinLogUtility.Log("开演时找不到麦克风建筑，主唱只走到场地中心。",
+                        severity: 1, isDebug: false);
+                    SendGoto(b.leadSinger, micCell);
+                }
                 Performers.Add(b.leadSinger);
 
                 // ② 乐手 → 各自乐器
@@ -134,22 +154,6 @@ namespace Binguin.Feature.Band
             p.jobs.TryTakeOrderedJob(job, JobTag.Misc);
         }
 
-        /// <summary>把一个格子当"乐器位"派活（麦克风只有格子时用）。</summary>
-        private static void SendPlayJob(Pawn p, IntVec3 cell)
-        {
-            if (p == null)
-            {
-                return;
-            }
-            JobDef def = DefDatabase<JobDef>.GetNamedSilentFail("Binguin_PlayInBand");
-            if (def == null)
-            {
-                return;
-            }
-            Job job = JobMaker.MakeJob(def);
-            job.targetA = new LocalTargetInfo(cell);
-            p.jobs.TryTakeOrderedJob(job, JobTag.Misc);
-        }
 
         /// <summary>把"观看"job 派给某人（目标 = 场地中心那一格）。</summary>
         private static void SendWatchJob(Pawn p, IntVec3 center)

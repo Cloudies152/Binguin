@@ -310,12 +310,20 @@ namespace Binguin.Patch
             // ★ 目标 `RaceProperties.FoodLevelPercentageWantEat` 是【计算属性】
             //   （switch ResolvedDietCategory 直接返回常数），没有 XML 字段可覆盖
             //   ⇒ 只能挂 Harmony 后置补丁。推导见 Source/FoodThreshold_Binguin.cs。
+            // ★★ 2026-10-17 修红字：原来挂 `RaceProperties.FoodLevelPercentageWantEat`
+            //   但 `RaceProperties` 没有 pawn 信息，而我们这个补丁的 `__instance` 声明成
+            //   `Need`（要靠 `Need.pawn` 区分冰鹅）⇒ Harmony 报
+            //     "Unrelated classes cannot describe the same non-null object:
+            //      supplied Verse.RaceProperties, requested RimWorld.Need"
+            //   ⇒ 改挂 `Need_Food.PercentageThreshHungry`（1.7 实测存在），
+            //     它本身就是由 `RaceProperties.FoodLevelPercentageWantEat` 派生的，
+            //     且 `__instance` 就是 `Need_Food`（继承 `Need`），语义与签名都对上。
             MethodInfo wantEat = AccessTools.PropertyGetter(
-                typeof(RaceProperties), "FoodLevelPercentageWantEat");
+                typeof(Need_Food), "PercentageThreshHungry");
             if (wantEat != null)
             {
                 SafePatch(harmony, wantEat,
-                    "冰鹅族饥饱阈值（上限 1.2 下把开始饿的绝对值拉回 0.36）：RaceProperties.FoodLevelPercentageWantEat",
+                    "冰鹅族饥饱阈值（上限 1.2 下把开始饿的绝对值拉回 0.36）：Need_Food.PercentageThreshHungry",
                     null, null,
                     typeof(Patch_BinguinFoodThreshold), "Postfix");
             }

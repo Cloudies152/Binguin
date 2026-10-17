@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ============================================================================
+     冰鹅族【自办演唱会】· 原版文化仪式相关 Def（2026-10-17）
+
+     ★★★ 事故记录（2026-10-17，玩家实测「所有乐器点不开、没有任何按键」）★★★
+       我曾在这里写了一个 `PreceptDef`，并设 `isNonIdeoRitual = true`。
+       游戏会**自动把这个 PreceptDef 实例化成 Precept_Ritual**，而我的
+       `RitualBehaviorDef` **没有写 `<workerClass>`** ⇒ `behavior` 为 null ⇒
+         `Precept_Ritual.ShouldShowGizmo()` 抛 NullReferenceException
+         ⇒ `Thing.GetGizmos()` 整个枚举中断
+         ⇒ **地图上所有物体（乐器、麦克风、家具…）的按键全部消失**
+       日志栈：
+         NullReferenceException
+           at RimWorld.Precept_Ritual.ShouldShowGizmo(TargetInfo)
+           at Verse.Thing.GetGizmos()
+           at Verse.Building.GetGizmos()
+           at RimWorld.Building_MusicalInstrument.GetGizmos()
+       ⇒ **玩家完全没法操作，比"没有仪式界面"严重得多。**
+
+     ⇒ 现在的策略：
+        · **不写 PreceptDef**（一旦存在就会被全局实例化，风险远高于收益）
+        · 只保留 `RitualBehaviorDef` / `RitualPatternDef`（不会自动实例化，安全）
+        · 演唱会入口走**自建窗口** `Dialog_BinguinConcertSetup`（稳定、已验证）
+        · `BinguinConcertRitual.TryOpen()` 找不到 PreceptDef 时返回 false，
+          自动回退到自建窗口 —— 不会崩。
+
+     ★★ 以后若要启用原版仪式界面，必须同时做到：
+        ① 给 `RitualBehaviorDef` 指定一个**具体的** `<workerClass>`
+           （原版可用的 `RitualBehaviorWorker_*`，或自己写一个子类），**绝不能留空**
+        ② 启用后先验证 `Thing.GetGizmos` 不抛异常，再往下做
+     ============================================================================ -->
+<Defs>
+
+  <!-- ══════ ① 仪式行为：角色槽 + 阶段（保留，不自动实例化，安全）══════ -->
+  <RitualBehaviorDef>
+    <defName>BinguinConcert</defName>
+    <!-- -1 = 不受仪式时长机制限制（时长由我们自己的曲目总和控制） -->
+    <durationTicks>-1</durationTicks>
+    <spectatorsLabel>观众</spectatorsLabel>
+    <spectatorGerund>观演</spectatorGerund>
+    <displayCompletedMessage>false</displayCompletedMessage>
+
+    <roles>
+      <!-- 主唱：必选 -->
+      <li Class="RitualRoleColonist">
+        <id>lead</id>
+        <label>主唱</label>
+        <maxCount>1</maxCount>
+        <required>True</required>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+      <!-- 乐手：可缺人 -->
+      <li Class="RitualRoleColonist">
+        <id>keyboard</id>
+        <label>键盘</label>
+        <maxCount>1</maxCount>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+      <li Class="RitualRoleColonist">
+        <id>drumkit</id>
+        <label>架子鼓</label>
+        <maxCount>1</maxCount>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+      <li Class="RitualRoleColonist">
+        <id>guitar</id>
+        <label>吉他</label>
+        <maxCount>1</maxCount>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+      <li Class="RitualRoleColonist">
+        <id>bass</id>
+        <label>贝斯</label>
+        <maxCount>1</maxCount>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+    </roles>
+
+    <stages>
+      <li>
+        <defaultDuty>Spectate</defaultDuty>
+        <endTriggers>
+          <li Class="StageEndTrigger_DurationPercentage">
+            <percentage>1</percentage>
+          </li>
+        </endTriggers>
+      </li>
+    </stages>
+  </RitualBehaviorDef>
+
+  <!-- ══════ ② 仪式模式（保留，不自动实例化，安全）══════ -->
+  <RitualPatternDef>
+    <defName>BinguinConcert</defName>
+    <ritualBehavior>BinguinConcert</ritualBehavior>
+    <ritualOnlyForIdeoMembers>false</ritualOnlyForIdeoMembers>
+    <playsIdeoMusic>false</playsIdeoMusic>
+    <alwaysStartAnytime>true</alwaysStartAnytime>
+    <ignoreExtremeTemperatures>true</ignoreExtremeTemperatures>
+  </RitualPatternDef>
+
+  <!-- ══════ ③ Precept（2026-10-17 第二版）══════
+       ★★ 与第一版的关键差别：**不写 `<isNonIdeoRitual>`**。
+          写了它，游戏会把这个 PreceptDef **全局自动实例化**，
+          而该实例随后被 `Thing.GetGizmos()` 遍历并调用
+          `Precept_Ritual.ShouldShowGizmo()` —— 实测在那里抛
+          NullReferenceException，导致**全图物体按键消失**。
+       现在改为：Def 只是"模板"，由 `BinguinConcertRitual.TryOpen()`
+       手动 `PreceptMaker.MakePrecept` + `Init(ideo, null)` 造实例再弹窗，
+       **实例不进任何 ideo 的 precept 列表** ⇒ `GetGizmos` 不会看到它。 -->
+  <PreceptDef>
+    <defName>BinguinConcert</defName>
+    <label>举办演唱会</label>
+    <description>在麦克风前办一场演唱会。</description>
+    <issue>Ritual</issue>
+    <preceptClass>Precept_Ritual</preceptClass>
+    <visible>false</visible>
+    <classic>true</classic>
+    <countsTowardsPreceptLimit>false</countsTowardsPreceptLimit>
+    <selectionWeight>1.0</selectionWeight>
+    <ritualPatternBase>BinguinConcert</ritualPatternBase>
+    <usesIdeoVisualEffects>false</usesIdeoVisualEffects>
+  </PreceptDef>
+</Defs>

@@ -76,7 +76,7 @@ namespace Binguin.Feature.RaceTraits
         }
 
         /// <summary>后置补丁：把冰鹅的可吃系数改成 0.375 ⇒ 两个阈值回到改版前的绝对值。</summary>
-        public static void Postfix(Need __instance, ref float __result)
+        public static void Postfix(Need_Food __instance, ref float __result)
         {
             try
             {

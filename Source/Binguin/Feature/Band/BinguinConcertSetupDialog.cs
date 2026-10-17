@@ -299,8 +299,20 @@ namespace Binguin.Feature.Band
                 if (!selectable)
                 {
                     GUI.color = ColorLibrary.RedReadable;
-                    Widgets.Label(new Rect(cell.x + 4f, cell.y + 48f, cell.width - 8f, 20f),
-                        why != null && why.StartsWith("已在") ? "已占用" : "技能不足");
+                    // ★ 2026-10-17 作者要求：技能不足时**提示要多少级**。
+                    //   原版 `Binguin_ConcertSong_LevelTooLow` 已含「需要 X，当前 Y」，
+                    //   但格子窄放不下，这里压缩成简短文案。
+                    string shortWhy;
+                    if (why != null && why.StartsWith("已在"))
+                    {
+                        shortWhy = "已占用";
+                    }
+                    else
+                    {
+                        int need = MinArtisticNeeded();
+                        shortWhy = "需艺术 " + need + " 级";
+                    }
+                    Widgets.Label(new Rect(cell.x + 4f, cell.y + 48f, cell.width - 8f, 20f), shortWhy);
                     GUI.color = new Color(1f, 1f, 1f, 0.32f);
                 }
                 else if (RoleOf(p) == activeSlot)
@@ -461,7 +473,13 @@ namespace Binguin.Feature.Band
             else if (cool > 0) cmd.Disable("Binguin_ConcertSetup_Cooldown".Translate(cool.ToString()));
             cmd.action = delegate
             {
-                Find.WindowStack.Add(new Dialog_BinguinConcertSetup(map, __instance.Position));
+                // ★ 2026-10-17 作者要求「和文化 UI 一样」：
+                //   优先走**原版仪式窗口**（`Dialog_BeginRitual`，界面完全一致）；
+                //   仪式 Def 缺失或创建失败时才回退到自建窗口。
+                if (!BinguinConcertRitual.TryOpen(map, __instance.Position))
+                {
+                    Find.WindowStack.Add(new Dialog_BinguinConcertSetup(map, __instance.Position));
+                }
             };
             yield return cmd;
         }
