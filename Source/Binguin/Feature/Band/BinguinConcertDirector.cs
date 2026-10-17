@@ -21,6 +21,7 @@
 using System.Collections.Generic;
 using RimWorld;
 using Verse;
+using Verse.AI.Group;
 using Verse.AI;
 using Binguin.Helper;
 
@@ -101,6 +102,13 @@ namespace Binguin.Feature.Band
                         Performers.Add(p);
                     }
                 }
+
+                // ③.5 ★ 2026-10-17：给**演出者**建 Lord
+                //   原版 `RitualRoleAssignments.cs:600` 会把“处于 Lord 中、且 LordJob 不是
+                //   LordJob_VoluntarilyJoinable”的小人判为 busy，返回
+                //   `MessageRitualRoleBusy`（"{0} is busy."），根本选不进另一个仪式。
+                //   ⇒ 不靠抢 job（会互相拉扯），而是让他们“很忙”。
+                GivePerformersLord(Performers, map, b.venueCenter);
 
                 // ③ 观众 → 看演出（地图上所有能自由行动的殖民者）
                 List<Pawn> colonists = map.mapPawns.FreeColonistsSpawned;
@@ -335,8 +343,19 @@ namespace Binguin.Feature.Band
             IntVec3 venue = b.venueCenter.IsValid ? b.venueCenter
                 : (b.leadSinger != null ? b.leadSinger.Position : IntVec3.Invalid);
             if (!venue.IsValid) return;
+            // ★★ 2026-10-17 修正：**他已经在弹就不要发新 job**。
+            //   无脑重派会每 250 tick 打断一次，造成：
+            //     · 每次都重新走路 → 在琴边反复抖动
+            //     · 和对方仪式互相抢人（他派一次、我抢回来、他再派……）
+            //   现在只在"他确实不在弹"时才补一次；
+            //   防抢人改由“给演出者建 Lord”（见 GivePerformersLord），
+            //   那是原版自带的“很忙”机制：
+            //     RitualRoleAssignments.cs:600
+            //       if (lordJob != null && !(lordJob is LordJob_VoluntarilyJoinable))
+            //           return "MessageRitualRoleBusy".Translate(p);   // "{0} is busy."
+            JobDef playDef = DefDatabase<JobDef>.GetNamedSilentFail("Binguin_PlayInBand");
             Thing mic = FindNearestInstrument(map, Dialog_BinguinConcertSetup.MicDefName, venue);
-            if (b.leadSinger != null && !b.leadSinger.Dead)
+            if (b.leadSinger != null && !b.leadSinger.Dead && !IsPlaying(b.leadSinger, playDef))
             {
                 if (mic != null) SendPlayJob(b.leadSinger, mic);
                 else SendGoto(b.leadSinger, venue);
@@ -347,9 +366,52 @@ namespace Binguin.Feature.Band
                 {
                     Pawn p = kv.Value;
                     if (p == null || p.Dead || !p.Spawned) continue;
+                    if (IsPlaying(p, playDef)) continue;
                     Thing inst = FindNearestInstrument(map, kv.Key, venue);
                     if (inst != null) SendPlayJob(p, inst);
                 }
+            }
+        }
+
+        /// <summary>他是不是正在弹（已在弹就不要发新 job）。</summary>
+        private static bool IsPlaying(Pawn p, JobDef playDef)
+        {
+            if (p == null || playDef == null) return false;
+            try { return p.CurJobDef == playDef; }
+            catch (System.Exception) { return false; }
+        }
+
+        /// <summary>
+        /// 给**演出者**建 Lord（让原版认为他们“很忙”）。
+        /// ★ 2026-10-17 作者反馈：「演出中途开别的节日……乐手正在忙」
+        ///   ⇒ 不靠抢 job（会互相拉扯），而是让他们**处于 Lord 中**：
+        ///     `RitualRoleAssignments.cs:600` 会直接返回
+        ///     `MessageRitualRoleBusy`（"{0} is busy."），根本选不进另一个仪式。
+        ///   用模组已有的 `LordJob_BinguinCrowd`（非 LordJob_VoluntarilyJoinable）。
+        /// </summary>
+        public static void GivePerformersLord(List<Pawn> performers, Map map, IntVec3 venue)
+        {
+            if (performers == null || performers.Count == 0 || map == null) return;
+            try
+            {
+                List<Pawn> valid = new List<Pawn>();
+                for (int i = 0; i < performers.Count; i++)
+                {
+                    Pawn p = performers[i];
+                    if (p == null || p.Dead || !p.Spawned) continue;
+                    if (p.GetLord() != null) continue;   // 已在 Lord 中就不重复建
+                    valid.Add(p);
+                }
+                if (valid.Count == 0) return;
+                Verse.AI.Group.LordMaker.MakeNewLord(Faction.OfPlayer,
+                    new LordJob_BinguinCrowd(venue), map, valid);
+                BinguinLogUtility.Log("已为 " + valid.Count
+                    + " 名演出者建 Lord（原版会把他们判为 busy，其他仪式抢不走）。",
+                    isDebug: false);
+            }
+            catch (System.Exception e)
+            {
+                BinguinLogUtility.Log("为演出者建 Lord 失败：" + e.Message, severity: 1, isDebug: false);
             }
         }
 
