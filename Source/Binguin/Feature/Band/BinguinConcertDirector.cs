@@ -181,6 +181,13 @@ namespace Binguin.Feature.Band
             nextSongTick = GenTicks.TicksGame;
         }
 
+        /// <summary>歌单是否已经全部放完（用于散场后收尾）。</summary>
+        public static bool IsMusicFinished(BinguinConcertBooking b)
+        {
+            if (b == null || b.songs == null || b.songs.Count == 0) return true;
+            return songIndex >= b.songs.Count && GenTicks.TicksGame >= nextSongTick;
+        }
+
         /// <summary>每 60 tick 调一次：到点就放下一首。</summary>
         public static void TickMusic(BinguinConcertBooking b)
         {

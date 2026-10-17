@@ -217,6 +217,13 @@ namespace Binguin.Feature.Band
         /// <summary>正在演出的那一场（运行期，不进存档）。用于演出中重派 job。</summary>
         public BinguinConcertBooking performingBooking;
 
+        /// <summary>
+        /// ★ 2026-10-17 作者要求：「第 2~4 首会响，在演唱会后也继续播放」
+        /// ⇒ 歌单播放与演出脱钩：演出结束后这个引用仍然保留，
+        ///   直到全部曲目放完才清空。
+        /// </summary>
+        public BinguinConcertBooking musicPlaylist;
+
         /// <summary>上一场演唱会结束的时刻（用于 5 天冷却）。</summary>
         public int lastConcertEndTick = -999999;
 
@@ -365,6 +372,7 @@ namespace Binguin.Feature.Band
                 // ★ 2026-10-17：演唱会结束后给来访派系加好感
                 BinguinConcertDirector.GrantGoodwill(performingBooking);
                 performingBooking = null;
+                // ★ musicPlaylist 故意不清：歌单要在演唱会之后继续放完
                 lastConcertEndTick = GenTicks.TicksGame;
                 BinguinLogUtility.Log("演唱会结束，5 天冷却开始。", isDebug: false);
             }
@@ -374,10 +382,16 @@ namespace Binguin.Feature.Band
             }
 
             // ★ 2026-10-17 修 bug：演出中被别的节日抢走 ⇒ 每 250 tick 重新派奏乐 job
-            // ★ 音乐：每 60 tick 检查一次是否该放下一首
-            if (BinguinConcert.Active && performingBooking != null)
+            // ★ 2026-10-17：歌单独立于演出状态 —— 散场后也要把剩下的歌放完
+            if (musicPlaylist != null)
             {
-                BinguinConcertDirector.TickMusic(performingBooking);
+                BinguinConcertDirector.TickMusic(musicPlaylist);
+                if (BinguinConcertDirector.IsMusicFinished(musicPlaylist))
+                {
+                    BinguinLogUtility.Log("演唱会歌单已全部播完，恢复常规背景音乐。",
+                        isDebug: false);
+                    musicPlaylist = null;
+                }
             }
 
             if (BinguinConcert.Active && performingBooking != null
@@ -484,6 +498,7 @@ namespace Binguin.Feature.Band
             // ★ 2026-10-17 作者：「演唱会时间是固定的4小时」
             //   曲目只是为了让玩家开 1 倍速时能听到四首歌，**不影响时长**。
             performingBooking = b;
+            musicPlaylist = b;          // ★ 歌单开始：散场后会继续放完
             BinguinConcert.Start(BinguinConcert.DurationTicks);
             BinguinConcertDirector.BeginPerformance(b, map);
             booking = null;   // 预约转成"运行中"，由 Director 接手

@@ -47,7 +47,11 @@
      ============================================================================ -->
 <Defs>
 
-  <!-- ═══════════ MyGO!!!!! 四首（2026-10-11 作者提供）═══════════ -->
+  <!-- ═══════════ MyGO!!!!! 四首（2026-10-11 作者提供）═══════════
+       ★ 2026-10-17：`durationTicks` 改为**每首歌的真实长度**（秒 × 60）。
+         换算是用 Tools/_scratch/mp3_duration.py 按 MPEG 帧精确测出来的，
+         这样第 2~4 首会在前一首放完时准时接上，不会中途被切。
+         迷星叫 3:36 / 詩超絆 4:00 / 影色舞 3:30 / 春日影 4:19（合计 15:26） -->
 
   <SoundDef>
     <defName>Binguin_SongClip_Mayoiuta</defName>
@@ -118,7 +122,7 @@
     <label>迷星叫</label>
     <description>在迷途中喊出的歌。哪怕脚下没有路，也要把声音送到星星那里去。</description>
     <style>抒情</style>
-    <durationTicks>10000</durationTicks>
+    <durationTicks>12960</durationTicks>
     <moodOffset>6</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
     <musicDef>Binguin_Music_Mayoiuta</musicDef>
@@ -130,7 +134,7 @@
     <label>詩超絆</label>
     <description>把说不出口的话写成诗，再把诗唱成羁绊。冰鹅族听完会安静很久。</description>
     <style>抒情</style>
-    <durationTicks>10000</durationTicks>
+    <durationTicks>14400</durationTicks>
     <moodOffset>7</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
     <musicDef>Binguin_Music_Utakotoba</musicDef>
@@ -142,7 +146,7 @@
     <label>影色舞</label>
     <description>影子也会跳舞。鼓点一起来，全场就没人坐得住了。</description>
     <style>激昂</style>
-    <durationTicks>9000</durationTicks>
+    <durationTicks>12660</durationTicks>
     <moodOffset>8</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
     <musicDef>Binguin_Music_SilhouetteDance</musicDef>
@@ -154,7 +158,7 @@
     <label>春日影</label>
     <description>春天的影子落在雪原上。这首唱完，冰鹅族的观众会想起很久以前的家。</description>
     <style>民谣</style>
-    <durationTicks>11000</durationTicks>
+    <durationTicks>15540</durationTicks>
     <moodOffset>9</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
     <musicDef>Binguin_Music_Harumikage</musicDef>
