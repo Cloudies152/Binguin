@@ -102,21 +102,24 @@
   <RitualPatternDef>
     <defName>BinguinConcert</defName>
     <ritualBehavior>BinguinConcert</ritualBehavior>
+    <!-- ★★ 2026-10-17 关键修复：原版每个 RitualPatternDef 都必须指定
+         `ritualObligationTargetFilter`（Odyssey 的 GravshipLaunch、Ideology 的所有
+         仪式都指定了）。**我第一版漏了它** ⇒ `Precept_Ritual.ShouldShowGizmo()`
+         访问 null 过滤器时抛 NullReferenceException。
+         证据：Verse/Thing.cs:1411 会遍历玩家意识形态的所有 Precept 并调用
+         `ritual.ShouldShowGizmo(this)`，异常一出整个 gizmo 枚举中断
+         ⇒ 全图物体按键消失。
+         `AnyRitualSpot` 是最宽松的原版过滤器。 -->
+    <ritualObligationTargetFilter>AnyRitualSpot</ritualObligationTargetFilter>
     <ritualOnlyForIdeoMembers>false</ritualOnlyForIdeoMembers>
     <playsIdeoMusic>false</playsIdeoMusic>
     <alwaysStartAnytime>true</alwaysStartAnytime>
     <ignoreExtremeTemperatures>true</ignoreExtremeTemperatures>
   </RitualPatternDef>
 
-  <!-- ══════ ③ Precept（2026-10-17 第二版）══════
-       ★★ 与第一版的关键差别：**不写 `<isNonIdeoRitual>`**。
-          写了它，游戏会把这个 PreceptDef **全局自动实例化**，
-          而该实例随后被 `Thing.GetGizmos()` 遍历并调用
-          `Precept_Ritual.ShouldShowGizmo()` —— 实测在那里抛
-          NullReferenceException，导致**全图物体按键消失**。
-       现在改为：Def 只是"模板"，由 `BinguinConcertRitual.TryOpen()`
-       手动 `PreceptMaker.MakePrecept` + `Init(ideo, null)` 造实例再弹窗，
-       **实例不进任何 ideo 的 precept 列表** ⇒ `GetGizmos` 不会看到它。 -->
+  <!-- ══════ ③ Precept（第三版：补齐 obligationTargetFilter 后重新启用）══════
+       ★ 不写 `isNonIdeoRitual`：写了会被全局额外实例化一份。
+       ★ 仍然保留：失败时 `BinguinConcertRitual.TryOpen()` 有三道回退保护。 -->
   <PreceptDef>
     <defName>BinguinConcert</defName>
     <label>举办演唱会</label>
@@ -124,7 +127,6 @@
     <issue>Ritual</issue>
     <preceptClass>Precept_Ritual</preceptClass>
     <visible>false</visible>
-    <classic>true</classic>
     <countsTowardsPreceptLimit>false</countsTowardsPreceptLimit>
     <selectionWeight>1.0</selectionWeight>
     <ritualPatternBase>BinguinConcert</ritualPatternBase>
