@@ -52,6 +52,16 @@ namespace Binguin.Feature.Band
         /// </summary>
         public static bool TryOpen(Map map, IntVec3 micCell)
         {
+            return TryOpen(map, micCell, null);
+        }
+
+        /// <summary>
+        /// 打开原版仪式窗口（可预先把现有预约的人填回角色槽）。
+        /// ★ 2026-10-17 作者要求：「改期界面最好也用仪式的」
+        ///   ⇒ 重新选人走同一个仪式窗口，并用 forcedForRole 把已有的人填好。
+        /// </summary>
+        public static bool TryOpen(Map map, IntVec3 micCell, BinguinConcertBooking prefill)
+        {
             if (map == null) return false;
             try
             {
@@ -187,7 +197,8 @@ namespace Binguin.Feature.Band
                     //   `PredictedQuality()` 第一行 `outcome.startingQuality` 直接 NRE
                     //   （Dialog_BeginRitual.cs:301）⇒ 每帧报错、界面画不出来。
                     //   历史日志：PredictedQuality 的 NRE 刷了 1441+400 次。
-                    null, null, null, null,
+                    // filter / okButtonText / requiredPawns / forcedForRole
+                    null, null, null, BuildForced(prefill),
                     ritual.sourcePattern != null ? ritual.sourcePattern.ritualOutcomeEffect : null);
                 Find.WindowStack.Add(dlg);
                 return true;
@@ -254,6 +265,34 @@ namespace Binguin.Feature.Band
             foreach (Pawn p in list)
             {
                 if (p != null) return p;
+            }
+            return null;
+        }
+
+        /// <summary>把已有预约的人变成“角色 id → 小人”，预先填好仪式角色槽。</summary>
+        private static Dictionary<string, Pawn> BuildForced(BinguinConcertBooking b)
+        {
+            if (b == null) return null;
+            Dictionary<string, Pawn> d = new Dictionary<string, Pawn>();
+            if (b.leadSinger != null) d["lead"] = b.leadSinger;
+            if (b.musicians != null)
+            {
+                foreach (KeyValuePair<string, Pawn> kv in b.musicians)
+                {
+                    if (kv.Value == null) continue;
+                    string roleId = RoleIdOf(kv.Key);
+                    if (!roleId.NullOrEmpty()) d[roleId] = kv.Value;
+                }
+            }
+            return d.Count > 0 ? d : null;
+        }
+
+        /// <summary>乐器 defName → 仪式角色 id。</summary>
+        private static string RoleIdOf(string instrumentDefName)
+        {
+            for (int i = 0; i < RoleToDef.Length; i++)
+            {
+                if (RoleToDef[i][1] == instrumentDefName) return RoleToDef[i][0];
             }
             return null;
         }

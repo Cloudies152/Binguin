@@ -458,7 +458,12 @@ namespace Binguin.Feature.Band
                     waiting.DaysUntilStart.ToString());
                 edit.action = delegate
                 {
-                    Find.WindowStack.Add(new Dialog_BinguinConcertSetup(map, __instance.Position));
+                    // ★ 2026-10-17 作者要求：改期/改人也用**仪式界面**
+                    //   并把已有的主唱/乐手预先填回角色槽
+                    if (!BinguinConcertRitual.TryOpen(map, __instance.Position, waiting))
+                    {
+                        Find.WindowStack.Add(new Dialog_BinguinConcertSetup(map, __instance.Position));
+                    }
                 };
                 yield return edit;
                 yield break;
