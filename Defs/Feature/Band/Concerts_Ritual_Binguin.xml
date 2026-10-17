@@ -119,7 +119,11 @@
              at RimWorld.Dialog_BeginRitual.PredictedQuality(...)
              at RimWorld.Dialog_BeginLordJob.DoDescription(...)
          ⇒ 借用原版 `CelebrationPartyDanceDrum`（鼓乐庆祝派对，语义最接近演唱会）。 -->
-    <ritualOutcomeEffect>CelebrationPartyDanceDrum</ritualOutcomeEffect>
+    <!-- ★ 2026-10-17 改：原来借用 `CelebrationPartyDanceDrum`，它带
+         `RitualOutcomeComp_NumPlayedDrums`（统计敲了几个鼓），于是仪式界面上
+         多出一个"鼓"的条目。原版其他 outcome 也都带讲台/座位/领袖等 comp，
+         同样会冒出不相关条目 ⇒ **自己定义一个无 comp 的 outcome**。 -->
+    <ritualOutcomeEffect>BinguinConcertOutcome</ritualOutcomeEffect>
     <ritualOnlyForIdeoMembers>false</ritualOnlyForIdeoMembers>
     <playsIdeoMusic>false</playsIdeoMusic>
     <alwaysStartAnytime>true</alwaysStartAnytime>
@@ -141,4 +145,20 @@
     <ritualPatternBase>BinguinConcert</ritualPatternBase>
     <usesIdeoVisualEffects>false</usesIdeoVisualEffects>
   </PreceptDef>
+  <!-- ══════ ④ 演唱会仪式结果：无任何 comp，界面才干净 ══════
+       · workerClass 用原版 `RitualOutcomeEffectWorker_FromQuality`（按质量给心情）
+       · `memoryDef` 复用模组已有的 `Binguin_AttendedConcert` 记忆
+       · **不写 <comps>** ⇒ 仪式界面不会多出"鼓/讲台/座位"之类的条目 -->
+  <RitualOutcomeEffectDef>
+    <defName>BinguinConcertOutcome</defName>
+    <description>依仪式质量，参与者在 {MOODDAYS} 天内获得 {MINMOOD}~{MAXMOOD} 心情。</description>
+    <workerClass>RitualOutcomeEffectWorker_FromQuality</workerClass>
+    <startingQuality>0.5</startingQuality>
+    <minQuality>0</minQuality>
+    <maxQuality>1</maxQuality>
+    <givesDevelopmentPoints>false</givesDevelopmentPoints>
+    <memoryDef>Binguin_AttendedConcert</memoryDef>
+    <warnOnLowQuality>false</warnOnLowQuality>
+    <allowAttachableOutcome>false</allowAttachableOutcome>
+  </RitualOutcomeEffectDef>
 </Defs>
