@@ -160,5 +160,18 @@
     <memoryDef>Binguin_AttendedConcert</memoryDef>
     <warnOnLowQuality>false</warnOnLowQuality>
     <allowAttachableOutcome>false</allowAttachableOutcome>
+    <!-- ★★★ 2026-10-17 关键：**空列表也必须显式写出来**。
+         `RitualOutcomeEffectDef.comps` 是 `public List<RitualOutcomeComp> comps;`
+         —— **没有初始化器**，XML 不写它就是 null。
+         而 `Dialog_BeginRitual.PredictedQuality()` 里是
+             foreach (RitualOutcomeComp comp in outcome.comps)
+         ⇒ null 列表直接 NullReferenceException，窗口每帧报错画不出来。
+         （原版 85% 的 RitualOutcomeEffectDef 都写 <comps>，就是因为不写会崩。）
+         其他 List 字段同理，一并给空列表。 -->
+    <comps />
+    <outcomeChances />
+    <extraPredictedOutcomeDescriptions />
+    <extraOutcomeDescriptions />
+    <extraInfoLines />
   </RitualOutcomeEffectDef>
 </Defs>
