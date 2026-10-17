@@ -254,15 +254,16 @@ namespace Binguin.Feature.Band
                 // ★ 2026-10-11 修「邀请的人没有来」：
                 //   贵宾原来在 `BeginPerformance`（开演）时才生成 —— 但作者要的是
                 //   「信封显示人员到场」时就应该一起到场。⇒ 挪到到场阶段生成。
-                // ★ 2026-10-17：贵宾**直接生成在场地周围**（不再从地图边缘走过来，
-                //   否则走到一半就散了，玩家看不到他们），并记下名单
-                //   供开演前反复叫回场地游荡。
-                List<Pawn> guests = BinguinConcertGuests.SpawnInvitedGuests(b, map, venue);
+                // ★ 2026-10-17 作者要求：「不要直接生成在场地周围，还是走进来更好」
+                //   ⇒ 仍从**地图边缘**生成，然后让他们自己走过来。
+                //   名单存进 booking.guests，由 KeepCrowdInPlace 负责：
+                //   路上继续走 → 到了就在场边游荡。
+                List<Pawn> guests = BinguinConcertGuests.SpawnInvitedGuests(b, map);
                 if (b.guests == null) b.guests = new List<Pawn>();
                 for (int i = 0; i < guests.Count; i++)
                 {
                     if (guests[i] != null) b.guests.Add(guests[i]);
-                    SendWanderNear(guests[i], venue, map);
+                    SendGoto(guests[i], venue);   // 开始走向场地
                 }
             }
             catch (System.Exception e)
@@ -301,12 +302,20 @@ namespace Binguin.Feature.Band
                 : (b.leadSinger != null ? b.leadSinger.Position : IntVec3.Invalid);
             if (!venue.IsValid) return;
 
-            // 外派系贵宾
+            // 外派系贵宾：**还在路上就继续走**，到了场边才游荡
             if (b.guests != null)
             {
-                for (int i = 0; i < b.guests.Count; i++) SendWanderNear(b.guests[i], venue, map);
+                for (int i = 0; i < b.guests.Count; i++)
+                {
+                    Pawn g = b.guests[i];
+                    if (g == null || g.Dead || !g.Spawned) continue;
+                    if ((g.Position - venue).LengthHorizontalSquared > 144f)   // 12 格以外
+                        SendGoto(g, venue);
+                    else
+                        SendWanderNear(g, venue, map);
+                }
             }
-            // 本方殖民者（减掉演出者本人）
+            // 本方殖民者（减掉演出者本人）：同样先走过去再游荡
             List<Pawn> cols = map.mapPawns.FreeColonistsSpawned;
             for (int i = 0; i < cols.Count; i++)
             {
@@ -314,7 +323,10 @@ namespace Binguin.Feature.Band
                 if (c == null || c.Dead) continue;
                 if (c == b.leadSinger) continue;
                 if (b.musicians != null && b.musicians.ContainsValue(c)) continue;
-                SendWanderNear(c, venue, map);
+                if ((c.Position - venue).LengthHorizontalSquared > 144f)
+                    SendGoto(c, venue);
+                else
+                    SendWanderNear(c, venue, map);
             }
         }
 
