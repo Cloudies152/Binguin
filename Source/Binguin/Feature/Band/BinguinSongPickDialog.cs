@@ -69,12 +69,16 @@ namespace Binguin.Feature.Band
 
                 Widgets.Label(new Rect(row.x + 6f, row.y + 3f, row.width - 12f, 20f),
                     (on ? "☑ " : "☐ ") + s.label);
-                string sub = s.style.NullOrEmpty() ? "" : "【" + s.style + "】";
-                sub += " " + (s.EffectiveDurationTicks / 2500f).ToString("0.#") + " 小时"
-                    + " · 需艺术 " + s.requiredArtisticLevel;
-                GUI.color = new Color(1f, 1f, 1f, 0.7f);
-                Widgets.Label(new Rect(row.x + 18f, row.y + 22f, row.width - 24f, 20f), sub);
-                GUI.color = Color.white;
+                // ★ 2026-10-17 作者：「选歌时候不要显示小时」「下面也不需要备注抒情什么的」
+                //   演唱会时长固定 4 小时，曲目只影响听到什么。
+                //   所以下面只保留最低艺术等级提示（有用），不显示风格/时长。
+                if (s.requiredArtisticLevel > 0)
+                {
+                    GUI.color = new Color(1f, 1f, 1f, 0.6f);
+                    Widgets.Label(new Rect(row.x + 18f, row.y + 22f, row.width - 24f, 20f),
+                        "需艺术 " + s.requiredArtisticLevel);
+                    GUI.color = Color.white;
+                }
 
                 if (Widgets.ButtonInvisible(row))
                 {

@@ -214,6 +214,9 @@ namespace Binguin.Feature.Band
     /// </summary>
     public class GameComponent_BinguinConcertBooking : GameComponent
     {
+        /// <summary>正在演出的那一场（运行期，不进存档）。用于演出中重派 job。</summary>
+        public BinguinConcertBooking performingBooking;
+
         /// <summary>上一场演唱会结束的时刻（用于 5 天冷却）。</summary>
         public int lastConcertEndTick = -999999;
 
@@ -359,12 +362,20 @@ namespace Binguin.Feature.Band
             if (wasPerforming && !BinguinConcert.Active)
             {
                 wasPerforming = false;
+                performingBooking = null;
                 lastConcertEndTick = GenTicks.TicksGame;
                 BinguinLogUtility.Log("演唱会结束，5 天冷却开始。", isDebug: false);
             }
             else if (BinguinConcert.Active)
             {
                 wasPerforming = true;
+            }
+
+            // ★ 2026-10-17 修 bug：演出中被别的节日抢走 ⇒ 每 250 tick 重新派奏乐 job
+            if (BinguinConcert.Active && performingBooking != null
+                && (GenTicks.TicksGame % 250) == 0)
+            {
+                BinguinConcertDirector.KeepPerformersPlaying(performingBooking, performingBooking.Map);
             }
 
             BinguinConcertBooking b = booking;
@@ -458,17 +469,14 @@ namespace Binguin.Feature.Band
                 Cancel("找不到预定的地图");
                 return;
             }
-            // ★ 2026-10-17 作者给定的质量公式：
-            //   人数 30% + 艺术等级总和 50%（到 60 为满）+ 灯光 20%（每个 5%，最多 4 个）
-            //   详见 BinguinConcertQuality.cs
+            // ★ 2026-10-17 作者：「开始演唱会时不用弹仪式质量消息」⇒ 只计算、不弹消息。
+            //   质量仍会在仪式界面的“效果乘数”里显示。
             b.quality = BinguinConcertQuality.Compute(b, map);
-            Messages.Message("Binguin_ConcertQuality_Message".Translate(
-                (b.quality * 100f).ToString("0"),
-                BinguinConcertQuality.TierLabel(b.quality),
-                BinguinConcertQuality.DetailLine(b, map)), MessageTypeDefOf.PositiveEvent);
 
-            int dur = 0; if (b.songs != null) { for (int si = 0; si < b.songs.Count; si++) { if (b.songs[si] != null) dur += b.songs[si].EffectiveDurationTicks; } } if (dur <= 0) dur = BinguinConcert.DurationTicks;
-            BinguinConcert.Start(dur);
+            // ★ 2026-10-17 作者：「演唱会时间是固定的4小时」
+            //   曲目只是为了让玩家开 1 倍速时能听到四首歌，**不影响时长**。
+            performingBooking = b;
+            BinguinConcert.Start(BinguinConcert.DurationTicks);
             BinguinConcertDirector.BeginPerformance(b, map);
             booking = null;   // 预约转成"运行中"，由 Director 接手
         }

@@ -53,6 +53,7 @@ namespace Binguin.Feature.Band
                 SelfHosted = true;
                 Audience = new List<Pawn>();
                 Performers = new List<Pawn>();
+                ResetSeats();
 
                 // ① 主唱 → 麦克风（必须传**麦克风建筑**，不能传格子！）
                 //   ★★ 2026-10-17 修玩家日志里的致命红字：
@@ -113,7 +114,7 @@ namespace Binguin.Feature.Band
                     {
                         continue;   // 表演者不给自己当观众
                     }
-                    SendWatchJob(c, b.venueCenter);
+                    SendWatchJob(c, b.venueCenter, map);
                     Audience.Add(c);
                 }
 
@@ -121,7 +122,7 @@ namespace Binguin.Feature.Band
                 List<Pawn> guests = BinguinConcertGuests.SpawnInvitedGuests(b, map);
                 for (int i = 0; i < guests.Count; i++)
                 {
-                    SendWatchJob(guests[i], b.venueCenter);
+                    SendWatchJob(guests[i], b.venueCenter, map);
                     Audience.Add(guests[i]);
                 }
 
@@ -155,8 +156,61 @@ namespace Binguin.Feature.Band
         }
 
 
-        /// <summary>把"观看"job 派给某人（目标 = 场地中心那一格）。</summary>
-        private static void SendWatchJob(Pawn p, IntVec3 center)
+        /// <summary>已被占用的座位 id（每场演出开始时清空）。</summary>
+        private static readonly HashSet<int> ClaimedSeats = new HashSet<int>();
+
+        /// <summary>清空座位占用表。</summary>
+        public static void ResetSeats()
+        {
+            ClaimedSeats.Clear();
+        }
+
+        /// <summary>
+        /// 找一个观众位置。
+        /// ★ 2026-10-17 作者要求：「听众不应该在麦克风面，参考之前的演唱会事件逻辑，
+        ///   自动寻找附近能坐的位置，或者在麦克风前几格」
+        ///   ⇒ 优先找场地附近**可坐的建筑**（椅子/座位），
+        ///     没有就站在麦克风**前方 4~±2 格**，不挤在麦克风上。
+        /// </summary>
+        public static IntVec3 AudienceSpot(Pawn p, IntVec3 venue, Map map)
+        {
+            if (!venue.IsValid || map == null) return IntVec3.Invalid;
+
+            // ① 找座位（场地 14 格内，未被占）
+            if (map.listerBuildings != null)
+            {
+                List<Building> all = map.listerBuildings.allBuildingsColonist;
+                float best = 999f;
+                IntVec3 bestCell = IntVec3.Invalid;
+                for (int i = 0; i < all.Count; i++)
+                {
+                    Building bd = all[i];
+                    if (bd == null || bd.def == null || bd.def.building == null) continue;
+                    if (!bd.def.building.isSittable) continue;
+                    if (ClaimedSeats.Contains(bd.thingIDNumber)) continue;
+                    IntVec3 cell = bd.InteractionCell.IsValid ? bd.InteractionCell : bd.Position;
+                    float d2 = (cell - venue).LengthHorizontalSquared;
+                    if (d2 > 196f) continue;            // 14 格
+                    if (d2 < best) { best = d2; bestCell = cell; }
+                }
+                if (bestCell.IsValid)
+                {
+                    return bestCell;
+                }
+            }
+
+            // ② 没座位 ⇒ 麦克风前方 4 ± 2 格
+            for (int k = 0; k < 8; k++)
+            {
+                IntVec3 c = venue + new IntVec3(0, 0, -(4 + Rand.RangeInclusive(-2, 2)));
+                c = CellFinder.RandomClosewalkCellNear(c, map, 2);
+                if (c.IsValid && c != venue) return c;
+            }
+            return venue;
+        }
+
+        /// <summary>把"观看"job 派给某人（目标 = 座位或麦克风前方的位置）。</summary>
+        private static void SendWatchJob(Pawn p, IntVec3 center, Map map)
         {
             if (p == null)
             {
@@ -169,9 +223,40 @@ namespace Binguin.Feature.Band
                     severity: 1, isDebug: false);
                 return;
             }
+            IntVec3 spot = AudienceSpot(p, center, map);
             Job job = JobMaker.MakeJob(def);
-            job.targetA = new LocalTargetInfo(center);
+            job.targetA = new LocalTargetInfo(spot.IsValid ? spot : center);
             p.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+        }
+
+        /// <summary>
+        /// 演出期间**重新派奏乐 job**。
+        /// ★ 2026-10-17 修 bug：「如果中途开其他节日就会离开乐器」
+        ///   ⇒ 原因是演出中只在开演那一刻派了一次 job，被别的节日抢走就没人叫回来。
+        ///   现在每 250 tick 重新强制派一次，把他们**按在乐器上**。
+        /// </summary>
+        public static void KeepPerformersPlaying(BinguinConcertBooking b, Map map)
+        {
+            if (b == null || map == null) return;
+            IntVec3 venue = b.venueCenter.IsValid ? b.venueCenter
+                : (b.leadSinger != null ? b.leadSinger.Position : IntVec3.Invalid);
+            if (!venue.IsValid) return;
+            Thing mic = FindNearestInstrument(map, Dialog_BinguinConcertSetup.MicDefName, venue);
+            if (b.leadSinger != null && !b.leadSinger.Dead)
+            {
+                if (mic != null) SendPlayJob(b.leadSinger, mic);
+                else SendGoto(b.leadSinger, venue);
+            }
+            if (b.musicians != null)
+            {
+                foreach (KeyValuePair<string, Pawn> kv in b.musicians)
+                {
+                    Pawn p = kv.Value;
+                    if (p == null || p.Dead || !p.Spawned) continue;
+                    Thing inst = FindNearestInstrument(map, kv.Key, venue);
+                    if (inst != null) SendPlayJob(p, inst);
+                }
+            }
         }
 
         /// <summary>按乐器 defName 找离场地中心最近的实例。</summary>
