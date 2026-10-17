@@ -204,7 +204,21 @@ namespace Binguin.Feature.Band
                 {
                     try
                     {
-                        Verse.Sound.SoundStarter.PlayOneShotOnCamera(clip, b.Map);
+                        // ★★ 2026-10-17 自测发现的错误：
+                        //   `PlayOneShotOnCamera` 要求 SoundDef 有 **on-camera subSounds**，
+                        //   而我们的曲目 SoundDef 是 `MapOnly` → 报
+                        //   "Tried to play ... on camera but it has no on-camera subSounds."
+                        //   ⇒ 改用 `PlayOneShot(clip, SoundInfo.InMap(...))`，
+                        //     从场地那一格发声，与 MapOnly 一致。
+                        IntVec3 at = b.venueCenter.IsValid ? b.venueCenter
+                            : (b.leadSinger != null ? b.leadSinger.Position : IntVec3.Invalid);
+                        Verse.Sound.SoundInfo info;
+                        if (at.IsValid)
+                            info = Verse.Sound.SoundInfo.InMap(new TargetInfo(at, b.Map),
+                                Verse.Sound.MaintenanceType.None);
+                        else
+                            info = Verse.Sound.SoundInfo.OnCamera(Verse.Sound.MaintenanceType.None);
+                        Verse.Sound.SoundStarter.PlayOneShot(clip, info);
                         BinguinLogUtility.Log("演唱会播放第 " + (songIndex + 1)
                             + " 首：" + s.label, isDebug: false);
                     }

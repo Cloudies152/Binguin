@@ -253,9 +253,42 @@ namespace Binguin.Feature.Band
             {
                 return null;
             }
-            // ★ `FactionDef` 没有 pawnKinds 列表；取"普通成员"模板
-            //   （与 `BandVisitFlow_Binguin.cs:389` 同一写法）。
-            return f.def.basicMemberKind;
+            // ★★ 2026-10-17 自测发现：「已邀请 太阳帝国 3 人」但**没有“贵宾到场”日志**
+            //   ⇒ `f.def.basicMemberKind` 对部分派系为 null，代码里直接 `continue` 静默跳过了。
+            //   ⇒ 加三级兜底。
+            if (f.def.basicMemberKind != null)
+            {
+                return f.def.basicMemberKind;
+            }
+            // ① 从该派系的 pawnGroupMakers 里挑一个人形种族
+            try
+            {
+                if (f.def.pawnGroupMakers != null)
+                {
+                    for (int i = 0; i < f.def.pawnGroupMakers.Count; i++)
+                    {
+                        PawnGroupMaker pgm = f.def.pawnGroupMakers[i];
+                        if (pgm == null || pgm.options == null) continue;
+                        for (int k = 0; k < pgm.options.Count; k++)
+                        {
+                            PawnKindDef kd = pgm.options[k].kind;
+                            if (kd != null && kd.RaceProps != null && kd.RaceProps.Humanlike)
+                            {
+                                BinguinLogUtility.Log("派系 " + f.Name
+                                    + " 没有 basicMemberKind，改用 " + kd.defName,
+                                    severity: 1, isDebug: false);
+                                return kd;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (System.Exception) { }
+            // ② 最后兜底：普通村民
+            BinguinLogUtility.Log("派系 " + f.Name
+                + " 找不到合适的贵宾模板，回退到 Villager。",
+                severity: 1, isDebug: false);
+            return PawnKindDefOf.Villager;
         }
 
         /// <summary>找一个地图边缘的落点（客人从边缘进场）。</summary>
