@@ -194,6 +194,33 @@ namespace Binguin.Feature.Band
                 dur = s.EffectiveDurationTicks;
                 // ★ `Binguin_SongDef.soundDef` 存的是 **defName 字符串**（方便 XML 里写引用），
                 //   所以先查 DefDatabase 拿到 SoundDef 再播。
+                // ★★ 2026-10-17 作者方案：**直接替换背景音乐**
+                //   原版接口：Find.MusicManagerPlay.ForcePlaySong(SongDef, bool)
+                //   好处：走游戏自己的音乐轨道，音量/淡入淡出/暂停全部由原版处理，
+                //         不受 one-shot 通道那道静默闸门影响。演唱会结束后
+                //         这首放完，原版会自己恢复正常的背景音乐调度。
+                SongDef music = s.musicDef.NullOrEmpty()
+                    ? null : DefDatabase<SongDef>.GetNamedSilentFail(s.musicDef);
+                if (music != null && Find.MusicManagerPlay != null)
+                {
+                    try
+                    {
+                        Find.MusicManagerPlay.ForcePlaySong(music, false);
+                        BinguinLogUtility.Log("演唱会背景音乐：" + music.defName
+                            + "（clipPath=" + music.clipPath + "）", isDebug: false);
+                    }
+                    catch (System.Exception e)
+                    {
+                        BinguinLogUtility.Log("ForcePlaySong 失败：" + e.Message,
+                            severity: 1, isDebug: false);
+                    }
+                }
+                else if (!s.musicDef.NullOrEmpty())
+                {
+                    BinguinLogUtility.Log("找不到 SongDef：" + s.musicDef
+                        + "（检查 Concerts_Songs_Binguin.xml）", severity: 1, isDebug: false);
+                }
+
                 SoundDef clip = s.soundDef.NullOrEmpty()
                     ? null : DefDatabase<SoundDef>.GetNamedSilentFail(s.soundDef);
                 if (clip == null && !s.soundDef.NullOrEmpty())
@@ -271,8 +298,12 @@ namespace Binguin.Feature.Band
                 }
                 foreach (KeyValuePair<Faction, List<Pawn>> kv in byFaction)
                 {
+                    // ★ 2026-10-17：Lord 的 chillSpot 放在**麦克风前方 4 格**，
+                    //   让客人聚在台前听，而不是围着麦克风转（作者反馈）。
+                    IntVec3 front = venue + new IntVec3(0, 0, -4);
+                    if (!front.Standable(map)) front = venue;
                     Verse.AI.Group.LordMaker.MakeNewLord(kv.Key,
-                        new LordJob_BinguinCrowd(venue), map, kv.Value);
+                        new LordJob_BinguinCrowd(front), map, kv.Value);
                 }
                 BinguinLogUtility.Log("已为贵宾建立 Lord（防止立刻离开地图）。",
                     isDebug: false);
@@ -280,6 +311,37 @@ namespace Binguin.Feature.Band
             catch (System.Exception e)
             {
                 BinguinLogUtility.Log("为贵宾建 Lord 失败：" + e.Message, severity: 1, isDebug: false);
+            }
+        }
+
+        /// <summary>
+        /// 演唱会结束后给**来访的派系**加好感（作者要求：听完后和所有派系加关系）。
+        /// ★ 只给真正被邀请且答应的派系加；敌对派系不动。
+        /// </summary>
+        public static void GrantGoodwill(BinguinConcertBooking b)
+        {
+            if (b == null || b.invitedFactionIds == null || b.invitedFactionIds.Count == 0) return;
+            if (Find.FactionManager == null) return;
+            Faction player = Faction.OfPlayer;
+            if (player == null) return;
+            List<Faction> all = Find.FactionManager.AllFactionsListForReading;
+            for (int i = 0; i < all.Count; i++)
+            {
+                Faction f = all[i];
+                if (f == null || f.def == null || f.IsPlayer) continue;
+                if (!b.invitedFactionIds.Contains(f.loadID)) continue;
+                if (f.HostileTo(player)) continue;
+                try
+                {
+                    f.TryAffectGoodwillWith(player, 8, true, false);
+                    Messages.Message("Binguin_ConcertGoodwill_Message".Translate(f.Name),
+                        MessageTypeDefOf.PositiveEvent);
+                }
+                catch (System.Exception e)
+                {
+                    BinguinLogUtility.Log("给 " + f.Name + " 加好感失败：" + e.Message,
+                        severity: 1, isDebug: false);
+                }
             }
         }
 

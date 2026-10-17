@@ -362,6 +362,8 @@ namespace Binguin.Feature.Band
             if (wasPerforming && !BinguinConcert.Active)
             {
                 wasPerforming = false;
+                // ★ 2026-10-17：演唱会结束后给来访派系加好感
+                BinguinConcertDirector.GrantGoodwill(performingBooking);
                 performingBooking = null;
                 lastConcertEndTick = GenTicks.TicksGame;
                 BinguinLogUtility.Log("演唱会结束，5 天冷却开始。", isDebug: false);

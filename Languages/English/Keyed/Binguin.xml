@@ -678,4 +678,5 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_SongPick_Full                     >You can pick at most {0} songs.</Binguin_SongPick_Full                     >
   <Binguin_ConcertQuality_Message            >The concert begins! Quality {0}% [{1}]
 {2}</Binguin_ConcertQuality_Message            >
+  <Binguin_ConcertGoodwill_Message           >The guests from {0} enjoyed the concert. Goodwill +8.</Binguin_ConcertGoodwill_Message           >
 </LanguageData>

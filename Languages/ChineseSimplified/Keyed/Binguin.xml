@@ -679,4 +679,5 @@
   <Binguin_SongPick_Full                     >最多只能选 {0} 首。</Binguin_SongPick_Full                     >
   <Binguin_ConcertQuality_Message            >演唱会开始！质量 {0}%【{1}】
 {2}</Binguin_ConcertQuality_Message            >
+  <Binguin_ConcertGoodwill_Message           >{0} 的来宾听完演唱会很满意，好感 +8。</Binguin_ConcertGoodwill_Message           >
 </LanguageData>

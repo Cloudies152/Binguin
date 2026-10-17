@@ -121,6 +121,7 @@
     <durationTicks>10000</durationTicks>
     <moodOffset>6</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
+    <musicDef>Binguin_Music_Mayoiuta</musicDef>
     <soundDef>Binguin_SongClip_Mayoiuta</soundDef>
   </Binguin.Feature.Band.Binguin_SongDef>
 
@@ -132,6 +133,7 @@
     <durationTicks>10000</durationTicks>
     <moodOffset>7</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
+    <musicDef>Binguin_Music_Utakotoba</musicDef>
     <soundDef>Binguin_SongClip_Utakotoba</soundDef>
   </Binguin.Feature.Band.Binguin_SongDef>
 
@@ -143,6 +145,7 @@
     <durationTicks>9000</durationTicks>
     <moodOffset>8</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
+    <musicDef>Binguin_Music_SilhouetteDance</musicDef>
     <soundDef>Binguin_SongClip_SilhouetteDance</soundDef>
   </Binguin.Feature.Band.Binguin_SongDef>
 
@@ -154,7 +157,46 @@
     <durationTicks>11000</durationTicks>
     <moodOffset>9</moodOffset>
     <requiredArtisticLevel>4</requiredArtisticLevel>
+    <musicDef>Binguin_Music_Harumikage</musicDef>
     <soundDef>Binguin_SongClip_Harumikage</soundDef>
   </Binguin.Feature.Band.Binguin_SongDef>
 
-  </Defs>
+  
+  <!-- ══ ★ 2026-10-17：原版 SongDef（背景音乐）══
+       作者要求：演唱会期间直接替换背景音乐，结束再换回来。
+       开演时 Find.MusicManagerPlay.ForcePlaySong(songDef, true)，
+       比我们自己播 SoundDef 可靠得多（1.7 的 one-shot 通道有静默闸门）。
+       commonality=0 ⇒ 平时绝不会被随机选进背景音乐。 -->
+  <SongDef>
+    <defName>Binguin_Music_Mayoiuta</defName>
+    <clipPath>ConcertSongs/MyGO_Mayoiuta</clipPath>
+    <volume>0.55</volume>
+    <commonality>0</commonality>
+    <tense>false</tense>
+  </SongDef>
+
+  <SongDef>
+    <defName>Binguin_Music_Utakotoba</defName>
+    <clipPath>ConcertSongs/MyGO_Utakotoba</clipPath>
+    <volume>0.55</volume>
+    <commonality>0</commonality>
+    <tense>false</tense>
+  </SongDef>
+
+  <SongDef>
+    <defName>Binguin_Music_SilhouetteDance</defName>
+    <clipPath>ConcertSongs/MyGO_SilhouetteDance</clipPath>
+    <volume>0.55</volume>
+    <commonality>0</commonality>
+    <tense>false</tense>
+  </SongDef>
+
+  <SongDef>
+    <defName>Binguin_Music_Harumikage</defName>
+    <clipPath>ConcertSongs/MyGO_Harumikage</clipPath>
+    <volume>0.55</volume>
+    <commonality>0</commonality>
+    <tense>false</tense>
+  </SongDef>
+
+</Defs>

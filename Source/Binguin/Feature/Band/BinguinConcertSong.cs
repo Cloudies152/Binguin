@@ -57,6 +57,15 @@ namespace Binguin.Feature.Band
         /// <summary>音频（**占位**：一期指向原版 SoundDef）。可为空。</summary>
         public string soundDef;
 
+        /// <summary>
+        /// ★ 2026-10-17 作者建议的方案：**直接替换背景音乐**。
+        /// 指向原版 `SongDef` 的 defName（如 Binguin_Music_Mayoiuta）。
+        /// 开演时用 Find.MusicManagerPlay.ForcePlaySong(songDef, true)
+        /// 把它插进背景音乐轨道，演唱会结束后自然恢复。
+        /// 留空则回退到旧的 SoundDef 方式。
+        /// </summary>
+        public string musicDef;
+
         /// <summary>默认时长：4 小时（与原 BinguinConcert.DurationTicks 一致）。</summary>
         public const int DefaultDurationTicks = 4 * 2500;
 
