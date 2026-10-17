@@ -80,4 +80,57 @@
     </researchPrerequisites>
   </ThingDef>
 
+
+  <!-- ══════ 小舞台板 2×2（2026-10-17 作者追加需求）══════
+       和 8×10 大舞台同一层（FloorEmplacement）、同样纯装饰，
+       只是尺寸小、造价低，方便拼出任意形状的台子。
+       造价按面积比例折算：4 格 vs 80 格 -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_ConcertStageSmall</defName>
+    <label>小舞台板</label>
+    <description>两块见方的木制舞台板。和演唱会舞台同一层，可随意拼接成大台的形状。</description>
+
+    <useHitPoints>false</useHitPoints>
+    <altitudeLayer>FloorEmplacement</altitudeLayer>
+    <passability>Standable</passability>
+    <canOverlapZones>false</canOverlapZones>
+    <rotatable>true</rotatable>
+    <defaultPlacingRot>South</defaultPlacingRot>
+
+    <size>(2,2)</size>
+
+    <graphicData>
+      <texPath>Things/Building/Joy/Binguin/ConcertStageSmall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,2)</drawSize>
+    </graphicData>
+
+    <constructEffect>ConstructWood</constructEffect>
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+
+    <statBases>
+      <WorkToBuild>200</WorkToBuild>
+      <Beauty>1</Beauty>
+    </statBases>
+
+    <costList>
+      <Steel>8</Steel>
+      <Cloth>6</Cloth>
+    </costList>
+
+    <building>
+      <isInert>true</isInert>
+      <expandHomeArea>false</expandHomeArea>
+      <ai_chillDestination>false</ai_chillDestination>
+      <artificialForMeditationPurposes>false</artificialForMeditationPurposes>
+    </building>
+
+    <designationCategory>Furniture</designationCategory>
+    <uiOrder>191</uiOrder>
+
+    <researchPrerequisites>
+      <li>Binguin_ResearchMusic</li>
+    </researchPrerequisites>
+  </ThingDef>
+
 </Defs>
