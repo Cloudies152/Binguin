@@ -26,7 +26,7 @@
                  <clipPath>ConcertSongs/你的文件名</clipPath>
                </li>
              </grains>
-             <volumeRange>12~12</volumeRange>
+             <volumeRange>1~1</volumeRange>
              <pitchRange>1~1</pitchRange>
            </li>
          </subSounds>
@@ -57,7 +57,7 @@
         <grains>
           <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_Mayoiuta</clipPath></li>
         </grains>
-        <volumeRange>12~12</volumeRange>
+        <volumeRange>1~1</volumeRange>
         <pitchRange>1~1</pitchRange>
       </li>
     </subSounds>
@@ -72,7 +72,7 @@
         <grains>
           <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_Utakotoba</clipPath></li>
         </grains>
-        <volumeRange>12~12</volumeRange>
+        <volumeRange>1~1</volumeRange>
         <pitchRange>1~1</pitchRange>
       </li>
     </subSounds>
@@ -87,7 +87,7 @@
         <grains>
           <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_SilhouetteDance</clipPath></li>
         </grains>
-        <volumeRange>12~12</volumeRange>
+        <volumeRange>1~1</volumeRange>
         <pitchRange>1~1</pitchRange>
       </li>
     </subSounds>
@@ -102,7 +102,7 @@
         <grains>
           <li Class="AudioGrain_Clip"><clipPath>ConcertSongs/MyGO_Harumikage</clipPath></li>
         </grains>
-        <volumeRange>12~12</volumeRange>
+        <volumeRange>1~1</volumeRange>
         <pitchRange>1~1</pitchRange>
       </li>
     </subSounds>

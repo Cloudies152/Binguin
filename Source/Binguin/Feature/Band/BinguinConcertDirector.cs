@@ -219,6 +219,19 @@ namespace Binguin.Feature.Band
                         else
                             info = Verse.Sound.SoundInfo.OnCamera(Verse.Sound.MaintenanceType.None);
                         Verse.Sound.SoundStarter.PlayOneShot(clip, info);
+                        // 诊断：告诉我们音频到底装载到了什么
+                        int subN = clip.subSounds != null ? clip.subSounds.Count : -1;
+                        int grainN = -1;
+                        if (clip.subSounds != null && clip.subSounds.Count > 0
+                            && clip.subSounds[0] != null && clip.subSounds[0].grains != null)
+                        {
+                            grainN = clip.subSounds[0].grains.Count;
+                        }
+                        BinguinLogUtility.Log("播放诊断：" + clip.defName
+                            + " subSounds=" + subN + " grains=" + grainN
+                            + " volume=" + (clip.subSounds != null && clip.subSounds.Count > 0
+                                ? clip.subSounds[0].volumeRange.ToString() : "?"),
+                            isDebug: false);
                         BinguinLogUtility.Log("演唱会播放第 " + (songIndex + 1)
                             + " 首：" + s.label, isDebug: false);
                     }
@@ -558,17 +571,36 @@ namespace Binguin.Feature.Band
                 : (b.leadSinger != null ? b.leadSinger.Position : IntVec3.Invalid);
             if (!venue.IsValid) return;
 
-            // 外派系贵宾：**还在路上就继续走**，到了场边才游荡
+            // 外派系贵宾
+            // ★★ 2026-10-17 修「访客又不见了」：
+            //   模组自己的注释就写了（BandVisitFlow_Binguin.cs:783）：
+            //     `Lord.RemovePawn` 会清空 duty、解除 pawn.lord，
+            //     于是原版 JobGiver_ExitMapBest 会把它们送出地图。
+            //   ⇒ 这里**自愈**：发现贵宾没有 lord 就立即重建，
+            //     避免代码别处（或原版）把 lord 解散后人跑光。
             if (b.guests != null)
             {
+                List<Pawn> lostLord = null;
                 for (int i = 0; i < b.guests.Count; i++)
                 {
                     Pawn g = b.guests[i];
                     if (g == null || g.Dead || !g.Spawned) continue;
+                    if (g.GetLord() == null)
+                    {
+                        if (lostLord == null) lostLord = new List<Pawn>();
+                        lostLord.Add(g);
+                    }
                     if ((g.Position - venue).LengthHorizontalSquared > 144f)   // 12 格以外
                         SendGoto(g, venue);
                     else
                         SendWanderNear(g, venue, map);
+                }
+                if (lostLord != null && lostLord.Count > 0)
+                {
+                    GiveGuestsLord(lostLord, map, venue);
+                    BinguinLogUtility.Log("贵宾丢了 Lord，已重建 " + lostLord.Count
+                        + " 人（否则他们会自己走出地图）。",
+                        severity: 1, isDebug: false);
                 }
             }
             // 本方殖民者（减掉演出者本人）：同样先走过去再游荡
