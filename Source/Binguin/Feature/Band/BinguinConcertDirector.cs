@@ -54,6 +54,7 @@ namespace Binguin.Feature.Band
                 Audience = new List<Pawn>();
                 Performers = new List<Pawn>();
                 ResetSeats();
+                ResetMusic();
 
                 // ① 主唱 → 麦克风（必须传**麦克风建筑**，不能传格子！）
                 //   ★★ 2026-10-17 修玩家日志里的致命红字：
@@ -155,6 +156,99 @@ namespace Binguin.Feature.Band
             p.jobs.TryTakeOrderedJob(job, JobTag.Misc);
         }
 
+
+        // ── 音乐播放（★ 2026-10-17 作者反馈「没有播放音乐」）──
+        //
+        // 原因：曲目 SoundDef 从头到尾**从未被播放**。
+        //   厂商 API：（Verse）Verse.Sound.SoundStarter.PlayOneShotOnCamera(SoundDef, Map)
+        //   演唱会固定 4 小时，曲目只影响听到什么 ⇒ 按选择顺序一首首放，
+        //   每首放完（按它自己的 durationTicks）再接下一首，放完就安静。
+        private static int songIndex;
+        private static int nextSongTick;
+
+        /// <summary>开演时重置音乐播放进度。</summary>
+        public static void ResetMusic()
+        {
+            songIndex = 0;
+            nextSongTick = GenTicks.TicksGame;
+        }
+
+        /// <summary>每 60 tick 调一次：到点就放下一首。</summary>
+        public static void TickMusic(BinguinConcertBooking b)
+        {
+            if (b == null || b.songs == null || b.songs.Count == 0) return;
+            if (GenTicks.TicksGame < nextSongTick) return;
+            if (songIndex >= b.songs.Count) return;
+            Binguin_SongDef s = b.songs[songIndex];
+            int dur = 10000;
+            if (s != null)
+            {
+                dur = s.EffectiveDurationTicks;
+                // ★ `Binguin_SongDef.soundDef` 存的是 **defName 字符串**（方便 XML 里写引用），
+                //   所以先查 DefDatabase 拿到 SoundDef 再播。
+                SoundDef clip = s.soundDef.NullOrEmpty()
+                    ? null : DefDatabase<SoundDef>.GetNamedSilentFail(s.soundDef);
+                if (clip == null && !s.soundDef.NullOrEmpty())
+                {
+                    BinguinLogUtility.Log("找不到 SoundDef：" + s.soundDef, severity: 1, isDebug: false);
+                }
+                if (clip != null && b.Map != null)
+                {
+                    try
+                    {
+                        Verse.Sound.SoundStarter.PlayOneShotOnCamera(clip, b.Map);
+                        BinguinLogUtility.Log("演唱会播放第 " + (songIndex + 1)
+                            + " 首：" + s.label, isDebug: false);
+                    }
+                    catch (System.Exception e)
+                    {
+                        BinguinLogUtility.Log("播放曲目失败：" + e.Message,
+                            severity: 1, isDebug: false);
+                    }
+                }
+            }
+            nextSongTick = GenTicks.TicksGame + dur;
+            songIndex++;
+        }
+
+        /// <summary>把贵宾交给一个 Lord，否则他们会立刻离开地图。
+        /// ★ 2026-10-17 作者反馈：「邀请访客后，演唱会开始时访客来时会直接离开地图」
+        ///   ⇒ 范例参考模组已有的冰鹅族演唱会事件（BandVisitFlow_Binguin.cs:488）：
+        ///     LordMaker.MakeNewLord(faction, new LordJob_BinguinCrowd(chillSpot), map, pawns)
+        /// </summary>
+        public static void GiveGuestsLord(List<Pawn> guests, Map map, IntVec3 venue)
+        {
+            if (guests == null || guests.Count == 0 || map == null) return;
+            try
+            {
+                Dictionary<Faction, List<Pawn>> byFaction = new Dictionary<Faction, List<Pawn>>();
+                for (int i = 0; i < guests.Count; i++)
+                {
+                    Pawn p = guests[i];
+                    if (p == null || p.Dead || !p.Spawned) continue;
+                    Faction f = p.Faction;
+                    if (f == null) continue;
+                    List<Pawn> list;
+                    if (!byFaction.TryGetValue(f, out list))
+                    {
+                        list = new List<Pawn>();
+                        byFaction[f] = list;
+                    }
+                    list.Add(p);
+                }
+                foreach (KeyValuePair<Faction, List<Pawn>> kv in byFaction)
+                {
+                    Verse.AI.Group.LordMaker.MakeNewLord(kv.Key,
+                        new LordJob_BinguinCrowd(venue), map, kv.Value);
+                }
+                BinguinLogUtility.Log("已为贵宾建立 Lord（防止立刻离开地图）。",
+                    isDebug: false);
+            }
+            catch (System.Exception e)
+            {
+                BinguinLogUtility.Log("为贵宾建 Lord 失败：" + e.Message, severity: 1, isDebug: false);
+            }
+        }
 
         /// <summary>已被占用的座位 id（每场演出开始时清空）。</summary>
         private static readonly HashSet<int> ClaimedSeats = new HashSet<int>();
@@ -348,8 +442,9 @@ namespace Binguin.Feature.Band
                 for (int i = 0; i < guests.Count; i++)
                 {
                     if (guests[i] != null) b.guests.Add(guests[i]);
-                    SendGoto(guests[i], venue);   // 开始走向场地
                 }
+                // ★ 先给 Lord，否则外派系小人没有 duty，生成后立刻往地图边缘走
+                GiveGuestsLord(guests, map, venue);
             }
             catch (System.Exception e)
             {

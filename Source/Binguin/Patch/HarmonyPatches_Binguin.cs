@@ -483,6 +483,22 @@ namespace Binguin.Patch
                 typeof(Patch_BinguinConcertMicGizmo), "Postfix");
 
             // ② 通讯台聊天选项里的「演唱会邀请」
+            // ---- 演唱会：演出期间把演出者从远行队名单剔除（作者要求"乐手正在忙"） ----
+            //   目标：`CaravanFormingUtility.AllSendablePawns(Map, bool×5, int)` 返回 List<Pawn>
+            MethodInfo sendable = AccessTools.Method(typeof(RimWorld.Planet.CaravanFormingUtility), "AllSendablePawns");
+            if (sendable != null)
+            {
+                SafePatch(harmony, sendable,
+                    "演唱会：CaravanFormingUtility.AllSendablePawns（演出者不能被远行队带走）",
+                    null, null,
+                    typeof(Patch_BinguinConcertBlockCaravan), "Postfix");
+            }
+            else
+            {
+                BinguinLogUtility.Log("未找到 CaravanFormingUtility.AllSendablePawns，"
+                    + "演出者仍可能被远行队带走。", severity: 1, isDebug: false);
+            }
+
             MethodInfo commsMenu = AccessTools.Method(typeof(Building_CommsConsole), "GetFloatMenuOptions");
             SafePatch(harmony, commsMenu,
                 "自办演唱会：Building_CommsConsole.GetFloatMenuOptions（聊天选项里的演唱会邀请）",

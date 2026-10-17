@@ -372,6 +372,12 @@ namespace Binguin.Feature.Band
             }
 
             // ★ 2026-10-17 修 bug：演出中被别的节日抢走 ⇒ 每 250 tick 重新派奏乐 job
+            // ★ 音乐：每 60 tick 检查一次是否该放下一首
+            if (BinguinConcert.Active && performingBooking != null)
+            {
+                BinguinConcertDirector.TickMusic(performingBooking);
+            }
+
             if (BinguinConcert.Active && performingBooking != null
                 && (GenTicks.TicksGame % 250) == 0)
             {
