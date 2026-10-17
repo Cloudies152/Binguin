@@ -254,15 +254,67 @@ namespace Binguin.Feature.Band
                 // ★ 2026-10-11 修「邀请的人没有来」：
                 //   贵宾原来在 `BeginPerformance`（开演）时才生成 —— 但作者要的是
                 //   「信封显示人员到场」时就应该一起到场。⇒ 挪到到场阶段生成。
-                List<Pawn> guests = BinguinConcertGuests.SpawnInvitedGuests(b, map);
+                // ★ 2026-10-17：贵宾**直接生成在场地周围**（不再从地图边缘走过来，
+                //   否则走到一半就散了，玩家看不到他们），并记下名单
+                //   供开演前反复叫回场地游荡。
+                List<Pawn> guests = BinguinConcertGuests.SpawnInvitedGuests(b, map, venue);
+                if (b.guests == null) b.guests = new List<Pawn>();
                 for (int i = 0; i < guests.Count; i++)
                 {
-                    SendGoto(guests[i], venue);
+                    if (guests[i] != null) b.guests.Add(guests[i]);
+                    SendWanderNear(guests[i], venue, map);
                 }
             }
             catch (System.Exception e)
             {
                 BinguinLogUtility.Log("人员到场时出错（已忽略）：" + e.Message, severity: 1, isDebug: false);
+            }
+        }
+
+        /// <summary>
+        /// 让某人在场地附近**游荡**等待开演。
+        /// ★ 2026-10-17 作者要求：「观众应该到麦克风前面游荡等待演唱会开始」
+        /// ⇒ 用原版 `JobDefOf.GotoWander`（走过去就会随便走动），而不是站死在一点。
+        /// </summary>
+        public static void SendWanderNear(Pawn p, IntVec3 center, Map map)
+        {
+            if (p == null || p.Dead || !p.Spawned || map == null || !center.IsValid) return;
+            try
+            {
+                IntVec3 cell = CellFinder.RandomClosewalkCellNear(center, map, 6);
+                if (!cell.IsValid) cell = center;
+                Job job = JobMaker.MakeJob(JobDefOf.GotoWander, cell);
+                p.jobs.TryTakeOrderedJob(job, JobTag.Misc);
+            }
+            catch (System.Exception) { }
+        }
+
+        /// <summary>
+        /// 等待开演期间：演出者守在乐器旁，**观众（殖民者 + 外派系贵宾）
+        /// 在麦克风前游荡**。每 250 tick 重新叫一次，保证人留在现场。
+        /// </summary>
+        public static void KeepCrowdInPlace(BinguinConcertBooking b, Map map)
+        {
+            if (b == null || map == null) return;
+            KeepPerformersInPlace(b, map);
+            IntVec3 venue = b.venueCenter.IsValid ? b.venueCenter
+                : (b.leadSinger != null ? b.leadSinger.Position : IntVec3.Invalid);
+            if (!venue.IsValid) return;
+
+            // 外派系贵宾
+            if (b.guests != null)
+            {
+                for (int i = 0; i < b.guests.Count; i++) SendWanderNear(b.guests[i], venue, map);
+            }
+            // 本方殖民者（减掉演出者本人）
+            List<Pawn> cols = map.mapPawns.FreeColonistsSpawned;
+            for (int i = 0; i < cols.Count; i++)
+            {
+                Pawn c = cols[i];
+                if (c == null || c.Dead) continue;
+                if (c == b.leadSinger) continue;
+                if (b.musicians != null && b.musicians.ContainsValue(c)) continue;
+                SendWanderNear(c, venue, map);
             }
         }
 

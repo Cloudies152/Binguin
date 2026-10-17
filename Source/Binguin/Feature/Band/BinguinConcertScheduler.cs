@@ -54,6 +54,13 @@ namespace Binguin.Feature.Band
         /// <summary>人员是否已到场、正在等玩家开演。</summary>
         public bool awaitingStart;
 
+        /// <summary>到场的外派系贵宾（运行期用，不进存档）。
+        /// 用于开演前把他们叫到麦克风前面游荡。</summary>
+        public List<Pawn> guests = new List<Pawn>();
+
+        /// <summary>本场演出质量 0~1（开演时计算）。</summary>
+        public float quality;
+
         /// <summary>人员到场的时刻（用于"6 小时不开演就取消"）。</summary>
         public int assembledTick;
 
@@ -372,7 +379,8 @@ namespace Binguin.Feature.Band
                 && GenTicks.TicksGame - b.assembledTick > 0
                 && (GenTicks.TicksGame % 250) == 0)
             {
-                BinguinConcertDirector.KeepPerformersInPlace(b, b.Map);
+                // ★ 2026-10-17：不只演出者，**观众也要在麦克风前游荡**
+                BinguinConcertDirector.KeepCrowdInPlace(b, b.Map);
             }
 
             // ① 主唱没了 ⇒ 取消（作者明确要求的唯一取消条件）
@@ -450,6 +458,15 @@ namespace Binguin.Feature.Band
                 Cancel("找不到预定的地图");
                 return;
             }
+            // ★ 2026-10-17 作者给定的质量公式：
+            //   人数 30% + 艺术等级总和 50%（到 60 为满）+ 灯光 20%（每个 5%，最多 4 个）
+            //   详见 BinguinConcertQuality.cs
+            b.quality = BinguinConcertQuality.Compute(b, map);
+            Messages.Message("Binguin_ConcertQuality_Message".Translate(
+                (b.quality * 100f).ToString("0"),
+                BinguinConcertQuality.TierLabel(b.quality),
+                BinguinConcertQuality.DetailLine(b, map)), MessageTypeDefOf.PositiveEvent);
+
             int dur = 0; if (b.songs != null) { for (int si = 0; si < b.songs.Count; si++) { if (b.songs[si] != null) dur += b.songs[si].EffectiveDurationTicks; } } if (dur <= 0) dur = BinguinConcert.DurationTicks;
             BinguinConcert.Start(dur);
             BinguinConcertDirector.BeginPerformance(b, map);

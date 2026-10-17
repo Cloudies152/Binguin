@@ -673,4 +673,10 @@
   <Binguin_ConcertSetup_Edit                 >改期 / 改人</Binguin_ConcertSetup_Edit                 >
   <Binguin_ConcertSetup_EditDesc             >还没到日子（还有 {0} 天），可以重新选人和改日期。</Binguin_ConcertSetup_EditDesc             >
   <Binguin_ConcertSetup_Cooldown             >上一场演唱会结束不久，还需要冷却 {0} 天。</Binguin_ConcertSetup_Cooldown             >
+  <Binguin_SongPick_Title                    >选择本场曲目</Binguin_SongPick_Title                    >
+  <Binguin_SongPick_Desc                     >已选 {0} / {1} 首。按选择顺序演出，点一下勾选/取消。</Binguin_SongPick_Desc                     >
+  <Binguin_SongPick_Confirm                  >就这几首</Binguin_SongPick_Confirm                  >
+  <Binguin_SongPick_Full                     >最多只能选 {0} 首。</Binguin_SongPick_Full                     >
+  <Binguin_ConcertQuality_Message            >演唱会开始！质量 {0}%【{1}】
+{2}</Binguin_ConcertQuality_Message            >
 </LanguageData>

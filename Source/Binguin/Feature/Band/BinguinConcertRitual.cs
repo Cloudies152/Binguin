@@ -220,13 +220,24 @@ namespace Binguin.Feature.Band
                     Pawn p = FirstOf(assignments, RoleToDef[i][0]);
                     if (p != null) musicians[RoleToDef[i][1]] = p;
                 }
-                // 曲目：仪式窗口里没地方选，先给默认第一首；
-                // 玩家可以在通讯台/改期界面里调整（后续可做成仪式前选择）。
-                List<Binguin_SongDef> songs = new List<Binguin_SongDef>();
+                // ★ 2026-10-17 作者要求：「选曲窗口在选人后」
+                //   流程：仪式窗口选人 → **选曲（最多 4 首）** → 选 1~7 天 → 登记
+                List<Binguin_SongDef> pre = new List<Binguin_SongDef>();
                 Binguin_SongDef d = BinguinConcertSongs.DefaultFor(lead);
-                if (d != null) songs.Add(d);
+                if (d != null) pre.Add(d);
 
-                AskDaysThenBook(lead, musicians, songs, map, micCell);
+                Find.WindowStack.Add(new Dialog_BinguinSongPick(pre,
+                    delegate (List<Binguin_SongDef> picked)
+                    {
+                        List<Binguin_SongDef> songs = new List<Binguin_SongDef>();
+                        if (picked != null) songs.AddRange(picked);
+                        if (songs.Count == 0)
+                        {
+                            Binguin_SongDef dd = BinguinConcertSongs.DefaultFor(lead);
+                            if (dd != null) songs.Add(dd);
+                        }
+                        AskDaysThenBook(lead, musicians, songs, map, micCell);
+                    }));
             }
             catch (System.Exception e)
             {

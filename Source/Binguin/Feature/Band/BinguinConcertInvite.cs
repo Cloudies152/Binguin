@@ -171,7 +171,9 @@ namespace Binguin.Feature.Band
         /// 按预约里"已答应的派系"生成客人。由 `BinguinConcertDirector` 开演时调用。
         /// ★ 生成成功后清空 `acceptedGuests`，避免重复生成。
         /// </summary>
-        public static List<Pawn> SpawnInvitedGuests(BinguinConcertBooking booking, Map map)
+        /// <param name="center">生成中心（传场地就直接生在现场；不传就从地图边缘入场）。</param>
+        public static List<Pawn> SpawnInvitedGuests(BinguinConcertBooking booking, Map map,
+            IntVec3 center = default(IntVec3))
         {
             List<Pawn> spawned = new List<Pawn>();
             if (booking == null || map == null || booking.acceptedGuests == null
@@ -217,7 +219,13 @@ namespace Binguin.Feature.Band
                         {
                             continue;
                         }
-                        GenSpawn.Spawn(p, entry, map, WipeMode.Vanish);
+                        IntVec3 at = entry;
+                        if (center.IsValid)
+                        {
+                            IntVec3 near = CellFinder.RandomClosewalkCellNear(center, map, 6);
+                            if (near.IsValid) at = near;
+                        }
+                        GenSpawn.Spawn(p, at, map, WipeMode.Vanish);
                         spawned.Add(p);
                     }
                     catch (System.Exception e)

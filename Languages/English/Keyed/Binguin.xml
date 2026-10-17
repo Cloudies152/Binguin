@@ -672,4 +672,10 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_ConcertSetup_Edit                 >Reschedule / change lineup</Binguin_ConcertSetup_Edit                 >
   <Binguin_ConcertSetup_EditDesc             >Still {0} day(s) away; you can pick people and a date again.</Binguin_ConcertSetup_EditDesc             >
   <Binguin_ConcertSetup_Cooldown             >The last concert just ended; {0} more day(s) of cooldown.</Binguin_ConcertSetup_Cooldown             >
+  <Binguin_SongPick_Title                    >Choose the set list</Binguin_SongPick_Title                    >
+  <Binguin_SongPick_Desc                     >Selected {0} / {1}. They play in the order you pick; click to toggle.</Binguin_SongPick_Desc                     >
+  <Binguin_SongPick_Confirm                  >Use these songs</Binguin_SongPick_Confirm                  >
+  <Binguin_SongPick_Full                     >You can pick at most {0} songs.</Binguin_SongPick_Full                     >
+  <Binguin_ConcertQuality_Message            >The concert begins! Quality {0}% [{1}]
+{2}</Binguin_ConcertQuality_Message            >
 </LanguageData>
