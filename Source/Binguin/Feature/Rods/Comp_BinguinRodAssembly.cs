@@ -350,6 +350,18 @@ namespace Binguin.Feature.Rods
         public bool StartAssembly(Pawn worker, Thing shaft, Thing tip, Thing hook, Thing bait)
         {
             Map map = parent.Map;
+            if (HasPendingAssembly)
+            {
+                Messages.Message("Binguin_CompRodAssembly_07".Translate(),
+                    parent, MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
+            if (HasActiveUnfinishedRod())
+            {
+                Messages.Message("Binguin_CompRodAssembly_07".Translate(),
+                    parent, MessageTypeDefOf.RejectInput, false);
+                return false;
+            }
             if (map == null || worker == null || shaft == null || tip == null || hook == null)
             {
                 return false;
@@ -359,6 +371,7 @@ namespace Binguin.Feature.Rods
                 Messages.Message("Binguin_CompRodAssembly_08".Translate(), parent, MessageTypeDefOf.RejectInput, false);
                 return false;
             }
+            BinguinLogUtility.Log("[诊断-Start] HasComponents(4)=true，通过", severity: 1, isDebug: false);
             pendingShaft = shaft;
             pendingTip = tip;
             pendingHook = hook;
@@ -537,7 +550,6 @@ namespace Binguin.Feature.Rods
                 {
                     return;
                 }
-                // ★ 必须复制一份再遍历：挪动过程中会改 things 列表
                 List<Thing> snapshot = new List<Thing>(things);
                 int moved = 0;
                 for (int i = 0; i < snapshot.Count; i++)
@@ -549,15 +561,36 @@ namespace Binguin.Feature.Rods
                     }
                     if (t.def.category != ThingCategory.Item || !t.def.alwaysHaulable)
                     {
-                        continue;   // 不是可搬运物品 —— 不碰
-                    }
-                    if (t.def.EverHaulable && t.def.category == ThingCategory.Item
-                        && t.IsForbidden(Faction.OfPlayer))
-                    {
-                        // 被禁止的物品玩家可能故意摆在那里，不动它
                         continue;
                     }
-                    if (GenPlace.TryPlaceThing(t, cell, map, ThingPlaceMode.Near, null))
+                    if (t.IsForbidden(Faction.OfPlayer))
+                    {
+                        continue;
+                    }
+                    //  跳过半成品：它被 DeSpawn 时会触发 PostDeSpawn 退款逻辑
+                    if (t.TryGetComp<CompBinguinUnfinishedRod>() != null)
+                    {
+                        continue;
+                    }
+                    //  已在别的容器/被搬运的，不动
+                    if (!t.Spawned || t.holdingOwner != null)
+                    {
+                        continue;
+                    }
+
+                    IntVec3 oldPos = t.Position;
+                    // 必须先 DeSpawn
+                    t.DeSpawn(DestroyMode.Vanish);
+                    if (!GenPlace.TryPlaceThing(t, oldPos, map, ThingPlaceMode.Near, null))
+                    {
+                        if (!GenPlace.TryPlaceThing(t, oldPos, map, ThingPlaceMode.Direct, null))
+                        {
+                            GenSpawn.Spawn(t, oldPos, map, WipeMode.Vanish);
+                            BinguinLogUtility.Log("台面物品挪不走也放不回，已原地放回：" + t.LabelShort,
+                                severity: 1, isDebug: false);
+                        }
+                    }
+                    else
                     {
                         moved++;
                     }
@@ -570,7 +603,6 @@ namespace Binguin.Feature.Rods
             }
             catch (Exception ex)
             {
-                // 腾位置失败不影响主流程 —— Direct 失败还有后面的兜底
                 BinguinLogUtility.Log("腾台面位置时出错（已忽略）：" + ex.Message, severity: 1, isDebug: false);
             }
         }
@@ -682,12 +714,31 @@ namespace Binguin.Feature.Rods
             //      优先吸台边那几堆。
             int spacersAbsorbed = 0;
             const int SpacersNeeded2 = 4;
+            // ★★★ 2026-10-16 修复：只吸"还缺的数量"，绝不多吸。
+            //   旧代码 `spacersAbsorbed++` 记的是"几堆"，不是"几个"；
+            //   而 `TryAbsorbPart` 会一次性吸走整堆 —— 地图上有一堆 10 个，
+            //   一次就吸 10 个，导致多扣（实测：4 个以上）。
+            //   ⇒ 两处一起改：
+            //     ① 累加改成"实际吸进去的数量"（`stackCount`）
+            //     ② 每堆吸之前 SplitOff，只取还缺的部分
             // ① 小人手上
             Thing inHand = pendingPawn != null && pendingPawn.carryTracker != null
                 ? pendingPawn.carryTracker.CarriedThing : null;
             if (inHand != null && inHand.def != null && inHand.def.defName == "ComponentSpacer")
             {
-                spacersAbsorbed += AddPartTo(comp, inHand, pendingPawn) ? 1 : 0;
+                int need = SpacersNeeded2 - spacersAbsorbed;
+                if (inHand.stackCount > need)
+                {
+                    Thing taken = inHand.SplitOff(need);
+                    if (taken != null && AddPartTo(comp, taken, pendingPawn))
+                    {
+                        spacersAbsorbed += taken.stackCount;
+                    }
+                }
+                else if (AddPartTo(comp, inHand, pendingPawn))
+                {
+                    spacersAbsorbed += inHand.stackCount;
+                }
             }
             // ② 其余的，按离台距离从近到远
             if (spacersAbsorbed < SpacersNeeded2)
@@ -704,9 +755,32 @@ namespace Binguin.Feature.Rods
                 {
                     Thing sp = rest[i];
                     if (sp == null || sp.Destroyed) continue;
-                    if (AddPartTo(comp, sp, pendingPawn))
+
+                    int need = SpacersNeeded2 - spacersAbsorbed;
+                    if (need <= 0) break;
+
+                    // ★ 只取还缺的数量：如果这一堆多于需要的，SplitOff 出需要的部分
+                    Thing toAbsorb = sp;
+                    bool wasSplit = false;
+                    if (sp.stackCount > need)
                     {
-                        spacersAbsorbed++;
+                        toAbsorb = sp.SplitOff(need);
+                        if (toAbsorb == null) continue;
+                        wasSplit = true;
+                    }
+
+                    if (AddPartTo(comp, toAbsorb, pendingPawn))
+                    {
+                        spacersAbsorbed += toAbsorb.stackCount;
+                    }
+                    else if (wasSplit && toAbsorb != null && !toAbsorb.Destroyed)
+                    {
+                        // 吸失败 → 把拆出来的还回地图
+                        if (!toAbsorb.Spawned)
+                        {
+                            GenPlace.TryPlaceThing(toAbsorb, sp.Position, map,
+                                ThingPlaceMode.Near, null);
+                        }
                     }
                 }
             }
@@ -761,7 +835,58 @@ namespace Binguin.Feature.Rods
         {
             return HasComponentsOnMap(parent.Map, count);
         }
+        /// 这台装配台是否已经有一根【未完成】的钓竿。
+        /// <summary>
+        /// 这台台子是不是"正在被工作"（有小人当前 job 或队列里有 WorkOnUnfinishedRod 指向它）。
+        /// ★ 2026-10-17 改：不再是"有未完成半成品就锁"，而是"有小人正在做就锁"。
+        ///   效果：
+        ///     · 有小人在台子上干活 → 锁（防止两人抢同一台）
+        ///     · 半成品在旁边但没人做 → 不锁，可以开新项目
+        ///     · 半成品被搬走 → 不锁
+        /// </summary>
+        private bool HasActiveUnfinishedRod()
+        {
+            Map map = parent != null ? parent.Map : null;
+            if (map == null)
+            {
+                return false;
+            }
+            JobDef workDef = DefDatabase<JobDef>.GetNamedSilentFail("Binguin_WorkOnUnfinishedRod");
+            if (workDef == null)
+            {
+                return false;
+            }
 
+            IReadOnlyList<Pawn> all = map.mapPawns.AllPawnsSpawned;
+            for (int i = 0; i < all.Count; i++)
+            {
+                Pawn p = all[i];
+                if (p == null || p.jobs == null)
+                {
+                    continue;
+                }
+                // 当前 job
+                Job cur = p.jobs.curJob;
+                if (cur != null && cur.def == workDef && cur.targetB.Thing == parent)
+                {
+                    return true;
+                }
+                // 队列
+                JobQueue q = p.jobs.jobQueue;
+                if (q != null)
+                {
+                    for (int j = 0; j < q.Count; j++)
+                    {
+                        Job queued = q[j].job;
+                        if (queued != null && queued.def == workDef && queued.targetB.Thing == parent)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
         /// <summary>
         /// 扫地图上所有高级零部件（ComponentSpacer）。
         /// ★ 2026-10-08：JobDriver 里那份叫 `FindAllSpacers` 是 private，

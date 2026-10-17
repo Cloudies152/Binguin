@@ -136,6 +136,32 @@ namespace Binguin.Feature.Rods
             {
                 return false;
             }
+
+            // ★★★ 2026-10-16 新增：台子也必须能预订。
+            //   不加这一条的话，两个小人会抢同一台台子：
+            //   第一个人先预订，第二个人的 job 被派下去、启动时 Reserve 失败、
+            //   又重派 → 循环刷 "Could not reserve"。实测日志（Player.log）：
+            //     Could not reserve Thing_Binguin_RodAssemblyTable...
+            //     for job Binguin_WorkOnUnfinishedRod ... Existing reservers: Viktor
+            //   ⇒ 在 WorkGiver 层就拦住，根本不派。
+            Thing table = JobDriver_BinguinWorkOnUnfinishedRod.FindTableNearRod(t);
+            if (table == null)
+            {
+                table = JobDriver_BinguinWorkOnUnfinishedRod.FindNearestTable(t,pawn);
+            }
+            if (table == null)
+            {
+                return false;   // 地图上没有台子，不派
+            }
+            if (!pawn.CanReserve(table, 1, -1, null, false))
+            {
+                return false;   // 台子被别人占了
+            }
+            if (!pawn.CanReach(table, PathEndMode.InteractionCell, Danger.Deadly))
+            {
+                return false;   // 走不到台子
+            }
+
             return true;
         }
 
