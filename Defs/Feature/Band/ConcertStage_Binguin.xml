@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ============================================================================
+     冰鹅族【演唱会舞台】（2026-10-17 作者需求）
+
+     ★ 作者原话：
+       「接下来我打算做一下舞台，舞台类似原版的雕版，和地板不同层，
+         只是装饰品，可以当做装饰放在下面，大概做成8*10就行」
+
+     ★ 技术选型：`altitudeLayer = FloorEmplacement`
+       这是 1.7 `Verse.AltitudeLayer` 里的第 7 层（实测枚举）：
+         0 BelowTerrain  1 TerrainEdges  2 Terrain  3 TerrainScatter  4 Floor
+         5 Conduits      6 FloorCoverings  7 **FloorEmplacement**  8 Filth  9 Zone
+         10 SmallWire    ...            23 Pawn
+       ⇒ 在地板/地板覆层**之上**、在污渍/物品/小人**之下**
+       ⇒ 正好满足"和地板不同层、可以当装饰放在下面"
+       原版同一层的东西：坟墓（Grave）、地板上的装饰性建筑等
+       参考：Core/Defs/ThingDefs_Buildings/Buildings_Misc.xml:770-800
+
+     ★ 纯装饰：
+       · `useHitPoints = true` ⇒ **有血量、可以选中和拆除**（作者 2026-10-17 要求「当然要能拆啊」）
+       · `building.isInert = true` ⇒ 不参与任何 AI（不会变 chill 点、不占家区）
+       · `passability = Standable` ⇒ 小人直接走在上面，不挡路
+       · `castShadow = false`    ⇒ 不投影，纯平面装饰
+
+     ★ 数值（我暂定，要改直接说）：
+       · 尺寸 8×10（可旋转 ⇒ 占地 8×10 或 10×8）
+       · 造价 150 钢铁 + 120 布，工作量 4000
+       · 研究前置：冰鹅音乐（Binguin_ResearchMusic）
+     ============================================================================ -->
+<Defs>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_ConcertStage</defName>
+    <label>演唱会舞台</label>
+    <description>一块宽大的木制舞台，铺在地上当作演出场地。它在地板之上、人和物之下，不挡路、不承伤，纯粹是装饰。</description>
+
+    <!-- 纯装饰：无血量、不参与 AI -->
+    <useHitPoints>true</useHitPoints>
+    <altitudeLayer>FloorEmplacement</altitudeLayer>
+    <passability>Standable</passability>
+    <canOverlapZones>false</canOverlapZones>
+    <rotatable>true</rotatable>
+    <defaultPlacingRot>South</defaultPlacingRot>
+
+    <size>(8,10)</size>
+
+    <graphicData>
+      <texPath>Things/Building/Joy/Binguin/ConcertStage</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(8,10)</drawSize>
+    </graphicData>
+
+    <constructEffect>ConstructWood</constructEffect>
+
+    <!-- 能放在任何地板上 -->
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+
+    <statBases>
+      <WorkToBuild>4000</WorkToBuild>
+      <Beauty>6</Beauty>
+      <MaxHitPoints>150</MaxHitPoints>
+    </statBases>
+
+    <costList>
+      <Steel>150</Steel>
+      <Cloth>120</Cloth>
+    </costList>
+
+    <building>
+      <isInert>true</isInert>
+      <expandHomeArea>false</expandHomeArea>
+      <ai_chillDestination>false</ai_chillDestination>
+      <artificialForMeditationPurposes>false</artificialForMeditationPurposes>
+    </building>
+
+    <designationCategory>Furniture</designationCategory>
+    <uiOrder>190</uiOrder>
+
+    <researchPrerequisites>
+      <li>Binguin_ResearchMusic</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+
+  <!-- ══════ 小舞台板 2×2（2026-10-17 作者追加需求）══════
+       和 8×10 大舞台同一层（FloorEmplacement）、同样纯装饰，
+       只是尺寸小、造价低，方便拼出任意形状的台子。
+       造价按面积比例折算：4 格 vs 80 格 -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Binguin_ConcertStageSmall</defName>
+    <label>小舞台板</label>
+    <description>两块见方的木制舞台板。和演唱会舞台同一层，可随意拼接成大台的形状。</description>
+
+    <useHitPoints>true</useHitPoints>
+    <altitudeLayer>FloorEmplacement</altitudeLayer>
+    <passability>Standable</passability>
+    <canOverlapZones>false</canOverlapZones>
+    <rotatable>true</rotatable>
+    <defaultPlacingRot>South</defaultPlacingRot>
+
+    <size>(2,2)</size>
+
+    <graphicData>
+      <texPath>Things/Building/Joy/Binguin/ConcertStageSmall</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,2)</drawSize>
+    </graphicData>
+
+    <constructEffect>ConstructWood</constructEffect>
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+
+    <statBases>
+      <WorkToBuild>200</WorkToBuild>
+      <Beauty>1</Beauty>
+      <MaxHitPoints>40</MaxHitPoints>
+    </statBases>
+
+    <costList>
+      <Steel>8</Steel>
+      <Cloth>6</Cloth>
+    </costList>
+
+    <building>
+      <isInert>true</isInert>
+      <expandHomeArea>false</expandHomeArea>
+      <ai_chillDestination>false</ai_chillDestination>
+      <artificialForMeditationPurposes>false</artificialForMeditationPurposes>
+    </building>
+
+    <designationCategory>Furniture</designationCategory>
+    <uiOrder>191</uiOrder>
+
+    <researchPrerequisites>
+      <li>Binguin_ResearchMusic</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+</Defs>

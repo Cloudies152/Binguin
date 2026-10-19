@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <!-- ============================================================================
        武器名（2026-10-08）
@@ -615,6 +615,35 @@
   <Binguin_CombinedRaid                    >霜牙同时发动了【{0}】与【{1}】的联合袭击！</Binguin_CombinedRaid                    >
   <Binguin_Concert_EnemyMoved              >人被音乐所打动，决定撤退</Binguin_Concert_EnemyMoved              >
   <Binguin_Concert_EnemyWatching           >鹅族的演唱会正开得热闹，敌人远远听见动静，决定先观望一阵再来</Binguin_Concert_EnemyWatching           >
+  <!-- ★ 2026-10-11 自办演唱会（预约式） -->
+  <Binguin_ConcertSong_NoSkill             >这个小人不具备技能信息，无法登台</Binguin_ConcertSong_NoSkill             >
+  <Binguin_ConcertSong_LevelTooLow         >艺术技能不足（需要 {0} 级，当前 {1} 级）</Binguin_ConcertSong_LevelTooLow         >
+  <Binguin_ConcertSong_Label               >曲目</Binguin_ConcertSong_Label               >
+  <Binguin_ConcertSong_None                >（没有可用曲目）</Binguin_ConcertSong_None                >
+  <Binguin_ConcertVenue_NoMic              >场地里没有麦克风</Binguin_ConcertVenue_NoMic              >
+  <Binguin_ConcertVenue_TooFewInstruments  >乐器太少（至少需要 1 个麦克风 + 2 件其它乐器）</Binguin_ConcertVenue_TooFewInstruments  >
+  <Binguin_ConcertVenue_Unreachable        >主唱位无法到达</Binguin_ConcertVenue_Unreachable        >
+  <Binguin_ConcertVenue_OK                 >场地合格：{0} 件乐器，可坐 {1} 人</Binguin_ConcertVenue_OK                 >
+  <Binguin_ConcertSetup_Gizmo              >准备演唱会</Binguin_ConcertSetup_Gizmo              >
+  <Binguin_ConcertSetup_GizmoDesc          >在这里筹备一场演唱会：选定主唱与乐手、挑好曲目、定下日子。之后去通讯台给别的派系发邀请函。</Binguin_ConcertSetup_GizmoDesc          >
+  <Binguin_ConcertSetup_Disabled           >场地不合格：{0}</Binguin_ConcertSetup_Disabled           >
+  <Binguin_ConcertSetup_AlreadyBooked      >已经有一场演唱会安排在 {0} 天后了，先取消或等它办完。</Binguin_ConcertSetup_AlreadyBooked      >
+  <Binguin_ConcertSetup_Title              >准备演唱会</Binguin_ConcertSetup_Title              >
+  <Binguin_ConcertSetup_LeadSinger         >主唱（必选）</Binguin_ConcertSetup_LeadSinger         >
+  <Binguin_ConcertSetup_Musicians          >乐手（可缺人）</Binguin_ConcertSetup_Musicians          >
+  <Binguin_ConcertSetup_Days               >预定时间</Binguin_ConcertSetup_Days               >
+  <Binguin_ConcertSetup_DaysValue          >{0} 天后</Binguin_ConcertSetup_DaysValue          >
+  <Binguin_ConcertSetup_Confirm            >定下这场演唱会</Binguin_ConcertSetup_Confirm            >
+  <Binguin_ConcertSetup_Cancel             >取消</Binguin_ConcertSetup_Cancel             >
+  <Binguin_ConcertSetup_LeadLost           >主唱已无法登台，演唱会取消了</Binguin_ConcertSetup_LeadLost           >
+  <Binguin_ConcertSetup_Booked             >演唱会已定在 {0} 天后（{1}）。到日子自动开演；期间可以去通讯台给别的派系发邀请函。</Binguin_ConcertSetup_Booked             >
+  <Binguin_ConcertSetup_NoSongs            >还没有任何曲目 —— 检查 Defs/Feature/Band/Concerts_Songs_Binguin.xml</Binguin_ConcertSetup_NoSongs            >
+  <Binguin_ConcertInvite_Menu               >演唱会邀请（{0}）</Binguin_ConcertInvite_Menu               >
+  <Binguin_ConcertInvite_MenuDesc          >向 {0} 发出演唱会邀请，请他们派人来观看。他们会按票价付费。</Binguin_ConcertInvite_MenuDesc          >
+  <Binguin_ConcertInvite_Sent              >已向 {0} 发出演唱会邀请，对方正在考虑。</Binguin_ConcertInvite_Sent              >
+  <Binguin_ConcertInvite_Accepted          >{0} 接受了邀请，届时会派 {1} 位贵宾前来观演。</Binguin_ConcertInvite_Accepted          >
+  <Binguin_ConcertInvite_Declined          >{0} 婉拒了演唱会邀请。</Binguin_ConcertInvite_Declined          >
+  <Binguin_ConcertInvite_NoBooking         >（需要先筹备一场演唱会，并定下日子）</Binguin_ConcertInvite_NoBooking         >
   <Binguin_ResumeRod_NoJobDef              >法继续装配（找不到 job 定义）</Binguin_ResumeRod_NoJobDef              >
   <Binguin_Ticket_Dropped                  > 银（实物落地={0}）</Binguin_Ticket_Dropped                  >
   <Binguin_Ticket_Income                   >演唱会门票收入：{0} 银（{1} 位观众 × {2} 银 × 场地系数 {3}）</Binguin_Ticket_Income                   >
@@ -630,4 +659,26 @@
   <Binguin_Weather_Snowstorm               >风</Binguin_Weather_Snowstorm               >
   <Binguin_Weather_Thunderstorm            >风</Binguin_Weather_Thunderstorm            >
   <Binguin_WorkOnRod_PartsIncomplete       >根钓竿的配件还不齐，没法继续装配</Binguin_WorkOnRod_PartsIncomplete       >
+  <Binguin_ConcertSelf_Quality_Terrible      >惨不忍睹</Binguin_ConcertSelf_Quality_Terrible      >
+  <Binguin_ConcertSelf_Quality_Boring        >平平无奇</Binguin_ConcertSelf_Quality_Boring        >
+  <Binguin_ConcertSelf_Quality_Fun           >很精彩</Binguin_ConcertSelf_Quality_Fun           >
+  <Binguin_ConcertSelf_Quality_Unforgettable >难以忘怀</Binguin_ConcertSelf_Quality_Unforgettable >
+  <Binguin_ConcertArrived_Title              >冰鹅族演唱会准备就绪</Binguin_ConcertArrived_Title              >
+  <Binguin_ConcertArrived_Text               >主唱 {0}、{1} 位乐手，以及全体殖民者已经到场。\n曲目：{2}\n\n点【麦克风】上的「开始演唱会」即可开演。\n超过 6 小时不开演，这场演唱会将自动取消。</Binguin_ConcertArrived_Text               >
+  <Binguin_ConcertSetup_StartNow             >开始演唱会</Binguin_ConcertSetup_StartNow             >
+  <Binguin_ConcertSetup_StartNowDesc         >人员已经到场（已等 {0} 小时）。点这里正式开演。</Binguin_ConcertSetup_StartNowDesc         >
+  <Binguin_ConcertSetup_TimeoutCancelled     >等了 6 小时还没开演，这场演唱会取消了。</Binguin_ConcertSetup_TimeoutCancelled     >
+  <Binguin_ConcertSetup_CancelBooking        >取消演唱会</Binguin_ConcertSetup_CancelBooking        >
+  <Binguin_ConcertSetup_CancelBookingDesc    >把已经安排好的这场演唱会取消。</Binguin_ConcertSetup_CancelBookingDesc    >
+  <Binguin_ConcertSetup_Edit                 >改期 / 改人</Binguin_ConcertSetup_Edit                 >
+  <Binguin_ConcertSetup_EditDesc             >还没到日子（还有 {0} 天），可以重新选人和改日期。</Binguin_ConcertSetup_EditDesc             >
+  <Binguin_ConcertSetup_Cooldown             >上一场演唱会结束不久，还需要冷却 {0} 天。</Binguin_ConcertSetup_Cooldown             >
+  <Binguin_SongPick_Title                    >选择本场曲目</Binguin_SongPick_Title                    >
+  <Binguin_SongPick_Desc                     >已选 {0} / {1} 首。按选择顺序演出，点一下勾选/取消。</Binguin_SongPick_Desc                     >
+  <Binguin_SongPick_Confirm                  >就这几首</Binguin_SongPick_Confirm                  >
+  <Binguin_SongPick_Full                     >最多只能选 {0} 首。</Binguin_SongPick_Full                     >
+  <Binguin_ConcertQuality_Message            >演唱会开始！质量 {0}%【{1}】
+{2}</Binguin_ConcertQuality_Message            >
+  <Binguin_ConcertGoodwill_Message           >{0} 的来宾听完演唱会很满意，好感 +8。</Binguin_ConcertGoodwill_Message           >
+  <Binguin_UserSongs_NoFolder                >没找到歌曲库文件夹，请先在 Mod 选项里点「打开歌曲库文件夹」。</Binguin_UserSongs_NoFolder                >
 </LanguageData>

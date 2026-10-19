@@ -26,6 +26,7 @@ using Verse;
 using Verse.AI;
 
 using Binguin.Feature.Appearance;
+using Binguin.Feature.Band;
 using Binguin.Feature.Diplomacy;
 using Binguin.Feature.Fishing;
 using Binguin.Feature.RaceTraits;
@@ -309,12 +310,20 @@ namespace Binguin.Patch
             // ★ 目标 `RaceProperties.FoodLevelPercentageWantEat` 是【计算属性】
             //   （switch ResolvedDietCategory 直接返回常数），没有 XML 字段可覆盖
             //   ⇒ 只能挂 Harmony 后置补丁。推导见 Source/FoodThreshold_Binguin.cs。
+            // ★★ 2026-10-17 修红字：原来挂 `RaceProperties.FoodLevelPercentageWantEat`
+            //   但 `RaceProperties` 没有 pawn 信息，而我们这个补丁的 `__instance` 声明成
+            //   `Need`（要靠 `Need.pawn` 区分冰鹅）⇒ Harmony 报
+            //     "Unrelated classes cannot describe the same non-null object:
+            //      supplied Verse.RaceProperties, requested RimWorld.Need"
+            //   ⇒ 改挂 `Need_Food.PercentageThreshHungry`（1.7 实测存在），
+            //     它本身就是由 `RaceProperties.FoodLevelPercentageWantEat` 派生的，
+            //     且 `__instance` 就是 `Need_Food`（继承 `Need`），语义与签名都对上。
             MethodInfo wantEat = AccessTools.PropertyGetter(
-                typeof(RaceProperties), "FoodLevelPercentageWantEat");
+                typeof(Need_Food), "PercentageThreshHungry");
             if (wantEat != null)
             {
                 SafePatch(harmony, wantEat,
-                    "冰鹅族饥饱阈值（上限 1.2 下把开始饿的绝对值拉回 0.36）：RaceProperties.FoodLevelPercentageWantEat",
+                    "冰鹅族饥饱阈值（上限 1.2 下把开始饿的绝对值拉回 0.36）：Need_Food.PercentageThreshHungry",
                     null, null,
                     typeof(Patch_BinguinFoodThreshold), "Postfix");
             }
@@ -451,6 +460,50 @@ namespace Binguin.Patch
             {
                 BinguinLogUtility.Log("未找到 LordToil_Siege.LordToilTick，冲锋判定未挂载。", severity: 1, isDebug: false);
             }
+
+            // ══════════════════════════════════════════════════════════════════
+            // ★★★ 2026-10-11 自办演唱会（`Feature/Band/BinguinConcert*.cs`）★★★
+            //
+            // ⚠️⚠️ 这里必须**显式注册**，不能只靠类上的 `[HarmonyPatch]` 特性：
+            //   本工程**从来没有调用过 `PatchAll()`**（全仓库无此调用），
+            //   特性只是元数据、不会自动生效。
+            //   我第一次写完演唱会忘了在这里注册 ⇒ 游戏里**完全没有**
+            //   「准备演唱会」按钮、通讯台也没有邀请项。这就是那次的表现。
+            //   ⇒ 以后新增任何带 `[HarmonyPatch]` 的类，**都要在这里补一条 SafePatch**。
+            // ══════════════════════════════════════════════════════════════════
+
+            // ① 麦克风上的「准备演唱会」gizmo
+            //    挂 `Building_MusicalInstrument.GetGizmos`（它 override 了 Building 的虚方法，
+            //    调用方走虚分发 ⇒ 挂在这个 override 上对所有乐器都生效，我们在
+            //    Postfix 里只对 `Binguin_Band_Microphone` 追加按钮）。
+            MethodInfo musicGizmos = AccessTools.Method(typeof(Building_MusicalInstrument), "GetGizmos");
+            SafePatch(harmony, musicGizmos,
+                "自办演唱会：Building_MusicalInstrument.GetGizmos（麦克风上的「准备演唱会」）",
+                null, null,
+                typeof(Patch_BinguinConcertMicGizmo), "Postfix");
+
+            // ② 通讯台聊天选项里的「演唱会邀请」
+            // ---- 演唱会：演出期间把演出者从远行队名单剔除（作者要求"乐手正在忙"） ----
+            //   目标：`CaravanFormingUtility.AllSendablePawns(Map, bool×5, int)` 返回 List<Pawn>
+            MethodInfo sendable = AccessTools.Method(typeof(RimWorld.Planet.CaravanFormingUtility), "AllSendablePawns");
+            if (sendable != null)
+            {
+                SafePatch(harmony, sendable,
+                    "演唱会：CaravanFormingUtility.AllSendablePawns（演出者不能被远行队带走）",
+                    null, null,
+                    typeof(Patch_BinguinConcertBlockCaravan), "Postfix");
+            }
+            else
+            {
+                BinguinLogUtility.Log("未找到 CaravanFormingUtility.AllSendablePawns，"
+                    + "演出者仍可能被远行队带走。", severity: 1, isDebug: false);
+            }
+
+            MethodInfo commsMenu = AccessTools.Method(typeof(Building_CommsConsole), "GetFloatMenuOptions");
+            SafePatch(harmony, commsMenu,
+                "自办演唱会：Building_CommsConsole.GetFloatMenuOptions（聊天选项里的演唱会邀请）",
+                null, null,
+                typeof(Patch_BinguinConcertInvite), "Postfix");
 
             // ★ 汇总：以后只要看到「失败/跳过 > 0」就说明有条补丁没挂上（日志上方有具体原因）
             if (patchFail > 0)

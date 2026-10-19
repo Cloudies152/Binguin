@@ -79,6 +79,10 @@
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
     </graphicData>
+    <!-- ★ 2026-10-11 作者需求：归入「音乐」科技（前置 微电子基础） -->
+    <researchPrerequisites>
+      <li>Binguin_ResearchMusic</li>
+    </researchPrerequisites>
   </ThingDef>
 
   <!-- ==================== 乐器 2/5：架子鼓（3 格） ==================== -->
@@ -133,6 +137,10 @@
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
     </graphicData>
+    <!-- ★ 2026-10-11 作者需求：归入「音乐」科技（前置 微电子基础） -->
+    <researchPrerequisites>
+      <li>Binguin_ResearchMusic</li>
+    </researchPrerequisites>
   </ThingDef>
 
   <!-- ==================== 乐器 3/5：麦克风（1 格） ==================== -->
@@ -191,6 +199,10 @@
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
     </graphicData>
+    <!-- ★ 2026-10-11 作者需求：归入「音乐」科技（前置 微电子基础） -->
+    <researchPrerequisites>
+      <li>Binguin_ResearchMusic</li>
+    </researchPrerequisites>
   </ThingDef>
 
   <!-- ==================== 乐器 4/5：吉他（1 格） ==================== -->
@@ -249,6 +261,10 @@
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
     </graphicData>
+    <!-- ★ 2026-10-11 作者需求：归入「音乐」科技（前置 微电子基础） -->
+    <researchPrerequisites>
+      <li>Binguin_ResearchMusic</li>
+    </researchPrerequisites>
   </ThingDef>
 
   <!-- ==================== 乐器 5/5：贝斯（1 格） ==================== -->
@@ -303,6 +319,10 @@
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
     </graphicData>
+    <!-- ★ 2026-10-11 作者需求：归入「音乐」科技（前置 微电子基础） -->
+    <researchPrerequisites>
+      <li>Binguin_ResearchMusic</li>
+    </researchPrerequisites>
   </ThingDef>
 
 

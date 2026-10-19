@@ -13,6 +13,7 @@ using Verse;
 using RimWorld;
 
 using Binguin.Helper;
+using Binguin.Feature.Band;
 
 namespace Binguin.Core
 {
@@ -80,6 +81,29 @@ namespace Binguin.Core
                 // 即时生效：不需要重开存档。场上已装备的剑会在下一帧刷新技能按钮。
                 BinguinLogUtility.Log("尚方宝剑远程斩击 = " + (Settings.enableVoidStrike ? "开" : "关"));
             }
+            ls.GapLine();
+            ls.Gap(6f);
+            ls.Label("★ 演唱会歌曲库（玩家自定义曲目）");
+            ls.Gap(4f);
+            ls.Label("把自己想听的歌（.mp3 / .ogg / .wav）放进歌曲库文件夹，");
+            ls.Label("重启游戏后就会出现在演唱会的选曲界面里。");
+            ls.Gap(4f);
+
+            if (ls.ButtonText("打开歌曲库文件夹"))
+            {
+                BinguinUserSongs.OpenFolder();
+            }
+            if (ls.ButtonText("重新扫描歌曲"))
+            {
+                BinguinUserSongs.Rescan();
+            }
+
+            ls.Gap(4f);
+            ls.Label("已载入自定义曲目：" + BinguinUserSongs.LoadedNames.Count + " 首");
+            ls.Label("状态：" + BinguinUserSongs.LastResult);
+            ls.Label("目录：" + (BinguinUserSongs.FolderPath.NullOrEmpty()
+                ? "（未找到，点上面的按钮会自动创建）" : BinguinUserSongs.FolderPath));
+
             ls.End();
 
         }
