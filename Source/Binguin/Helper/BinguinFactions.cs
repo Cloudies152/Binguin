@@ -55,17 +55,15 @@ namespace Binguin.Helper
 
         // ★ 2026-10-22 优化：外交组件里 9 处都是
         //   `Find.FactionManager.AllFactions.FirstOrDefault(f => f.def.defName == "Binguin")`，
-        //   每次都要分配闭包 + 线性扫派系表。这里缓存一次；派系被灭/销毁时下次重新找。
-        private static Faction cachedPeaceful;
-
-        /// <summary>取「和平冰鹅派系」（派外交官那支）；没有就返回 null（下次调用会重试）。</summary>
+        //   每次都要分配闭包 + 走 LINQ。这里收成一个方法，用 for 循环（不分配闭包）。
+        //
+        // ⚠️ 故意**不缓存 Faction 对象**：
+        //   读档时 `FactionManager` 会整个重建，静态字段里存的上一个存档的 Faction
+        //   引用会变成"过期对象"（loadID 还可能和存档里的新对象撞号），
+        //   比每次扫一遍派系表危险得多。派系表通常只有十几项，扫一遍是纳秒级。
+        /// <summary>取「和平冰鹅派系」（派外交官那支）；没有就返回 null。</summary>
         public static Faction GetPeaceful()
         {
-            if (cachedPeaceful != null && !cachedPeaceful.defeated && cachedPeaceful.def != null)
-            {
-                return cachedPeaceful;
-            }
-            cachedPeaceful = null;
             FactionManager fm = Find.FactionManager;
             if (fm == null)
             {
@@ -76,11 +74,10 @@ namespace Binguin.Helper
             {
                 if (IsPeaceful(all[i]))
                 {
-                    cachedPeaceful = all[i];
-                    break;
+                    return all[i];
                 }
             }
-            return cachedPeaceful;
+            return null;
         }
     }
 }
