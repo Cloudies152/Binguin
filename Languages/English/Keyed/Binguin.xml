@@ -658,10 +658,10 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_Weather_Snowstorm               >Snowstorm</Binguin_Weather_Snowstorm               >
   <Binguin_Weather_Thunderstorm            >Thunderstorm</Binguin_Weather_Thunderstorm            >
   <Binguin_WorkOnRod_PartsIncomplete       >This rod is still missing attachments and cannot be worked on.</Binguin_WorkOnRod_PartsIncomplete       >
-  <Binguin_ConcertSelf_Quality_Terrible      >Terrible</Binguin_ConcertSelf_Quality_Terrible      >
-  <Binguin_ConcertSelf_Quality_Boring        >Underwhelming</Binguin_ConcertSelf_Quality_Boring        >
-  <Binguin_ConcertSelf_Quality_Fun           >Great</Binguin_ConcertSelf_Quality_Fun           >
-  <Binguin_ConcertSelf_Quality_Unforgettable >Unforgettable</Binguin_ConcertSelf_Quality_Unforgettable >
+  <Binguin_ConcertSelf_Quality_Dull          >Dull</Binguin_ConcertSelf_Quality_Dull          >
+  <Binguin_ConcertSelf_Quality_Ordinary      >Ordinary</Binguin_ConcertSelf_Quality_Ordinary      >
+  <Binguin_ConcertSelf_Quality_Memorable     >Memorable</Binguin_ConcertSelf_Quality_Memorable     >
+  <Binguin_ConcertSelf_Quality_Resonant      >Resonant</Binguin_ConcertSelf_Quality_Resonant      >
   <Binguin_ConcertArrived_Title              >Binguin concert is ready</Binguin_ConcertArrived_Title              >
   <Binguin_ConcertArrived_Text               >Lead singer {0}, {1} musicians and all colonists are on site.\nSet list: {2}\n\nClick "Start concert" on the microphone to begin.\nIf you do not start within 6 hours, the concert is cancelled automatically.</Binguin_ConcertArrived_Text               >
   <Binguin_ConcertSetup_StartNow             >Start concert</Binguin_ConcertSetup_StartNow             >
@@ -672,12 +672,14 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_ConcertSetup_Edit                 >Reschedule / change lineup</Binguin_ConcertSetup_Edit                 >
   <Binguin_ConcertSetup_EditDesc             >Still {0} day(s) away; you can pick people and a date again.</Binguin_ConcertSetup_EditDesc             >
   <Binguin_ConcertSetup_Cooldown             >The last concert just ended; {0} more day(s) of cooldown.</Binguin_ConcertSetup_Cooldown             >
-  <Binguin_SongPick_Title                    >Choose the set list</Binguin_SongPick_Title                    >
+  <Binguin_SongPick_Title                    >Plan the concert: set list and date</Binguin_SongPick_Title                    >
   <Binguin_SongPick_Desc                     >Selected {0} / {1}. They play in the order you pick; click to toggle.</Binguin_SongPick_Desc                     >
-  <Binguin_SongPick_Confirm                  >Use these songs</Binguin_SongPick_Confirm                  >
+  <Binguin_SongPick_Confirm                  >Book it</Binguin_SongPick_Confirm                  >
   <Binguin_SongPick_Full                     >You can pick at most {0} songs.</Binguin_SongPick_Full                     >
   <Binguin_ConcertQuality_Message            >The concert begins! Quality {0}% [{1}]
 {2}</Binguin_ConcertQuality_Message            >
-  <Binguin_ConcertGoodwill_Message           >The guests from {0} enjoyed the concert. Goodwill +8.</Binguin_ConcertGoodwill_Message           >
+  <Binguin_ConcertGoodwill_Message           >The guests from {0} enjoyed the concert. Goodwill +{1}.</Binguin_ConcertGoodwill_Message           >
+  <!-- ★ 2026-10-18: four-tier probability prediction (start-concert tooltip) -->
+  <Binguin_ConcertSetup_Prediction           >Predicted: {0} {1}% · {2} {3}% · {4} {5}% · {6} {7}% (quality {8}%)</Binguin_ConcertSetup_Prediction           >
   <Binguin_UserSongs_NoFolder                >Song library folder not found. Use "Open song library folder" in mod options first.</Binguin_UserSongs_NoFolder                >
 </LanguageData>

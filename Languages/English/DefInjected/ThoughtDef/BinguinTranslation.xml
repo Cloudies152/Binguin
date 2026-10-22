@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <!-- 冰鹅族 · def 文案英文（2026-10-09 由中文基准翻译生成） -->
   <Binguin_RodBaitJellyMood.label>insect jelly bait</Binguin_RodBaitJellyMood.label>
@@ -11,8 +11,17 @@
 
   <Binguin_StinkFishSmell.label>Reeking of stinkfish</Binguin_StinkFishSmell.label>
   <Binguin_StinkFishSmell.description>Caked in the smell of stinkfish cans, and nothing will wash it off.</Binguin_StinkFishSmell.description>
-  <Binguin_AttendedConcert.label>Attended a binguin concert</Binguin_AttendedConcert.label>
-  <Binguin_AttendedConcert.description>That performance was wonderful. The melody is still echoing in my head.</Binguin_AttendedConcert.description>
+  <!-- ★ 2026-10-18：演唱会心情改成 4 个 stage（乏味/普通/难忘/共鸣，-2/+2/+5/+10），
+       路径必须是 `DefName.stages.N.label` —— ThoughtDef 本身没有 label/description，
+       它们挂在 ThoughtStage 上。（原来写的 `.label`/`.description` 是无效路径。） -->
+  <Binguin_AttendedConcert.stages.0.label>Sat through a dull concert</Binguin_AttendedConcert.stages.0.label>
+  <Binguin_AttendedConcert.stages.0.description>The performance was flat and forgettable; I left feeling a little empty.</Binguin_AttendedConcert.stages.0.description>
+  <Binguin_AttendedConcert.stages.1.label>Attended an ordinary concert</Binguin_AttendedConcert.stages.1.label>
+  <Binguin_AttendedConcert.stages.1.description>A middle-of-the-road show, neither good nor bad.</Binguin_AttendedConcert.stages.1.description>
+  <Binguin_AttendedConcert.stages.2.label>Attended a memorable concert</Binguin_AttendedConcert.stages.2.label>
+  <Binguin_AttendedConcert.stages.2.description>A great performance; several of the songs stayed with me.</Binguin_AttendedConcert.stages.2.description>
+  <Binguin_AttendedConcert.stages.3.label>Felt a real resonance at the concert</Binguin_AttendedConcert.stages.3.label>
+  <Binguin_AttendedConcert.stages.3.description>The songs felt like they were sung just for me. I was deeply moved.</Binguin_AttendedConcert.stages.3.description>
   <Binguin_AteFish.label>ate delicious fish</Binguin_AteFish.label>
   <Binguin_AteFish.description>Such delicious fish! It sets me fairly glowing!</Binguin_AteFish.description>
 </LanguageData>

@@ -61,6 +61,15 @@ namespace Binguin.Feature.Band
         /// <summary>本场演出质量 0~1（开演时计算）。</summary>
         public float quality;
 
+        /// <summary>
+        /// 本场实际掷出的档位（0 惨不忍睹 / 1 平平无奇 / 2 很精彩 / 3 难以忘怀）。
+        /// ★ 2026-10-18：开演时按 `TierProbabilities(quality)` 掷**一次**，
+        ///   之后散场结算只读这个值（同一场不会重掷）。
+        ///   注意：开演后 booking 会转成 `performingBooking`（运行期字段，不进存档），
+        ///   所以存档里这个值只在"还没开演"时有意义。
+        /// </summary>
+        public int outcomeTier = -1;
+
         /// <summary>人员到场的时刻（用于"6 小时不开演就取消"）。</summary>
         public int assembledTick;
 
@@ -173,6 +182,7 @@ namespace Binguin.Feature.Band
         {
             Scribe_Collections.Look(ref guests, "arrivedGuests", LookMode.Reference);
             Scribe_Values.Look(ref quality, "quality");
+            Scribe_Values.Look<int>(ref outcomeTier, "binguinBookingTier", -1, false);
             Scribe_References.Look<Pawn>(ref leadSinger, "binguinBookingSinger");
             Scribe_Collections.Look<Binguin_SongDef>(ref songs, "binguinBookingSongs", LookMode.Def);
             Scribe_Values.Look<int>(ref scheduledTick, "binguinBookingTick", 0, false);
@@ -392,10 +402,14 @@ namespace Binguin.Feature.Band
             if (wasPerforming && !BinguinConcert.Active)
             {
                 wasPerforming = false;
+                // ★ 2026-10-18：自办演出的收尾（只给"正在看"的人发心情 + 放贵宾回家）。
+                //   必须在 GrantGoodwill 之前/之后都行，这里先收尾再结算好感。
+                BinguinConcertDirector.EndPerformance(performingBooking);
                 // ★ 2026-10-17：演唱会结束后给来访派系加好感
                 BinguinConcertDirector.GrantGoodwill(performingBooking);
                 BinguinConcertDirector.SendEveryoneHome(performingBooking, performingBooking != null ? performingBooking.Map : null);
-                BinguinConcertDirector.OnPerformanceEnded();
+                // ★ 不在这里再调 OnPerformanceEnded()：EndPerformance 里已经做了
+                //   "释放参与者 + 发心情 + 放贵宾 + 清座位表"，再调一次会重复跑一遍收尾。
                 performingBooking = null;
                 // ★ musicPlaylist 故意不清：歌单要在演唱会之后继续放完
                 lastConcertEndTick = GenTicks.TicksGame;
@@ -410,6 +424,9 @@ namespace Binguin.Feature.Band
                 && (GenTicks.TicksGame % 250) == 0)
             {
                 BinguinConcertDirector.KeepPerformersPlaying(performingBooking, performingBooking.Map);
+                // ★ 2026-10-18 新增：观众也要一直待在麦克风前面看
+                //   （原来只在开演那一刻派一次，被别的活抢走就再也不回来了）
+                BinguinConcertDirector.KeepAudienceWatching(performingBooking, performingBooking.Map);
             }
 
             BinguinConcertBooking b = booking;
@@ -506,6 +523,13 @@ namespace Binguin.Feature.Band
             // ★ 2026-10-17 作者：「开始演唱会时不用弹仪式质量消息」⇒ 只计算、不弹消息。
             //   质量仍会在仪式界面的“效果乘数”里显示。
             b.quality = BinguinConcertQuality.Compute(b, map);
+            // ★ 2026-10-18：四档是**按概率掷**的，开演时掷一次并写进存档
+            b.outcomeTier = BinguinConcertQuality.RollTier(b.quality);
+            BinguinLogUtility.Log("本场演出质量 " + (b.quality * 100f).ToString("0")
+                + "% ⇒ 掷出档位【" + BinguinConcertQuality.TierKey(b.outcomeTier).Translate()
+                + "】（心情 " + BinguinConcertQuality.MoodOffsetText(b.outcomeTier)
+                + "，来访好感 +" + BinguinConcertQuality.GoodwillOf(b.quality) + "）",
+                isDebug: false);
 
             // ★ 2026-10-17 作者：「演唱会时间是固定的4小时」
             //   曲目只是为了让玩家开 1 倍速时能听到四首歌，**不影响时长**。

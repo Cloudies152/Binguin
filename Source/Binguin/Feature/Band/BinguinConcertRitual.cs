@@ -232,13 +232,14 @@ namespace Binguin.Feature.Band
                     if (p != null) musicians[RoleToDef[i][1]] = p;
                 }
                 // ★ 2026-10-17 作者要求：「选曲窗口在选人后」
-                //   流程：仪式窗口选人 → **选曲（最多 4 首）** → 选 1~7 天 → 登记
+                // ★ 2026-10-18 作者要求：「把选择多少天后开始的选项和选择歌曲的页面放到一起」
+                //   ⇒ 流程：仪式窗口选人 → **一个窗口里同时选曲 + 选 1~7 天后** → 直接登记
                 List<Binguin_SongDef> pre = new List<Binguin_SongDef>();
                 Binguin_SongDef d = BinguinConcertSongs.DefaultFor(lead);
                 if (d != null) pre.Add(d);
 
                 Find.WindowStack.Add(new Dialog_BinguinSongPick(pre,
-                    delegate (List<Binguin_SongDef> picked)
+                    delegate (List<Binguin_SongDef> picked, int days)
                     {
                         List<Binguin_SongDef> songs = new List<Binguin_SongDef>();
                         if (picked != null) songs.AddRange(picked);
@@ -247,7 +248,7 @@ namespace Binguin.Feature.Band
                             Binguin_SongDef dd = BinguinConcertSongs.DefaultFor(lead);
                             if (dd != null) songs.Add(dd);
                         }
-                        AskDaysThenBook(lead, musicians, songs, map, micCell);
+                        DoBook(lead, musicians, songs, days, map, micCell);
                     }));
             }
             catch (System.Exception e)
@@ -297,21 +298,11 @@ namespace Binguin.Feature.Band
             return null;
         }
 
-        /// <summary>弹原版 FloatMenu 让玩家挑 1~7 天后。</summary>
-        private static void AskDaysThenBook(Pawn lead, Dictionary<string, Pawn> musicians,
-            List<Binguin_SongDef> songs, Map map, IntVec3 micCell)
-        {
-            List<FloatMenuOption> opts = new List<FloatMenuOption>();
-            for (int d = 1; d <= 7; d++)
-            {
-                int days = d;
-                opts.Add(new FloatMenuOption(
-                    "Binguin_ConcertSetup_DaysValue".Translate(days.ToString()),
-                    delegate { DoBook(lead, musicians, songs, days, map, micCell); }));
-            }
-            Find.WindowStack.Add(new FloatMenu(opts));
-        }
-
+        /// <summary>
+        /// ★ 2026-10-18 已删除 `AskDaysThenBook`（原来选完曲还弹一个 FloatMenu 选天数）。
+        ///   作者要求把「多少天后」和选曲放同一页 ⇒ 日期现在由 `Dialog_BinguinSongPick`
+        ///   一起收，确认后直接走 `DoBook`。
+        /// </summary>
         private static void DoBook(Pawn lead, Dictionary<string, Pawn> musicians,
             List<Binguin_SongDef> songs, int days, Map map, IntVec3 micCell)
         {

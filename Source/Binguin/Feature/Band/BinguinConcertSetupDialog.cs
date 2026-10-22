@@ -191,23 +191,24 @@ namespace Binguin.Feature.Band
             return true;
         }
 
-        private float EstimateQuality()
+        /// <summary>
+        /// 用**真实的 3 权重公式**估算当前阵容的质量（只造一个临时 booking，不登记预约）。
+        /// ★ 2026-10-18：原来的 `EstimateQuality`（艺术等级/20 求平均）和真实公式对不上，
+        ///   而且 `QualityLabel` 用的四个旧翻译键已随四档改名删除 ⇒ 改为直接显示四档概率。
+        /// </summary>
+        private float RealQuality()
         {
-            float sum = 0f; int n = 0;
+            BinguinConcertBooking tmp = new BinguinConcertBooking();
+            Pawn leader;
+            if (slots.TryGetValue(SlotLeader, out leader)) tmp.leadSinger = leader;
+            tmp.musicians = new Dictionary<string, Pawn>();
             foreach (KeyValuePair<string, Pawn> kv in slots)
             {
-                if (kv.Value == null) continue;
-                sum += Mathf.Clamp01(ArtisticOf(kv.Value) / 20f); n++;
+                if (kv.Key == SlotLeader || kv.Value == null) continue;
+                tmp.musicians[kv.Key] = kv.Value;
             }
-            return n > 0 ? sum / (float)n : 0f;
-        }
-
-        private string QualityLabel(float q)
-        {
-            if (q < 0.2f) return "Binguin_ConcertSelf_Quality_Terrible".Translate();
-            if (q < 0.4f) return "Binguin_ConcertSelf_Quality_Boring".Translate();
-            if (q < 0.7f) return "Binguin_ConcertSelf_Quality_Fun".Translate();
-            return "Binguin_ConcertSelf_Quality_Unforgettable".Translate();
+            tmp.venueCenter = micCell;
+            return BinguinConcertQuality.Compute(tmp, map);
         }
 
         private int TotalTicks()
@@ -237,8 +238,10 @@ namespace Binguin.Feature.Band
             else
             {
                 Widgets.Label(new Rect(0f, y, inRect.width, 22f),
-                    "Binguin_Interface_042".Translate().ToString() + QualityLabel(EstimateQuality())
-                    + "Binguin_Interface_043".Translate().ToString() + (TotalTicks() / 2500f).ToString("0.#") + "Binguin_Interface_044".Translate().ToString());
+                    BinguinConcertQuality.PredictionLine(RealQuality())
+                    + "Binguin_Interface_043".Translate().ToString()
+                    + (TotalTicks() / 2500f).ToString("0.#")
+                    + "Binguin_Interface_044".Translate().ToString());
             }
             y += 28f;
 
@@ -418,8 +421,11 @@ namespace Binguin.Feature.Band
             if (waiting != null && waiting.awaitingStart)
             {
                 cmd.defaultLabel = "Binguin_ConcertSetup_StartNow".Translate();
+                // ★ 2026-10-18：把"四档概率预测"挂在开演按钮的悬浮说明里
+                //   （质量在开演时才算，这里先算一次给玩家看）
                 cmd.defaultDesc = "Binguin_ConcertSetup_StartNowDesc".Translate(
-                    waiting.AssembledHours.ToString("0.#"));
+                    waiting.AssembledHours.ToString("0.#"))
+                    + "\n" + BinguinConcertQuality.CachedPredictionLine(waiting, map);
                 cmd.action = delegate
                 {
                     GameComponent_BinguinConcertBooking comp = GameComponent_BinguinConcertBooking.Instance;

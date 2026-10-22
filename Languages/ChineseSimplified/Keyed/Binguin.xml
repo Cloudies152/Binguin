@@ -659,10 +659,10 @@
   <Binguin_Weather_Snowstorm               >风</Binguin_Weather_Snowstorm               >
   <Binguin_Weather_Thunderstorm            >风</Binguin_Weather_Thunderstorm            >
   <Binguin_WorkOnRod_PartsIncomplete       >根钓竿的配件还不齐，没法继续装配</Binguin_WorkOnRod_PartsIncomplete       >
-  <Binguin_ConcertSelf_Quality_Terrible      >惨不忍睹</Binguin_ConcertSelf_Quality_Terrible      >
-  <Binguin_ConcertSelf_Quality_Boring        >平平无奇</Binguin_ConcertSelf_Quality_Boring        >
-  <Binguin_ConcertSelf_Quality_Fun           >很精彩</Binguin_ConcertSelf_Quality_Fun           >
-  <Binguin_ConcertSelf_Quality_Unforgettable >难以忘怀</Binguin_ConcertSelf_Quality_Unforgettable >
+  <Binguin_ConcertSelf_Quality_Dull          >乏味</Binguin_ConcertSelf_Quality_Dull          >
+  <Binguin_ConcertSelf_Quality_Ordinary      >普通</Binguin_ConcertSelf_Quality_Ordinary      >
+  <Binguin_ConcertSelf_Quality_Memorable     >难忘</Binguin_ConcertSelf_Quality_Memorable     >
+  <Binguin_ConcertSelf_Quality_Resonant      >共鸣</Binguin_ConcertSelf_Quality_Resonant      >
   <Binguin_ConcertArrived_Title              >冰鹅族演唱会准备就绪</Binguin_ConcertArrived_Title              >
   <Binguin_ConcertArrived_Text               >主唱 {0}、{1} 位乐手，以及全体殖民者已经到场。\n曲目：{2}\n\n点【麦克风】上的「开始演唱会」即可开演。\n超过 6 小时不开演，这场演唱会将自动取消。</Binguin_ConcertArrived_Text               >
   <Binguin_ConcertSetup_StartNow             >开始演唱会</Binguin_ConcertSetup_StartNow             >
@@ -673,12 +673,14 @@
   <Binguin_ConcertSetup_Edit                 >改期 / 改人</Binguin_ConcertSetup_Edit                 >
   <Binguin_ConcertSetup_EditDesc             >还没到日子（还有 {0} 天），可以重新选人和改日期。</Binguin_ConcertSetup_EditDesc             >
   <Binguin_ConcertSetup_Cooldown             >上一场演唱会结束不久，还需要冷却 {0} 天。</Binguin_ConcertSetup_Cooldown             >
-  <Binguin_SongPick_Title                    >选择本场曲目</Binguin_SongPick_Title                    >
+  <Binguin_SongPick_Title                    >安排本场演唱会：曲目与日期</Binguin_SongPick_Title                    >
   <Binguin_SongPick_Desc                     >已选 {0} / {1} 首。按选择顺序演出，点一下勾选/取消。</Binguin_SongPick_Desc                     >
-  <Binguin_SongPick_Confirm                  >就这几首</Binguin_SongPick_Confirm                  >
+  <Binguin_SongPick_Confirm                  >就这些，定下日子</Binguin_SongPick_Confirm                  >
   <Binguin_SongPick_Full                     >最多只能选 {0} 首。</Binguin_SongPick_Full                     >
   <Binguin_ConcertQuality_Message            >演唱会开始！质量 {0}%【{1}】
 {2}</Binguin_ConcertQuality_Message            >
-  <Binguin_ConcertGoodwill_Message           >{0} 的来宾听完演唱会很满意，好感 +8。</Binguin_ConcertGoodwill_Message           >
+  <Binguin_ConcertGoodwill_Message           >{0} 的来宾听完演唱会很满意，好感 +{1}。</Binguin_ConcertGoodwill_Message           >
+  <!-- ★ 2026-10-18：四档概率预测（开演按钮悬浮说明） -->
+  <Binguin_ConcertSetup_Prediction           >预计：{0} {1}% · {2} {3}% · {4} {5}% · {6} {7}%（质量 {8}%）</Binguin_ConcertSetup_Prediction           >
   <Binguin_UserSongs_NoFolder                >没找到歌曲库文件夹，请先在 Mod 选项里点「打开歌曲库文件夹」。</Binguin_UserSongs_NoFolder                >
 </LanguageData>

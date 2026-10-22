@@ -28,29 +28,53 @@ namespace Binguin.Feature.Band
 {
     public class JobDriver_BinguinWatchConcert : JobDriver
     {
-        private const int CheckInterval = 250;
-
         public override bool TryMakePreToilReservations(bool errorOnFailed)
         {
             return true;
         }
 
+        // ★★★ 2026-10-18 修「观众根本没有一个人在看演出」：
+        //   目标 A 有两种可能：① 座位（Thing，老 `GameComponent_BinguinBandWatch` 传的）；
+        //   ② 只是"麦克风前的一个格子"（自办演唱会的 `BinguinConcertDirector` 传的）。
+        //   原来一律走 `Toils_Goto.GotoThing(TargetIndex.A, ...)`，
+        //   而 `Toils_Goto.Goto(ind, pe)` 是 `GotoThing(ind, pe, false)` 的**纯转发**
+        //   （1.7 IL 实证：ldarg.0 / ldarg.1 / ldc.i4.0 / call GotoThing / ret），
+        //   格子目标没有 Thing ⇒ 初始化时 `TargetA.Thing` 为 null ⇒ NRE，
+        //   观众一开工就失败、当场去干别的事。（和主唱那次"传格子给 GotoThing"是同一个坑。）
+        //   ⇒ 按目标类型分流：有 Thing 用 GotoThing，否则用 GotoCell。
         protected override IEnumerable<Toil> MakeNewToils()
         {
-            // 走到座位（A）；没有座位（targetA 无效）就直接原地看
-            Toil go = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.OnCell);
-            go.FailOnDespawnedOrNull(TargetIndex.A);
-            yield return go;
+            LocalTargetInfo seat = job.targetA;
+            if (seat.IsValid)
+            {
+                Toil go;
+                if (seat.HasThing)
+                {
+                    go = Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.OnCell);
+                    go.FailOnDespawnedOrNull(TargetIndex.A);   // 椅子被拆了就收工
+                }
+                else
+                {
+                    go = Toils_Goto.GotoCell(seat.Cell, PathEndMode.OnCell);
+                }
+                yield return go;
+            }
 
-            Toil wait = Toils_General.Wait(60000, TargetIndex.A);
-            wait.socialMode = RandomSocialMode.Off;
-            wait.handlingFacing = true;
-            // 演唱会一结束就收工
-            wait.AddEndCondition(delegate
+            // ★ 面朝舞台：B = 麦克风（没有就朝自己的位置）。
+            //   `Toils_General.Wait(ticks, face)` 在 face != None 时会自己
+            //   设 handlingFacing = true 并每 tick 面向该目标（1.7 IL 实证），
+            //   所以不用手写 tickAction。
+            TargetIndex face = job.targetB.IsValid
+                ? TargetIndex.B
+                : (job.targetA.IsValid ? TargetIndex.A : TargetIndex.None);
+            Toil watch = Toils_General.Wait(60000, face);
+            watch.socialMode = RandomSocialMode.Off;
+            // 演唱会一结束就收工（收工后各回各的日常）
+            watch.AddEndCondition(delegate
             {
                 return BinguinConcert.Active ? JobCondition.Ongoing : JobCondition.Succeeded;
             });
-            yield return wait;
+            yield return watch;
         }
     }
 
@@ -331,6 +355,10 @@ namespace Binguin.Feature.Band
 
             Job job = JobMaker.MakeJob(def);
             job.targetA = seat;
+            // ★ 2026-10-18：B = 麦克风（朝舞台）。不设的话驱动只能朝自己的座位发呆，
+            //   和"看演出"这个动作对不上。
+            Thing mic = FindInstrument(map, "Binguin_Band_Microphone");
+            if (mic != null) job.targetB = mic;
             job.expiryInterval = -1;
             job.playerForced = false;
             p.jobs.StartJob(job, JobCondition.InterruptForced);

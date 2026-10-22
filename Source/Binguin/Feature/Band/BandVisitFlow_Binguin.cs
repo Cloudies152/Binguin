@@ -623,8 +623,9 @@ namespace Binguin.Feature.Band
         public static void StartConcert(Pawn singer)
         {
             if (BinguinConcert.Active || singer == null || !singer.Spawned || !IsLeadSinger(singer)) return;
-            Find.WindowStack.Add(new Dialog_BinguinSongPick(null, delegate(List<Binguin_SongDef> songs)
+            Find.WindowStack.Add(new Dialog_BinguinSongPick(null, delegate(List<Binguin_SongDef> songs, int days)
             {
+                // days 是给自办预约用的；来访乐队是"当场开演"，不需要它。
                 // 窗口打开后仍可能发生死亡/离场；确认时再次检查，取消窗口不改变演出状态。
                 if (BinguinConcert.Active || !singer.Spawned || singer.Dead || !IsLeadSinger(singer)) return;
                 BinguinConcertBooking playlist = new BinguinConcertBooking();
@@ -938,8 +939,14 @@ namespace Binguin.Feature.Band
             if (wasActive && !now)
             {
                 wasActive = false;
+                // ★ 只有「乐队来访」事件在场、且不是自办演出时才走这套收尾。
+                //   自办演出也共用 `BinguinConcert.Active`，但由 `EndPerformance` 收尾
+                //   （只给正在看的观众发心情 + 放贵宾回家），不该掉武器 / 给冰鹅派系 +20。
                 if (!BinguinConcertDirector.SelfHosted && BinguinBandConcert.bandArrived)
-                    BinguinBandConcert.EndConcert(GameComponent_BinguinPerformanceState.Current.VisitingMap);
+                {
+                    BinguinBandConcert.EndConcert(
+                        GameComponent_BinguinPerformanceState.Current.VisitingMap);
+                }
             }
             else if (now)
             {

@@ -16,6 +16,17 @@
 //
 // ★★ 观众范围：一期 = 地图上所有**能自由行动**的殖民者
 //     （作者没要求手选观众；"乐手可以缺人"是明确要求）。
+//
+// ★★★ 2026-10-18 观众观看（本轮新增，之前**根本没有**）：
+//   · 观众 job 的 targetA = 座位/站位，**targetB = 麦克风**（用来面朝舞台）。
+//   · `Binguin_WatchConcert` 的驱动原来只会 `GotoThing`，而这里传的是**格子**
+//     ⇒ 目标没有 Thing ⇒ 初始化 NRE ⇒ 全场没有一个人在看演出。
+//     驱动已改成格子/物件分流（见 BandWatch_Binguin.cs）。
+//   · 演出期间每 250 tick 由 `KeepAudienceWatching` 补派一次（已在看的不打断），
+//     所以中途被别的活抢走也会自己走回来。
+//   · 散场时由 `EndPerformance` 只给**正在看的人**发心情（原来这条是空的，
+//     靠"乐队来访"那套 `EndConcert` 兜底，而它还会掉武器 + 给冰鹅派系 +20，
+//     对自办演出是错的 ⇒ 现在那套只在来访事件 `bandArrived` 时跑）。
 // ============================================================================
 
 using System.Collections.Generic;
@@ -109,29 +120,32 @@ namespace Binguin.Feature.Band
                 //   ⇒ 不靠抢 job（会互相拉扯），而是让他们“很忙”。
                 GivePerformersLord(Performers, map, b.venueCenter);
 
-                // ③ 观众 → 看演出（地图上所有能自由行动的殖民者）
-                List<Pawn> colonists = map.mapPawns.FreeColonistsSpawned;
-                for (int i = 0; i < colonists.Count; i++)
+                // ③ 观众 → 看演出（殖民者 + 已经到场的贵宾）
+                //    ★ 2026-10-18：名单统一由 CollectAudience 收集
+                //      （排除演出者 / 倒地 / 精神崩溃 / 不在本图），
+                //      并且 job 带上 targetB = 麦克风 ⇒ 观众才会**面朝舞台**看。
+                List<Pawn> audience = CollectAudience(b, map);
+                for (int i = 0; i < audience.Count; i++)
                 {
-                    Pawn c = colonists[i];
-                    if (c == null || c.Dead)
-                    {
-                        continue;
-                    }
-                    if (Performers.Contains(c))
-                    {
-                        continue;   // 表演者不给自己当观众
-                    }
-                    SendWatchJob(c, b.venueCenter, map);
-                    Audience.Add(c);
+                    SendWatchJob(audience[i], b.venueCenter, map, mic);
                 }
+                Audience = audience;
 
-                // ④ 外派系贵宾 → 从地图边缘进场（通讯台发过邀请、对方答应了的）
+                // ④ 开演这一刻才生成的新贵宾（通常到场阶段已经生成过，这里是兜底）
                 List<Pawn> guests = BinguinConcertGuests.SpawnInvitedGuests(b, map);
-                for (int i = 0; i < guests.Count; i++)
+                if (guests != null && guests.Count > 0)
                 {
-                    SendWatchJob(guests[i], b.venueCenter, map);
-                    Audience.Add(guests[i]);
+                    if (b.guests == null) b.guests = new List<Pawn>();
+                    for (int i = 0; i < guests.Count; i++)
+                    {
+                        Pawn g = guests[i];
+                        if (g == null) continue;
+                        SendWatchJob(g, b.venueCenter, map, mic);
+                        b.guests.Add(g);
+                        Audience.Add(g);
+                    }
+                    // 开演才生成的贵宾也要有 Lord，否则看完了会直接往外走
+                    GiveGuestsLord(guests, map, b.venueCenter);
                 }
 
                 BinguinLogUtility.Log("自办演唱会开演：主唱 1 人、乐手 "
@@ -189,12 +203,15 @@ namespace Binguin.Feature.Band
                     }
                     list.Add(p);
                 }
+                // ★ 2026-10-17：Lord 的 chillSpot 放在**舞台正前方**，
+                //   让客人聚在台前听，而不是围着麦克风转（作者反馈）。
+                // ★ 2026-10-18：方向不能再写死南侧（那是歌手背后）——
+                //   按「主唱站位 → 麦克风」推出来的 StageFrontDir 走。
+                Thing mic = FindNearestInstrument(map, Dialog_BinguinConcertSetup.MicDefName, venue);
+                IntVec3 front = venue + StageFrontDir(mic) * 4;
+                if (!front.Standable(map)) front = venue;
                 foreach (KeyValuePair<Faction, List<Pawn>> kv in byFaction)
                 {
-                    // ★ 2026-10-17：Lord 的 chillSpot 放在**麦克风前方 4 格**，
-                    //   让客人聚在台前听，而不是围着麦克风转（作者反馈）。
-                    IntVec3 front = venue + new IntVec3(0, 0, -4);
-                    if (!front.Standable(map)) front = venue;
                     Verse.AI.Group.LordMaker.MakeNewLord(kv.Key,
                         new LordJob_BinguinCrowd(front), map, kv.Value);
                 }
@@ -226,8 +243,12 @@ namespace Binguin.Feature.Band
                 if (f.HostileTo(player)) continue;
                 try
                 {
-                    f.TryAffectGoodwillWith(player, 8, true, false);
-                    Messages.Message("Binguin_ConcertGoodwill_Message".Translate(f.Name),
+                    // ★ 2026-10-18：好感改成随质量变化的曲线（+4 ~ +12，质量 0.5 = 原来的 +8）
+                    int amount = BinguinConcertQuality.GoodwillOf(b.quality);
+                    if (amount <= 0) continue;
+                    f.TryAffectGoodwillWith(player, amount, true, false);
+                    Messages.Message("Binguin_ConcertGoodwill_Message".Translate(
+                            f.Name, amount.ToString()),
                         MessageTypeDefOf.PositiveEvent);
                 }
                 catch (System.Exception e)
@@ -241,75 +262,167 @@ namespace Binguin.Feature.Band
         /// <summary>已被占用的座位 id（每场演出开始时清空）。</summary>
         private static readonly HashSet<int> ClaimedSeats = new HashSet<int>();
 
-        /// <summary>清空座位占用表。</summary>
+        /// <summary>已被占用的站位（椅子格/台前格），避免两个观众挤在同一格。</summary>
+        private static readonly HashSet<IntVec3> ClaimedSpots = new HashSet<IntVec3>();
+
+        /// <summary>清空座位/站位占用表。</summary>
         public static void ResetSeats()
         {
             ClaimedSeats.Clear();
+            ClaimedSpots.Clear();
+        }
+
+        /// <summary>
+        /// 舞台「正前方」的单位格向量（观众该站的那一侧）。
+        /// ★★ 2026-10-18 修「观众站到歌手背后」：
+        ///   麦克风 XML 是 `<interactionCellOffset>(0,0,-1)</interactionCellOffset>`，
+        ///   所以主唱站在麦克风**南侧**；演奏 job 又让他面朝麦克风 ⇒ 他实际面向**北**。
+        ///   我上一轮把"前方"写成了南侧（`venue + (0,0,-4)`）⇒ 观众全跑到歌手背后。
+        ///   ⇒ 不再写死方向，按「主唱站位 → 麦克风」这条向量推：
+        ///     `mic.InteractionCell` = 主唱站位，`mic.Position` = 麦克风，差值就是主唱面朝的方向。
+        ///   麦克风转了方向（按 R 旋转）也能自动跟着变。
+        /// </summary>
+        public static IntVec3 StageFrontDir(Thing mic)
+        {
+            if (mic != null && mic.def != null && mic.def.hasInteractionCell)
+            {
+                IntVec3 d = mic.Position - mic.InteractionCell;
+                if (d.x != 0 || d.z != 0)
+                {
+                    return new IntVec3(System.Math.Sign(d.x), 0, System.Math.Sign(d.z));
+                }
+            }
+            // 麦克风没了 / 没有操作点：按现有布局（主唱面朝北）兜底
+            return new IntVec3(0, 0, 1);
         }
 
         /// <summary>
         /// 找一个观众位置。
         /// ★ 2026-10-17 作者要求：「听众不应该在麦克风面，参考之前的演唱会事件逻辑，
         ///   自动寻找附近能坐的位置，或者在麦克风前几格」
-        ///   ⇒ 优先找场地附近**可坐的建筑**（椅子/座位），
-        ///     没有就站在麦克风**前方 4~±2 格**，不挤在麦克风上。
+        /// ★ 2026-10-18：补上"台前优先 + 防重复占位"，并按 <paramref name="frontDir"/>
+        ///   （主唱面朝的方向）判定"前面"，不再写死南北：
+        ///   ① 先找舞台**正前方**的椅子（背后的椅子一律不要 —— 坐背后不如站前面）；
+        ///   ② 没椅子就站在麦克风正前方 3~7 格、左右 ±3 格；
+        ///   ③ 再不行才用原版随机近走格。
+        ///   每一步都跳过已被本场其它观众占掉的格子。
         /// </summary>
-        public static IntVec3 AudienceSpot(Pawn p, IntVec3 venue, Map map)
+        public static IntVec3 AudienceSpot(Pawn p, IntVec3 venue, Map map, IntVec3 frontDir)
         {
             if (!venue.IsValid || map == null) return IntVec3.Invalid;
+            if (frontDir.x == 0 && frontDir.z == 0) frontDir = new IntVec3(0, 0, 1);
+            IntVec3 side = new IntVec3(frontDir.z, 0, frontDir.x);   // 与 frontDir 垂直
 
-            // ① 找座位（场地 14 格内，未被占）
-            if (map.listerBuildings != null)
+            // ① 椅子：**只认舞台正前方**的（作者要的是"在麦克风前面看"；
+            //    坐在背后还不如站到前面）
+            Building seat = FindSeat(p, venue, map, frontDir);
+            if (seat != null)
             {
-                List<Building> all = map.listerBuildings.allBuildingsColonist;
-                float best = 999f;
-                IntVec3 bestCell = IntVec3.Invalid;
-                for (int i = 0; i < all.Count; i++)
+                ClaimedSeats.Add(seat.thingIDNumber);
+                IntVec3 at = seat.Position;
+                // 极少数座位格不可站立（例如被其它建筑占住）→ 退到操作点
+                if (!at.Standable(map))
                 {
-                    Building bd = all[i];
-                    if (bd == null || bd.def == null || bd.def.building == null) continue;
-                    if (!bd.def.building.isSittable) continue;
-                    if (ClaimedSeats.Contains(bd.thingIDNumber)) continue;
-                    IntVec3 cell = bd.InteractionCell.IsValid ? bd.InteractionCell : bd.Position;
-                    float d2 = (cell - venue).LengthHorizontalSquared;
-                    if (d2 > 196f) continue;            // 14 格
-                    if (d2 < best) { best = d2; bestCell = cell; }
+                    IntVec3 ic = seat.InteractionCell;
+                    if (ic.IsValid && ic.InBounds(map) && ic.Standable(map)) at = ic;
                 }
-                if (bestCell.IsValid)
-                {
-                    return bestCell;
-                }
+                ClaimedSpots.Add(at);
+                return at;
             }
 
-            // ② 没座位 ⇒ 麦克风前方 4 ± 2 格
-            for (int k = 0; k < 8; k++)
+            // ③ 麦克风正前方 3~7 格，左右 ±3 格
+            for (int k = 0; k < 16; k++)
             {
-                IntVec3 c = venue + new IntVec3(0, 0, -(4 + Rand.RangeInclusive(-2, 2)));
-                c = CellFinder.RandomClosewalkCellNear(c, map, 2);
-                if (c.IsValid && c != venue) return c;
+                IntVec3 c = venue + frontDir * Rand.RangeInclusive(3, 7)
+                    + side * Rand.RangeInclusive(-3, 3);
+                if (!c.InBounds(map)) continue;
+                if (!c.Standable(map)) continue;
+                if (c.GetEdifice(map) != null) continue;     // 别站到乐器/墙上
+                if (c.GetFirstPawn(map) != null) continue;   // 已经有人站这了
+                if (ClaimedSpots.Contains(c)) continue;
+                if (!p.CanReach(c, PathEndMode.OnCell, Danger.Some)) continue;
+                ClaimedSpots.Add(c);
+                return c;
+            }
+
+            // ④ 兜底：场地前方附近随机一个能站、没人占的格子
+            IntVec3 near = CellFinder.RandomClosewalkCellNear(venue + frontDir * 4,
+                map, 3, delegate (IntVec3 x)
+                {
+                    return x.Standable(map) && !ClaimedSpots.Contains(x) && x.GetEdifice(map) == null;
+                });
+            if (near.IsValid && !ClaimedSpots.Contains(near))
+            {
+                ClaimedSpots.Add(near);
+                return near;
             }
             return venue;
         }
 
-        /// <summary>把"观看"job 派给某人（目标 = 座位或麦克风前方的位置）。</summary>
-        private static void SendWatchJob(Pawn p, IntVec3 center, Map map)
+        /// <summary>
+        /// 场地附近**舞台正前方**的可坐建筑（按 frontDir 投影判定，背后的一律不要）。
+        /// </summary>
+        private static Building FindSeat(Pawn p, IntVec3 venue, Map map, IntVec3 frontDir)
+        {
+            if (map.listerBuildings == null) return null;
+            List<Building> all = map.listerBuildings.allBuildingsColonist;
+            Building best = null;
+            float bestDist = 999999f;
+            for (int i = 0; i < all.Count; i++)
+            {
+                Building bd = all[i];
+                if (bd == null || bd.def == null || bd.def.building == null) continue;
+                if (!bd.def.building.isSittable) continue;
+                if (bd is Building_Bed) continue;              // 床不算"座位"
+                if (ClaimedSeats.Contains(bd.thingIDNumber)) continue;
+                IntVec3 cell = bd.Position;
+                if (!cell.IsValid || ClaimedSpots.Contains(cell)) continue;
+                if (!cell.Standable(map)) continue;             // 站不上去的"座位"没法坐
+                if (cell.GetFirstPawn(map) != null) continue;   // 已经有人坐了
+                float d2 = (cell - venue).LengthHorizontalSquared;
+                if (d2 > 196f) continue;                       // 14 格
+                // 把座位相对麦克风的位移投到 frontDir 上：负值 = 歌手背后，直接跳过
+                IntVec3 rel = cell - venue;
+                if (rel.x * frontDir.x + rel.z * frontDir.z < 0) continue;
+                if (!p.CanReserveAndReach(bd, PathEndMode.OnCell, Danger.Some)) continue;
+                if (d2 < bestDist)
+                {
+                    bestDist = d2;
+                    best = bd;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>把"观看"job 派给某人（A = 座位/站位，B = 舞台）。
+        /// ★ 2026-10-18：**必须同时给 B**，否则驱动只能朝自己的格子发呆；
+        ///   只有把麦克风放进 B，`Toils_General.Wait(ticks, B)` 才会让人面向舞台。</summary>
+        private static void SendWatchJob(Pawn p, IntVec3 center, Map map, Thing stage)
         {
             if (p == null)
             {
                 return;
             }
-            JobDef def = DefDatabase<JobDef>.GetNamedSilentFail("Binguin_WatchConcert");
+            JobDef def = DefDatabase<JobDef>.GetNamedSilentFail(WatchJobDefName);
             if (def == null)
             {
-                BinguinLogUtility.Log("找不到 JobDef Binguin_WatchConcert，观众未派活。",
+                BinguinLogUtility.Log("找不到 JobDef " + WatchJobDefName + "，观众未派活。",
                     severity: 1, isDebug: false);
                 return;
             }
-            IntVec3 spot = AudienceSpot(p, center, map);
+            IntVec3 frontDir = StageFrontDir(stage);
+            IntVec3 spot = AudienceSpot(p, center, map, frontDir);
             Job job = JobMaker.MakeJob(def);
             job.targetA = new LocalTargetInfo(spot.IsValid ? spot : center);
+            if (stage != null)
+            {
+                job.targetB = new LocalTargetInfo(stage);
+            }
             p.jobs.TryTakeOrderedJob(job, JobTag.Misc);
         }
+
+        /// <summary>观众 job 的 defName（每 250 tick 都要比对，别反复查 DefDatabase）。</summary>
+        private const string WatchJobDefName = "Binguin_WatchConcert";
 
         /// <summary>
         /// 演出期间**重新派奏乐 job**。
@@ -359,6 +472,226 @@ namespace Binguin.Feature.Band
             if (p == null || playDef == null) return false;
             try { return p.CurJobDef == playDef; }
             catch (System.Exception) { return false; }
+        }
+
+        // ── 观众（★ 2026-10-18 新增：之前**没有任何代码**让人在麦克风前看演出）──
+
+        /// <summary>
+        /// 演出期间：把观众**按在麦克风前面看演出**。每 250 tick 调一次。
+        /// · 已经在看（`CurJobDef == Binguin_WatchConcert`）的不打断 —— 免得每次重派都
+        ///   打断走路、在座位和门口之间反复抖（演出者那边踩过同样的坑，见 KeepPerformersPlaying）。
+        /// · 被别的活抢走（吃饭/睡觉/别的仪式）就补派一次。
+        /// · 名单每次现算，不依赖静态字段 ⇒ 中途读档也不会丢。
+        /// </summary>
+        public static void KeepAudienceWatching(BinguinConcertBooking b, Map map)
+        {
+            if (b == null || map == null) return;
+            IntVec3 venue = b.venueCenter.IsValid ? b.venueCenter
+                : (b.leadSinger != null ? b.leadSinger.Position : IntVec3.Invalid);
+            if (!venue.IsValid) return;
+            try
+            {
+                Thing mic = FindNearestInstrument(map, Dialog_BinguinConcertSetup.MicDefName, venue);
+                List<Pawn> audience = CollectAudience(b, map);
+                for (int i = 0; i < audience.Count; i++)
+                {
+                    Pawn p = audience[i];
+                    if (IsWatching(p)) continue;
+                    SendWatchJob(p, venue, map, mic);
+                }
+                Audience = audience;
+            }
+            catch (System.Exception e)
+            {
+                BinguinLogUtility.Log("安排观众看演出失败：" + e.Message,
+                    severity: 1, isDebug: false);
+            }
+        }
+
+        /// <summary>
+        /// 本场观众 = 能自由行动的殖民者 + 已到场的受邀贵宾（排除演出者本人）。
+        /// ★ 作者没要求手选观众，所以默认"全殖民地都来看"。
+        /// </summary>
+        private static List<Pawn> CollectAudience(BinguinConcertBooking b, Map map)
+        {
+            List<Pawn> list = new List<Pawn>();
+            if (map == null) return list;
+            List<Pawn> colonists = map.mapPawns.FreeColonistsSpawned;
+            for (int i = 0; i < colonists.Count; i++)
+            {
+                Pawn c = colonists[i];
+                if (!CanAttend(c, b, map)) continue;
+                list.Add(c);
+            }
+            if (b != null && b.guests != null)
+            {
+                for (int i = 0; i < b.guests.Count; i++)
+                {
+                    Pawn g = b.guests[i];
+                    if (!CanAttend(g, b, map)) continue;
+                    if (!list.Contains(g)) list.Add(g);
+                }
+            }
+            return list;
+        }
+
+        /// <summary>这个人能不能当观众（活着、在地上、没倒、没疯、不是演出者）。</summary>
+        private static bool CanAttend(Pawn p, BinguinConcertBooking b, Map map)
+        {
+            if (p == null || p.Dead || p.Downed || !p.Spawned || p.Map != map) return false;
+            if (p.InMentalState) return false;   // 精神崩溃的看不了演出
+            if (p.Drafted) return false;         // 被征召的（玩家在指挥战斗）不抢
+            if (p.jobs == null) return false;
+            if (p.InBed()) return false;         // 躺床养伤的别拖出来看演出
+            if (p.health != null && p.health.capacities != null
+                && !p.health.capacities.CapableOf(PawnCapacityDefOf.Moving))
+            {
+                return false;                    // 走不动的人（婴儿/重伤）不派
+            }
+            return !IsPerformer(b, p);
+        }
+
+        /// <summary>是不是本场演出者（主唱/乐手）——演出者不看演出。</summary>
+        private static bool IsPerformer(BinguinConcertBooking b, Pawn p)
+        {
+            if (b == null || p == null) return false;
+            if (b.leadSinger == p) return true;
+            if (b.musicians != null)
+            {
+                foreach (KeyValuePair<string, Pawn> kv in b.musicians)
+                {
+                    if (kv.Value == p) return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>他此刻是不是正在"看演出"。</summary>
+        private static bool IsWatching(Pawn p)
+        {
+            if (p == null || p.CurJobDef == null) return false;
+            return p.CurJobDef.defName == WatchJobDefName;
+        }
+
+        /// <summary>
+        /// 演出结束（自办）：只给**正在看演出的人**发心情，然后清运行期状态。
+        /// ★ 2026-10-18：原来这个收尾是空的，全靠"乐队来访"那套
+        ///   `BinguinBandConcert.EndConcert` 兜底 —— 而它还会**掉武器 + 给冰鹅派系 +20 好感**，
+        ///   对自办演唱会是不对的。现在那套只在 `bandArrived`（来访事件）时跑，
+        ///   自办演出由这里收尾：发心情 + 放贵宾回家 + 清座位表。
+        /// </summary>
+        public static void EndPerformance(BinguinConcertBooking b)
+        {
+            int n = 0;
+            // 本场掷出的档位（读档后 b 可能是 null ⇒ 退回"最可能档位"）
+            int tier = (b != null && b.outcomeTier >= 0 && b.outcomeTier < BinguinConcertQuality.TierCount)
+                ? b.outcomeTier
+                : BinguinConcertQuality.TierOf(b != null ? b.quality : 0.5f);
+            try
+            {
+                ThoughtDef thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Binguin_AttendedConcert");
+                // 观众名单有两个来源，合并去重：
+                //   ① `Audience`（演出期间每 250 tick 刷新，最完整）
+                //   ② 此刻 CurJobDef 还是"看演出"的人（防止收尾瞬间 job 刚好结束）
+                HashSet<Pawn> watchers = new HashSet<Pawn>();
+                if (Audience != null)
+                {
+                    for (int i = 0; i < Audience.Count; i++)
+                    {
+                        if (Audience[i] != null) watchers.Add(Audience[i]);
+                    }
+                }
+                List<Map> maps = Find.Maps;
+                for (int m = 0; m < maps.Count; m++)
+                {
+                    Map map = maps[m];
+                    if (map == null || map.mapPawns == null) continue;
+                    // 1.6+ 里 AllPawnsSpawned 是 IReadOnlyList<Pawn>（不能声明成 List）
+                    var all = map.mapPawns.AllPawnsSpawned;
+                    for (int i = 0; i < all.Count; i++)
+                    {
+                        if (IsWatching(all[i])) watchers.Add(all[i]);
+                    }
+                }
+
+                foreach (Pawn p in watchers)
+                {
+                    if (p == null || p.Dead || !p.Spawned) continue;
+                    if (thought == null || p.needs == null || p.needs.mood == null) continue;
+                    // ★ 2026-10-18：按本场掷出的档位给对应阶段的心情
+                    //   （ThoughtDef 有 4 个 stage：6 / 10 / 14 / 18）
+                    Thought_Memory memory = ThoughtMaker.MakeThought(thought, tier);
+                    p.needs.mood.thoughts.memories.TryGainMemory(memory, null);
+                    n++;
+                }
+            }
+            catch (System.Exception e)
+            {
+                BinguinLogUtility.Log("演唱会收尾发心情失败：" + e.Message,
+                    severity: 1, isDebug: false);
+            }
+
+            try
+            {
+                // 贵宾看完就走：解散他们的 Lord，原版思维树会自己把他们送出地图
+                if (b != null && b.guests != null && !b.guests.NullOrEmpty())
+                {
+                    ReleaseGuestLords(b.guests);
+                }
+            }
+            catch (System.Exception e)
+            {
+                BinguinLogUtility.Log("送贵宾离场失败：" + e.Message, severity: 1, isDebug: false);
+            }
+
+            // ★ 把参与者从"演出中"的持久化状态里放回日常
+            //   （他那边 `GameComponent_BinguinPerformanceState` 存了 performers/audience，
+            //     不清的话读档后会被当成还在演出）
+            try
+            {
+                GameComponent_BinguinPerformanceState.ReleaseParticipants(Performers);
+                GameComponent_BinguinPerformanceState.ReleaseParticipants(Audience);
+            }
+            catch (System.Exception e)
+            {
+                BinguinLogUtility.Log("释放演出参与者失败：" + e.Message, severity: 1, isDebug: false);
+            }
+
+            Audience = new List<Pawn>();
+            Performers = new List<Pawn>();
+            SelfHosted = false;
+            ResetSeats();
+            BinguinLogUtility.Log("自办演唱会结束：" + n + " 名观众获得了心情加成（档位【"
+                + BinguinConcertQuality.TierKey(tier).Translate() + "】，心情 "
+                + BinguinConcertQuality.MoodOffsetText(tier) + "）。",
+                isDebug: false);
+        }
+
+        /// <summary>解散贵宾的 Lord（清掉职责后他们会自己往地图边缘走）。</summary>
+        private static void ReleaseGuestLords(List<Pawn> guests)
+        {
+            List<Lord> lords = new List<Lord>();
+            for (int i = 0; i < guests.Count; i++)
+            {
+                Pawn g = guests[i];
+                if (g == null || g.Dead || !g.Spawned) continue;
+                Lord l = g.GetLord();
+                if (l != null && !lords.Contains(l)) lords.Add(l);
+            }
+            for (int i = 0; i < lords.Count; i++)
+            {
+                Lord l = lords[i];
+                if (l == null || l.Map == null || l.Map.lordManager == null) continue;
+                try
+                {
+                    l.Map.lordManager.RemoveLord(l);
+                }
+                catch (System.Exception e)
+                {
+                    BinguinLogUtility.Log("解散贵宾 Lord 失败：" + e.Message,
+                        severity: 1, isDebug: false);
+                }
+            }
         }
 
         /// <summary>
@@ -423,18 +756,17 @@ namespace Binguin.Feature.Band
         }
 
         /// <summary>
-        /// 本场结束后由**已有**的 `GameComponent_BinguinBandConcertEnd` 调用
-        /// （它检测 `BinguinConcert.Active` 由 true 变 false）。
-        /// 这里只清自办演出的运行时状态。
+        /// 【兼容旧调用】收尾。
+        /// ★ 2026-10-18：真正的收尾已改成 `EndPerformance(booking)`（发心情 + 放贵宾走）；
+        ///   这个无参版本现在没有调用点，只留着防止旧存档/外部脚本反射调用时炸掉。
         /// </summary>
         public static void OnPerformanceEnded()
         {
+            // 先把参与者从演出状态里放回日常（他这边的持久化状态），
+            // 再走我们的收尾（发心情、放贵宾、清座位表）。
             GameComponent_BinguinPerformanceState.ReleaseParticipants(Performers);
             GameComponent_BinguinPerformanceState.ReleaseParticipants(Audience);
-            Audience = new List<Pawn>();
-            Performers = new List<Pawn>();
-            SelfHosted = false;
-            ResetSeats();
+            EndPerformance(null);
         }
 
         /// <summary>

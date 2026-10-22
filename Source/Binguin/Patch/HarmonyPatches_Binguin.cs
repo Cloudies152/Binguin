@@ -4,7 +4,8 @@
 // 思路（来自朋友建议）：不轮询地形，而是在 1.6 计算"进入某格所需成本"的
 // 入口 Verse.AI.Pawn_PathFollower.CostToMoveIntoCell 上挂钩：
 //   如果该 pawn 带有滑冰基因，且目标格是冰/雪/水面 → 把成本压到
-//   "平地一格的成本"（= 1 / moveSpeed，无地形减益），而不是更快。
+//   **平地的 1.2 倍速**（= 平地 tick 成本 / 1.2，2026-10-19 作者定稿）。
+//   范围不变：冰面（Ice*）、积雪、水面（Water*）、自家冰地板（Binguin_*）。
 //
 // ★ 1.6 结构（2026-08-17 反射确认）：
 //   - Pawn_PathFollower 有两个 CostToMoveIntoCell：
@@ -575,22 +576,34 @@ namespace Binguin.Patch
             }
             if (IsIceSnowOrWater(map, c))
             {
-                // 平地一格成本 ≈ FlatCellCostFactor / moveSpeed。
-                // 校准记录（2026-08-17）：
-                //   F=1  → 比普通人在平地快约 20 倍
-                //   F=20 → 比普通人在平地快约 2 倍
-                //   F=40 → 平地速度（当前值）。若仍偏快/偏慢，调整此常量。
-                float moveSpeed = pawn.GetStatValue(StatDefOf.MoveSpeed);
-                float flatCost = FlatCellCostFactor / (moveSpeed > 0.01f ? moveSpeed : 0.01f);
-                if (__result > flatCost)
+                // ★★ 2026-10-19 作者定稿：冰/雪/水面 = **平地的 1.2 倍速**。
+                //
+                //   1.7 的 `CostToMoveIntoCell` 是加法（IL 实证）：
+                //     成本 = TicksPerMoveCardinal/Diagonal + PathGrid.CalculatedCostAt(格子)
+                //          = 60/MoveSpeed（对角 ×1.414） + 地形 pathCost（平地 = 1）
+                //   所以"平地一格"的成本是 `flat = TicksPerMove + 1`（单位：tick）。
+                //   想比平地快 X 倍 ⇒ 成本 = flat / X（成本越低走得越快）。
+                //
+                //   · 平地 4.6 移速：60/4.6 + 1 ≈ 14.0 tick/格（≈4.3 格/秒）
+                //   · 冰面原本：60/4.6 + 14 ≈ 27.0 tick/格（比平地慢 1.9 倍）
+                //   · 本基因（X=1.2）：14.0 / 1.2 ≈ 11.7 tick/格 ⇒ 5.1 格/秒
+                //   （旧的 `40/MoveSpeed` 写法实际约 1.6 倍速，2026-10-19 已按作者要求换成精确倍率）
+                bool diagonal = c.x != pawn.Position.x && c.z != pawn.Position.z;
+                float ticksPerMove = diagonal ? pawn.TicksPerMoveDiagonal : pawn.TicksPerMoveCardinal;
+                float flatCost = ticksPerMove + 1f;          // 平地 pathCost = 1
+                float target = flatCost / IceSpeedMultiplier;
+                if (__result > target)
                 {
-                    __result = flatCost;
+                    __result = target;
                 }
             }
         }
 
-        // 用户实测校准：真实平地一格成本 ≈ 40 / 移速（2026-08-17 第二次校准）
-        private const float FlatCellCostFactor = 40f;
+        /// <summary>
+        /// 冰/雪/水面相对"平地"的速度倍率。
+        /// ★ 2026-10-19 作者定：**1.2 倍**（想再调就改这里）。
+        /// </summary>
+        private const float IceSpeedMultiplier = 1.2f;
 
         private static bool IsIceSnowOrWater(Map map, IntVec3 cell)
         {

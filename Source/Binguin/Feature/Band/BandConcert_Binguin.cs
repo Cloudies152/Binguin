@@ -193,8 +193,9 @@ namespace Binguin.Feature.Band
                 return;
             }
             Map map = Find.CurrentMap;
-            Find.WindowStack.Add(new Dialog_BinguinSongPick(null, delegate(List<Binguin_SongDef> songs)
+            Find.WindowStack.Add(new Dialog_BinguinSongPick(null, delegate(List<Binguin_SongDef> songs, int days)
             {
+                // days 是给自办预约用的；调试的"立刻开演"不用它。
                 if (BinguinConcert.Active || map == null || !Find.Maps.Contains(map)) return;
                 BinguinConcertBooking playlist = new BinguinConcertBooking();
                 playlist.mapId = map.uniqueID;
