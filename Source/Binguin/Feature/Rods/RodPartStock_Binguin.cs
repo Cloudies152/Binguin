@@ -164,7 +164,7 @@ namespace Binguin.Feature.Rods
         {
             if (t == null)
             {
-                return "（未选）";
+                return "Binguin_Interface_082".Translate().ToString();
             }
             if (t.Stuff != null)
             {

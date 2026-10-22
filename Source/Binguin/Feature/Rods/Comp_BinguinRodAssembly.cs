@@ -112,12 +112,6 @@ namespace Binguin.Feature.Rods
                 stallTicks = 0;
                 return;
             }
-            if (HasPendingPartNearTable())
-            {
-                // 配件已经落在台边 —— 这也算"进行中"，不要复位
-                stallTicks = 0;
-                return;
-            }
 
             stallTicks++;
             if (stallTicks < StallResetTicks)
@@ -127,7 +121,7 @@ namespace Binguin.Feature.Rods
 
             // 到这里才是真正卡住（装配者彻底不管了、配件也不在台边）
             // 再确认一次，避免中途又被派活
-            if (IsActivelyAssembling(pendingPawn) || HasPendingPartNearTable())
+            if (IsActivelyAssembling(pendingPawn))
             {
                 stallTicks = 0;
                 return;
@@ -175,33 +169,7 @@ namespace Binguin.Feature.Rods
         /// <summary>
         /// 装配台附近（半径 6 格）是否已经有待装的配件在地上 —— 有就说明搬运有进展。
         /// </summary>
-        private bool HasPendingPartNearTable()
-        {
-            Map map = parent != null ? parent.Map : null;
-            if (map == null)
-            {
-                return false;
-            }
-            Thing[] parts = { pendingShaft, pendingTip, pendingHook, pendingBait };
-            for (int i = 0; i < parts.Length; i++)
-            {
-                Thing part = parts[i];
-                if (part == null || part.Destroyed)
-                {
-                    continue;
-                }
-                if (!part.Spawned)
-                {
-                    // 还在某人手上（被搬运中）也算是进行中
-                    return true;
-                }
-                if ((part.Position - parent.Position).LengthHorizontalSquared <= 36f)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+
 
         /// <summary>
         /// 真正卡住时的复位：把配件**放回地图**（绝不销毁），再清空 pending。
@@ -325,17 +293,15 @@ namespace Binguin.Feature.Rods
 
             // ---- 调试按钮（★ 只在开发者模式显示，正常游玩看不到）----
             // 2026-10-06 用户需求：「做个 debug 用的快速生成四种配件各一个和
-            //   4 个高级零部件，这样测试快一点」。就地生成在装配台旁边，省去手工筹备。
-            if (Prefs.DevMode)
+            //   4 个高级零部件，这样测试快一点」。点击地图选择生成位置。
+            if (DebugSettings.ShowDevGizmos && parent.Faction == Faction.OfPlayer)
             {
                 Command_Action devKit = new Command_Action();
-                devKit.defaultLabel = "（调试）生成装配测试套件";
-                devKit.defaultDesc = "在装配台旁生成：4 种配件各 1 个（钢铁材质）+ 4 个高级零部件。\n"
-                    + "仅开发者模式可见。";
+                devKit.defaultLabel = "Binguin_Debug_RodKit_Label".Translate();
+                devKit.defaultDesc = "Binguin_Debug_RodKit_Desc".Translate();
                 devKit.action = delegate
                 {
-                    DebugActions_RodAssembly.SpawnKitAt(parent.Map, parent.Position,
-                        ThingDefOf.Steel, false);
+                    DebugActions_RodAssembly.BeginTargetingKit(parent);
                 };
                 yield return devKit;
             }
@@ -434,73 +400,7 @@ namespace Binguin.Feature.Rods
         //     两处都跑 = **双重扣料 + 双重产出**。
         //   ⇒ 所以下面加了一句运行时告警：万一有人接上，日志里立刻能看见。
         // ══════════════════════════════════════════════════════════════════════
-        public void FinishAssembly(Pawn worker)
-        {
-            BinguinLogUtility.Log("CompBinguinRodAssembly.FinishAssembly 被调用了 —— 这是【死代码】！"
-                + "当前流程的收尾在 Comp_BinguinUnfinishedRod.cs。"
-                + "若确实需要走旧路径，请先确认不会与 SpawnUnfinishedRod 双重扣料。", severity: 1, isDebug: false);
-            Map map = parent.Map;
-            if (map == null) return;
-            if (pendingShaft == null || pendingTip == null || pendingHook == null)
-            {
-                ClearPending();
-                return;
-            }
-            if (!ConsumeComponents(4))
-            {
-                Messages.Message("Binguin_CompRodAssembly_10".Translate(), parent, MessageTypeDefOf.RejectInput, false);
-                ClearPending();
-                return;
-            }
 
-            bool bladeTip = pendingTip.def.defName == BinguinRodUtility.TipBlade;
-            ThingDef rodDef = DefDatabase<ThingDef>.GetNamedSilentFail(bladeTip ? BinguinRodUtility.RodBlade : BinguinRodUtility.RodHammer);
-            if (rodDef == null)
-            {
-                ClearPending();
-                return;
-            }
-
-            Thing rod = ThingMaker.MakeThing(rodDef);
-            CompBinguinRod comp = rod.TryGetComp<CompBinguinRod>();
-            if (comp != null)
-            {
-                comp.longShaft = pendingShaft.def.defName == BinguinRodUtility.ShaftLong;
-                comp.bladeTip = bladeTip;
-                comp.straightHook = pendingHook.def.defName == BinguinRodUtility.HookStraight;
-                comp.shaftStuff = pendingShaft.Stuff;
-                comp.tipStuff = pendingTip.Stuff;
-                comp.hookStuff = pendingHook.Stuff;
-                CompBinguinRodBait baitComp = pendingBait != null ? pendingBait.TryGetComp<CompBinguinRodBait>() : null;
-                if (baitComp != null && baitComp.effects != null && baitComp.effects.Count > 0)
-                {
-                    comp.baitEffects = new List<BinguinBaitEffect>(baitComp.effects);
-                }
-            }
-
-            // ★ 品质：按制作技能（原版制作品质生成）
-            QualityCategory quality = QualityUtility.GenerateQualityCreatedByPawn(worker, SkillDefOf.Crafting, false);
-            CompQuality qualityComp = rod.TryGetComp<CompQuality>();
-            if (qualityComp != null)
-            {
-                qualityComp.SetQuality(quality, null);
-            }
-
-            // 消耗配件
-            // ★ 2026-10-05：现在配件会先被小人**搬到装配台旁边**（见
-            //   JobDriver_BinguinAssembleRod 的搬运段），所以它们可能已经在
-            //   小人手上 / 掉在装配台附近的地上 —— 不再一定是"原地图格子上那件"。
-            //   `Thing.Destroy()` 对这些情况都成立（会先自动从 holder 里摘出来），
-            //   所以这里保持不变；但加一道"已销毁就跳过"的保护，避免重复销毁报错。
-            DestroyPart(pendingShaft);
-            DestroyPart(pendingTip);
-            DestroyPart(pendingHook);
-            DestroyPart(pendingBait);
-            ClearPending();
-
-            GenPlace.TryPlaceThing(rod, parent.Position, map, ThingPlaceMode.Near, null);
-            Messages.Message("Binguin_CompRodAssembly_11".Translate() + quality.GetLabel() + "）！", rod, MessageTypeDefOf.PositiveEvent, true);
-        }
 
         /// <summary>安全销毁一件配件（已销毁 / 空引用都跳过）。</summary>
         private static void DestroyPart(Thing t)
@@ -626,6 +526,14 @@ namespace Binguin.Feature.Rods
                 BinguinLogUtility.Log("生成半成品失败：装配台不在有效地图上。", severity: 1, isDebug: false);
                 return null;
             }
+            Thing[] requiredParts = { pendingShaft, pendingTip, pendingHook, pendingBait };
+            foreach (Thing part in requiredParts)
+                if (part == null || part.Destroyed || !part.Spawned
+                    || part.Map != map || part.Position.DistanceToSquared(parent.Position) > 36) return null;
+            int available = 0;
+            foreach (Thing sp in FindAllSpacersOnMap(map))
+                if (sp.Position.DistanceToSquared(parent.Position) <= 36) available += sp.stackCount;
+            if (available < 4) return null;
             ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail("Binguin_UnfinishedRod");
             if (def == null)
             {
@@ -754,7 +662,7 @@ namespace Binguin.Feature.Rods
                 for (int i = 0; i < rest.Count && spacersAbsorbed < SpacersNeeded2; i++)
                 {
                     Thing sp = rest[i];
-                    if (sp == null || sp.Destroyed) continue;
+                    if (sp == null || sp.Destroyed || sp.Position.DistanceToSquared(parent.Position) > 36) continue;
 
                     int need = SpacersNeeded2 - spacersAbsorbed;
                     if (need <= 0) break;
@@ -787,6 +695,12 @@ namespace Binguin.Feature.Rods
             BinguinLogUtility.Log("零部件装入半成品 " + spacersAbsorbed + " 堆（共计入 "
                 + comp.spacersSpent + " 个）。");
 
+            if (absorbed != 4 || spacersAbsorbed != 4)
+            {
+                if (comp.RollbackAssembly(map, parent.Position)) rod.Destroy(DestroyMode.Vanish);
+                ClearPending();
+                return null;
+            }
             // ★ 记住是在哪台装配台上做的：半成品在交互格上，干活时用
             //   `GetEdifice` 找不到台子，得靠这个引用（也用于工作速度与站位）。
             comp.workTable = parent;
@@ -795,37 +709,7 @@ namespace Binguin.Feature.Rods
             //   绑定后：只有他能**自动**回来续做（其它人不会抢），
             //   但玩家仍可手动用「继续装配」换人（换人时会重新绑定）。
             comp.boundMaker = pendingPawn;
-            // ★★★ 2026-10-10 回滚（作者报「合并半成品时，搬过去的 4 个和仓库的 4 个都消耗了」）：
-            //
-            // 【曾经在这里写过什么】
-            //   2026-10-09 我为了解决「搬高级零部件只搬一个，却消耗四个」，除了修搬运，
-            //   还在 L743 附近加了一段"差额补扣"：
-            //       if (spacersAbsorbed < SpacersNeeded2) { gap = 4 - spacersSpent;
-            //           if (gap > 0) ConsumeComponentsFromMap(map, gap); ... }
-            //   ——**这段是我自己加的，原始代码里根本不存在**。原始代码只有一行
-            //     `comp.spacersSpent = 4;`，从来不碰仓库。
-            //
-            // 【为什么撤掉】
-            //   那是**唯一**一条"从地图/仓库扣零部件"的路径，而作者报的症状正好是
-            //   「搬过去的 4 个 + 仓库的 4 个都被消耗」—— 与它的行为完全吻合。
-            //   触发条件 `spacersAbsorbed < 4` 只要判断偏一点，就会正好多扣 4 个。
-            //   ⇒ **作者要求直接撤掉，不再从仓库补扣任何东西。**
-            //
-            // 【撤掉之后的行为】—— 宁可少扣，绝不白扣
-            //   · `spacersSpent` 完全由 `TryAbsorbPart` 按**实际吸进容器的数量**累加
-            //     （见 `Comp_BinguinUnfinishedRod.cs:303` `spacersSpent += part.stackCount;`）
-            //   · 这里**一个字都不改**，也不碰地图上的东西
-            //   · 收尾时 `Comp_BinguinUnfinishedRod.FinishIntoRod` 按 `spacerParts.Count > 0`
-            //     销毁容器里那几个实物 ⇒ **不碰仓库**
-            //   · 最坏情况（搬运不足 4 个）= 玩家**少扣**（略微白拿），而不会多扣。
-            //     ★ 多扣比少扣严重得多，这是刻意的取舍。
-            //
-            // ⚠️ 以后**不要再往这里加"从地图补扣"**。要补也得先拿到实测日志证明哪条路径
-            //    真的没吸进去，否则只会重新引入这个 bug。
-
-            // ★ 记下这根半成品【实际】付过几个高级零部件 —— 半成品被销毁时要按这个数退回来
-            //   （数量由 `TryAbsorbPart` 累加，这里不写死）
-
+            // 收尾只消费容器内实际搬来的四个零部件，不从仓库补扣。
             BinguinLogUtility.Log("已生成【钓竿（未完成）】于 " + rod.Position
                 + "，装入配件 " + absorbed + " 件：" + comp.PartsSummary());
 
@@ -960,48 +844,13 @@ namespace Binguin.Feature.Rods
         }
 
         // 从地图扣除高级零部件
-        private bool ConsumeComponents(int count)
-        {
-            return ConsumeComponentsFromMap(parent.Map, count);
-        }
+
 
         /// <summary>
         /// 从地图扣除 count 个高级零部件（静态版：半成品收尾也要用，保证只有一份实现）。
         /// ★ 不能在枚举 listerThings 时 Destroy（Collection was modified 红字！），
         ///   先收集整堆再统一销毁。
         /// </summary>
-        public static bool ConsumeComponentsFromMap(Map map, int count)
-        {
-            if (map == null) return false;
-            int need = count;
-            List<Thing> fullStacks = new List<Thing>();
-            foreach (Thing t in map.listerThings.ThingsInGroup(ThingRequestGroup.HaulableEver))
-            {
-                if (need <= 0) break;
-                if (t == null || t.def == null || t.def.defName != "ComponentSpacer") continue;
-                if (t.stackCount <= need)
-                {
-                    fullStacks.Add(t);
-                    need -= t.stackCount;
-                }
-                else
-                {
-                    Thing removed = t.SplitOff(need);
-                    if (removed != null)
-                    {
-                        removed.Destroy();
-                        need = 0;
-                    }
-                }
-            }
-            for (int i = 0; i < fullStacks.Count; i++)
-            {
-                if (fullStacks[i] != null && !fullStacks[i].Destroyed)
-                {
-                    fullStacks[i].Destroy();
-                }
-            }
-            return need <= 0;
-        }
+
     }
 }

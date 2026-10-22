@@ -46,3 +46,11 @@ Def 声明、程序集限定类型名和 DLC 门控见 [XML 类型与依赖](XML
 `Log(message, severity: 2, isDebug: false)`，两者在 Release 中也输出。
 需要保留的普通消息可指定 `isDebug: false`。
 `WarningOnce(message, key)` 转发 Verse 的去重机制，默认在两种构建中均输出。
+
+## XML 与发布目录
+
+参考渡鸦族分类：`Defs/Core` 放种族、派系、PawnKind 和场景等基础身份；`Defs/Content` 放普通服饰、武器、建筑、物品和地面；`Defs/Features` 放完整玩法系统；`Defs/Research` 与 `Defs/Abilities` 各自独立。叶目录只承担一种主要职责。
+
+所有 XML Patch 位于根目录 `Patches`，按功能分类，不包含 Def 或源码。`AdvancedFishing` 已并入正常的 Def/贴图分类；资源逻辑路径保持不变，Odyssey 依赖在 Def 或节点上声明 `MayRequire`。这次分类调整不重排 C# 命名空间。
+
+项目仅支持 1.7，构建、完整打包和部署入口见 [BUILDING.md](BUILDING.md)。

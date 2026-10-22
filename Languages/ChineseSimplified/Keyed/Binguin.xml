@@ -637,7 +637,7 @@
   <Binguin_ConcertSetup_Cancel             >取消</Binguin_ConcertSetup_Cancel             >
   <Binguin_ConcertSetup_LeadLost           >主唱已无法登台，演唱会取消了</Binguin_ConcertSetup_LeadLost           >
   <Binguin_ConcertSetup_Booked             >演唱会已定在 {0} 天后（{1}）。到日子自动开演；期间可以去通讯台给别的派系发邀请函。</Binguin_ConcertSetup_Booked             >
-  <Binguin_ConcertSetup_NoSongs            >还没有任何曲目 —— 检查 Defs/Feature/Band/Concerts_Songs_Binguin.xml</Binguin_ConcertSetup_NoSongs            >
+  <Binguin_ConcertSetup_NoSongs            >还没有任何曲目 —— 检查 Defs/Features/Band/Concerts_Songs_Binguin.xml</Binguin_ConcertSetup_NoSongs            >
   <Binguin_ConcertInvite_Menu               >演唱会邀请（{0}）</Binguin_ConcertInvite_Menu               >
   <Binguin_ConcertInvite_MenuDesc          >向 {0} 发出演唱会邀请，请他们派人来观看。他们会按票价付费。</Binguin_ConcertInvite_MenuDesc          >
   <Binguin_ConcertInvite_Sent              >已向 {0} 发出演唱会邀请，对方正在考虑。</Binguin_ConcertInvite_Sent              >

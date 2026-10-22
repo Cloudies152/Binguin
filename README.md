@@ -1,6 +1,6 @@
-# 冰鹅族 Binguin Race — 环世界 1.6 种族 MOD
+# 冰鹅族 Binguin Race — 环世界 1.7 种族 MOD
 
-> **版本：`0.0.4 开发版`**　|　RimWorld **1.6**　|　前置：Harmony、Humanoid Alien Races 2.0
+> **版本：`0.0.4 开发版`**　|　RimWorld **1.7**　|　前置：Harmony、Humanoid Alien Races 2.0
 >
 > 外观：**身体 / 头 / 脸借用游戏原版贴图**（兼容性最好）。
 > 历史：曾有一版"自绘身体/头/脸"，已于 2026-10-09 停用归档。
@@ -35,7 +35,7 @@
 >
 > ---
 
-一个基于 **Humanoid Alien Races 2.0（外星人框架）** 的环世界（RimWorld）1.6 种族 MOD：
+一个基于 **Humanoid Alien Races 2.0（外星人框架）** 的环世界（RimWorld）1.7 种族 MOD：
 企鹅娘种族「冰鹅族」，中立派系「冰鹅」，据点名为「XX观察站」（XX 取自屈原诗歌中的名词），
 并带有开局三天内上门询问「共存意向」的外交事件。
 
@@ -70,24 +70,17 @@
 2. 将整个 `Binguin_Race_Mod` 文件夹复制到 `RimWorld/Mods/` 下。
 3. 游戏内「Mods」列表启用本 MOD（排在 HAR2 之后，`loadAfter` 已声明）。
 
-### 编译 C#（三种方式随便挑一种，结果一样）
+### 编译、打包和部署
 
-> 仓库里**已带编译好的 `Assemblies\Binguin.dll`**，clone 下来直接玩即可；
-> 只有改了 `Source/**/*.cs` 才需要重新编译。
+安装 .NET 10 SDK 后，从仓库根目录执行，依赖自动还原：
 
 ```powershell
-# ① Visual Studio / Rider：双击 Source\Binguin\Binguin.Race.sln → 生成解决方案
-# ② 命令行：
-cd Binguin_Race_Mod\Source\Binguin
-dotnet build
-dotnet build -p:DeployToGame=true          # 编译并自动复制到游戏目录
-# ③ 老办法（什么都不用装）：
-cd Binguin_Race_Mod\Source
-.\build.ps1 -GameDir "你的 RimWorld 安装目录"
+.\compile_modSelf.bat Release
+.\package_modSelf.ps1
+.\deploy_modSelf.bat
 ```
 
-> 产物都是 `Assemblies\Binguin.dll`（编译完自动铺过去，不用手动复制）。
-> 📄 游戏目录怎么指定、常见报错 → [任务/参考/编译方式.md](任务/参考/编译方式.md)
+打包默认输出 `dist/Binguin`；部署自动发现 Steam 游戏安装，也可显式指定独立目标。完整说明见 [构建与部署](Source/BUILDING.md)。
 
 ## 4. 兼容性说明（全部 DLC）
 
@@ -97,6 +90,5 @@ cd Binguin_Race_Mod\Source
 | Ideology | 无冲突；造型台可自定义头发等外观（★ 早期的鸟喙附加件 `bodyAddons` 已按用户要求移除） |
 | Biotech | 已配置 `gestationPeriodDays`、`humanRecipeImport`、`maleGenderProbability`；可用 `raceGenes` 加种族基因 |
 | Anomaly | 无冲突；事件使用原生好感 API，不会被异常体事件干扰（活铁 Bioferrite = 用户口中的「异铁」） |
-| Odyssey | 钓鱼/鱼/水域/真空抗性等内容的载体：进阶与高级钓鱼学、鱼池、蟹笼、打窝用具全部放在
-   `AdvancedFishing/` 并由 **LoadFolders.xml** 按 Odyssey 门控；威灵套真空抗性、企鹅飞踢音效等
+| Odyssey | 钓鱼/鱼/水域/真空抗性等内容的载体：进阶与高级钓鱼学、鱼池、蟹笼、打窝用具按功能归入 `Defs/Features`，通过 `MayRequire` 按 Odyssey 门控；威灵套真空抗性、企鹅飞踢音效等
    用 `MayRequire="Ludeon.RimWorld.Odyssey"` 就地门控，未装 DLC 不加载、不报错 |

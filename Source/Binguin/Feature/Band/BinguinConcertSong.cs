@@ -7,7 +7,7 @@
 //
 // ★ 设计：**每首歌一个 Def**，继承本文件的 `Binguin_SongDef : Def`。
 //   ⇒ 「往里面塞歌曲」= 在 XML 里加一个条目，**完全不用改代码**。
-//   ⇒ 条目位置：`Defs/Feature/Band/Concerts_Songs_Binguin.xml`
+//   ⇒ 条目位置：`Defs/Features/Band/Concerts_Songs_Binguin.xml`
 //
 // ★ 字段（都可在 XML 里写）：
 //     label                   曲名（Def 自带）
@@ -37,7 +37,7 @@ using Binguin.Helper;
 namespace Binguin.Feature.Band
 {
     /// <summary>
-    /// 一首曲目。每首歌一个 Def，在 `Defs/Feature/Band/Concerts_Songs_Binguin.xml`
+    /// 一首曲目。每首歌一个 Def，在 `Defs/Features/Band/Concerts_Songs_Binguin.xml`
     /// 里声明（自定义类型可直接写在 XML，见 `Source/XML_DEFS.md`）。
     /// </summary>
     public class Binguin_SongDef : Def
@@ -60,7 +60,7 @@ namespace Binguin.Feature.Band
         /// <summary>
         /// ★ 2026-10-17 作者建议的方案：**直接替换背景音乐**。
         /// 指向原版 `SongDef` 的 defName（如 Binguin_Music_Mayoiuta）。
-        /// 开演时用 Find.MusicManagerPlay.ForcePlaySong(songDef, true)
+        /// 开演时用 Find.MusicManagerPlay.ForcePlaySong(songDef, false)
         /// 把它插进背景音乐轨道，演唱会结束后自然恢复。
         /// 留空则回退到旧的 SoundDef 方式。
         /// </summary>
@@ -143,7 +143,7 @@ namespace Binguin.Feature.Band
                     }
                     if (cached.Count == 0)
                     {
-                        BinguinLogUtility.Log("曲目库为空 —— 检查 Defs/Feature/Band/Concerts_Songs_Binguin.xml 是否加载。",
+                        BinguinLogUtility.Log("曲目库为空 —— 检查 Defs/Features/Band/Concerts_Songs_Binguin.xml 是否加载。",
                             severity: 1, isDebug: false);
                     }
                 }

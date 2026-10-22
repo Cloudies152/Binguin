@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <Binguin_Interface_001>冰鹅族（原版身形·脸）</Binguin_Interface_001>
+  <Binguin_Interface_002>★★ 这是【原版身形 / 头部 / 面部】版 ★★</Binguin_Interface_002>
+  <Binguin_Interface_003>冰鹅族的身体、头、脸全部使用原版贴图。</Binguin_Interface_003>
+  <Binguin_Interface_004>其余内容（基因、技能、武器、建筑、科技、事件、乐队）与正式版完全一致。</Binguin_Interface_004>
+  <Binguin_Interface_005>尚方宝剑 · 远程斩击（测试玩法）</Binguin_Interface_005>
+  <Binguin_Interface_006>启用「天顶鱼斩」（14 条鱼轮流远程斩击）</Binguin_Interface_006>
+  <Binguin_Interface_007>关闭时尚方宝剑是纯近战武器（面板 30 钝击 / 冷却 0.7s）。\n</Binguin_Interface_007>
+  <Binguin_Interface_008>开启后额外获得技能「天顶鱼斩」：向目标区域倾泻 14 条鱼的轮流斩击，\n</Binguin_Interface_008>
+  <Binguin_Interface_009>每次 10 钝击 + 冰爆、100% 钝器穿透，对椭圆形范围造成范围伤害。\n</Binguin_Interface_009>
+  <Binguin_Interface_010>★ 这是测试玩法，会显著影响平衡。</Binguin_Interface_010>
+  <Binguin_Interface_011>★ 演唱会歌曲库（玩家自定义曲目）</Binguin_Interface_011>
+  <Binguin_Interface_012>把自己想听的歌（.mp3 / .ogg / .wav）放进歌曲库文件夹，</Binguin_Interface_012>
+  <Binguin_Interface_013>重启游戏后就会出现在演唱会的选曲界面里。</Binguin_Interface_013>
+  <Binguin_Interface_014>打开歌曲库文件夹</Binguin_Interface_014>
+  <Binguin_Interface_015>重新扫描歌曲</Binguin_Interface_015>
+  <Binguin_Interface_016>已载入自定义曲目：</Binguin_Interface_016>
+  <Binguin_Interface_017> 首</Binguin_Interface_017>
+  <Binguin_Interface_018>状态：</Binguin_Interface_018>
+  <Binguin_Interface_019>目录：</Binguin_Interface_019>
+  <Binguin_Interface_020>（未找到，点上面的按钮会自动创建）</Binguin_Interface_020>
+  <Binguin_Interface_021>人数 </Binguin_Interface_021>
+  <Binguin_Interface_022>每个乐器都有人演出才算满。权重 </Binguin_Interface_022>
+  <Binguin_Interface_023>%。</Binguin_Interface_023>
+  <Binguin_Interface_024>艺术总和 </Binguin_Interface_024>
+  <Binguin_Interface_025>所有演出者的 Artistic（艺术）等级之和，到 </Binguin_Interface_025>
+  <Binguin_Interface_026> 为满。权重 </Binguin_Interface_026>
+  <Binguin_Interface_027>灯光 </Binguin_Interface_027>
+  <Binguin_Interface_028>场地 </Binguin_Interface_028>
+  <Binguin_Interface_029> 格内的演唱会灯组数量，每个 +</Binguin_Interface_029>
+  <Binguin_Interface_030>%，最多 </Binguin_Interface_030>
+  <Binguin_Interface_031> 个。</Binguin_Interface_031>
+  <Binguin_Interface_032> · 艺术总和 </Binguin_Interface_032>
+  <Binguin_Interface_033> · 灯光 </Binguin_Interface_033>
+  <Binguin_Interface_034> ⇒ 质量 </Binguin_Interface_034>
+  <Binguin_Interface_035>重新预约</Binguin_Interface_035>
+  <Binguin_Interface_036>（失踪）</Binguin_Interface_036>
+  <Binguin_Interface_037>主唱 </Binguin_Interface_037>
+  <Binguin_Interface_038> 已无法登台</Binguin_Interface_038>
+  <Binguin_Interface_039>到场后 6 小时未开演</Binguin_Interface_039>
+  <Binguin_Interface_040>找不到预定的地图</Binguin_Interface_040>
+  <Binguin_Interface_081>（无）</Binguin_Interface_081>
+  <Binguin_Interface_041>已在：</Binguin_Interface_041>
+  <Binguin_Interface_042>预计质量：</Binguin_Interface_042>
+  <Binguin_Interface_043>    ·    总时长：</Binguin_Interface_043>
+  <Binguin_Interface_044> 小时</Binguin_Interface_044>
+  <Binguin_Interface_045>（艺术 </Binguin_Interface_045>
+  <Binguin_Interface_046>— 空缺 —</Binguin_Interface_046>
+  <Binguin_Interface_047>艺术 </Binguin_Interface_047>
+  <Binguin_Interface_048>已占用</Binguin_Interface_048>
+  <Binguin_Interface_049>需艺术 </Binguin_Interface_049>
+  <Binguin_Interface_050> 级</Binguin_Interface_050>
+  <Binguin_Interface_051>（最多 </Binguin_Interface_051>
+  <Binguin_Interface_052> 首，按选择顺序演出）</Binguin_Interface_052>
+  <Binguin_Interface_053>玩家取消</Binguin_Interface_053>
+  <Binguin_Interface_054>尚未扫描</Binguin_Interface_054>
+  <Binguin_Interface_055>扫描失败：</Binguin_Interface_055>
+  <Binguin_Interface_056>没找到文件夹（游戏里创建一个空文件夹后重启即可）</Binguin_Interface_056>
+  <Binguin_Interface_057>读取文件夹失败：</Binguin_Interface_057>
+  <Binguin_Interface_058>扫描完成：新增 </Binguin_Interface_058>
+  <Binguin_Interface_059> 首，跳过 </Binguin_Interface_059>
+  <Binguin_Interface_060> 个文件</Binguin_Interface_060>
+  <Binguin_Interface_061>玩家自定义曲目：</Binguin_Interface_061>
+  <Binguin_Interface_062>自定义</Binguin_Interface_062>
+  <Binguin_Interface_063>路径：</Binguin_Interface_063>
+  <Binguin_Interface_064>竿身=</Binguin_Interface_064>
+  <Binguin_Interface_065> 竿头=</Binguin_Interface_065>
+  <Binguin_Interface_066> 鱼钩=</Binguin_Interface_066>
+  <Binguin_Interface_067> 鱼饵=</Binguin_Interface_067>
+  <Binguin_Interface_068>（缺）</Binguin_Interface_068>
+  <Binguin_Interface_069>已装配件：</Binguin_Interface_069>
+  <Binguin_Interface_070>\n装配工作量：</Binguin_Interface_070>
+  <Binguin_Interface_071>（剩余 </Binguin_Interface_071>
+  <Binguin_Interface_072>（已完成，等待收尾）</Binguin_Interface_072>
+  <Binguin_Interface_073>\n制作者：</Binguin_Interface_073>
+  <Binguin_Interface_074>继续装配</Binguin_Interface_074>
+  <Binguin_Interface_075>继续装配钓竿</Binguin_Interface_075>
+  <Binguin_Interface_076>这件物品没有半成品数据，无法装配。</Binguin_Interface_076>
+  <Binguin_Interface_077>当前配件：</Binguin_Interface_077>
+  <Binguin_Interface_078>已完成工作量：</Binguin_Interface_078>
+  <Binguin_Interface_079>由谁来继续装配：</Binguin_Interface_079>
+  <Binguin_Interface_080>没有可以来装配的殖民者（全部倒地 / 死亡）。</Binguin_Interface_080>
+  <Binguin_Interface_082>（未选）</Binguin_Interface_082>
+  <Binguin_Interface_083>远程斩击：已启用（测试玩法，能力栏 → 天顶鱼斩）</Binguin_Interface_083>
+  <Binguin_WorkOnRod_NoTable>找不到可用的鱼竿装配台。</Binguin_WorkOnRod_NoTable>
+  <Binguin_BandQuest_NoStart>冰鹅族乐队等了六小时仍未开演，收拾东西离开了。</Binguin_BandQuest_NoStart>
+  <Binguin_Debug_RodKit_Label>（调试）生成装配测试套件</Binguin_Debug_RodKit_Label>
+  <Binguin_Debug_RodKit_Desc>点击地图选择生成位置：4 种配件各 1 个（钢铁材质）和 4 个高级零部件。\n仅在上帝模式下显示。</Binguin_Debug_RodKit_Desc>
+  <Binguin_Debug_BandMarker_NoRoom>所选位置无法放置演唱会地标，请选择足够大的空地。</Binguin_Debug_BandMarker_NoRoom>
+</LanguageData>

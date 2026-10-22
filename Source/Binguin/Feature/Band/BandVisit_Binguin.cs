@@ -143,7 +143,7 @@ namespace Binguin.Feature.Band
         }
 
         /// <summary>生成地标。已有地标则不重复生成。</summary>
-        public static MonumentMarker SpawnMarker(Map map)
+        public static MonumentMarker SpawnMarker(Map map, IntVec3? requestedCenter = null)
         {
             try
             {
@@ -156,8 +156,11 @@ namespace Binguin.Feature.Band
                 Sketch sk = BuildSketch();
                 if (sk == null) return null;
 
-                IntVec3 center;
-                if (!TryFindSpot(map, sk.OccupiedSize, out center))
+                IntVec3 center = requestedCenter.HasValue ? requestedCenter.Value : IntVec3.Invalid;
+                bool valid = requestedCenter.HasValue
+                    ? center.IsValid && RectClear(map, center, sk.OccupiedSize.x / 2, sk.OccupiedSize.z / 2)
+                    : TryFindSpot(map, sk.OccupiedSize, out center);
+                if (!valid)
                 {
                     BinguinLogUtility.Log("乐队场地：附近找不到足够空地（需要 " + sk.OccupiedSize.x + "×" + sk.OccupiedSize.z + " 格）。", severity: 1, isDebug: false);
                     return null;
@@ -176,6 +179,7 @@ namespace Binguin.Feature.Band
                     return null;
                 }
                 marker.sketch = sk;
+                GameComponent_BinguinPerformanceState.Current.activeMarker = marker;
                 GenSpawn.Spawn(marker, center, map, Rot4.North);
                 BinguinLogUtility.Log("演唱会地标已生成于 " + center + "（场地 " + sk.OccupiedSize.x + "×" + sk.OccupiedSize.z + "）。");
                 return marker;
@@ -206,6 +210,7 @@ namespace Binguin.Feature.Band
                 MonumentMarker marker = ThingMaker.MakeThing(def, null) as MonumentMarker;
                 if (marker == null) return null;
                 marker.sketch = sk;
+                GameComponent_BinguinPerformanceState.Current.activeMarker = marker;
                 // ★★ 2026-09 修复（用户反馈）：原来直接把地标本体丢下来，玩家既不知道
                 //    落在哪、也没法挑位置和朝向。改成【小型化后空投】——
                 //    落下来的是一个可安装的地标（和原版纪念碑一样），
@@ -238,6 +243,9 @@ namespace Binguin.Feature.Band
         public static MonumentMarker FindMarker(Map map)
         {
             if (map == null || map.listerThings == null) return null;
+            Thing active = GameComponent_BinguinPerformanceState.Current.activeMarker;
+            if (active != null && !active.Destroyed)
+                return active.Spawned && active.Map == map ? active as MonumentMarker : null;
             List<Thing> list = map.listerThings.ThingsOfDef(Named(MarkerDefName));
             if (list == null) return null;
             for (int i = 0; i < list.Count; i++)
@@ -254,6 +262,7 @@ namespace Binguin.Feature.Band
     {
         // 已经处理过的"建完"状态（避免每 tick 重复触发）
         private bool announcedDone;
+        public void ResetVisit() { announcedDone = false; }
 
         public GameComponent_BinguinBandVisit(Game game) : base()
         {
@@ -268,6 +277,7 @@ namespace Binguin.Feature.Band
         public override void GameComponentTick()
         {
             if (Find.TickManager == null || Find.TickManager.TicksGame % 250 != 0) return;
+            if (!Current.Game.GetComponent<GameComponent_BinguinBandScheduler>().markerPlaced) return;
             try
             {
                 List<Map> maps = Find.Maps;
@@ -317,7 +327,8 @@ namespace Binguin.Feature.Band
     /// <summary>调试命令：立刻在殖民地附近落下演唱会地标。</summary>
     public static class DebugActions_BandVisit
     {
-        [DebugAction("冰鹅族", "乐队来访：立刻生成演唱会地标")]
+        [DebugAction("冰鹅族", "乐队来访：立刻生成演唱会地标", actionType = DebugActionType.ToolMap,
+            allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static void SpawnMarkerNow()
         {
             Map map = Find.CurrentMap;
@@ -326,7 +337,8 @@ namespace Binguin.Feature.Band
                 BinguinLogUtility.Log("没有当前地图。");
                 return;
             }
-            BinguinBandVisit.SpawnMarker(map);
+            if (BinguinBandVisit.SpawnMarker(map, UI.MouseCell()) == null)
+                Messages.Message("Binguin_Debug_BandMarker_NoRoom".Translate(), MessageTypeDefOf.RejectInput);
         }
 
         [DebugAction("冰鹅族", "乐队来访：一键建完整个场地")]
@@ -358,36 +370,12 @@ namespace Binguin.Feature.Band
     [HarmonyPatch(typeof(MonumentMarker), "AllowedStuffsFor")]
     public static class Patch_BandVisitFreeStuffs
     {
-        public static void Postfix(ref List<ThingDef> __result)
+        public static void Postfix(MonumentMarker __instance, ref List<ThingDef> __result)
         {
-            try
-            {
-                if (__result == null)
-                {
-                    __result = new List<ThingDef>();   // ★ 关键：null → 空表，避免 Any(null) 空引用
-                    return;
-                }
-                if (__result.Count == 0) return;       // 本来就是空表 → 不动
-
-                // 放行【全部可用材料】
-                List<ThingDef> all = new List<ThingDef>();
-                foreach (ThingDef d in DefDatabase<ThingDef>.AllDefs)
-                {
-                    if (d.stuffProps != null)
-                    {
-                        all.Add(d);
-                    }
-                }
-                if (all.Count > 0)
-                {
-                    __result = all;
-                }
-            }
-            catch (Exception)
-            {
-                // 出问题就保留原版结果（至少要保证不是 null）
-                if (__result == null) __result = new List<ThingDef>();
-            }
+            // 保留原版材料类别筛选，只修复本模组标记的空结果。
+            if (__instance != null && __instance.def.defName == BinguinBandVisit.MarkerDefName && __result == null)
+                __result = new List<ThingDef>();
         }
+
     }
 }

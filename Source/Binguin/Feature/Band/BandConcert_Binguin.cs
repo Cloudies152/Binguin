@@ -36,7 +36,11 @@ namespace Binguin.Feature.Band
         /// <summary>袭击被拦下后延后多久：8 小时。</summary>
         public const int RaidDelayTicks = 8 * TicksPerHour;
 
-        public static int EndTick = -1;
+        public static int EndTick
+        {
+            get { return Current.Game == null ? -1 : GameComponent_BinguinPerformanceState.Current.endTick; }
+            set { if (Current.Game != null) GameComponent_BinguinPerformanceState.Current.endTick = value; }
+        }
 
         public static bool Active
         {
@@ -145,7 +149,7 @@ namespace Binguin.Feature.Band
         public override void ExposeData()
         {
             base.ExposeData();
-            Scribe_Values.Look<int>(ref BinguinConcert.EndTick, "binguinConcertEndTick", -1, false);
+            // 演出截止时刻由 PerformanceState 持久化。
         }
 
         public override void GameComponentTick()
@@ -172,12 +176,33 @@ namespace Binguin.Feature.Band
     /// <summary>调试命令：手动开关演唱会（用于测试袭击拦截/劝退）。</summary>
     public static class DebugActions_Concert
     {
-        [DebugAction("冰鹅族", "演唱会：立刻开始（4 小时）")]
+        [DebugAction("冰鹅族", "演唱会：立刻开始（4 小时）",
+            allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static void StartNow()
         {
-            BinguinConcert.Start(BinguinConcert.DurationTicks);
-            Messages.Message("（调试）演唱会开始，持续 4 小时。",
-                MessageTypeDefOf.TaskCompletion);
+            if (BinguinConcert.Active) return;
+            GameComponent_BinguinConcertBooking component = GameComponent_BinguinConcertBooking.Instance;
+            if (component.HasBooking && component.booking.awaitingStart)
+            {
+                component.StartNow(component.booking);
+                return;
+            }
+            if (BinguinBandConcert.LeadSinger != null)
+            {
+                BinguinBandConcert.StartConcert(BinguinBandConcert.LeadSinger);
+                return;
+            }
+            Map map = Find.CurrentMap;
+            Find.WindowStack.Add(new Dialog_BinguinSongPick(null, delegate(List<Binguin_SongDef> songs)
+            {
+                if (BinguinConcert.Active || map == null || !Find.Maps.Contains(map)) return;
+                BinguinConcertBooking playlist = new BinguinConcertBooking();
+                playlist.mapId = map.uniqueID;
+                playlist.songs = new List<Binguin_SongDef>(songs);
+                component.StartPlaylist(playlist);
+                BinguinConcert.Start(BinguinConcert.DurationTicks);
+                Messages.Message("Binguin_Band_ConcertStart".Translate(), MessageTypeDefOf.TaskCompletion);
+            }));
         }
 
         [DebugAction("冰鹅族", "演唱会：立刻结束")]

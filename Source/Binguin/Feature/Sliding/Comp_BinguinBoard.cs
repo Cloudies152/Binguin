@@ -36,9 +36,7 @@ namespace Binguin.Feature.Sliding
     public class CompBinguinBoard : ThingComp
     {
         private int nextUseTick = -1;
-        // ★ 静态：ExecutePendingSlide（前摇起飞）是静态方法，免疫计时也静态化
-        //   （同一时刻只有一个滑板前摇，多滑板同时滑行的免疫同 tick 到期可接受）
-        private static int immunityExpireTick = -1;   // 瞬移后短暂免疫的到期 tick
+        // 每块滑板拥有自己的前摇状态，避免多人施放相互覆盖。
 
         // 瞬移后免疫时长（0.5 秒 = 30 tick，防落地瞬间被集火）
         private const int ImmunityTicksAfterSlide = 30;
@@ -67,17 +65,16 @@ namespace Binguin.Feature.Sliding
         {
             base.PostExposeData();
             Scribe_Values.Look<int>(ref nextUseTick, "nextUseTick", -1, false);
-            // 免疫计时是瞬态静态字段，不存档
+            Scribe_References.Look(ref pendingSlidePawn, "pendingSlidePawn");
+            Scribe_Values.Look(ref pendingSlideDest, "pendingSlideDest", IntVec3.Invalid);
+            Scribe_Values.Look(ref pendingSlideTick, "pendingSlideTick", -1);
         }
 
         public override void CompTick()
         {
             base.CompTick();
-            if (immunityExpireTick > 0 && GenTicks.TicksGame >= immunityExpireTick)
-            {
-                immunityExpireTick = -1;
-                RemoveImmunity(Wearer);
-            }
+            if (pendingSlideTick >= 0 && GenTicks.TicksGame >= pendingSlideTick)
+                ExecutePendingSlide();
         }
 
         // ★ 2026-09 性能：def 名是常量 → 懒加载缓存（加/摘免疫时不再查库）
@@ -119,7 +116,9 @@ namespace Binguin.Feature.Sliding
             if (pawn != null && pawn.health != null && def != null
                 && pawn.health.hediffSet.GetFirstHediffOfDef(def) == null)
             {
-                pawn.health.AddHediff(def);
+                Hediff h = pawn.health.AddHediff(def);
+                HediffComp_Disappears expires = h.TryGetComp<HediffComp_Disappears>();
+                if (expires != null) expires.ticksToDisappear = ImmunityTicksAfterSlide;
             }
         }
 
@@ -230,7 +229,7 @@ namespace Binguin.Feature.Sliding
                     return;
                 }
                 // ★ 0.2 秒前摇（用户 2026-08-19 要求）：转向目标 + 记录待滑行，
-                //   GameComponent 每帧检查，到点执行 ExecutePendingSlide
+                //   滑板 Tick 到点执行 ExecutePendingSlide
                 wearer.rotationTracker.FaceCell(dest);
                 MoteMaker.ThrowText(wearer.Position.ToVector3Shifted(), map, "Binguin_CompBoard_12".Translate(), 0.9f);
                 pendingSlidePawn = wearer;
@@ -246,12 +245,12 @@ namespace Binguin.Feature.Sliding
             }
         }
 
-        // ---- 滑行前摇（0.2 秒）：GameComponent_BinguinDiplomacy.GameComponentUpdate 调用 ----
-        public static Pawn pendingSlidePawn;
-        public static IntVec3 pendingSlideDest = IntVec3.Invalid;
-        public static int pendingSlideTick = -1;
+        // ---- 滑行前摇（0.2 秒）：每块滑板独立执行并保存 ----
+        private Pawn pendingSlidePawn;
+        private IntVec3 pendingSlideDest = IntVec3.Invalid;
+        private int pendingSlideTick = -1;
 
-        public static void ExecutePendingSlide()
+        private void ExecutePendingSlide()
         {
             pendingSlideTick = -1;
             Pawn wearer = pendingSlidePawn;
@@ -274,7 +273,7 @@ namespace Binguin.Feature.Sliding
                 BinguinLogUtility.Log("滑行冲刺：起飞 " + wearer.Position + " → " + dest);
                 // 落地短暂免疫（防落点被集火；飞行途中 pawn 在飞行器里天然不可被命中）
                 AddImmunity(wearer);
-                immunityExpireTick = GenTicks.TicksGame + ImmunityTicksAfterSlide;
+
                 // ★ 照抄原版跳跃背包（JumpUtility.DoJump）：用 PawnFlyer 飞行实体，
                 //   pawn 进入飞行器飞向目标，全程不在地图上 → 无回弹、天然不可被命中、
                 //   越过一切敌人（LOS 已挡墙）

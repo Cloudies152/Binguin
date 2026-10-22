@@ -30,7 +30,7 @@
 dotnet build Source/Binguin/Binguin.Race.sln -c Release
 ```
 
-产物先在 `Source/Binguin/bin/Release/net48/`，再自动复制到这里。
+产物先在 `Source/Binguin/bin/Release/net10.0/`，再自动复制到这里。
 详见 [../Source/BUILDING.md](../Source/BUILDING.md)。
 
 ## 别手放这些东西

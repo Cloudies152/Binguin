@@ -141,8 +141,21 @@ namespace Binguin.Feature.VoidSword
                 {
                     return null;
                 }
-                return parent.ParentHolder as Pawn;
+                Pawn_EquipmentTracker equipment = parent.ParentHolder as Pawn_EquipmentTracker;
+                return equipment != null ? equipment.pawn : null;
             }
+        }
+
+        public override void Notify_Equipped(Pawn pawn)
+        {
+            base.Notify_Equipped(pawn);
+            SyncAbility(pawn);
+        }
+        public override void Notify_Unequipped(Pawn pawn)
+        {
+            base.Notify_Unequipped(pawn);
+            AbilityDef ability = BinguinVoidSwordUtility.StrikeAbilityDef;
+            if (pawn.abilities != null && ability != null) pawn.abilities.RemoveAbility(ability);
         }
 
         public override void PostExposeData()
@@ -195,7 +208,7 @@ namespace Binguin.Feature.VoidSword
             string s = base.CompInspectStringExtra();
             if (BinguinMod.Settings != null && BinguinMod.Settings.enableVoidStrike)
             {
-                string line = "远程斩击：已启用（测试玩法，能力栏 → 天顶鱼斩）";
+                string line = "Binguin_Interface_083".Translate().ToString();
                 s = s.NullOrEmpty() ? line : s + "\n" + line;
             }
             return s;

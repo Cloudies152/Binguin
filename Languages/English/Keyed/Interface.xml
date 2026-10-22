@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <Binguin_Interface_001>Binguin (vanilla body and face)</Binguin_Interface_001>
+  <Binguin_Interface_002>Vanilla body, head and face</Binguin_Interface_002>
+  <Binguin_Interface_003>Binguin use vanilla body, head and face textures.</Binguin_Interface_003>
+  <Binguin_Interface_004>Includes Binguin genes, abilities, equipment, buildings, research, events and concerts.</Binguin_Interface_004>
+  <Binguin_Interface_005>Imperial Fish Sword: ranged strike (experimental)</Binguin_Interface_005>
+  <Binguin_Interface_006>Enable Zenith Fish Strike (14 alternating fish strikes)</Binguin_Interface_006>
+  <Binguin_Interface_007>When disabled, the sword is a melee weapon (30 blunt damage; 0.7s cooldown).\n</Binguin_Interface_007>
+  <Binguin_Interface_008>When enabled, grants Zenith Fish Strike, which launches 14 alternating fish strikes at the target area.\n</Binguin_Interface_008>
+  <Binguin_Interface_009>Each strike deals 10 blunt damage and an ice burst with 100% blunt penetration in an elliptical area.\n</Binguin_Interface_009>
+  <Binguin_Interface_010>This experimental ability significantly affects balance.</Binguin_Interface_010>
+  <Binguin_Interface_011>Concert song library</Binguin_Interface_011>
+  <Binguin_Interface_012>Place your songs (.mp3, .ogg or .wav) in the library folder.</Binguin_Interface_012>
+  <Binguin_Interface_013>Restart the game to include them in the concert song picker.</Binguin_Interface_013>
+  <Binguin_Interface_014>Open song library</Binguin_Interface_014>
+  <Binguin_Interface_015>Rescan songs</Binguin_Interface_015>
+  <Binguin_Interface_016>Custom songs loaded: </Binguin_Interface_016>
+  <Binguin_Interface_017> songs</Binguin_Interface_017>
+  <Binguin_Interface_018>Status: </Binguin_Interface_018>
+  <Binguin_Interface_019>Folder: </Binguin_Interface_019>
+  <Binguin_Interface_020>(Not found; use the button above to create it.)</Binguin_Interface_020>
+  <Binguin_Interface_021>Performers </Binguin_Interface_021>
+  <Binguin_Interface_022>Full score requires a performer at every instrument. Weight: </Binguin_Interface_022>
+  <Binguin_Interface_023>%.</Binguin_Interface_023>
+  <Binguin_Interface_024>Total Artistic </Binguin_Interface_024>
+  <Binguin_Interface_025>Combined Artistic level of all performers. Full score at </Binguin_Interface_025>
+  <Binguin_Interface_026>; weight: </Binguin_Interface_026>
+  <Binguin_Interface_027>Lights </Binguin_Interface_027>
+  <Binguin_Interface_028>Venue </Binguin_Interface_028>
+  <Binguin_Interface_029> cells: each concert light adds +</Binguin_Interface_029>
+  <Binguin_Interface_030>%; maximum </Binguin_Interface_030>
+  <Binguin_Interface_031> lights.</Binguin_Interface_031>
+  <Binguin_Interface_032> · Total Artistic </Binguin_Interface_032>
+  <Binguin_Interface_033> · Lights </Binguin_Interface_033>
+  <Binguin_Interface_034> ⇒ Quality </Binguin_Interface_034>
+  <Binguin_Interface_035>Rescheduled</Binguin_Interface_035>
+  <Binguin_Interface_036>(missing)</Binguin_Interface_036>
+  <Binguin_Interface_037>Lead singer </Binguin_Interface_037>
+  <Binguin_Interface_038> can no longer perform</Binguin_Interface_038>
+  <Binguin_Interface_039>The concert did not start within six hours of arrival</Binguin_Interface_039>
+  <Binguin_Interface_040>The booked map is unavailable</Binguin_Interface_040>
+  <Binguin_Interface_081>(none)</Binguin_Interface_081>
+  <Binguin_Interface_041>Already assigned: </Binguin_Interface_041>
+  <Binguin_Interface_042>Expected quality: </Binguin_Interface_042>
+  <Binguin_Interface_043>    ·    Duration: </Binguin_Interface_043>
+  <Binguin_Interface_044> hours</Binguin_Interface_044>
+  <Binguin_Interface_045> (Artistic </Binguin_Interface_045>
+  <Binguin_Interface_046>— Vacant —</Binguin_Interface_046>
+  <Binguin_Interface_047>Artistic </Binguin_Interface_047>
+  <Binguin_Interface_048>Assigned</Binguin_Interface_048>
+  <Binguin_Interface_049>Requires Artistic </Binguin_Interface_049>
+  <Binguin_Interface_050></Binguin_Interface_050>
+  <Binguin_Interface_051> (up to </Binguin_Interface_051>
+  <Binguin_Interface_052> songs, performed in selection order)</Binguin_Interface_052>
+  <Binguin_Interface_053>Cancelled by player</Binguin_Interface_053>
+  <Binguin_Interface_054>Not scanned</Binguin_Interface_054>
+  <Binguin_Interface_055>Scan failed: </Binguin_Interface_055>
+  <Binguin_Interface_056>Folder not found. Create the song library and restart the game.</Binguin_Interface_056>
+  <Binguin_Interface_057>Could not read folder: </Binguin_Interface_057>
+  <Binguin_Interface_058>Scan complete: added </Binguin_Interface_058>
+  <Binguin_Interface_059> songs; skipped </Binguin_Interface_059>
+  <Binguin_Interface_060> files</Binguin_Interface_060>
+  <Binguin_Interface_061>Custom song: </Binguin_Interface_061>
+  <Binguin_Interface_062>Custom</Binguin_Interface_062>
+  <Binguin_Interface_063>Path: </Binguin_Interface_063>
+  <Binguin_Interface_064>Shaft: </Binguin_Interface_064>
+  <Binguin_Interface_065>; tip: </Binguin_Interface_065>
+  <Binguin_Interface_066>; hook: </Binguin_Interface_066>
+  <Binguin_Interface_067>; bait: </Binguin_Interface_067>
+  <Binguin_Interface_068>(missing)</Binguin_Interface_068>
+  <Binguin_Interface_069>Installed parts: </Binguin_Interface_069>
+  <Binguin_Interface_070>\nAssembly work: </Binguin_Interface_070>
+  <Binguin_Interface_071> (remaining </Binguin_Interface_071>
+  <Binguin_Interface_072> (complete; awaiting finishing)</Binguin_Interface_072>
+  <Binguin_Interface_073>\nMaker: </Binguin_Interface_073>
+  <Binguin_Interface_074>Resume assembly</Binguin_Interface_074>
+  <Binguin_Interface_075>Resume rod assembly</Binguin_Interface_075>
+  <Binguin_Interface_076>This item has no unfinished rod data.</Binguin_Interface_076>
+  <Binguin_Interface_077>Current parts: </Binguin_Interface_077>
+  <Binguin_Interface_078>Work completed: </Binguin_Interface_078>
+  <Binguin_Interface_079>Continue assembly with:</Binguin_Interface_079>
+  <Binguin_Interface_080>No available colonists can assemble this rod.</Binguin_Interface_080>
+  <Binguin_Interface_082>(not selected)</Binguin_Interface_082>
+  <Binguin_Interface_083>Ranged strike enabled: Zenith Fish Strike (experimental)</Binguin_Interface_083>
+  <Binguin_WorkOnRod_NoTable>No usable rod assembly table is available.</Binguin_WorkOnRod_NoTable>
+  <Binguin_BandQuest_NoStart>The Binguin band waited six hours without a concert and has left.</Binguin_BandQuest_NoStart>
+  <Binguin_Debug_RodKit_Label>(Debug) Spawn rod assembly kit</Binguin_Debug_RodKit_Label>
+  <Binguin_Debug_RodKit_Desc>Click the map to choose a location for one of each of the four rod parts (steel) and four advanced components.\nOnly shown in god mode.</Binguin_Debug_RodKit_Desc>
+  <Binguin_Debug_BandMarker_NoRoom>There is not enough room for the concert marker here. Choose a larger clear area.</Binguin_Debug_BandMarker_NoRoom>
+</LanguageData>

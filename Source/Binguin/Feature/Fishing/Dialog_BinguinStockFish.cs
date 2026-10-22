@@ -103,6 +103,8 @@ namespace Binguin.Feature.Fishing
             }
         }
 
+        private Vector2 scroll;
+
         public override Vector2 InitialSize
         {
             get { return new Vector2(460f, 440f); }
@@ -124,19 +126,17 @@ namespace Binguin.Feature.Fishing
                 return;
             }
 
-            float btnW = (inRect.width - 16f) / 2f;
+            Rect body = new Rect(inRect.x, y, inRect.width, inRect.yMax - y - 8f);
+            Rect view = new Rect(0f, 0f, body.width - 20f, ((availableFish.Count + 1) / 2) * 52f);
+            Widgets.BeginScrollView(body, ref scroll, view);
+            float btnW = (view.width - 8f) / 2f;
             float btnH = 46f;
             for (int i = 0; i < availableFish.Count; i++)
             {
                 ThingDef f = availableFish[i];
                 int col = i % 2;
                 int row = i / 2;
-                Rect r = new Rect(inRect.x + col * (btnW + 8f), y + row * (btnH + 6f), btnW, btnH);
-                // 滚动：窗口只显示前 6 行
-                if (row >= 6)
-                {
-                    break;
-                }
+                Rect r = new Rect(col * (btnW + 8f), row * (btnH + 6f), btnW, btnH);
                 if (Mouse.IsOver(r))
                 {
                     Widgets.DrawHighlight(r);
@@ -150,10 +150,12 @@ namespace Binguin.Feature.Fishing
                 Text.Font = GameFont.Small;
                 if (Widgets.ButtonInvisible(r))
                 {
+                    Widgets.EndScrollView();
                     StockFish(f);
                     return;
                 }
             }
+            Widgets.EndScrollView();
         }
 
         private void StockFish(ThingDef fishDef)

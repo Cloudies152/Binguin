@@ -72,7 +72,7 @@ namespace Binguin.Feature.Rods
 
         public override Vector2 InitialSize
         {
-            get { return new Vector2(480f, 420f); }
+            get { return new Vector2(600f, 480f); }
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -85,9 +85,9 @@ namespace Binguin.Feature.Rods
 
             float y = inRect.y + 66f;
             DrawEffectSelector(inRect, y, "Binguin_DialogBait_04".Translate(), ref effect1);
-            y += 92f;
+            y += 136f;
             DrawEffectSelector(inRect, y, "Binguin_DialogBait_05".Translate(), ref effect2);
-            y += 92f;
+            y += 136f;
 
             // 消耗预览
             Widgets.Label(new Rect(inRect.x, y, inRect.width, 60f), BuildSummary());
@@ -115,10 +115,11 @@ namespace Binguin.Feature.Rods
         {
             Widgets.Label(new Rect(inRect.x, y, inRect.width, 22f), label);
             float x = inRect.x;
+            float buttonWidth = (inRect.width - 24f) / 4f;
             for (int i = 0; i < AllEffects.Length; i++)
             {
                 BinguinBaitEffect e = AllEffects[i];
-                Rect r = new Rect(x, y + 24f, 64f, 48f);
+                Rect r = new Rect(inRect.x + (i % 4) * (buttonWidth + 8f), y + 24f + (i / 4) * 52f, buttonWidth, 48f);
                 bool isSel = current == e;
                 if (isSel)
                 {
@@ -136,7 +137,7 @@ namespace Binguin.Feature.Rods
                 x += 66f;
             }
             // 清除按钮
-            Rect clear = new Rect(x, y + 24f, 64f, 48f);
+            Rect clear = new Rect(inRect.x + (AllEffects.Length % 4) * (buttonWidth + 8f), y + 24f + (AllEffects.Length / 4) * 52f, buttonWidth, 48f);
             if (Widgets.ButtonText(clear, "Binguin_DialogBait_08".Translate()))
             {
                 current = BinguinBaitEffect.None;

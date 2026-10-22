@@ -38,6 +38,7 @@ namespace Binguin.Feature.Raids
 
         // 大气冷冻器自毁（满 24 小时）→ 强制冲锋
         public static int SelfDestructTick = -1;
+        public static Lord PlacingLord;
 
         public static bool JustSelfDestructed
         {
@@ -110,22 +111,10 @@ namespace Binguin.Feature.Raids
             return true;
         }
 
-        // 这场围攻是不是我们放的（派系 + 地图 + 1 天时间窗）
+        // 围攻身份由持久化的 LordJob 类型确定，不受建造耗时影响。
         public static bool IsOurSiege(Lord lord)
         {
-            if (lord == null || SiegeFaction == null || SiegeMap == null || PlacedTick < 0)
-            {
-                return false;
-            }
-            if (lord.faction != SiegeFaction)
-            {
-                return false;
-            }
-            if (lord.lordManager == null || lord.lordManager.map != SiegeMap)
-            {
-                return false;
-            }
-            return GenTicks.TicksGame - PlacedTick < 60000;
+            return lord != null && lord.LordJob is LordJob_BinguinCryoSiege;
         }
 
         // 当前这场袭击是不是低温围攻（用我们之前记录的策略名）
@@ -146,6 +135,20 @@ namespace Binguin.Feature.Raids
     // ============================================================
     public class LordJob_BinguinCryoSiege : LordJob_Siege
     {
+        public IntVec3 freezerCell = IntVec3.Invalid;
+        public int freezerSelfDestructTick = -1;
+        public int initialRaidCount = -1;
+        public int maxSappers;
+        public bool assaulted;
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Values.Look(ref freezerCell, "freezerCell", IntVec3.Invalid);
+            Scribe_Values.Look(ref initialRaidCount, "initialRaidCount", -1);
+            Scribe_Values.Look(ref maxSappers, "maxSappers", 0);
+            Scribe_Values.Look(ref assaulted, "assaulted", false);
+            Scribe_Values.Look(ref freezerSelfDestructTick, "freezerSelfDestructTick", -1);
+        }
         // 存档反序列化需要无参构造（原版所有 LordJob 子类同款写法）
         public LordJob_BinguinCryoSiege()
         {
@@ -162,11 +165,17 @@ namespace Binguin.Feature.Raids
     //   所以在这里（Init 的 prefix）把标志置好，蓝图前缀立刻就能读到。
     public static class Patch_BinguinCryoSiegeToilInit
     {
+        public static void Postfix()
+        {
+            BinguinCryoSiegeContext.PlacingLord = null;
+            BinguinCryoSiegeContext.ToilIsCryoSiege = false;
+        }
         public static void Prefix(LordToil_Siege __instance)
         {
             try
             {
                 Lord lord = __instance != null ? __instance.lord : null;
+                BinguinCryoSiegeContext.PlacingLord = lord;
                 BinguinCryoSiegeContext.ToilIsCryoSiege =
                     lord != null && lord.LordJob is LordJob_BinguinCryoSiege;
             }
@@ -440,6 +449,9 @@ namespace Binguin.Feature.Raids
                     {
                         list.Add(bp);
                         freezerPlaced = true;
+                        Lord owner = BinguinCryoSiegeContext.PlacingLord;
+                        LordJob_BinguinCryoSiege siege = owner != null ? owner.LordJob as LordJob_BinguinCryoSiege : null;
+                        if (siege != null) siege.freezerCell = freezerSpot;
                     }
                 }
                 BinguinLogUtility.Log("低温围攻：冷冻器落点 " + freezerSpot
@@ -934,9 +946,6 @@ namespace Binguin.Feature.Raids
     // ---------- 2) 冲锋时机：减员 30% 或工兵全灭 ----------
     public static class Patch_BinguinCryoSiegeAssault
     {
-        private static readonly Dictionary<int, int> initialCounts = new Dictionary<int, int>();
-        private static readonly Dictionary<int, int> sapperSeen = new Dictionary<int, int>();
-        private static readonly HashSet<int> assaulted = new HashSet<int>();
 
         public static void Postfix(LordToil_Siege __instance)
         {
@@ -949,20 +958,11 @@ namespace Binguin.Feature.Raids
                 }
                 // ★ 诊断（2026-09）：每 2500 tick 报一次"本场有几个工兵（DutyDefOf.Build）
                 //   以及阵地还剩多少蓝图/框架"，用来判断"没人建造"到底卡在哪一步。
-                if (GenTicks.TicksGame % 5000 == 0)
-                {
-                    ReportBuilderStatus(lord);
-                }
-                int id = lord.loadID;
-                // ★ 2026-09 性能：冲锋一旦判定过，这个 postfix 原来还会每 tick
-                //   继续数一遍整队 pawn（围攻可能持续很久）。这里直接早退并
-                //   清掉记账，之后每 tick 只剩一次字典查找。
-                if (assaulted.Contains(id))
-                {
-                    initialCounts.Remove(id);
-                    sapperSeen.Remove(id);
-                    return;
-                }
+#if DEBUG
+                if (GenTicks.TicksGame % 5000 == 0) ReportBuilderStatus(lord);
+#endif
+                LordJob_BinguinCryoSiege siege = (LordJob_BinguinCryoSiege)lord.LordJob;
+                if (siege.assaulted) return;
                 List<Pawn> pawns = lord.ownedPawns;
                 if (pawns == null || pawns.Count == 0)
                 {
@@ -989,25 +989,16 @@ namespace Binguin.Feature.Raids
                 }
                 // ★ 2026-09 性能：同一 tick 内同一个 key 原来要查 3 次字典
                 //   （ContainsKey + 赋值 + 取值）→ 合并成一次 TryGetValue。
-                int initial;
-                if (!initialCounts.TryGetValue(id, out initial))
-                {
-                    initial = pawns.Count;
-                    initialCounts[id] = initial;
-                }
-                int seen;
-                sapperSeen.TryGetValue(id, out seen);
-                if (sappersAlive > seen)
-                {
-                    sapperSeen[id] = sappersAlive;
-                    seen = sappersAlive;
-                }
+                if (siege.initialRaidCount < 0) siege.initialRaidCount = pawns.Count;
+                int initial = siege.initialRaidCount;
+                siege.maxSappers = Math.Max(siege.maxSappers, sappersAlive);
+                int seen = siege.maxSappers;
                 bool lost30 = alive <= initial - Math.Max(1, (int)Math.Ceiling(initial * 0.3f));
                 bool sappersWiped = seen > 0 && sappersAlive == 0;
-                bool freezerDone = BinguinCryoSiegeContext.JustSelfDestructed;   // 冷冻器自毁满 24 小时
-                if ((lost30 || sappersWiped || freezerDone) && !assaulted.Contains(id))
+                bool freezerDone = ((LordJob_BinguinCryoSiege)lord.LordJob).freezerSelfDestructTick >= 0;   // 冷冻器自毁满 24 小时
+                if ((lost30 || sappersWiped || freezerDone) && !siege.assaulted)
                 {
-                    assaulted.Add(id);
+                    siege.assaulted = true;
                     ForceAssault(lord, sappersWiped, freezerDone);
                 }
             }
@@ -1352,8 +1343,12 @@ namespace Binguin.Feature.Raids
             if (GenTicks.TicksGame - startTick >= Props.lifetimeTicks)
             {
                 BinguinLogUtility.Log("大气冷冻器运转满 24 小时，自毁并触发总攻。");
-                BinguinCryoSiegeContext.SelfDestructTick = GenTicks.TicksGame;
-                condition = null;
+                foreach (Lord lord in parent.Map.lordManager.lords)
+                {
+                    LordJob_BinguinCryoSiege siege = lord.LordJob as LordJob_BinguinCryoSiege;
+                    if (siege != null && lord.faction == parent.Faction && siege.freezerCell == parent.Position)
+                        siege.freezerSelfDestructTick = GenTicks.TicksGame;
+                }
                 if (parent != null && parent.Spawned)
                 {
                     parent.Destroy(DestroyMode.Vanish);
@@ -1387,7 +1382,7 @@ namespace Binguin.Feature.Raids
                 GameCondition_TemperatureOffset t0 = active[i] as GameCondition_TemperatureOffset;
                 if (t0 != null && t0.def == def)
                 {
-                    t0.Duration = Props.conditionDurationTicks;
+                    t0.Duration = t0.TicksPassed + Props.conditionDurationTicks;
                     condition = t0;
                     return;
                 }

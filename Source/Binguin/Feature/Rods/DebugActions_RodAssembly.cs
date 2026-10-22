@@ -18,8 +18,7 @@
 //
 // ★ 高级零部件 = `ComponentSpacer` ×4（装配收尾时要扣的那 4 个）。
 //
-// ★ 所有生成都落在 `DropCellFinder.TradeDropSpot(map)`（和原版"空投物资"落点
-//   一致，保证是可站立、可达、可堆放的格子），生成失败只记日志不影响游戏。
+// ★ 开发者菜单与装配台按钮均由玩家点击地图选点，物品在该格附近安全放置。
 // ============================================================================
 
 using System.Collections.Generic;
@@ -42,19 +41,22 @@ namespace Binguin.Feature.Rods
         // ------------------------------------------------------------------
         // 开发者菜单入口
         // ------------------------------------------------------------------
-        [DebugAction("冰鹅族", "钓竿装配：生成测试套件（4 配件 + 4 高级零部件）")]
+        [DebugAction("冰鹅族", "钓竿装配：生成测试套件（4 配件 + 4 高级零部件）", actionType = DebugActionType.ToolMap,
+            allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static void SpawnFullKit()
         {
             SpawnKit(DefaultMetal, false);
         }
 
-        [DebugAction("冰鹅族", "钓竿装配：生成测试套件（玻璃钢材质）")]
+        [DebugAction("冰鹅族", "钓竿装配：生成测试套件（玻璃钢材质）", actionType = DebugActionType.ToolMap,
+            allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static void SpawnFullKitPlasteel()
         {
             SpawnKit(ThingDef.Named("Plasteel"), false);
         }
 
-        [DebugAction("冰鹅族", "钓竿装配：只生成 4 个高级零部件")]
+        [DebugAction("冰鹅族", "钓竿装配：只生成 4 个高级零部件", actionType = DebugActionType.ToolMap,
+            allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static void SpawnComponentsOnly()
         {
             SpawnKit(null, true);
@@ -75,19 +77,30 @@ namespace Binguin.Feature.Rods
                 Messages.Message("（调试）当前没有地图，无法生成。", MessageTypeDefOf.RejectInput, false);
                 return false;
             }
-            IntVec3 pos;
-            try
-            {
-                pos = DropCellFinder.TradeDropSpot(map);
-            }
-            catch
-            {
-                pos = map.Center;
-            }
+            IntVec3 pos = UI.MouseCell();
             return SpawnKitAt(map, pos, metal, onlyComponents);
         }
 
-        /// <summary>在指定位置生成测试套件（装配台按钮用这个，直接落在装配台旁）。</summary>
+        /// <summary>装配台调试按钮复用地图选点，不在点击按钮时立刻生成。</summary>
+        public static void BeginTargetingKit(Thing table)
+        {
+            if (!DebugSettings.ShowDevGizmos || table == null || !table.Spawned
+                || table.Faction != Faction.OfPlayer) return;
+            Map map = table.Map;
+            TargetingParameters parameters = new TargetingParameters
+            {
+                canTargetLocations = true, canTargetPawns = false,
+                canTargetBuildings = false, canTargetItems = false
+            };
+            Find.Targeter.BeginTargeting(parameters, delegate(LocalTargetInfo target)
+            {
+                if (!DebugSettings.ShowDevGizmos || !table.Spawned || table.Map != map
+                    || table.Faction != Faction.OfPlayer || Find.CurrentMap != map) return;
+                SpawnKitAt(map, target.Cell, DefaultMetal, false);
+            }, null, null, null, false);
+        }
+
+        /// <summary>在指定位置附近安全放置，不覆盖原有物品。</summary>
         public static bool SpawnKitAt(Map map, IntVec3 pos, ThingDef metal, bool onlyComponents)
         {
             if (map == null || !pos.IsValid || !pos.InBounds(map))
@@ -141,8 +154,13 @@ namespace Binguin.Feature.Rods
                 }
                 try
                 {
-                    GenSpawn.Spawn(t, pos, map, WipeMode.Vanish);
-                    ok++;
+                    if (GenPlace.TryPlaceThing(t, pos, map, ThingPlaceMode.Near)) ok++;
+                    else
+                    {
+                        BinguinLogUtility.Log("（调试）所选位置附近无法放置 " + t.def.defName,
+                            severity: 1, isDebug: false);
+                        t.Destroy(DestroyMode.Vanish);
+                    }
                 }
                 catch (System.Exception e)
                 {

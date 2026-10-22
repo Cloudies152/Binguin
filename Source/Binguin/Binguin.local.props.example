@@ -1,14 +1,8 @@
 <Project>
   <PropertyGroup>
-    <!-- 复制到同目录的 Binguin.local.props，再填写个人路径；本机文件已被 Git 忽略。
-         RimWorld：Steam 库 → 右键游戏 → 管理 → 浏览本地文件。
-         HAR：通常位于 steamapps/workshop/content/294100/839005762，
-         也可使用手动安装的 HAR 根目录。请使用与团队约定一致的版本。 -->
-    <RimWorldDir>D:\YourSteamLibrary\steamapps\common\RimWorld</RimWorldDir>
-    <HarDir>D:\YourSteamLibrary\steamapps\workshop\content\294100\839005762</HarDir>
-    <!-- HarDir 默认选择 1.6/Assemblies/AlienRace.dll。目录布局不同时直接指定： -->
-    <!-- <HarAssemblyPath>D:\Mods\HAR\Assemblies\AlienRace.dll</HarAssemblyPath> -->
-    <!-- 可选：<ManagedDir>...</ManagedDir> 直接指定游戏引用程序集目录。 -->
-    <!-- 可选：配合 -p:DeployToGame=true 更新另一份安装中的 DLL。<GameModsDir>D:\RimWorld\Mods\Zengbing</GameModsDir> -->
+    <!-- 默认自动还原参考包，无需复制此文件；仅按需显式覆盖。
+         <RimWorldDir>游戏根目录</RimWorldDir>
+         <CustomOutputDir>独立产物目录</CustomOutputDir>
+    -->
   </PropertyGroup>
 </Project>

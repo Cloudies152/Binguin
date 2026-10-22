@@ -25,7 +25,11 @@ namespace Binguin.Feature.Band
 {
     public static class BinguinBandQuest
     {
-        public static Quest Current;
+        public static Quest Current
+        {
+            get { return GameComponent_BinguinPerformanceState.Current.activeQuest; }
+            set { GameComponent_BinguinPerformanceState.Current.activeQuest = value; }
+        }
 
         /// <summary>发一个正式任务条目（出现在任务栏，带接受/拒绝）。</summary>
         public static Quest Offer()
@@ -33,6 +37,7 @@ namespace Binguin.Feature.Band
             try
             {
                 Quest q = new Quest();
+                q.root = DefDatabase<QuestScriptDef>.GetNamed("Binguin_BandVisitQuest");
                 q.name = "Binguin_BandQuest_Name".Translate();
                 // ★ Quest.description 是 TaggedString
                 q.description = "Binguin_BandQuest_Desc".Translate();
@@ -90,7 +95,7 @@ namespace Binguin.Feature.Band
             try
             {
                 // 让乐队和观众走人
-                BinguinBandConcert.EndConcert(Find.AnyPlayerHomeMap);
+                BinguinBandConcert.EndConcert(GameComponent_BinguinPerformanceState.Current.VisitingMap, false);
                 if (Current != null && Current.State == QuestState.Ongoing)
                 {
                     Current.End(QuestEndOutcome.Fail, true, true);
@@ -124,35 +129,11 @@ namespace Binguin.Feature.Band
     }
 
     /// <summary>玩家点"接受"时（Quest.Accept）→ 空投地标。</summary>
-    [HarmonyPatch(typeof(Quest), "Accept")]
-    public static class Patch_BandQuestAccept
-    {
-        public static void Postfix(Quest __instance)
-        {
-            try
-            {
-                if (__instance == null) return;
-                if (BinguinBandQuest.Current != __instance) return;
-                BinguinBandQuest.OnAccepted(__instance);
-            }
-            catch (Exception e)
-            {
-                BinguinLogUtility.Log("接受乐队任务后处理失败：" + e, severity: 2, isDebug: false);
-            }
-        }
-    }
-
-    /// <summary>
-    /// 轮询任务状态来空投地标。
-    /// ★★ 原来靠 Quest.Accept 的 postfix，但 BinguinBandQuest.Current 是静态字段、
-    ///    不存档 —— 只要"接到任务"和"点接受"之间存过一次档，钩子就永久失效
-    ///    （用户实测「点击接受任务后依然没有空投地标」就是这个原因）。
-    ///    改成每 250 tick 扫任务列表：看到带标记的任务处于 Ongoing 且还没投过，就投。
-    /// </summary>
     public class GameComponent_BinguinBandMarkerDrop : GameComponent
     {
         public const string QuestTag = "BinguinBandVisit";
         private bool dropped;
+        public void ResetVisit() { dropped = false; }
 
         public GameComponent_BinguinBandMarkerDrop(Game game) : base()
         {
@@ -175,6 +156,12 @@ namespace Binguin.Feature.Band
                 Map map = Find.AnyPlayerHomeMap;
                 if (map == null) return;
                 dropped = BinguinBandVisit.DropMarkerByPod(map) != null;
+                if (dropped)
+                {
+                    GameComponent_BinguinBandScheduler scheduler = Current.Game.GetComponent<GameComponent_BinguinBandScheduler>();
+                    scheduler.invitePending = false;
+                    scheduler.markerPlaced = true;
+                }
             }
             catch (Exception e)
             {
@@ -253,7 +240,7 @@ namespace Binguin.Feature.Band
             {
                 arrivedTick = -1;
                 warned = false;
-                BinguinBandQuest.Fail("冰鹅族乐队干等了 6 个小时也没等到演出，收拾东西走了。");
+                BinguinBandQuest.Fail("Binguin_BandQuest_NoStart".Translate());
             }
         }
     }

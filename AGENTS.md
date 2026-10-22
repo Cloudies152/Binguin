@@ -1,6 +1,6 @@
 # 项目协作规范
 
-适用于整个仓库。项目为 RimWorld 1.6 冰鹅族模组，C# 源码位于 `Source/Binguin`。
+适用于整个仓库。项目为 RimWorld 1.7 冰鹅族模组，C# 源码位于 `Source/Binguin`。
 详细说明见 [源码结构](Source/STRUCTURE.md) 和 [构建说明](Source/BUILDING.md)。
 
 ## 目录与命名空间
@@ -16,8 +16,8 @@
 
 ## Defs 与翻译路径
 
-- `Defs` 与 `AdvancedFishing/Defs` 内均按 `Feature/<功能>` 分类；共享科技树放 `Core/Research`。
-- 保留两个加载根和 `LoadFolders.xml` 的 Odyssey 门控；按功能拆分混合 XML 时保留定义身份、字段、父定义与说明注释。
+- XML Def 参考渡鸦族分为 `Defs/Core`（基础身份）、`Defs/Content`（普通内容）、`Defs/Features`（功能）、`Defs/Research`（科技）、`Defs/Abilities`（能力）。一个目录只承担一种主要职责。
+- 所有 XML Patch 从根 `Patches` 加载；不把 Def 或源码放进 Patches。仅使用根加载目录，DLC 内容逐 Def/节点声明 MayRequire；不再使用 AdvancedFishing 加载根。
 - 移动 XML 不改变 C# 命名空间、defName 或贴图逻辑路径；同步文档和代码中的文件路径说明。
 - `Languages/<语言>/Keyed`、`DefInjected/<Def类型>` 是游戏约定，不改成 Feature 或 C# 命名空间目录。
 - 翻译键使用 defName 和字段路径，不使用 C# 完整类型名；同一语言和类别中不得重复定义同名键。
@@ -46,8 +46,8 @@
 
 ## 构建与多人协作
 
-- 保留当前 `net48` 和 C# 5 设置；本机 HAR 1.6 面向 net48。调整框架或语言版本须有明确需求和验证。
-- 每人通过被 Git 忽略的 `Source/Binguin/Binguin.local.props` 配置 `RimWorldDir`、`HarDir`，特殊布局用 `ManagedDir`、`HarAssemblyPath`。
+- 仅支持 1.7，使用 .NET 10 SDK 和 C# 5；默认自动还原固定的 1.7 参考包，HAR 仅作运行依赖。
+- 普通构建不需要个人配置；本地游戏引用只作可选覆盖，配置文件仍被 Git 忽略。
 - 公共 `.csproj`、模板和 task 不写个人绝对路径；不提交本机 props、游戏/HAR DLL、`bin/`、`obj/` 或编译产物。
 - 从仓库根目录执行 `dotnet build Source/Binguin/Binguin.Race.sln -c Release`；日志条件编译相关改动同时验证 `-c Debug`。
 - VS Code 使用 `build: Release`、`build: Debug`；Release 为默认任务。`Source/build.ps1` 调用同一项目。

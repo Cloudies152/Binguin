@@ -7,7 +7,7 @@
 //   近战伤害与穿甲共用 pawn.MeleeWeapon_DamageMultiplier（VerbProperties.
 //   AdjustedMeleeDamageAmount / AdjustedArmorPenetration 确认），
 //   冷却用 pawn.MeleeWeapon_CooldownMultiplier。
-// 注册：Odyssey 加载根中的 XML Patch 给 7 个 StatDef 添加实例；原版 StatWorker 初始化时赋值 parentStat。
+// 注册：根 Patches/Rods 中的 XML Patch 给 7 个 StatDef 添加实例；原版 StatWorker 初始化时赋值 parentStat。
 // ============================================================================
 
 using System;

@@ -181,7 +181,7 @@ namespace Binguin.Feature.Band
             if (p == null) { why = ""; return false; }
             if (p.Dead || !p.Spawned) { why = "Binguin_ConcertVenue_Unreachable".Translate(); return false; }
             string occ = RoleOf(p);
-            if (occ != null && occ != slot) { why = "已在：" + SlotLabel(occ); return false; }
+            if (occ != null && occ != slot) { why = "Binguin_Interface_041".Translate().ToString() + SlotLabel(occ); return false; }
             int need = MinArtisticNeeded();
             if (need > 0 && ArtisticOf(p) < need)
             {
@@ -237,8 +237,8 @@ namespace Binguin.Feature.Band
             else
             {
                 Widgets.Label(new Rect(0f, y, inRect.width, 22f),
-                    "预计质量：" + QualityLabel(EstimateQuality())
-                    + "    ·    总时长：" + (TotalTicks() / 2500f).ToString("0.#") + " 小时");
+                    "Binguin_Interface_042".Translate().ToString() + QualityLabel(EstimateQuality())
+                    + "Binguin_Interface_043".Translate().ToString() + (TotalTicks() / 2500f).ToString("0.#") + "Binguin_Interface_044".Translate().ToString());
             }
             y += 28f;
 
@@ -259,7 +259,7 @@ namespace Binguin.Feature.Band
                 else Widgets.DrawHighlightIfMouseover(row);
 
                 Widgets.Label(new Rect(row.x + 4f, row.y + 2f, row.width - 8f, 20f), SlotLabel(id));
-                string who = cur != null ? cur.LabelShort + "（艺术 " + ArtisticOf(cur) + "）" : "— 空缺 —";
+                string who = cur != null ? cur.LabelShort + "Binguin_Interface_045".Translate().ToString() + ArtisticOf(cur) + "）" : "Binguin_Interface_046".Translate().ToString();
                 GUI.color = cur != null ? Color.white : new Color(1f, 1f, 1f, 0.45f);
                 Widgets.Label(new Rect(row.x + 12f, row.y + 22f, row.width - 16f, 20f), who);
                 GUI.color = Color.white;
@@ -295,7 +295,7 @@ namespace Binguin.Feature.Band
                 try { GUI.DrawTexture(av, PortraitsCache.Get(p, new Vector2(38f, 44f), Rot4.South)); }
                 catch (System.Exception) { Widgets.DrawBoxSolid(av, new Color(0.3f, 0.35f, 0.4f)); }
                 Widgets.Label(new Rect(cell.x + 46f, cell.y + 3f, cell.width - 48f, 20f), p.LabelShort);
-                Widgets.Label(new Rect(cell.x + 46f, cell.y + 23f, cell.width - 48f, 20f), "艺术 " + ArtisticOf(p));
+                Widgets.Label(new Rect(cell.x + 46f, cell.y + 23f, cell.width - 48f, 20f), "Binguin_Interface_047".Translate().ToString() + ArtisticOf(p));
                 if (!selectable)
                 {
                     GUI.color = ColorLibrary.RedReadable;
@@ -303,14 +303,14 @@ namespace Binguin.Feature.Band
                     //   原版 `Binguin_ConcertSong_LevelTooLow` 已含「需要 X，当前 Y」，
                     //   但格子窄放不下，这里压缩成简短文案。
                     string shortWhy;
-                    if (why != null && why.StartsWith("已在"))
+                    if (RoleOf(p) != null && RoleOf(p) != activeSlot)
                     {
-                        shortWhy = "已占用";
+                        shortWhy = "Binguin_Interface_048".Translate().ToString();
                     }
                     else
                     {
                         int need = MinArtisticNeeded();
-                        shortWhy = "需艺术 " + need + " 级";
+                        shortWhy = "Binguin_Interface_049".Translate().ToString() + need + "Binguin_Interface_050".Translate().ToString();
                     }
                     Widgets.Label(new Rect(cell.x + 4f, cell.y + 48f, cell.width - 8f, 20f), shortWhy);
                     GUI.color = new Color(1f, 1f, 1f, 0.32f);
@@ -328,7 +328,7 @@ namespace Binguin.Feature.Band
             // ═════ 底部：曲目 + 天数 ═════
             float by = inRect.height - 126f;
             Widgets.Label(new Rect(0f, by, inRect.width, 20f),
-                "Binguin_ConcertSong_Label".Translate() + "（最多 " + MaxSongs + " 首，按选择顺序演出）");
+                "Binguin_ConcertSong_Label".Translate() + "Binguin_Interface_051".Translate().ToString() + MaxSongs + "Binguin_Interface_052".Translate().ToString());
             by += 22f;
             List<Binguin_SongDef> all = BinguinConcertSongs.All;
             float sx = 0f;
@@ -384,7 +384,7 @@ namespace Binguin.Feature.Band
             {
                 if (kv.Key != SlotLeader && kv.Value != null) music[kv.Key] = kv.Value;
             }
-            if (comp.HasBooking) comp.Cancel("重新预约");
+            if (comp.HasBooking) comp.Cancel("Binguin_Interface_035".Translate().ToString());
             if (!comp.Book(leader, music, chosenSongs, days, map, micCell)) return;
             Messages.Message("Binguin_ConcertSetup_Booked".Translate(days.ToString(),
                 chosenSongs[0] != null ? chosenSongs[0].label : ""), MessageTypeDefOf.PositiveEvent);
@@ -434,7 +434,7 @@ namespace Binguin.Feature.Band
                 cancel1.action = delegate
                 {
                     GameComponent_BinguinConcertBooking comp = GameComponent_BinguinConcertBooking.Instance;
-                    if (comp != null) comp.Cancel("玩家取消");
+                    if (comp != null) comp.Cancel("Binguin_Interface_053".Translate().ToString());
                 };
                 yield return cancel1;
                 yield break;
@@ -448,7 +448,7 @@ namespace Binguin.Feature.Band
                 cmd.action = delegate
                 {
                     GameComponent_BinguinConcertBooking comp = GameComponent_BinguinConcertBooking.Instance;
-                    if (comp != null) comp.Cancel("玩家取消");
+                    if (comp != null) comp.Cancel("Binguin_Interface_053".Translate().ToString());
                 };
                 yield return cmd;
 

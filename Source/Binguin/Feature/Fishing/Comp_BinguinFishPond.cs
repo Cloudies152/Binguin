@@ -297,85 +297,67 @@ namespace Binguin.Feature.Fishing
         public override void PostDeSpawn(Map map, DestroyMode mode)
         {
             base.PostDeSpawn(map, mode);
-            // ★ 2026-08-20 连接贴图：拆除后四邻的连接 mask 都变了 → 重打网格
             DirtyConnectionVisuals(map);
-            if (IsLeaderComp)
+            CompBinguinFishPond oldLeader = LeaderComp;
+            if (map == null || PondDef == null || oldLeader == null) return;
+            float totalFish = oldLeader.fishCount;
+            string species = oldLeader.fishDefName;
+            bool automatic = oldLeader.autoCatchOn;
+            float reserve = oldLeader.keepMinFish;
+            float repro = oldLeader.reproAccum, caught = oldLeader.catchAccum, fed = oldLeader.feedTickAccum;
+            List<Thing> remaining = new List<Thing>();
+            foreach (Thing pond in map.listerThings.ThingsOfDef(PondDef))
             {
-                if (!string.IsNullOrEmpty(fishDefName) && fishCount >= 0.5f)
+                if (pond == parent || pond.Destroyed) continue;
+                CompBinguinFishPond c = pond.TryGetComp<CompBinguinFishPond>();
+                if (c != null && (c.parent == oldLeader.parent || c.leaderThing == oldLeader.parent))
+                    remaining.Add(pond);
+            }
+            remaining.Sort((x, y) => x.thingIDNumber.CompareTo(y.thingIDNumber));
+            int count = remaining.Count;
+            int retained = Mathf.FloorToInt(Mathf.Min(totalFish, count * MaxFishPerPond));
+            int assigned = 0, processedPonds = 0;
+            HashSet<Thing> visited = new HashSet<Thing>();
+            foreach (Thing start in remaining)
+            {
+                if (!visited.Add(start)) continue;
+                List<Thing> group = new List<Thing> { start };
+                for (int i = 0; i < group.Count; i++)
+                    foreach (Thing other in remaining)
+                        if (!visited.Contains(other) && AreAdjacent(group[i], other))
+                        { visited.Add(other); group.Add(other); }
+                CompBinguinFishPond leader = start.TryGetComp<CompBinguinFishPond>();
+                foreach (Thing member in group)
                 {
-                    CompBinguinFishPond heir = FindHeir(map);
-                    if (heir != null)
-                    {
-                        heir.fishDefName = fishDefName;
-                        heir.fishCount = fishCount;
-                        heir.autoCatchOn = autoCatchOn;
-                        heir.reproAccum = reproAccum;
-                        heir.catchAccum = catchAccum;
-                        heir.feedTickAccum = feedTickAccum;
-                        heir.keepMinFish = keepMinFish;
-                        heir.leaderThing = null;
-                        // 原组员重挂到新组长（同组相邻者）
-                        if (heir.parent != null && heir.parent.Map != null)
-                        {
-                            List<Thing> ponds = heir.parent.Map.listerThings.ThingsOfDef(PondDef);
-                            for (int i = 0; i < ponds.Count; i++)
-                            {
-                                Thing t = ponds[i];
-                                if (t == heir.parent || t.Destroyed)
-                                {
-                                    continue;
-                                }
-                                CompBinguinFishPond c = t.TryGetComp<CompBinguinFishPond>();
-                                if (c != null && AreAdjacent(heir.parent, t)
-                                    && (c.leaderThing == parent || c.leaderThing == null))
-                                {
-                                    c.fishDefName = fishDefName;
-                                    c.leaderThing = heir.parent;
-                                }
-                            }
-                        }
-                    }
-                    else if (map != null && parent != null)
-                    {
-                        int drop = Mathf.Clamp((int)fishCount, 0, 1 + (int)MaxFishPerPond);
-                        if (drop > 0)
-                        {
-                            ThingDef f = DefDatabase<ThingDef>.GetNamedSilentFail(fishDefName);
-                            if (f != null)
-                            {
-                                Thing fish = ThingMaker.MakeThing(f);
-                                fish.stackCount = Mathf.Min(drop, f.stackLimit);
-                                GenPlace.TryPlaceThing(fish, parent.Position, map, ThingPlaceMode.Near, null);
-                            }
-                        }
-                    }
+                    CompBinguinFishPond c = member.TryGetComp<CompBinguinFishPond>();
+                    c.leaderThing = member == start ? null : start;
+                    c.leaderCompCache = null;
+                    c.cachedGroupCount = -1;
+                    c.fishDefName = species;
+                    c.fishCount = 0f;
                 }
+                processedPonds += group.Count;
+                int cumulative = retained * processedPonds / count;
+                leader.fishCount = cumulative - assigned;
+                assigned = cumulative;
+                leader.autoCatchOn = automatic;
+                leader.keepMinFish = Mathf.Min(reserve, group.Count * MaxFishPerPond);
+                leader.reproAccum = repro;
+                leader.catchAccum = caught;
+                leader.feedTickAccum = fed;
+            }
+            // 分配按池数保留总量，超过剩余总容量的完整鱼掉落。
+            int excess = Mathf.FloorToInt(Mathf.Max(0f, totalFish - retained));
+            ThingDef fishDef = DefDatabase<ThingDef>.GetNamedSilentFail(species);
+            while (excess > 0 && fishDef != null)
+            {
+                Thing fish = ThingMaker.MakeThing(fishDef);
+                fish.stackCount = Mathf.Min(excess, fishDef.stackLimit);
+                excess -= fish.stackCount;
+                if (!GenPlace.TryPlaceThing(fish, parent.Position, map, ThingPlaceMode.Near, null)) break;
             }
             leaderThing = null;
-        }
-
-        private CompBinguinFishPond FindHeir(Map map)
-        {
-            if (map == null || PondDef == null)
-            {
-                return null;
-            }
-            List<Thing> ponds = map.listerThings.ThingsOfDef(PondDef);
-            for (int i = 0; i < ponds.Count; i++)
-            {
-                Thing t = ponds[i];
-                if (t == parent || t.Destroyed)
-                {
-                    continue;
-                }
-                CompBinguinFishPond c = t.TryGetComp<CompBinguinFishPond>();
-                if (c != null && c.LeaderComp != null && c.LeaderComp.parent == parent
-                    && AreAdjacent(parent, t))
-                {
-                    return c;
-                }
-            }
-            return null;
+            fishCount = 0f;
         }
 
         // ================= 组信息（BFS：相邻 且 LeaderComp 相同） =================

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!-- 来访任务由组件推进；正式根定义用于任务生命周期和保存恢复。 -->
+  <QuestScriptDef>
+    <defName>Binguin_BandVisitQuest</defName>
+    <root Class="QuestNode_Sequence"><nodes /></root>
+  </QuestScriptDef>
+</Defs>

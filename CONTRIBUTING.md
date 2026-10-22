@@ -31,35 +31,14 @@
 
 → **[任务/参考/文件命名规则.md](任务/参考/文件命名规则.md)**
 
-（为什么贴图叫 `_south` / `_north` / `_east`、为什么有两个 `Textures` 目录、
+（为什么贴图叫 `_south` / `_north` / `_east`、贴图如何按资源路径归类、
 `Comp_` / `JobDriver_` / `Dialog_` 这些前缀是什么意思…都在里面）
 
 ---
 
-## 💻 写 C# 的看这里：两种编译方式，随便挑
+## 编译和部署
 
-| 方式 | 怎么用 | 需要装什么 |
-|---|---|---|
-| **Visual Studio / Rider**（推荐） | 双击**`Source\Binguin\Binguin.Race.sln`** → 生成解决方案 | VS 2022 或 Rider |
-| **命令行** | `dotnet build` | .NET SDK |
-| **老办法** | `Source\build.ps1` | **什么都不用装**（靠系统自带 csc.exe） |
-
-**三条路等价** —— 引用同一批 dll、输出同一个位置（`Assemblies\Binguin.dll`）。
-
-> 🆕 **2026-10-10 新增**：`.sln` / `.csproj` / GitHub 自动编译。
-> 以前只有 `build.ps1`（PowerShell），很多人不习惯，现在用 VS 打开就能编。
-> 详细说明（含"游戏目录怎么指定"）→ [任务/参考/编译方式.md](任务/参考/编译方式.md)
-
-### 编译完记得部署
-
-`Assemblies\Binguin.dll` 要复制到游戏目录的对应位置才会生效：
-
-```
-...\RimWorld\Mods\Binguin_Race_Mod\Assemblies\Binguin.dll
-```
-
-VS 里可以加个生成后事件，或者用 `Tools\Deploy-BinguinToGame.ps1`。
-也可以 `dotnet build -p:DeployToGame=true`（自动复制，见编译方式文档）。
+安装 .NET 10 SDK，克隆后从根目录执行 `compile_modSelf.bat Release`。项目自动还原固定的 1.7 编译引用，无需复制本机 props 或准备 HAR DLL。`package_modSelf.ps1` 生成完整模组包；`deploy_modSelf.bat` 自动发现 Steam 安装并部署。详细参数见 [构建说明](Source/BUILDING.md)。
 
 ---
 

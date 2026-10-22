@@ -103,6 +103,7 @@ namespace Binguin.Feature.Production
                     storedMeteors.RemoveAll(m => m.Expired);
                 }
 
+                if (StoredCount >= MaxStoredMeteors) return false;
                 progressDays = base.daysWorkingSinceLastFinding;
                 if (progressDays < 0f)
                 {
@@ -161,6 +162,10 @@ namespace Binguin.Feature.Production
                     expireTick = GenTicks.TicksGame + MeteorExpireTicks
                 };
                 storedMeteors.Add(rec);
+                lastStep = 0;
+                guaranteedDone = false;
+                progressDays = 0f;
+                daysWorkingSinceLastFinding = 0f;
 
                 ThingDef def = DefDatabase<ThingDef>.GetNamedSilentFail(mineral);
                 string label = def != null ? def.label : mineral;

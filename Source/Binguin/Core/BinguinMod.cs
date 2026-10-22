@@ -52,30 +52,30 @@ namespace Binguin.Core
 
         public override string SettingsCategory()
         {
-            return "冰鹅族（原版身形·脸）";
+            return "Binguin_Interface_001".Translate().ToString();
         }
 
         public override void DoSettingsWindowContents(Rect inRect)
         {
             Listing_Standard ls = new Listing_Standard();
             ls.Begin(inRect);
-            ls.Label("★★ 这是【原版身形 / 头部 / 面部】版 ★★");
+            ls.Label("Binguin_Interface_002".Translate().ToString());
             ls.Gap(2f);
-            ls.Label("冰鹅族的身体、头、脸全部使用原版贴图。");
-            ls.Label("其余内容（基因、技能、武器、建筑、科技、事件、乐队）与正式版完全一致。");
+            ls.Label("Binguin_Interface_003".Translate().ToString());
+            ls.Label("Binguin_Interface_004".Translate().ToString());
 
             ls.GapLine();
             ls.Gap(6f);
-            ls.Label("尚方宝剑 · 远程斩击（测试玩法）");
+            ls.Label("Binguin_Interface_005".Translate().ToString());
             ls.Gap(4f);
             // ★ 用户需求：远程斩击属于测试玩法，默认关闭，常态只能近战
             bool beforeVoid = Settings.enableVoidStrike;
-            ls.CheckboxLabeled("启用「天顶鱼斩」（14 条鱼轮流远程斩击）",
+            ls.CheckboxLabeled("Binguin_Interface_006".Translate().ToString(),
                 ref Settings.enableVoidStrike,
-                "关闭时尚方宝剑是纯近战武器（面板 30 钝击 / 冷却 0.7s）。\n"
-                + "开启后额外获得技能「天顶鱼斩」：向目标区域倾泻 14 条鱼的轮流斩击，\n"
-                + "每次 10 钝击 + 冰爆、100% 钝器穿透，对椭圆形范围造成范围伤害。\n"
-                + "★ 这是测试玩法，会显著影响平衡。");
+                "Binguin_Interface_007".Translate().ToString()
+                + "Binguin_Interface_008".Translate().ToString()
+                + "Binguin_Interface_009".Translate().ToString()
+                + "Binguin_Interface_010".Translate().ToString());
             if (beforeVoid != Settings.enableVoidStrike)
             {
                 // 即时生效：不需要重开存档。场上已装备的剑会在下一帧刷新技能按钮。
@@ -83,26 +83,26 @@ namespace Binguin.Core
             }
             ls.GapLine();
             ls.Gap(6f);
-            ls.Label("★ 演唱会歌曲库（玩家自定义曲目）");
+            ls.Label("Binguin_Interface_011".Translate().ToString());
             ls.Gap(4f);
-            ls.Label("把自己想听的歌（.mp3 / .ogg / .wav）放进歌曲库文件夹，");
-            ls.Label("重启游戏后就会出现在演唱会的选曲界面里。");
+            ls.Label("Binguin_Interface_012".Translate().ToString());
+            ls.Label("Binguin_Interface_013".Translate().ToString());
             ls.Gap(4f);
 
-            if (ls.ButtonText("打开歌曲库文件夹"))
+            if (ls.ButtonText("Binguin_Interface_014".Translate().ToString()))
             {
                 BinguinUserSongs.OpenFolder();
             }
-            if (ls.ButtonText("重新扫描歌曲"))
+            if (ls.ButtonText("Binguin_Interface_015".Translate().ToString()))
             {
                 BinguinUserSongs.Rescan();
             }
 
             ls.Gap(4f);
-            ls.Label("已载入自定义曲目：" + BinguinUserSongs.LoadedNames.Count + " 首");
-            ls.Label("状态：" + BinguinUserSongs.LastResult);
-            ls.Label("目录：" + (BinguinUserSongs.FolderPath.NullOrEmpty()
-                ? "（未找到，点上面的按钮会自动创建）" : BinguinUserSongs.FolderPath));
+            ls.Label("Binguin_Interface_016".Translate().ToString() + BinguinUserSongs.LoadedNames.Count + "Binguin_Interface_017".Translate().ToString());
+            ls.Label("Binguin_Interface_018".Translate().ToString() + BinguinUserSongs.LastResult);
+            ls.Label("Binguin_Interface_019".Translate().ToString() + (BinguinUserSongs.FolderPath.NullOrEmpty()
+                ? "Binguin_Interface_020".Translate().ToString() : BinguinUserSongs.FolderPath));
 
             ls.End();
 

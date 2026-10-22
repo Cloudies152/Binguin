@@ -636,7 +636,7 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_ConcertSetup_Cancel             >Cancel</Binguin_ConcertSetup_Cancel             >
   <Binguin_ConcertSetup_LeadLost           >The lead singer can no longer perform; the concert was cancelled.</Binguin_ConcertSetup_LeadLost           >
   <Binguin_ConcertSetup_Booked             >The concert is scheduled in {0} day(s) ({1}). It will start automatically. Meanwhile, invite other factions from the comms console.</Binguin_ConcertSetup_Booked             >
-  <Binguin_ConcertSetup_NoSongs            >No songs defined yet - check Defs/Feature/Band/Concerts_Songs_Binguin.xml.</Binguin_ConcertSetup_NoSongs            >
+  <Binguin_ConcertSetup_NoSongs            >No songs defined yet - check Defs/Features/Band/Concerts_Songs_Binguin.xml.</Binguin_ConcertSetup_NoSongs            >
   <Binguin_ConcertInvite_Menu               >Concert invitation ({0})</Binguin_ConcertInvite_Menu               >
   <Binguin_ConcertInvite_MenuDesc          >Invite {0} to send guests to watch the concert. They will pay for their tickets.</Binguin_ConcertInvite_MenuDesc          >
   <Binguin_ConcertInvite_Sent              >A concert invitation has been sent to {0}; they are considering it.</Binguin_ConcertInvite_Sent              >

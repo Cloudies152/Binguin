@@ -1,6 +1,6 @@
 # 冰鹅族 Binguin Race — `0.0.4 开发版`
 
-> **RimWorld 1.6** 种族 MOD。前置：**Harmony** + **Humanoid Alien Races 2.0**。
+> **RimWorld 1.7** 种族 MOD。前置：**Harmony** + **Humanoid Alien Races 2.0**。
 > 兼容全部 DLC（Royalty / Ideology / Biotech / Anomaly / Odyssey），未装的 DLC 内容自动不加载。
 
 ---
@@ -40,7 +40,7 @@
 3. 启用，重启
 
 > **仓库里已经带了编译好的 DLL** ⇒ clone 即玩。
-> 只有改了 `Source/*.cs` 才需要自己重新编译（`Source/build.ps1`，需要 .NET Framework 的 csc）。
+> 只有改了 `Source/*.cs` 才需要自己重新编译（`Source/build.ps1`，需要 .NET 10 SDK，编译依赖自动还原）。
 
 ---
 

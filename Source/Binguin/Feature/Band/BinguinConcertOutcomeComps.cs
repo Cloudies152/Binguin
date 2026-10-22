@@ -80,9 +80,9 @@ namespace Binguin.Feature.Band
             float ratio = total > 0 ? filled / (float)total : 0f;
             float q = BinguinConcertQuality.WeightPersonnel * ratio;
             return BinguinConcertCompUtil.Make(
-                "人数 " + filled + "/" + total,
+                "Binguin_Interface_021".Translate().ToString() + filled + "/" + total,
                 q,
-                "每个乐器都有人演出才算满。权重 " + (BinguinConcertQuality.WeightPersonnel * 100f).ToString("0") + "%。");
+                "Binguin_Interface_022".Translate().ToString() + (BinguinConcertQuality.WeightPersonnel * 100f).ToString("0") + "Binguin_Interface_023".Translate().ToString());
         }
     }
 
@@ -104,11 +104,11 @@ namespace Binguin.Feature.Band
             if (ratio > 1f) ratio = 1f;
             float q = BinguinConcertQuality.WeightArtistic * ratio;
             return BinguinConcertCompUtil.Make(
-                "艺术总和 " + sum + "/" + BinguinConcertQuality.ArtisticSumForMax,
+                "Binguin_Interface_024".Translate().ToString() + sum + "/" + BinguinConcertQuality.ArtisticSumForMax,
                 q,
-                "所有演出者的 Artistic（艺术）等级之和，到 "
-                + BinguinConcertQuality.ArtisticSumForMax + " 为满。权重 "
-                + (BinguinConcertQuality.WeightArtistic * 100f).ToString("0") + "%。");
+                "Binguin_Interface_025".Translate().ToString()
+                + BinguinConcertQuality.ArtisticSumForMax + "Binguin_Interface_026".Translate().ToString()
+                + (BinguinConcertQuality.WeightArtistic * 100f).ToString("0") + "Binguin_Interface_023".Translate().ToString());
         }
     }
 
@@ -130,12 +130,12 @@ namespace Binguin.Feature.Band
             }
             float q = BinguinConcertQuality.LightScore(n);
             return BinguinConcertCompUtil.Make(
-                "灯光 " + n + "/" + BinguinConcertQuality.LightCountForMax,
+                "Binguin_Interface_027".Translate().ToString() + n + "/" + BinguinConcertQuality.LightCountForMax,
                 q,
-                "场地 " + BinguinConcertQuality.LightRadius.ToString("0")
-                + " 格内的演唱会灯组数量，每个 +"
-                + (BinguinConcertQuality.LightWeightPerLight * 100f).ToString("0") + "%，最多 "
-                + BinguinConcertQuality.LightCountForMax + " 个。");
+                "Binguin_Interface_028".Translate().ToString() + BinguinConcertQuality.LightRadius.ToString("0")
+                + "Binguin_Interface_029".Translate().ToString()
+                + (BinguinConcertQuality.LightWeightPerLight * 100f).ToString("0") + "Binguin_Interface_030".Translate().ToString()
+                + BinguinConcertQuality.LightCountForMax + "Binguin_Interface_031".Translate().ToString());
         }
     }
 }

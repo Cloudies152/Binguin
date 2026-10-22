@@ -195,10 +195,10 @@ namespace Binguin.Feature.Band
             int art = ArtisticSum(b);
             int lights = CountLights(map, center);
             float q = Compute(b, map);
-            return "人数 " + filled + "/" + TotalSlots + "（30%）"
-                + " · 艺术总和 " + art + "/" + ArtisticSumForMax + "（50%）"
-                + " · 灯光 " + lights + "/" + LightCountForMax + "（20%）"
-                + " ⇒ 质量 " + (q * 100f).ToString("0") + "%【" + TierLabel(q) + "】";
+            return "Binguin_Interface_021".Translate().ToString() + filled + "/" + TotalSlots + "（30%）"
+                + "Binguin_Interface_032".Translate().ToString() + art + "/" + ArtisticSumForMax + "（50%）"
+                + "Binguin_Interface_033".Translate().ToString() + lights + "/" + LightCountForMax + "（20%）"
+                + "Binguin_Interface_034".Translate().ToString() + (q * 100f).ToString("0") + "%【" + TierLabel(q) + "】";
         }
 
         // ── 内部 ──

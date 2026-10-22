@@ -59,7 +59,7 @@ namespace Binguin.Feature.Band
         public static string FolderPath = "";
 
         /// <summary>上次扫描的结果摘要。</summary>
-        public static string LastResult = "尚未扫描";
+        public static string LastResult = "Binguin_Interface_054".Translate().ToString();
 
         static BinguinUserSongs()
         {
@@ -69,7 +69,7 @@ namespace Binguin.Feature.Band
             }
             catch (Exception e)
             {
-                LastResult = "扫描失败：" + e.Message;
+                LastResult = "Binguin_Interface_055".Translate().ToString() + e.Message;
                 BinguinLogUtility.Log("自定义歌曲库扫描失败：" + e,
                     severity: 1, isDebug: false);
             }
@@ -107,7 +107,7 @@ namespace Binguin.Feature.Band
             FolderPath = ResolveFolder();
             if (FolderPath.NullOrEmpty() || !Directory.Exists(FolderPath))
             {
-                LastResult = "没找到文件夹（游戏里创建一个空文件夹后重启即可）";
+                LastResult = "Binguin_Interface_056".Translate().ToString();
                 BinguinLogUtility.Log("自定义歌曲库目录不存在：" + FolderPath,
                     severity: 1, isDebug: false);
                 return;
@@ -120,7 +120,7 @@ namespace Binguin.Feature.Band
             }
             catch (Exception e)
             {
-                LastResult = "读取文件夹失败：" + e.Message;
+                LastResult = "Binguin_Interface_057".Translate().ToString() + e.Message;
                 return;
             }
 
@@ -170,7 +170,7 @@ namespace Binguin.Feature.Band
                 }
             }
 
-            LastResult = "扫描完成：新增 " + added + " 首，跳过 " + skipped + " 个文件";
+            LastResult = "Binguin_Interface_058".Translate().ToString() + added + "Binguin_Interface_059".Translate().ToString() + skipped + "Binguin_Interface_060".Translate().ToString();
             BinguinLogUtility.Log("自定义歌曲库：" + LastResult + "（目录 " + FolderPath + "）",
                 isDebug: false);
         }
@@ -211,7 +211,12 @@ namespace Binguin.Feature.Band
                 return false;
             }
 
-            string key = Sanitize(nameNoExt);
+            string key;
+            using (System.Security.Cryptography.SHA256 hash = System.Security.Cryptography.SHA256.Create())
+            {
+                byte[] bytes = hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(relPath.Replace('\\', '/').ToLowerInvariant()));
+                key = Sanitize(nameNoExt) + "_" + BitConverter.ToString(bytes).Replace("-", "").Substring(0, 16);
+            }
 
             // ② SoundDef（onCamera 一发，兜底通道）
             SoundDef snd = new SoundDef();
@@ -253,8 +258,8 @@ namespace Binguin.Feature.Band
             Binguin_SongDef song = new Binguin_SongDef();
             song.defName = "Binguin_UserSong_" + key;
             song.label = nameNoExt;
-            song.description = "玩家自定义曲目：" + Path.GetFileName(fullPath);
-            song.style = "自定义";
+            song.description = "Binguin_Interface_061".Translate().ToString() + Path.GetFileName(fullPath);
+            song.style = "Binguin_Interface_062".Translate().ToString();
             song.durationTicks = EstimateTicks(fullPath, clip);
             song.moodOffset = 0f;
             song.requiredArtisticLevel = 0;
@@ -327,7 +332,7 @@ namespace Binguin.Feature.Band
             catch (Exception e)
             {
                 BinguinLogUtility.Log("打开文件夹失败：" + e.Message, severity: 1, isDebug: false);
-                Messages.Message("路径：" + p, MessageTypeDefOf.NeutralEvent, false);
+                Messages.Message("Binguin_Interface_063".Translate().ToString() + p, MessageTypeDefOf.NeutralEvent, false);
             }
         }
     }

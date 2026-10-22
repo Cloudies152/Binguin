@@ -159,14 +159,14 @@ namespace Binguin.Feature.Weather
 
             // ★ 天气按钮图标统一用大气控制仪贴图（原版天气无独立图标文件，
             //   Weather/* 路径不存在会报错；按钮靠文字区分）
-            yield return MakeWeatherCommand("Binguin_Weather_Clear".Translate(), "Binguin_CompWeather_10".Translate());
-            yield return MakeWeatherCommand("Binguin_Weather_Rain".Translate(), "Binguin_CompWeather_11".Translate());
-            yield return MakeWeatherCommand("Binguin_Weather_Thunderstorm".Translate(), "Binguin_CompWeather_12".Translate());
-            yield return MakeWeatherCommand("Binguin_Weather_Snow".Translate(), "Binguin_CompWeather_13".Translate());
-            yield return MakeWeatherCommand("Binguin_Weather_Snowstorm".Translate(), "Binguin_CompWeather_14".Translate());
+            yield return MakeWeatherCommand("Clear", "Binguin_Weather_Clear".Translate(), "Binguin_CompWeather_10".Translate());
+            yield return MakeWeatherCommand("Rain", "Binguin_Weather_Rain".Translate(), "Binguin_CompWeather_11".Translate());
+            yield return MakeWeatherCommand("RainyThunderstorm", "Binguin_Weather_Thunderstorm".Translate(), "Binguin_CompWeather_12".Translate());
+            yield return MakeWeatherCommand("SnowGentle", "Binguin_Weather_Snow".Translate(), "Binguin_CompWeather_13".Translate());
+            yield return MakeWeatherCommand("SnowHard", "Binguin_Weather_Snowstorm".Translate(), "Binguin_CompWeather_14".Translate());
         }
 
-        private Gizmo MakeWeatherCommand(string label, string desc)
+        private Gizmo MakeWeatherCommand(string weatherDefName, string label, string desc)
         {
             Command_Action cmd = new Command_Action
             {
@@ -175,7 +175,7 @@ namespace Binguin.Feature.Weather
                 icon = ContentFinder<Texture2D>.Get("Things/Building/Binguin/AtmosphereController", false),
                 action = delegate
                 {
-                    TryChangeWeather(label);
+                    TryChangeWeather(weatherDefName, label);
                 }
             };
             // 充能没满 → 禁用（2026-09 新机制：充能 24 小时才能用一次）
@@ -198,7 +198,7 @@ namespace Binguin.Feature.Weather
             return powerComp != null && powerComp.PowerOn;
         }
 
-        private void TryChangeWeather(string label)
+        private void TryChangeWeather(string weatherDefName, string label)
         {
             try
             {
@@ -220,7 +220,7 @@ namespace Binguin.Feature.Weather
                         MessageTypeDefOf.RejectInput, false);
                     return;
                 }
-                WeatherDef target = GetWeatherFor(label);
+                WeatherDef target = DefDatabase<WeatherDef>.GetNamedSilentFail(weatherDefName);
                 if (target == null)
                 {
                     BinguinLogUtility.Log("大气控制仪：找不到天气 " + label, severity: 1, isDebug: false);
@@ -246,17 +246,5 @@ namespace Binguin.Feature.Weather
             get { return (CompProperties_BinguinWeather)props; }
         }
 
-        private static WeatherDef GetWeatherFor(string label)
-        {
-            switch (label)
-            {
-                case "晴": return DefDatabase<WeatherDef>.GetNamedSilentFail("Clear");
-                case "雨": return DefDatabase<WeatherDef>.GetNamedSilentFail("Rain");
-                case "暴风雨": return DefDatabase<WeatherDef>.GetNamedSilentFail("RainyThunderstorm");
-                case "雪": return DefDatabase<WeatherDef>.GetNamedSilentFail("SnowGentle");
-                case "暴风雪": return DefDatabase<WeatherDef>.GetNamedSilentFail("SnowHard");
-                default: return null;
-            }
-        }
     }
 }

@@ -104,7 +104,7 @@ namespace Binguin.Feature.Rods
         /// ★★ 2026-10-06 用户需求：「我指的是你直接用原版制作的代码和显示，这样比较方便」。
         ///   ⇒ 数值**只有一个来源**：`Binguin_UnfinishedRod` def 上的
         ///     `<recipeMaker><workAmount>N</workAmount>…</recipeMaker>`
-        ///     （见 `AdvancedFishing/Defs/Feature/Rods/Fishing_RodsAndParts.xml`）。改数值只改那一处，不再有层层回退。
+        ///     （见 `Defs/Features/Rods/Fishing_RodsAndParts.xml`）。改数值只改那一处，不再有层层回退。
         ///
         /// ★ 原版语义（IL 实证）：`RecipeDef.WorkAmountForStuff`
         ///   `if (workAmount >= 0) return workAmount;`
@@ -211,7 +211,7 @@ namespace Binguin.Feature.Rods
         ///
         /// ★★ 2026-10-06 的两次踩坑记录（别再走弯路）：
         ///
-        /// ① **`innerContainer.TryAdd(part, true)` 是错的**：
+        /// ① **`innerContainer.TryAdd(part, false)` 是错的**：
         ///    `ThingOwner.TryAdd` 里有一段守卫 `if (item.holdingOwner != null)` →
         ///    直接拒绝并打印 "already in another container"
         ///    （IL 实证 IL_004A~IL_00AD）。地图上的东西 holder 就是 `Map` 的 ThingOwner。
@@ -234,7 +234,7 @@ namespace Binguin.Feature.Rods
         /// ③ **正确做法（当前实现）**：自己先让它脱离地图，再直接 `TryAdd`：
         ///      ```csharp
         ///      if (part.Spawned) part.DeSpawn(DestroyMode.Vanish);
-        ///      ok = innerContainer.TryAdd(part, true);
+        ///      ok = innerContainer.TryAdd(part, false);
         ///      ```
         ///    ★ 实测有效（这是最终跑通的写法）。
         ///    ⚠️ **别猜"为什么有效"** —— 我先前在这里写过
@@ -285,7 +285,7 @@ namespace Binguin.Feature.Rods
                 part.DeSpawn(DestroyMode.Vanish);
             }
             // ③ 现在 TryAdd 才会真正把它加进容器
-            bool ok = innerContainer.TryAdd(part, true);
+            bool ok = innerContainer.TryAdd(part, false);
             if (!ok)
             {
                 BinguinLogUtility.Log("配件装进【钓竿（未完成）】失败：" + part.LabelShort
@@ -402,13 +402,13 @@ namespace Binguin.Feature.Rods
         /// <summary>用英文/中文标签描述当前已装上的配件（给 inspect 字符串用）。</summary>
         public string PartsSummary()
         {
-            return "竿身=" + Name(shaft) + " 竿头=" + Name(tip)
-                + " 鱼钩=" + Name(hook) + " 鱼饵=" + Name(bait);
+            return "Binguin_Interface_064".Translate().ToString() + Name(shaft) + "Binguin_Interface_065".Translate().ToString() + Name(tip)
+                + "Binguin_Interface_066".Translate().ToString() + Name(hook) + "Binguin_Interface_067".Translate().ToString() + Name(bait);
         }
 
         private static string Name(Thing t)
         {
-            return t == null ? "（缺）" : t.LabelShort;
+            return t == null ? "Binguin_Interface_068".Translate().ToString() : t.LabelShort;
         }
 
         // ================================================================
@@ -437,42 +437,14 @@ namespace Binguin.Feature.Rods
                 return;
             }
 
-            // ① 高级零部件：**已经跟着配件一起被吸进容器了**（2026-10-08 用户需求）。
-            //   ⇒ 这里不再从地图上扣，也不再"防呆补扣"：
-            //      如果容器里没有零部件，说明是旧存档/异常路径，
-            //      那就退回老的"从地图扣"逻辑兜底一次。
-            if (spacerParts != null && spacerParts.Count > 0)
+            RebuildSpacerPartsFromContainer();
+            int spacers = 0;
+            foreach (Thing sp in spacerParts) if (sp != null && !sp.Destroyed) spacers += sp.stackCount;
+            if (spacers != 4)
             {
-                for (int i = 0; i < spacerParts.Count; i++)
-                {
-                    DestroyPart(spacerParts[i]);
-                }
-                spacerParts.Clear();
+                Messages.Message("Binguin_CompRodAssembly_10".Translate(), parent, MessageTypeDefOf.RejectInput, false);
+                return;
             }
-            else if (spacersSpent > 0)
-            {
-                // 旧路径：数量记在 spacersSpent 上但从没吸进容器 ⇒ 从地图扣
-                if (!CompBinguinRodAssembly.ConsumeComponentsFromMap(map, spacersSpent))
-                {
-                    Messages.Message("Binguin_CompRodAssembly_10".Translate(),
-                        parent, MessageTypeDefOf.RejectInput, false);
-                    return;
-                }
-            }
-            else
-            {
-                // 既没吸进容器、也没记账 ⇒ 老存档，按老规则从地图扣 4 个
-                if (!CompBinguinRodAssembly.ConsumeComponentsFromMap(map, 4))
-                {
-                    Messages.Message("Binguin_CompRodAssembly_10".Translate(),
-                        parent, MessageTypeDefOf.RejectInput, false);
-                    return;
-                }
-                spacersSpent = 4;
-            }
-            // 标记"正常收尾"：下面会销毁自己，别触发退款
-            finishedSuccessfully = true;
-
             bool bladeTip = tip.def.defName == BinguinRodUtility.TipBlade;
             ThingDef rodDef = DefDatabase<ThingDef>.GetNamedSilentFail(
                 bladeTip ? BinguinRodUtility.RodBlade : BinguinRodUtility.RodHammer);
@@ -512,19 +484,21 @@ namespace Binguin.Feature.Rods
                 qc.SetQuality(quality, null);
             }
 
-            // ④ 消耗配件（它们现在是 innerContainer 里的东西）
+            // 先成功放置成品，再一次性提交材料消费；失败保留半成品和全部材料。
+            if (!GenPlace.TryPlaceThing(rod, parent.Position, map, ThingPlaceMode.Near, null))
+            {
+                rod.Destroy(DestroyMode.Vanish);
+                return;
+            }
+            finishedSuccessfully = true;
+            foreach (Thing sp in spacerParts) DestroyPart(sp);
+            spacerParts.Clear();
+            spacersSpent = 0;
             DestroyPart(shaft);
             DestroyPart(tip);
             DestroyPart(hook);
             DestroyPart(bait);
-            shaft = null;
-            tip = null;
-            hook = null;
-            bait = null;
-
-            // ⑤ 放成品 + 销毁半成品
-            IntVec3 pos = parent.Position;
-            GenPlace.TryPlaceThing(rod, pos, map, ThingPlaceMode.Near, null);
+            shaft = tip = hook = bait = null;
             Messages.Message("Binguin_CompRodAssembly_11".Translate()
                 + quality.GetLabel() + "）！", rod, MessageTypeDefOf.PositiveEvent, true);
 
@@ -538,6 +512,17 @@ namespace Binguin.Feature.Rods
         /// <summary>
         /// 读档后按容器里的实际内容重建 `spacerParts`（列表本身不进存档）。
         /// </summary>
+        public bool RollbackAssembly(Map map, IntVec3 cell)
+        {
+            // 失败只释放已经接收的实物，不凭记账生成退款。
+            if (!innerContainer.TryDropAll(cell, map, ThingPlaceMode.Near)) return false;
+            finishedSuccessfully = true;
+            spacersSpent = 0;
+            spacerParts.Clear();
+            shaft = tip = hook = bait = null;
+            return true;
+        }
+
         private void RebuildSpacerPartsFromContainer()
         {
             if (spacerParts == null)
@@ -663,7 +648,7 @@ namespace Binguin.Feature.Rods
         //        if (spacerDef == null)
         //        {
         //            BinguinLogUtility.Log("半成品退款失败：找不到 ComponentSpacer def，"
-        //                + "需要退 " + refund + " 个。", severity: 1, isDebug: false);
+        //                + "需要退 " + refund + "Binguin_Interface_031".Translate().ToString(), severity: 1, isDebug: false);
         //            return;
         //        }
         //        IntVec3 pos = parent != null ? parent.Position : IntVec3.Invalid;
@@ -738,7 +723,7 @@ namespace Binguin.Feature.Rods
                 if (spacerDef == null)
                 {
                     BinguinLogUtility.Log("半成品退款失败：找不到 ComponentSpacer def，"
-                        + "需要退 " + refund + " 个。", severity: 1, isDebug: false);
+                        + "需要退 " + refund + "Binguin_Interface_031".Translate().ToString(), severity: 1, isDebug: false);
                     return;
                 }
                 Map placeMap = previousMap;
@@ -814,13 +799,13 @@ namespace Binguin.Feature.Rods
             float left = total - workDone;
             if (left < 0f) left = 0f;
             // ★ 显示成原版那种"工作量"口径（数值直接来自 XML 的 recipeMaker.workAmount）
-            string mine = "已装配件：" + PartsSummary()
-                + "\n装配工作量：" + workDone.ToString("0") + " / " + total.ToString("0")
-                + "（剩余 " + left.ToString("0") + "）"
-                + (IsFinished ? "（已完成，等待收尾）" : "");
+            string mine = "Binguin_Interface_069".Translate().ToString() + PartsSummary()
+                + "Binguin_Interface_070".Translate().ToString() + workDone.ToString("0") + " / " + total.ToString("0")
+                + "Binguin_Interface_071".Translate().ToString() + left.ToString("0") + "）"
+                + (IsFinished ? "Binguin_Interface_072".Translate().ToString() : "");
             if (boundMaker != null)
             {
-                mine += "\n制作者：" + boundMaker.LabelShort;
+                mine += "Binguin_Interface_073".Translate().ToString() + boundMaker.LabelShort;
             }
             if (baseStr.NullOrEmpty())
             {
@@ -846,7 +831,7 @@ namespace Binguin.Feature.Rods
             }
 
             Command_Action cmd = new Command_Action();
-            cmd.defaultLabel = "继续装配";
+            cmd.defaultLabel = "Binguin_Interface_074".Translate().ToString();
             if (!HasAllParts)
             {
                 cmd.defaultDesc = "Binguin_UnfinishedRod_MissingParts".Translate(PartsSummary()).ToString();

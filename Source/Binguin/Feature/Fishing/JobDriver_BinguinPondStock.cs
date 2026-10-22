@@ -43,8 +43,7 @@ namespace Binguin.Feature.Fishing
             // 2) 走到鱼池旁
             yield return Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.Touch);
 
-            // 3) 放入：先把鱼放到池边地面（离开搬运状态），入池成功才销毁
-            //    （TryStock 失败 = 异种/满池 → 鱼留在地面，不浪费）
+            // 3) 入池成功才从搬运容器消耗一条；失败保持携带物完整。
             Toil put = new Toil();
             put.defaultCompleteMode = ToilCompleteMode.Instant;
             put.initAction = delegate
@@ -58,28 +57,12 @@ namespace Binguin.Feature.Fishing
                 }
                 Thing fish = actor.carryTracker.CarriedThing;
                 ThingDef fishDef = fish.def;
-                // 1) 先放到池边地面（Near 模式必然找得到空格，远离搬运状态）
-                Thing dropped = null;
-                bool droppedOk = actor.carryTracker.TryDropCarriedThing(pond.Position,
-                    ThingPlaceMode.Near, out dropped);
-                if (!droppedOk)
-                {
-                    droppedOk = actor.carryTracker.TryDropCarriedThing(actor.Position,
-                        ThingPlaceMode.Near, out dropped);
-                }
-                if (!droppedOk)
-                {
-                    return;
-                }
-                // 2) 入池：成功 → 落地鱼销毁（= 鱼进了池）；失败 → 鱼留在地面
+                // 接收与数量消费在同一次主线程操作中完成，不落地合堆。
                 CompBinguinFishPond pondComp = pond.TryGetComp<CompBinguinFishPond>();
                 bool stocked = pondComp != null && pondComp.TryStock(fishDef.defName);
                 if (stocked)
                 {
-                    if (dropped != null && !dropped.Destroyed)
-                    {
-                        dropped.Destroy();
-                    }
+                    fish.SplitOff(1).Destroy();
                     Messages.Message("Binguin_JobDriverPondStock_01".Translate() + (fishDef.label ?? "") + "Binguin_JobDriverPondStock_02".Translate(),
                         pond, MessageTypeDefOf.PositiveEvent, false);
                 }

@@ -96,6 +96,11 @@ namespace Binguin.Patch
         {
             Harmony harmony = new Harmony("binguin.race");
 
+            SafePatch(harmony, AccessTools.Method(typeof(Thing), "DynamicDrawPhase", new Type[] { typeof(DrawPhase) }),
+                "冰鹅族实体：主线程预绘制（1.7）",
+                typeof(Patch_BinguinMainThreadPreDraw), "Prefix",
+                typeof(Patch_BinguinMainThreadPreDraw), "Postfix");
+
             // 静态版（真计算）：static float CostToMoveIntoCell(Pawn, IntVec3)
             MethodInfo staticTarget = typeof(Pawn_PathFollower).GetMethod(
                 "CostToMoveIntoCell",
@@ -236,7 +241,7 @@ namespace Binguin.Patch
             if (getCatches != null)
             {
                 SafePatch(harmony, getCatches, "钓到企鹅！原版钓鱼区：FishingUtility.GetCatchesFor",
-                    typeof(Patch_BinguinFishingCatch), "Postfix", null, null);
+                    null, null, typeof(Patch_BinguinFishingCatch), "Postfix");
             }
             else
             {
@@ -389,7 +394,7 @@ namespace Binguin.Patch
             if (siegeInit != null)
             {
                 SafePatch(harmony, siegeInit, "低温围攻 toil 识别：LordToil_Siege.Init",
-                    typeof(Patch_BinguinCryoSiegeToilInit), "Prefix", null, null);
+                    typeof(Patch_BinguinCryoSiegeToilInit), "Prefix", typeof(Patch_BinguinCryoSiegeToilInit), "Postfix");
             }
             else
             {
@@ -600,7 +605,7 @@ namespace Binguin.Patch
                 return false;
             }
             string name = terrain.defName;
-            // 原版冰面/水面 + 本 MOD 的冰鹅地板（Binguin_*，见 Defs/Feature/Floors/TerrainDefs_Floors.xml）
+            // 原版冰面/水面 + 本 MOD 的冰鹅地板（Binguin_*，见 Defs/Content/Terrain/TerrainDefs_Floors.xml）
             return name.StartsWith("Ice", StringComparison.Ordinal)
                 || name.StartsWith("Water", StringComparison.Ordinal)
                 || name.StartsWith("Binguin_", StringComparison.Ordinal);

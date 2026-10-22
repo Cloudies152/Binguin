@@ -1,59 +1,57 @@
-# 构建与多人协作
+# 构建、打包和部署
 
-项目面向 RimWorld 1.6，使用 .NET Framework 4.8（本机 HAR 1.6 DLL 的目标框架）。安装 .NET SDK 后，
-Visual Studio、Rider、dotnet CLI 与 `build.ps1` 使用同一份项目配置。
+项目仅支持 RimWorld 1.7，使用 .NET 10 SDK。安装 SDK 并克隆仓库后即可构建；无需准备游戏 DLL、HAR DLL 或本机配置文件。首次构建需要网络以还原 NuGet 包。
 
-## 每位协作者只需配置一次
+## 构建
 
-将 `Binguin/Binguin.local.props.example` 复制为同目录的
-`Binguin.local.props`，填写自己的 `RimWorldDir` 和 `HarDir`。
-
-- `RimWorldDir`：游戏根目录，包含 `RimWorldWin64_Data/Managed`。
-- `HarDir`：HAR 模组根目录，例如创意工坊的 `294100/839005762`。
-  项目引用其 `1.6/Assemblies/AlienRace.dll`，请勿选择旧版子目录。
-- 如果目录结构不同，可以直接指定 `ManagedDir` 和 `HarAssemblyPath`。
-- 本机配置由 `.gitignore` 排除。提交 `.csproj` 和 `.props.example`，
-  不提交个人绝对路径、游戏 DLL 或 HAR DLL。
-
-从模组根目录执行：
+从仓库根目录执行：
 
 ```powershell
 dotnet build Source/Binguin/Binguin.Race.sln -c Release
+# 或
+.\compile_modSelf.bat Release
+# 可选第二参数：将产物复制到指定目录（支持中文及空格）。
+.\compile_modSelf.bat Release '<产物目录>'
+.\Source\build.ps1 -Configuration Debug
 ```
 
-也可以执行 `./Source/build.ps1 -NoPause`。脚本需要 .NET SDK，
-不再使用 Windows 自带的旧版 csc。`-NoPause` 为兼容旧调用保留，脚本不等待按键。
+引用固定为 `Krafs.Rimworld.Ref 1.7.4985-unstable` 和 `Lib.Harmony 2.4.1`。参考包版本与当前游戏构建对应；它只用于编译，不能用来启动游戏。HAR 是运行依赖，源码不直接引用其类型，因此编译不要求安装 HAR。
 
-## VS Code 构建任务
+IDE、VS Code task 和脚本调用同一项目。C# 语言版本保留为 5。产物位于 `Source/Binguin/bin/<配置>/net10.0`，仅将 `Binguin.dll` 复制到根 `Assemblies`。游戏、Harmony 和参考包 DLL 不随模组发布。
 
-在 VS Code 中打开模组根目录，完成上述本机配置后，按 `Ctrl+Shift+B`，
-执行默认的 `build: Release` 任务。通过“终端 → 运行任务”可选择
-`build: Debug` 或 `build: Release`；“终端 → 配置默认生成任务”可更改默认项。
-两个任务均使用 PATH 中的 `dotnet`，并将编译诊断显示在“问题”面板。
-两种配置都会更新模组的 `Assemblies/Binguin.dll`，以最后一次构建为准。
-任务不包含个人绝对路径；协作者共用 `.vscode/tasks.json`，各自维护本机 props。
-
-临时覆盖路径（命令行属性优先于本机配置）：
+`compile_modSelf.bat` 和 `deploy_modSelf.bat` 成功、失败都会显示结果并暂停，按键后才结束；失败时保留非零退出码。批处理会先切换到仓库根目录，支持从其他工作目录启动。自动化请直接调用对应 `.ps1`，不要使用带暂停的 `.bat`。
 
 ```powershell
-dotnet build Source/Binguin/Binguin.Race.sln -c Release `
-  -p:RimWorldDir="D:/Games/RimWorld" `
-  -p:HarDir="E:/SteamLibrary/steamapps/workshop/content/294100/839005762"
+# 可选：改用本地 RimWorld 1.7 根目录的引用。
+.\Source\build.ps1 -GameDir '<游戏根目录>'
+# 可选：产物重定向到独立目录。
+.\Source\build.ps1 -OutputRoot '<产物目录>'
 ```
 
-产物先生成在项目的 `bin/Release/net48`，再仅复制 `Binguin.dll` 到模组的
-`Assemblies`。依赖引用均不随产物复制；运行游戏仍需安装 Harmony 和 HAR。
-若仓库在游戏之外，先将完整模组安装到游戏，再通过本机配置的 `GameModsDir`
-及 `-p:DeployToGame=true` 更新该安装中的 DLL。
+通常不需要 `Binguin.local.props`；模板仅用于个人显式覆盖，文件被 Git 忽略。公共项目不包含个人安装路径。
 
-## CI 与版本一致性
+## 打包
 
-CI 使用固定的 RimWorld 参考包 `Krafs.Rimworld.Ref 1.6.4871`，
-以及固定提交 `ae8412cdb4a047cb1a5d3945bebca44d061da569` 的官方 HAR。
-CI 通过命令行传入临时依赖路径，不需要个人配置。
-协作者应使用同一 RimWorld 版本和对应的 HAR 1.6；更新依赖时同步更新 CI。
-Steam 工坊可能自动更新 HAR，本机路径一致并不意味着 DLL 版本完全一致。
+```powershell
+.\package_modSelf.ps1
+.\package_modSelf.ps1 -OutputRoot '<打包目录>'
+```
 
-## 源码结构
+默认输出 `dist/Binguin`，包含 About、Assemblies、Defs、Patches、Languages、Sounds、Textures 和 LoadFolders.xml。不会包含源码、IDE 配置或开发任务文档。清单 `binguin-files.json` 记录本次拥有的文件；更新时只清理旧清单中已被移除的文件，保留用户自加歌曲等未登记文件。
 
-C# 文件按功能组织，目录职责与重构约束见 [STRUCTURE.md](STRUCTURE.md)。
+旧清单在写入构建产物之前校验；清单读取兼容 Windows PowerShell 5.1 和 PowerShell 7，支持对同一目标重复打包、更新部署。
+
+## 部署
+
+```powershell
+.\deploy_modSelf.bat
+# 或
+.\deploy_modSelf.ps1 -GameDir '<游戏根目录>'
+.\deploy_modSelf.ps1 -DestinationRoot '<独立部署目录>'
+```
+
+默认读取 Steam 注册表及 libraryfolders.vdf 查找唯一的 1.7 安装，将完整模组部署到 `Mods/Binguin`。非 Steam 安装或存在多个安装时显式传参。部署会重新构建完整包，不只是复制 DLL；拒绝以游戏根目录或开发目录作为目标。不自动启动游戏。
+
+## 验证边界
+
+CI 自动还原依赖，验证 Debug、构建 Release 并提供完整模组 Artifact。编译、XML MCP 诊断、重定向部署和游戏实际加载是不同证据；发布前仍需游戏内检查相关玩法及正常存读档。

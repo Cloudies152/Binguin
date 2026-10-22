@@ -171,6 +171,8 @@ namespace Binguin.Feature.Band
 
         public void ExposeData()
         {
+            Scribe_Collections.Look(ref guests, "arrivedGuests", LookMode.Reference);
+            Scribe_Values.Look(ref quality, "quality");
             Scribe_References.Look<Pawn>(ref leadSinger, "binguinBookingSinger");
             Scribe_Collections.Look<Binguin_SongDef>(ref songs, "binguinBookingSongs", LookMode.Def);
             Scribe_Values.Look<int>(ref scheduledTick, "binguinBookingTick", 0, false);
@@ -223,6 +225,7 @@ namespace Binguin.Feature.Band
         ///   直到全部曲目放完才清空。
         /// </summary>
         public BinguinConcertBooking musicPlaylist;
+        private BinguinConcertMusicPlayer musicPlayer = new BinguinConcertMusicPlayer();
 
         /// <summary>上一场演唱会结束的时刻（用于 5 天冷却）。</summary>
         public int lastConcertEndTick = -999999;
@@ -280,6 +283,11 @@ namespace Binguin.Feature.Band
         {
             base.ExposeData();
             Scribe_Deep.Look<BinguinConcertBooking>(ref booking, "binguinConcertBooking");
+            // 两个快照分别拥有自己的字段，Pawn/Def 仍按引用保存。
+            Scribe_Deep.Look(ref performingBooking, "performingBooking");
+            Scribe_Deep.Look(ref musicPlaylist, "musicPlaylist");
+            Scribe_Deep.Look(ref musicPlayer, "musicPlayer");
+            Scribe_Values.Look(ref wasPerforming, "wasPerforming");
             Scribe_Values.Look<int>(ref lastConcertEndTick, "binguinLastConcertEnd", -999999, false);
         }
 
@@ -337,7 +345,7 @@ namespace Binguin.Feature.Band
 
             BinguinLogUtility.Log("已登记演唱会预约：主唱 " + leadSinger.LabelShort
                 + "，乐手 " + b.musicians.Count + " 人，曲目 "
-                + (songs != null && songs.Count > 0 ? songs[0].label + " 等 " + songs.Count + " 首" : "（无）")
+                + (songs != null && songs.Count > 0 ? songs[0].label + " 等 " + songs.Count + "Binguin_Interface_017".Translate().ToString() : "Binguin_Interface_081".Translate().ToString())
                 + "，" + days + " 天后开演。", isDebug: false);
             return true;
         }
@@ -353,10 +361,25 @@ namespace Binguin.Feature.Band
             booking = null;
         }
 
-        /// <summary>
-        /// 每 tick 检查：到点了就开演；主唱没了就取消。
-        /// ★ 作者定：**只有主唱死了才取消**，其他情况（乐器被拆、场地改建）不取消。
-        /// </summary>
+        // Unity 音频及 MusicManager 只由主线程每帧驱动；暂停/倍速不改变歌单推进规则。
+        public override void GameComponentUpdate()
+        {
+            base.GameComponentUpdate();
+            if (musicPlayer == null) musicPlayer = new BinguinConcertMusicPlayer();
+            if (musicPlaylist != null && musicPlayer.Update(musicPlaylist))
+            {
+                musicPlaylist = null;
+                BinguinLogUtility.Log("演唱会歌单已全部播完，恢复常规背景音乐。", isDebug: false);
+            }
+        }
+
+        public void StartPlaylist(BinguinConcertBooking playlist)
+        {
+            musicPlaylist = playlist;
+            musicPlayer = new BinguinConcertMusicPlayer();
+        }
+
+        /// <summary>检查预约、到场和散场；只有主唱死亡才取消有效预约。</summary>
         public override void GameComponentTick()
         {
             base.GameComponentTick();
@@ -371,27 +394,16 @@ namespace Binguin.Feature.Band
                 wasPerforming = false;
                 // ★ 2026-10-17：演唱会结束后给来访派系加好感
                 BinguinConcertDirector.GrantGoodwill(performingBooking);
+                BinguinConcertDirector.SendEveryoneHome(performingBooking, performingBooking != null ? performingBooking.Map : null);
+                BinguinConcertDirector.OnPerformanceEnded();
                 performingBooking = null;
                 // ★ musicPlaylist 故意不清：歌单要在演唱会之后继续放完
                 lastConcertEndTick = GenTicks.TicksGame;
                 BinguinLogUtility.Log("演唱会结束，5 天冷却开始。", isDebug: false);
             }
-            else if (BinguinConcert.Active)
+            else if (BinguinConcert.Active && performingBooking != null)
             {
                 wasPerforming = true;
-            }
-
-            // ★ 2026-10-17 修 bug：演出中被别的节日抢走 ⇒ 每 250 tick 重新派奏乐 job
-            // ★ 2026-10-17：歌单独立于演出状态 —— 散场后也要把剩下的歌放完
-            if (musicPlaylist != null)
-            {
-                BinguinConcertDirector.TickMusic(musicPlaylist);
-                if (BinguinConcertDirector.IsMusicFinished(musicPlaylist))
-                {
-                    BinguinLogUtility.Log("演唱会歌单已全部播完，恢复常规背景音乐。",
-                        isDebug: false);
-                    musicPlaylist = null;
-                }
             }
 
             if (BinguinConcert.Active && performingBooking != null
@@ -419,10 +431,10 @@ namespace Binguin.Feature.Band
             // ① 主唱没了 ⇒ 取消（作者明确要求的唯一取消条件）
             if (!b.LeadSingerUsable)
             {
-                string who = b.leadSinger != null ? b.leadSinger.LabelShort : "（失踪）";
+                string who = b.leadSinger != null ? b.leadSinger.LabelShort : "Binguin_Interface_036".Translate().ToString();
                 Messages.Message("Binguin_ConcertSetup_LeadLost".Translate(),
                     MessageTypeDefOf.NegativeEvent);
-                Cancel("主唱 " + who + " 已无法登台");
+                Cancel("Binguin_Interface_037".Translate().ToString() + who + "Binguin_Interface_038".Translate().ToString());
                 return;
             }
 
@@ -446,7 +458,7 @@ namespace Binguin.Feature.Band
                 Messages.Message("Binguin_ConcertSetup_TimeoutCancelled".Translate(),
                     MessageTypeDefOf.NegativeEvent);
                 BinguinConcertDirector.SendEveryoneHome(b, b.Map);
-                Cancel("到场后 6 小时未开演");
+                Cancel("Binguin_Interface_039".Translate().ToString());
             }
         }
 
@@ -488,7 +500,7 @@ namespace Binguin.Feature.Band
             Map map = b.Map;
             if (map == null)
             {
-                Cancel("找不到预定的地图");
+                Cancel("Binguin_Interface_040".Translate().ToString());
                 return;
             }
             // ★ 2026-10-17 作者：「开始演唱会时不用弹仪式质量消息」⇒ 只计算、不弹消息。
@@ -498,7 +510,7 @@ namespace Binguin.Feature.Band
             // ★ 2026-10-17 作者：「演唱会时间是固定的4小时」
             //   曲目只是为了让玩家开 1 倍速时能听到四首歌，**不影响时长**。
             performingBooking = b;
-            musicPlaylist = b;          // ★ 歌单开始：散场后会继续放完
+            StartPlaylist(b);          // 歌单独立播放，散场后继续放完。
             BinguinConcert.Start(BinguinConcert.DurationTicks);
             BinguinConcertDirector.BeginPerformance(b, map);
             booking = null;   // 预约转成"运行中"，由 Director 接手

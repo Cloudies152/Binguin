@@ -149,7 +149,17 @@ namespace Binguin.Feature.Band
                 return;
             }
 
-            if (invitePending || markerPlaced) return;
+            if (invitePending)
+            {
+                Quest quest = BinguinBandQuest.Current;
+                if (quest == null || (quest.State != QuestState.NotYetAccepted && quest.State != QuestState.Ongoing))
+                {
+                    BinguinBandQuest.Current = null;
+                    Retire();
+                }
+                return;
+            }
+            if (markerPlaced) return;
             if (now < nextInviteTick) return;
 
             SendInvite();
@@ -163,7 +173,11 @@ namespace Binguin.Feature.Band
                 if (map == null) return;
                 invitePending = true;
                 // ★ 走正式【任务条目】（用户定稿方案 B：C# 直接构造 Quest）
-                BinguinBandQuest.Offer();
+                if (BinguinBandQuest.Offer() == null)
+                {
+                    invitePending = false;
+                    nextInviteTick = GenTicks.TicksGame + 5 * GenDate.TicksPerDay;
+                }
             }
             catch (Exception e)
             {
@@ -203,8 +217,12 @@ namespace Binguin.Feature.Band
         {
             lastVisitTick = Find.TickManager.TicksGame;
             nextInviteTick = lastVisitTick + BinguinBandTuning.IntervalDays * GenDate.TicksPerDay;
+            invitePending = false;
             markerPlaced = false;
             concertFinished = false;
+            GameComponent_BinguinPerformanceState.Current.activeMarker = null;
+            Current.Game.GetComponent<GameComponent_BinguinBandVisit>().ResetVisit();
+            Current.Game.GetComponent<GameComponent_BinguinBandMarkerDrop>().ResetVisit();
         }
     }
 
@@ -241,10 +259,10 @@ namespace Binguin.Feature.Band
     public static class BinguinBandConcert
     {
         /// <summary>当前这场的乐队与观众（存档）</summary>
-        public static List<Pawn> performers = new List<Pawn>();
-        public static List<Pawn> audience = new List<Pawn>();
-        public static IntVec3 venueCenter = IntVec3.Invalid;
-        public static bool bandArrived;
+        public static List<Pawn> performers { get { return GameComponent_BinguinPerformanceState.Current.visitingPerformers; } set { GameComponent_BinguinPerformanceState.Current.visitingPerformers = value; } }
+        public static List<Pawn> audience { get { return GameComponent_BinguinPerformanceState.Current.visitingAudience; } set { GameComponent_BinguinPerformanceState.Current.visitingAudience = value; } }
+        public static IntVec3 venueCenter { get { return GameComponent_BinguinPerformanceState.Current.venue; } set { GameComponent_BinguinPerformanceState.Current.venue = value; } }
+        public static bool bandArrived { get { return GameComponent_BinguinPerformanceState.Current.bandArrived; } set { GameComponent_BinguinPerformanceState.Current.bandArrived = value; } }
 
         public static bool IsLeadSinger(Pawn p)
         {
@@ -349,6 +367,8 @@ namespace Binguin.Feature.Band
         /// </remarks>
         public static void Arrive(Map map, MonumentMarker marker)
         {
+            if (map == null) return;
+            GameComponent_BinguinPerformanceState.Current.visitingMapId = map.uniqueID;
             if (map == null || bandArrived) return;
             try
             {
@@ -602,7 +622,23 @@ namespace Binguin.Feature.Band
         /// <summary>开演唱会（由交互触发）。</summary>
         public static void StartConcert(Pawn singer)
         {
-            if (BinguinConcert.Active) return;
+            if (BinguinConcert.Active || singer == null || !singer.Spawned || !IsLeadSinger(singer)) return;
+            Find.WindowStack.Add(new Dialog_BinguinSongPick(null, delegate(List<Binguin_SongDef> songs)
+            {
+                // 窗口打开后仍可能发生死亡/离场；确认时再次检查，取消窗口不改变演出状态。
+                if (BinguinConcert.Active || !singer.Spawned || singer.Dead || !IsLeadSinger(singer)) return;
+                BinguinConcertBooking playlist = new BinguinConcertBooking();
+                playlist.leadSinger = singer;
+                playlist.mapId = singer.Map.uniqueID;
+                playlist.venueCenter = venueCenter;
+                playlist.songs = new List<Binguin_SongDef>(songs);
+                GameComponent_BinguinConcertBooking.Instance.StartPlaylist(playlist);
+                StartSelectedConcert(singer);
+            }));
+        }
+
+        private static void StartSelectedConcert(Pawn singer)
+        {
             BinguinConcert.Start(BinguinConcert.DurationTicks);
             Messages.Message("Binguin_Band_ConcertStart".Translate(),
                 MessageTypeDefOf.PositiveEvent);
@@ -620,10 +656,21 @@ namespace Binguin.Feature.Band
         }
 
         /// <summary>演唱会结束：结算心情/好感/掉落，然后所有人离场。</summary>
-        public static void EndConcert(Map map)
+        public static void EndConcert(Map map, bool completed = true)
         {
             try
             {
+                if (!completed)
+                {
+                    SendEveryoneAway(map);
+                    bandArrived = false;
+                    performers.Clear();
+                    audience.Clear();
+                    BinguinConcert.Stop();
+                    Current.Game.GetComponent<GameComponent_BinguinBandScheduler>().Retire();
+                    return;
+                }
+
                 // ---- 1) 在场殖民者 +12 心情 / 10 天 ----
                 ThoughtDef thought = DefDatabase<ThoughtDef>.GetNamedSilentFail("Binguin_AttendedConcert");
                 int n = 0;
@@ -653,6 +700,8 @@ namespace Binguin.Feature.Band
                 // ---- 4) 全员离场 ----
                 SendEveryoneAway(map);
 
+                Current.Game.GetComponent<GameComponent_BinguinBandScheduler>().Retire();
+                BinguinBandQuest.Succeed();
                 bandArrived = false;
                 performers.Clear();
                 audience.Clear();
@@ -786,72 +835,11 @@ namespace Binguin.Feature.Band
         /// </summary>
         private static void SendEveryoneAway(Map map)
         {
-            if (map == null) return;
-            Faction player = Faction.OfPlayer;
-
-            List<Pawn> all = new List<Pawn>();
-            for (int i = 0; i < performers.Count; i++)
-            {
-                if (performers[i] != null) all.Add(performers[i]);
-            }
-            for (int i = 0; i < audience.Count; i++)
-            {
-                if (audience[i] != null) all.Add(audience[i]);
-            }
-
-            // 1) 先停掉手上的活（含"看演出"的 job），免得他们端着 job 不走
-            for (int i = 0; i < all.Count; i++)
-            {
-                Pawn p = all[i];
-                if (p == null || p.Dead || !p.Spawned || p.Map != map) continue;
-                if (player != null && p.Faction == player) continue;
-                try { p.jobs.StopAll(); }
-                catch (Exception) { }
-            }
-
-            // 2) 解散他们所属的 Lord（清掉职责 → 原版思维树接手送他们离场）
-            List<Lord> lords = new List<Lord>();
-            for (int i = 0; i < all.Count; i++)
-            {
-                Pawn p = all[i];
-                if (p == null || p.Dead || !p.Spawned || p.Map != map) continue;
-                try
-                {
-                    Lord l = LordUtility.GetLord(p);
-                    if (l != null && !lords.Contains(l)) lords.Add(l);
-                }
-                catch (Exception)
-                {
-                }
-            }
-            for (int i = 0; i < lords.Count; i++)
-            {
-                try { map.lordManager.RemoveLord(lords[i]); }
-                catch (Exception e) { BinguinLogUtility.Log("解散观众队伍失败：" + e.Message, severity: 1, isDebug: false); }
-            }
-
-            // 3) 兜底：仍然没有 Lord 的（或上面失败的）手动送回地图边缘
-            for (int i = 0; i < all.Count; i++)
-            {
-                Pawn p = all[i];
-                if (p == null || p.Dead || !p.Spawned || p.Map != map) continue;
-                if (player != null && p.Faction == player) continue;
-                try
-                {
-                    if (LordUtility.GetLord(p) != null) continue;
-                    IntVec3 exit;
-                    if (RCellFinder.TryFindBestExitSpot(p, out exit))
-                    {
-                        Job job = JobMaker.MakeJob(JobDefOf.Goto, exit);
-                        job.exitMapOnArrival = true;    // 走到边缘就地消失（原版同款）
-                        p.jobs.StartJob(job, JobCondition.InterruptForced);
-                    }
-                }
-                catch (Exception)
-                {
-                }
-            }
+            List<Pawn> all = new List<Pawn>(performers);
+            all.AddRange(audience);
+            GameComponent_BinguinPerformanceState.ReleaseParticipants(all);
         }
+
     }
 
     // ========================================================================
@@ -936,6 +924,12 @@ namespace Binguin.Feature.Band
         {
         }
 
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Values.Look(ref wasActive, "wasActive");
+        }
+
         public override void GameComponentTick()
         {
             if (Find.TickManager == null) return;
@@ -944,7 +938,8 @@ namespace Binguin.Feature.Band
             if (wasActive && !now)
             {
                 wasActive = false;
-                BinguinBandConcert.EndConcert(Find.AnyPlayerHomeMap);
+                if (!BinguinConcertDirector.SelfHosted && BinguinBandConcert.bandArrived)
+                    BinguinBandConcert.EndConcert(GameComponent_BinguinPerformanceState.Current.VisitingMap);
             }
             else if (now)
             {

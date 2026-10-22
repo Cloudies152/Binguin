@@ -50,25 +50,25 @@ namespace Binguin.Feature.Rods
         public override void DoWindowContents(Rect inRect)
         {
             Text.Font = GameFont.Medium;
-            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 32f), "继续装配钓竿");
+            Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 32f), "Binguin_Interface_075".Translate().ToString());
             Text.Font = GameFont.Small;
 
             float y = inRect.y + 40f;
             CompBinguinUnfinishedRod comp = Comp;
             if (comp == null)
             {
-                Widgets.Label(new Rect(inRect.x, y, inRect.width, 24f), "这件物品没有半成品数据，无法装配。");
+                Widgets.Label(new Rect(inRect.x, y, inRect.width, 24f), "Binguin_Interface_076".Translate().ToString());
                 return;
             }
 
             // ---- 当前状态 ----
-            Widgets.Label(new Rect(inRect.x, y, inRect.width, 22f), "当前配件：" + comp.PartsSummary());
+            Widgets.Label(new Rect(inRect.x, y, inRect.width, 22f), "Binguin_Interface_077".Translate().ToString() + comp.PartsSummary());
             y += 24f;
             float pct = comp.workDone / comp.WorkAmountBase;
             if (pct < 0f) pct = 0f;
             if (pct > 1f) pct = 1f;
             Widgets.Label(new Rect(inRect.x, y, inRect.width, 22f),
-                "已完成工作量：" + comp.workDone.ToString("0") + " / "
+                "Binguin_Interface_078".Translate().ToString() + comp.workDone.ToString("0") + " / "
                 + comp.WorkAmountBase.ToString("0")
                 + "（" + (pct * 100f).ToString("0") + "%）");
             y += 30f;
@@ -79,13 +79,13 @@ namespace Binguin.Feature.Rods
             {
                 selectedWorker = workers[0];
             }
-            Widgets.Label(new Rect(inRect.x, y, inRect.width, 22f), "由谁来继续装配：");
+            Widgets.Label(new Rect(inRect.x, y, inRect.width, 22f), "Binguin_Interface_079".Translate().ToString());
             y += 24f;
 
             if (workers.Count == 0)
             {
                 Widgets.Label(new Rect(inRect.x + 6f, y, inRect.width - 12f, 24f),
-                    "没有可以来装配的殖民者（全部倒地 / 死亡）。");
+                    "Binguin_Interface_080".Translate().ToString());
             }
             else
             {
@@ -123,7 +123,7 @@ namespace Binguin.Feature.Rods
             bool canStart = selectedWorker != null && rod != null && !rod.Destroyed && comp.HasAllParts;
             if (canStart)
             {
-                if (Widgets.ButtonText(btnRect, "继续装配"))
+                if (Widgets.ButtonText(btnRect, "Binguin_Interface_074".Translate().ToString()))
                 {
                     Pawn w = selectedWorker;
                     Close(true);
@@ -140,7 +140,7 @@ namespace Binguin.Feature.Rods
             {
                 Widgets.DrawBox(btnRect, 1, null);
                 Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(btnRect, "继续装配");
+                Widgets.Label(btnRect, "Binguin_Interface_074".Translate().ToString());
                 Text.Anchor = TextAnchor.UpperLeft;
             }
         }

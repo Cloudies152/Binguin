@@ -219,7 +219,7 @@ namespace Binguin.Feature.Band
 
         /// <summary>
         /// ★ 乐手顺序 → 乐器 defName（performers[0] = 主唱 = 麦克风）。
-        /// 顺序对应 Defs/Feature/Band/BandVisit_Binguin.xml 里 BuildSketch 的摆位：
+        /// 顺序对应 Defs/Features/Band/BandVisit_Binguin.xml 里 BuildSketch 的摆位：
         ///   麦克风 (0,-8) / 吉他 (+2,-8) / 键盘 (-3,-8) / 鼓 (+2,-11) / 贝斯 (-3,-11)。
         /// </summary>
         private static readonly string[] BandInstruments = new string[]
@@ -339,7 +339,25 @@ namespace Binguin.Feature.Band
         /// <summary>场地 20 格内、没人占的可坐建筑。</summary>
         private static Building FindFreeSeat(Pawn p, Map map, IntVec3 center)
         {
-            List<Thing> things = map.listerThings.ThingsInGroup(ThingRequestGroup.BuildingArtificial);
+            Dictionary<Map, BinguinSeatAvailability> cache = GameComponent_BinguinPerformanceState.Current.seatCache;
+            BinguinSeatAvailability snapshot;
+            if (!cache.TryGetValue(map, out snapshot) || GenTicks.TicksGame - snapshot.tick >= 60)
+            {
+                snapshot = new BinguinSeatAvailability();
+                snapshot.tick = GenTicks.TicksGame;
+                foreach (Thing t in map.listerThings.ThingsInGroup(ThingRequestGroup.BuildingArtificial))
+                {
+                    Building seat = t as Building;
+                    if (seat != null && seat.def.building != null && seat.def.building.isSittable) snapshot.seats.Add(seat);
+                }
+                foreach (Pawn other in map.mapPawns.AllPawnsSpawned)
+                {
+                    if (other.CurJob != null && other.CurJob.targetA.HasThing) snapshot.targets.Add(other.CurJob.targetA.Thing);
+                    if (other.pather != null && !other.pather.Moving) snapshot.occupiedCells.Add(other.Position);
+                }
+                cache[map] = snapshot;
+            }
+            List<Building> things = snapshot.seats;
             Building best = null;
             float bestDist = float.MaxValue;
             for (int i = 0; i < things.Count; i++)
@@ -351,24 +369,13 @@ namespace Binguin.Feature.Band
                 if (dist > 20f) continue;
                 if (dist >= bestDist) continue;
                 if (!p.CanReserveAndReach(b, PathEndMode.OnCell, Danger.Some)) continue;
-                if (IsTaken(map, b)) continue;
+                if (snapshot.targets.Contains(b) || snapshot.occupiedCells.Contains(b.Position)) continue;
                 best = b;
                 bestDist = dist;
             }
+            if (best != null) snapshot.targets.Add(best);
             return best;
         }
 
-        private static bool IsTaken(Map map, Building seat)
-        {
-            var all = map.mapPawns.AllPawnsSpawned;
-            for (int i = 0; i < all.Count; i++)
-            {
-                Pawn q = all[i];
-                if (q == null || q.jobs == null || q.CurJob == null) continue;
-                if (q.CurJob.targetA.Thing == seat) return true;
-                if (q.Position == seat.Position && q.pather != null && !q.pather.Moving) return true;
-            }
-            return false;
-        }
     }
 }

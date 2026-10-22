@@ -27,6 +27,7 @@ using LudeonTK;
 using RimWorld;
 using Verse;
 using Verse.AI;
+using Verse.AI.Group;
 
 using Binguin.Feature.Band;
 using Binguin.Feature.GateShield;
@@ -263,7 +264,7 @@ namespace Binguin.Feature.Diplomacy
                     {
                         continue;
                     }
-                    List<Thing> caps = map.listerThings.ThingsOfDef(capDef);
+                    List<Thing> caps = new List<Thing>(map.listerThings.ThingsOfDef(capDef));
                     for (int i = 0; i < caps.Count; i++)
                     {
                         Building_Casket c = caps[i] as Building_Casket;
@@ -347,7 +348,7 @@ namespace Binguin.Feature.Diplomacy
                         {
                             continue;
                         }
-                        List<Thing> caps = map.listerThings.ThingsOfDef(capDef);
+                        List<Thing> caps = new List<Thing>(map.listerThings.ThingsOfDef(capDef));
                         for (int i = 0; i < caps.Count; i++)
                         {
                             Building_Casket c = caps[i] as Building_Casket;
@@ -403,7 +404,7 @@ namespace Binguin.Feature.Diplomacy
                         {
                             continue;
                         }
-                        List<Thing> caps2 = map.listerThings.ThingsOfDef(capDef);
+                        List<Thing> caps2 = new List<Thing>(map.listerThings.ThingsOfDef(capDef));
                         for (int i = 0; i < caps2.Count; i++)
                         {
                             try
@@ -520,10 +521,6 @@ namespace Binguin.Feature.Diplomacy
                 GenDraw.DrawRadiusRing(cannonAimPawn.Position, cannonAimRange, new UnityEngine.Color(1f, 0.55f, 0.2f));
             }
             // ★ 滑板 0.2 秒前摇（2026-08-19 用户要求）：到点执行起飞
-            if (CompBinguinBoard.pendingSlideTick >= 0 && GenTicks.TicksGame >= CompBinguinBoard.pendingSlideTick)
-            {
-                CompBinguinBoard.ExecutePendingSlide();
-            }
             // ★ 威灵炮站定瞄准视觉（v10）：JobDriver 瞄准期间每帧画
             //   瞄准扇形（角度随进度张开 = 蓄力进度条）+ 落点圈
             CompBinguinWillingCannon.DrawAimVisualTick();
@@ -1016,6 +1013,12 @@ namespace Binguin.Feature.Diplomacy
             {
                 return;
             }
+            Lord waitingLord = diplomat.GetLord();
+            if (waitingLord != null && waitingLord.LordJob is LordJob_BinguinDiplomat)
+            {
+                waitingLord.Notify_PawnLost(diplomat, PawnLostCondition.ForcedToJoinOtherLord);
+                if (diplomat.mindState != null) diplomat.mindState.duty = null;
+            }
             if (!leaveTarget.IsValid)
             {
                 Map map = diplomat.Map;
@@ -1028,8 +1031,7 @@ namespace Binguin.Feature.Diplomacy
                         delegate(IntVec3 c)
                         {
                             return c.Walkable(map)
-                                && map.reachability.CanReach(diplomat.Position, c,
-                                    PathEndMode.OnCell, TraverseMode.ByPawn);
+                                && diplomat.CanReach(c, PathEndMode.OnCell, Danger.Some);
                         },
                         map, 0.5f, out cell))
                 {
@@ -1136,6 +1138,9 @@ namespace Binguin.Feature.Diplomacy
         // public：供 DebugActions_Binguin 调试命令与测试调用
         public void TrySendDiplomat()
         {
+            // 调试入口也不能遗留第二名外交官，或把上一轮离场状态带给新访客。
+            if (diplomat != null && !diplomat.Destroyed && !diplomat.Dead && diplomat.Spawned)
+                return;
             fired = true;
 
             Faction faction = Find.FactionManager.AllFactions.FirstOrDefault(
@@ -1168,6 +1173,11 @@ namespace Binguin.Feature.Diplomacy
             }
             GenSpawn.Spawn(newDiplomat, cell, map);
             diplomat = newDiplomat;
+            leavingTick = -1;
+            responseKind = 0;
+            refusalGoodwillApplied = false;
+            leaveTarget = IntVec3.Invalid;
+            nextWalkRetry = -1;
 
             // ★ 2026-09 修复：生成后自动走进殖民地内部（路径会探开迷雾），
             //   避免外交官站在地图边缘的迷雾里 → 玩家“收到信却看不到人”。
@@ -1219,20 +1229,30 @@ namespace Binguin.Feature.Diplomacy
                         delegate(IntVec3 c)
                         {
                             return c.Walkable(map)
-                                && map.reachability.CanReach(d.Position, c,
-                                    PathEndMode.OnCell, TraverseMode.ByPawn);
+                                && d.CanReach(c, PathEndMode.OnCell, Danger.Some);
                         });
                     if (near.IsValid)
                     {
                         dest = near;
                     }
                 }
-                if (!dest.IsValid || !dest.Walkable(map))
+                if (!dest.IsValid || !dest.Walkable(map)
+                    || !d.CanReach(dest, PathEndMode.OnCell, Danger.Some))
                 {
                     dest = d.Position;
                 }
                 if (dest.IsValid && dest.Walkable(map) && d.pather != null && d.jobs != null)
                 {
+                    // 等待答复期间保持外交官职责；单独派 Goto 后普通访客 AI 会自行离场。
+                    Lord previous = d.GetLord();
+                    if (previous != null)
+                    {
+                        if (previous.LordJob is LordJob_BinguinDiplomat) return;
+                        if (!(previous.LordJob is LordJob_ExitMapBest)) return;
+                        previous.Notify_PawnLost(d, PawnLostCondition.ForcedToJoinOtherLord);
+                    }
+                    LordMaker.MakeNewLord(d.Faction, new LordJob_BinguinDiplomat(dest), map,
+                        new List<Pawn> { d });
                     d.jobs.StartJob(new Job(JobDefOf.Goto, dest), JobCondition.InterruptForced);
                     BinguinLogUtility.Log("外交官正走进殖民地等待点 " + dest);
                 }
@@ -1259,7 +1279,9 @@ namespace Binguin.Feature.Diplomacy
                 {
                     if (diplomat.Spawned)
                     {
-                        return; // 一切正常
+                        if (diplomat.GetLord() == null || diplomat.GetLord().LordJob is LordJob_ExitMapBest)
+                            TryWalkDiplomatIntoColony(diplomat);
+                        return;
                     }
                     BinguinLogUtility.Log("外交官在答复前被移出地图，准备补派。", severity: 1, isDebug: false);
                 }
@@ -1283,6 +1305,8 @@ namespace Binguin.Feature.Diplomacy
 
         public override void ExposeData()
         {
+            base.ExposeData();
+            Scribe_Values.Look(ref allyApplied, "allyApplied", false);
             Scribe_Values.Look<bool>(ref initialized, "initialized", false, false);
             Scribe_Values.Look<int>(ref startTick, "startTick", -1, false);
             Scribe_Values.Look<bool>(ref fired, "fired", false, false);
@@ -1350,7 +1374,7 @@ namespace Binguin.Feature.Diplomacy
 
         // ★ 2026-09：修「老存档里的冰鹅肤色改不过来」。
         //   根因：HAR 把肤色通道【存进了存档】（AlienComp.colorChannels 走 Scribe_Collections），
-        //        所以改 Defs/Feature/Appearance/AlienRace_Binguin.xml 只影响【新生成】的小人；老小人会永远保留当初抽到的值。
+        //        所以改 Defs/Core/Appearance/AlienRace_Binguin.xml 只影响【新生成】的小人；老小人会永远保留当初抽到的值。
         //   本命令把场上所有冰鹅的 skin 通道 first 覆写成纯白（= pawn.story.SkinColor 变白），
         //   second 归零（= 贴图不做 colorTwo 染色），然后刷新渲染。
         //   注意：AlienComp 及其元组类型在 HAR 里是 internal 的，所以走反射，避免编译期依赖。
@@ -1482,7 +1506,7 @@ namespace Binguin.Feature.Diplomacy
             PawnKindDef kind = DefDatabase<PawnKindDef>.GetNamedSilentFail("Binguin_Leader");
             if (kind == null)
             {
-                BinguinLogUtility.Log("找不到 PawnKindDef Binguin_Leader！请检查 Defs/Feature/Diplomacy/PawnKindDefs_Binguin.xml。", severity: 2, isDebug: false);
+                BinguinLogUtility.Log("找不到 PawnKindDef Binguin_Leader！请检查 Defs/Core/PawnKinds/PawnKindDefs_Binguin_Diplomacy.xml。", severity: 2, isDebug: false);
                 return;
             }
             Pawn pawn = null;

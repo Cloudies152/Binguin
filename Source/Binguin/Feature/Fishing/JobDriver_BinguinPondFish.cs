@@ -114,7 +114,8 @@ namespace Binguin.Feature.Fishing
                     JoyTickFullJoyAction.None, 1f, null);
             };
 
-            fish.AddFinishAction(delegate
+            yield return fish;
+            yield return Toils_General.Do(delegate
             {
                 CompBinguinFishPond comp = null;
                 Map map = fish.actor != null ? fish.actor.Map : null;
@@ -137,7 +138,6 @@ namespace Binguin.Feature.Fishing
                     //   鱼直接产出在池边地上，搬运工会收走
                 }
             });
-            yield return fish;
         }
     }
 }

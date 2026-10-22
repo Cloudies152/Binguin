@@ -97,24 +97,17 @@ namespace Binguin.Feature.Rods
                 yield break;
             }
 
-            IntVec3 tablePos = table.Position;
-            bool rodAtTable = (rod.Position - tablePos).LengthHorizontalSquared <= 4f;
+            // 即使半成品已在台边，也使用相同 Toil 序列，保证存读档索引稳定。
 
-            if (!rodAtTable)
-            {
-                yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch)
-                    .FailOnDespawnedOrNull(TargetIndex.A);
-                yield return Toils_Haul.StartCarryThing(TargetIndex.A, false, false, false);
-            }
+            yield return Toils_Goto.GotoThing(TargetIndex.A, PathEndMode.ClosestTouch)
+                .FailOnDespawnedOrNull(TargetIndex.A);
+            yield return Toils_Haul.StartCarryThing(TargetIndex.A, false, false, false);
 
             //  先走到台子旁边（任意相邻格），在这里放下半成品
             yield return Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.ClosestTouch)
                 .FailOnDespawnedOrNull(TargetIndex.B);
 
-            if (!rodAtTable)
-            {
-                yield return ToilDropAtTable(TargetIndex.B);
-            }
+            yield return ToilDropAtTable(TargetIndex.B);
 
             //  放下后，走到台子的交互格（正前方）—— 这是干活位置
             yield return Toils_Goto.GotoThing(TargetIndex.B, PathEndMode.InteractionCell)
@@ -125,16 +118,16 @@ namespace Binguin.Feature.Rods
             // ================================================================
             Toil work = new Toil();
 
-            float[] workLeftBox = new float[1];
+
 
             work.initAction = delegate
             {
                 CompBinguinUnfinishedRod c = RodComp;
                 if (c == null) return;
-                workLeftBox[0] = c.WorkAmountBase - c.workDone;
+                float remaining = c.WorkAmountBase - c.workDone;
                 BinguinLogUtility.Log("开始装配半成品：已有进度 " + c.workDone.ToString("0")
                     + " / " + c.WorkAmountBase.ToString("0")
-                    + "，本次剩余 " + workLeftBox[0].ToString("0")
+                    + "，本次剩余 " + remaining.ToString("0")
                     + "（" + pawn.LabelShort + "，速度 ×"
                     + c.WorkSpeedMultiplier(pawn, WorkTable()).ToString("0.00") + "）");
             };
@@ -159,13 +152,8 @@ namespace Binguin.Feature.Rods
                 }
 
                 float speed = c.WorkSpeedMultiplier(pawn, WorkTable());
-                workLeftBox[0] -= speed * delta;
-
-                float done = c.WorkAmountBase - workLeftBox[0];
-                if (done < 0f) done = 0f;
-                c.workDone = done;
-
-                if (workLeftBox[0] <= 0f)
+                c.workDone = System.Math.Min(c.WorkAmountBase, c.workDone + speed * delta);
+                if (c.workDone >= c.WorkAmountBase)
                 {
                     c.workDone = c.WorkAmountBase;
                     BinguinLogUtility.Log("半成品装配完成，进入收尾（" + pawn.LabelShort + "）");
@@ -181,7 +169,7 @@ namespace Binguin.Feature.Rods
                 if (c == null) return 0f;
                 float total = c.WorkAmountBase;
                 if (total <= 0f) return 1f;
-                float p = 1f - workLeftBox[0] / total;
+                float p = c.workDone / total;
                 if (p < 0f) p = 0f;
                 if (p > 1f) p = 1f;
                 return p;

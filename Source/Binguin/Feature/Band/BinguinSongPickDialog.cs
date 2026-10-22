@@ -6,7 +6,7 @@
 //            → 选 1~7 天后 → 登记预约
 //
 // ★ 曲目来源：`BinguinConcertSongs.All`（DefDatabase<Binguin_SongDef>）
-//   玩家可以往 `Defs/Feature/Band/Concerts_Songs_Binguin.xml` 里加歌。
+//   玩家可以往 `Defs/Features/Band/Concerts_Songs_Binguin.xml` 里加歌。
 // ★ 上限 4 首，按点击顺序演出。
 // ============================================================================
 
@@ -76,7 +76,7 @@ namespace Binguin.Feature.Band
                 {
                     GUI.color = new Color(1f, 1f, 1f, 0.6f);
                     Widgets.Label(new Rect(row.x + 18f, row.y + 22f, row.width - 24f, 20f),
-                        "需艺术 " + s.requiredArtisticLevel);
+                        "Binguin_Interface_049".Translate().ToString() + s.requiredArtisticLevel);
                     GUI.color = Color.white;
                 }
 

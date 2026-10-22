@@ -6,7 +6,7 @@
 //     所以界面**完全一致**：左列角色槽、右侧头像网格、灰掉原因、预计质量、
 //     一人只能占一个位置（由 `RitualRoleAssignments` 原生保证）。
 //
-// ★★ 依赖的三件套 XML：`Defs/Feature/Band/Concerts_Ritual_Binguin.xml`
+// ★★ 依赖的三件套 XML：`Defs/Features/Band/Concerts_Ritual_Binguin.xml`
 //     `RitualBehaviorDef BinguinConcert`（角色槽）
 //     `RitualPatternDef  BinguinConcert`（随时可开）
 //     `PreceptDef        BinguinConcert`（isNonIdeoRitual = 不绑意识形态）
@@ -321,7 +321,7 @@ namespace Binguin.Feature.Band
                 BinguinLogUtility.Log("找不到预约 GameComponent。", severity: 2, isDebug: false);
                 return;
             }
-            if (comp.HasBooking) comp.Cancel("重新预约");
+            if (comp.HasBooking) comp.Cancel("Binguin_Interface_035".Translate().ToString());
             if (!comp.Book(lead, musicians, songs, days, map, micCell)) return;
             Messages.Message("Binguin_ConcertSetup_Booked".Translate(days.ToString(),
                 songs.Count > 0 && songs[0] != null ? songs[0].label : ""),

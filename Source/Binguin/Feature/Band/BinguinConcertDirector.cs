@@ -31,13 +31,13 @@ namespace Binguin.Feature.Band
     public static class BinguinConcertDirector
     {
         /// <summary>本场演出的观众（用于收尾时"只给到场的人发心情"）。</summary>
-        public static List<Pawn> Audience = new List<Pawn>();
+        public static List<Pawn> Audience { get { return GameComponent_BinguinPerformanceState.Current.audience; } set { GameComponent_BinguinPerformanceState.Current.audience = value; } }
 
         /// <summary>本场演出的乐手（含主唱）。</summary>
-        public static List<Pawn> Performers = new List<Pawn>();
+        public static List<Pawn> Performers { get { return GameComponent_BinguinPerformanceState.Current.performers; } set { GameComponent_BinguinPerformanceState.Current.performers = value; } }
 
         /// <summary>本场是不是玩家自办的（区别于外团来访那套）。</summary>
-        public static bool SelfHosted;
+        public static bool SelfHosted { get { return GameComponent_BinguinPerformanceState.Current.selfHosted; } set { GameComponent_BinguinPerformanceState.Current.selfHosted = value; } }
 
         /// <summary>
         /// 开演。由 `GameComponent_BinguinConcertBooking.StartNow()` 调用。
@@ -55,7 +55,6 @@ namespace Binguin.Feature.Band
                 Audience = new List<Pawn>();
                 Performers = new List<Pawn>();
                 ResetSeats();
-                ResetMusic();
 
                 // ① 主唱 → 麦克风（必须传**麦克风建筑**，不能传格子！）
                 //   ★★ 2026-10-17 修玩家日志里的致命红字：
@@ -164,119 +163,6 @@ namespace Binguin.Feature.Band
             p.jobs.TryTakeOrderedJob(job, JobTag.Misc);
         }
 
-
-        // ── 音乐播放（★ 2026-10-17 作者反馈「没有播放音乐」）──
-        //
-        // 原因：曲目 SoundDef 从头到尾**从未被播放**。
-        //   厂商 API：（Verse）Verse.Sound.SoundStarter.PlayOneShotOnCamera(SoundDef, Map)
-        //   演唱会固定 4 小时，曲目只影响听到什么 ⇒ 按选择顺序一首首放，
-        //   每首放完（按它自己的 durationTicks）再接下一首，放完就安静。
-        private static int songIndex;
-        private static int nextSongTick;
-
-        /// <summary>开演时重置音乐播放进度。</summary>
-        public static void ResetMusic()
-        {
-            songIndex = 0;
-            nextSongTick = GenTicks.TicksGame;
-        }
-
-        /// <summary>歌单是否已经全部放完（用于散场后收尾）。</summary>
-        public static bool IsMusicFinished(BinguinConcertBooking b)
-        {
-            if (b == null || b.songs == null || b.songs.Count == 0) return true;
-            return songIndex >= b.songs.Count && GenTicks.TicksGame >= nextSongTick;
-        }
-
-        /// <summary>每 60 tick 调一次：到点就放下一首。</summary>
-        public static void TickMusic(BinguinConcertBooking b)
-        {
-            if (b == null || b.songs == null || b.songs.Count == 0) return;
-            if (GenTicks.TicksGame < nextSongTick) return;
-            if (songIndex >= b.songs.Count) return;
-            Binguin_SongDef s = b.songs[songIndex];
-            int dur = 10000;
-            if (s != null)
-            {
-                dur = s.EffectiveDurationTicks;
-                // ★ `Binguin_SongDef.soundDef` 存的是 **defName 字符串**（方便 XML 里写引用），
-                //   所以先查 DefDatabase 拿到 SoundDef 再播。
-                // ★★ 2026-10-17 作者方案：**直接替换背景音乐**
-                //   原版接口：Find.MusicManagerPlay.ForcePlaySong(SongDef, bool)
-                //   好处：走游戏自己的音乐轨道，音量/淡入淡出/暂停全部由原版处理，
-                //         不受 one-shot 通道那道静默闸门影响。演唱会结束后
-                //         这首放完，原版会自己恢复正常的背景音乐调度。
-                SongDef music = s.musicDef.NullOrEmpty()
-                    ? null : DefDatabase<SongDef>.GetNamedSilentFail(s.musicDef);
-                if (music != null && Find.MusicManagerPlay != null)
-                {
-                    try
-                    {
-                        Find.MusicManagerPlay.ForcePlaySong(music, false);
-                        BinguinLogUtility.Log("演唱会背景音乐：" + music.defName
-                            + "（clipPath=" + music.clipPath + "）", isDebug: false);
-                    }
-                    catch (System.Exception e)
-                    {
-                        BinguinLogUtility.Log("ForcePlaySong 失败：" + e.Message,
-                            severity: 1, isDebug: false);
-                    }
-                }
-                else if (!s.musicDef.NullOrEmpty())
-                {
-                    BinguinLogUtility.Log("找不到 SongDef：" + s.musicDef
-                        + "（检查 Concerts_Songs_Binguin.xml）", severity: 1, isDebug: false);
-                }
-
-                SoundDef clip = s.soundDef.NullOrEmpty()
-                    ? null : DefDatabase<SoundDef>.GetNamedSilentFail(s.soundDef);
-                if (clip == null && !s.soundDef.NullOrEmpty())
-                {
-                    BinguinLogUtility.Log("找不到 SoundDef：" + s.soundDef, severity: 1, isDebug: false);
-                }
-                if (clip != null && b.Map != null)
-                {
-                    try
-                    {
-                        // ★★ 2026-10-17 自测发现的错误：
-                        //   `PlayOneShotOnCamera` 要求 SoundDef 有 **on-camera subSounds**，
-                        //   而我们的曲目 SoundDef 是 `MapOnly` → 报
-                        //   "Tried to play ... on camera but it has no on-camera subSounds."
-                        //   ⇒ 改用 `PlayOneShot(clip, SoundInfo.InMap(...))`，
-                        //     从场地那一格发声，与 MapOnly 一致。
-                        // ★★ 2026-10-17 终于找到原因：
-                        //   SubSoundDef.TryPlay 里有一道静默闸门（不报错直接 return），
-                        //   而 `SoundInfo.InMap(格子)` 会按**离镜头距离衰减音量** ——
-                        //   演唱会场地经常不在镜头里 ⇒ 播放成功但听不见。
-                        //   ⇒ 改用 on-camera 通道（XML 已给 subSounds 标了 onCamera=True），
-                        //     不受距离衰减，只要玩家在这张地图上看着就能听到。
-                        Verse.Sound.SoundStarter.PlayOneShotOnCamera(clip, b.Map);
-                        // 诊断：告诉我们音频到底装载到了什么
-                        int subN = clip.subSounds != null ? clip.subSounds.Count : -1;
-                        int grainN = -1;
-                        if (clip.subSounds != null && clip.subSounds.Count > 0
-                            && clip.subSounds[0] != null && clip.subSounds[0].grains != null)
-                        {
-                            grainN = clip.subSounds[0].grains.Count;
-                        }
-                        BinguinLogUtility.Log("播放诊断：" + clip.defName
-                            + " subSounds=" + subN + " grains=" + grainN
-                            + " volume=" + (clip.subSounds != null && clip.subSounds.Count > 0
-                                ? clip.subSounds[0].volumeRange.ToString() : "?"),
-                            isDebug: false);
-                        BinguinLogUtility.Log("演唱会播放第 " + (songIndex + 1)
-                            + " 首：" + s.label, isDebug: false);
-                    }
-                    catch (System.Exception e)
-                    {
-                        BinguinLogUtility.Log("播放曲目失败：" + e.Message,
-                            severity: 1, isDebug: false);
-                    }
-                }
-            }
-            nextSongTick = GenTicks.TicksGame + dur;
-            songIndex++;
-        }
 
         /// <summary>把贵宾交给一个 Lord，否则他们会立刻离开地图。
         /// ★ 2026-10-17 作者反馈：「邀请访客后，演唱会开始时访客来时会直接离开地图」
@@ -543,9 +429,12 @@ namespace Binguin.Feature.Band
         /// </summary>
         public static void OnPerformanceEnded()
         {
+            GameComponent_BinguinPerformanceState.ReleaseParticipants(Performers);
+            GameComponent_BinguinPerformanceState.ReleaseParticipants(Audience);
             Audience = new List<Pawn>();
             Performers = new List<Pawn>();
             SelfHosted = false;
+            ResetSeats();
         }
 
         /// <summary>
@@ -727,6 +616,10 @@ namespace Binguin.Feature.Band
             try
             {
                 if (b == null) return;
+                List<Pawn> all = b.LiveMusicians();
+                if (b.leadSinger != null) all.Add(b.leadSinger);
+                if (b.guests != null) all.AddRange(b.guests);
+                GameComponent_BinguinPerformanceState.ReleaseParticipants(all);
                 if (b.musicians != null)
                 {
                     foreach (KeyValuePair<string, Pawn> kv in b.musicians)

@@ -27,7 +27,7 @@
         "panel": "shared",
         "clear": true
       },
-      "detail": "构建 Release 并复制 Binguin.dll 到 Assemblies；依赖路径读取 Binguin.local.props。"
+      "detail": "构建 Release 并复制 Binguin.dll 到 Assemblies；自动还原固定版本的 RimWorld 1.7 参考包。"
     },
     {
       "label": "build: Debug",
@@ -55,7 +55,7 @@
         "panel": "shared",
         "clear": true
       },
-      "detail": "构建 Debug 并复制 Binguin.dll 到 Assemblies；依赖路径读取 Binguin.local.props。"
+      "detail": "构建 Debug 并复制 Binguin.dll 到 Assemblies；自动还原固定版本的 RimWorld 1.7 参考包。"
     }
   ]
 }

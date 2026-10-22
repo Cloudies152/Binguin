@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ============================================================================
+     冰鹅族【自办演唱会】· 原版文化仪式相关 Def（2026-10-17）
+
+     ★★★ 事故记录（2026-10-17，玩家实测「所有乐器点不开、没有任何按键」）★★★
+       我曾在这里写了一个 `PreceptDef`，并设 `isNonIdeoRitual = true`。
+       游戏会**自动把这个 PreceptDef 实例化成 Precept_Ritual**，而我的
+       `RitualBehaviorDef` **没有写 `<workerClass>`** ⇒ `behavior` 为 null ⇒
+         `Precept_Ritual.ShouldShowGizmo()` 抛 NullReferenceException
+         ⇒ `Thing.GetGizmos()` 整个枚举中断
+         ⇒ **地图上所有物体（乐器、麦克风、家具…）的按键全部消失**
+       日志栈：
+         NullReferenceException
+           at RimWorld.Precept_Ritual.ShouldShowGizmo(TargetInfo)
+           at Verse.Thing.GetGizmos()
+           at Verse.Building.GetGizmos()
+           at RimWorld.Building_MusicalInstrument.GetGizmos()
+       ⇒ **玩家完全没法操作，比"没有仪式界面"严重得多。**
+
+     ⇒ 现在的策略：
+        · **不写 PreceptDef**（一旦存在就会被全局实例化，风险远高于收益）
+        · 只保留 `RitualBehaviorDef` / `RitualPatternDef`（不会自动实例化，安全）
+        · 演唱会入口走**自建窗口** `Dialog_BinguinConcertSetup`（稳定、已验证）
+        · `BinguinConcertRitual.TryOpen()` 找不到 PreceptDef 时返回 false，
+          自动回退到自建窗口 —— 不会崩。
+
+     ★★ 以后若要启用原版仪式界面，必须同时做到：
+        ① 给 `RitualBehaviorDef` 指定一个**具体的** `<workerClass>`
+           （原版可用的 `RitualBehaviorWorker_*`，或自己写一个子类），**绝不能留空**
+        ② 启用后先验证 `Thing.GetGizmos` 不抛异常，再往下做
+     ============================================================================ -->
+<Defs>
+
+  <!-- ══════ ① 仪式行为：角色槽 + 阶段（保留，不自动实例化，安全）══════ -->
+  <RitualBehaviorDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>BinguinConcert</defName>
+    <!-- -1 = 不受仪式时长机制限制（时长由我们自己的曲目总和控制） -->
+    <durationTicks>-1</durationTicks>
+    <spectatorsLabel>观众</spectatorsLabel>
+    <spectatorGerund>观演</spectatorGerund>
+    <displayCompletedMessage>false</displayCompletedMessage>
+
+    <roles>
+      <!-- 主唱：必选 -->
+      <li Class="RitualRoleColonist">
+        <id>lead</id>
+        <label>主唱</label>
+        <maxCount>1</maxCount>
+        <required>True</required>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+      <!-- 乐手：可缺人 -->
+      <li Class="RitualRoleColonist">
+        <id>keyboard</id>
+        <label>键盘</label>
+        <maxCount>1</maxCount>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+      <li Class="RitualRoleColonist">
+        <id>drumkit</id>
+        <label>架子鼓</label>
+        <maxCount>1</maxCount>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+      <li Class="RitualRoleColonist">
+        <id>guitar</id>
+        <label>吉他</label>
+        <maxCount>1</maxCount>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+      <li Class="RitualRoleColonist">
+        <id>bass</id>
+        <label>贝斯</label>
+        <maxCount>1</maxCount>
+        <usedSkill>Artistic</usedSkill>
+        <countsAsParticipant>True</countsAsParticipant>
+        <allowChild>false</allowChild>
+      </li>
+    </roles>
+
+    <stages>
+      <li>
+        <defaultDuty>Spectate</defaultDuty>
+        <endTriggers>
+          <li Class="StageEndTrigger_DurationPercentage">
+            <percentage>1</percentage>
+          </li>
+        </endTriggers>
+      </li>
+    </stages>
+  </RitualBehaviorDef>
+
+  <!-- ══════ ② 仪式模式（保留，不自动实例化，安全）══════ -->
+  <RitualPatternDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>BinguinConcert</defName>
+    <ritualBehavior>BinguinConcert</ritualBehavior>
+    <!-- ★★ 2026-10-17 关键修复：原版每个 RitualPatternDef 都必须指定
+         `ritualObligationTargetFilter`（Odyssey 的 GravshipLaunch、Ideology 的所有
+         仪式都指定了）。**我第一版漏了它** ⇒ `Precept_Ritual.ShouldShowGizmo()`
+         访问 null 过滤器时抛 NullReferenceException。
+         证据：Verse/Thing.cs:1411 会遍历玩家意识形态的所有 Precept 并调用
+         `ritual.ShouldShowGizmo(this)`，异常一出整个 gizmo 枚举中断
+         ⇒ 全图物体按键消失。
+         `AnyRitualSpot` 是最宽松的原版过滤器。 -->
+    <ritualObligationTargetFilter>AnyRitualSpot</ritualObligationTargetFilter>
+    <!-- ★★ 2026-10-17 关键修复（第四个缺失字段）：
+         `Dialog_BeginRitual.PredictedQuality(List<RitualOutcomeEffectDef MayRequire="Ludeon.RimWorld.Ideology">)` 会读取
+         outcome effect，**没写它就会 NullReferenceException**，导致整个仪式窗口
+         每帧报错、画不出来：
+           NullReferenceException
+             at RimWorld.Dialog_BeginRitual.PredictedQuality(...)
+             at RimWorld.Dialog_BeginLordJob.DoDescription(...)
+         ⇒ 借用原版 `CelebrationPartyDanceDrum`（鼓乐庆祝派对，语义最接近演唱会）。 -->
+    <!-- ★ 2026-10-17 改：原来借用 `CelebrationPartyDanceDrum`，它带
+         `RitualOutcomeComp_NumPlayedDrums`（统计敲了几个鼓），于是仪式界面上
+         多出一个"鼓"的条目。原版其他 outcome 也都带讲台/座位/领袖等 comp，
+         同样会冒出不相关条目 ⇒ **自己定义一个无 comp 的 outcome**。 -->
+    <ritualOutcomeEffect>BinguinConcertOutcome</ritualOutcomeEffect>
+    <ritualOnlyForIdeoMembers>false</ritualOnlyForIdeoMembers>
+    <playsIdeoMusic>false</playsIdeoMusic>
+    <alwaysStartAnytime>true</alwaysStartAnytime>
+    <ignoreExtremeTemperatures>true</ignoreExtremeTemperatures>
+  </RitualPatternDef>
+
+  <!-- ══════ ③ Precept（第三版：补齐 obligationTargetFilter 后重新启用）══════
+       ★ 不写 `isNonIdeoRitual`：写了会被全局额外实例化一份。
+       ★ 仍然保留：失败时 `BinguinConcertRitual.TryOpen()` 有三道回退保护。 -->
+  <PreceptDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>BinguinConcert</defName>
+    <label>举办演唱会</label>
+    <description>在麦克风前办一场演唱会。</description>
+    <issue>Ritual</issue>
+    <preceptClass>Precept_Ritual</preceptClass>
+    <visible>false</visible>
+    <countsTowardsPreceptLimit>false</countsTowardsPreceptLimit>
+    <selectionWeight>1.0</selectionWeight>
+    <ritualPatternBase>BinguinConcert</ritualPatternBase>
+    <usesIdeoVisualEffects>false</usesIdeoVisualEffects>
+  </PreceptDef>
+  <!-- ══════ ④ 演唱会仪式结果：无任何 comp，界面才干净 ══════
+       · workerClass 用原版 `RitualOutcomeEffectWorker_FromQuality`（按质量给心情）
+       · `memoryDef` 复用模组已有的 `Binguin_AttendedConcert` 记忆
+       · **不写 <comps>** ⇒ 仪式界面不会多出"鼓/讲台/座位"之类的条目 -->
+  <RitualOutcomeEffectDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>BinguinConcertOutcome</defName>
+    <description>依仪式质量，参与者在 {MOODDAYS} 天内获得 {MINMOOD}~{MAXMOOD} 心情。</description>
+    <workerClass>RitualOutcomeEffectWorker_FromQuality</workerClass>
+    <startingQuality>0</startingQuality>
+    <minQuality>0</minQuality>
+    <maxQuality>1</maxQuality>
+    <givesDevelopmentPoints>false</givesDevelopmentPoints>
+    <memoryDef>Binguin_AttendedConcert</memoryDef>
+    <warnOnLowQuality>false</warnOnLowQuality>
+    <allowAttachableOutcome>false</allowAttachableOutcome>
+    <!-- ★★★ 2026-10-17 关键：**空列表也必须显式写出来**。
+         `RitualOutcomeEffectDef.comps` 是 `public List<RitualOutcomeComp> comps;`
+         —— **没有初始化器**，XML 不写它就是 null。
+         而 `Dialog_BeginRitual.PredictedQuality()` 里是
+             foreach (RitualOutcomeComp comp in outcome.comps)
+         ⇒ null 列表直接 NullReferenceException，窗口每帧报错画不出来。
+         （原版 85% 的 RitualOutcomeEffectDef 都写 <comps>，就是因为不写会崩。）
+         其他 List 字段同理，一并给空列表。 -->
+    <!-- ★ 2026-10-17：三个自定义 comp ⇒ 仪式界面的"效果乘数"会显示这三条，
+         加起来正好等于总质量（startingQuality 已设为 0）。
+         权重依据作者要求：人数 30% / 艺术总和 50% / 灯光 20%。 -->
+    <comps>
+      <li Class="Binguin.Feature.Band.RitualOutcomeComp_BinguinPersonnel, Binguin" />
+      <li Class="Binguin.Feature.Band.RitualOutcomeComp_BinguinArtistic, Binguin" />
+      <li Class="Binguin.Feature.Band.RitualOutcomeComp_BinguinLights, Binguin" />
+    </comps>
+    <!-- ★ 2026-10-17：`outcomeChances` 也**不能空**。
+         仪式界面的“预计效果 / 心情”就是从这里算出来的
+         （RitualOutcomeEffectWorker_FromQuality 按质量在这些条目里选）。
+         给空列表 ⇒ 界面上没有任何预计结果可显示。 -->
+    <outcomeChances>
+      <!-- 正面：演唱会本身就是好事，所以只给一个条目、概率 1。
+           记忆复用模组已有的 Binguin_AttendedConcert。 -->
+      <li>
+        <label>冰鹅演唱会</label>
+        <chance>1</chance>
+        <memory>Binguin_AttendedConcert</memory>
+        <description>大家在演唱会上得到了很好的享受。</description>
+        <positivityIndex>1</positivityIndex>
+      </li>
+    </outcomeChances>
+    <extraPredictedOutcomeDescriptions />
+    <extraOutcomeDescriptions />
+    <extraInfoLines />
+  </RitualOutcomeEffectDef>
+</Defs>

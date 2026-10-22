@@ -238,24 +238,9 @@ namespace Binguin.Feature.Band
                     spot = center;
                 }
             }
-            GenPlace.TryPlaceThing(silver, spot, map, ThingPlaceMode.Near, null);
-            if (!silver.Spawned)
-            {
-                // 真放不下 ⇒ 退回原版的"直接给玩家"（不丢钱）
-                if (!silver.Destroyed)
-                {
-                    silver.Destroy(DestroyMode.Vanish);
-                }
-                Thing silver2 = ThingMaker.MakeThing(silverDef, null);
-                if (silver2 != null)
-                {
-                    silver2.stackCount = amount;
-                    GenPlace.TryPlaceThing(silver2, center, map, ThingPlaceMode.Near, null);
-                    return silver2.Spawned;
-                }
-                return false;
-            }
-            return true;
+            // 合堆会销毁原对象，但仍属于成功；失败时仅重试剩余实物。
+            if (GenPlace.TryPlaceThing(silver, spot, map, ThingPlaceMode.Near, null)) return true;
+            return !silver.Destroyed && GenPlace.TryPlaceThing(silver, center, map, ThingPlaceMode.Near, null);
         }
     }
 }

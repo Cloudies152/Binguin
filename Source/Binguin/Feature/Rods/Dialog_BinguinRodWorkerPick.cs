@@ -200,7 +200,7 @@ namespace Binguin.Feature.Rods
 
         private static string Label(Thing t)
         {
-            return t == null ? "（无）" : t.LabelShort;
+            return t == null ? "Binguin_Interface_081".Translate().ToString() : t.LabelShort;
         }
 
         /// <summary>

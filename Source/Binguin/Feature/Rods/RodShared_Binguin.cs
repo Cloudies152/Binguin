@@ -110,7 +110,7 @@ namespace Binguin.Feature.Rods
             if (stuff == null) return 1f;
             StatDef stat = CooldownStat;
             if (stat == null) return 1f;
-            return stuff.GetStatValueAbstract(stat, null);
+            return stuff.stuffProps == null ? 1f : stuff.stuffProps.statFactors.GetStatFactorFromList(stat);
         }
 
         // 竿头材质 → 伤害/穿甲倍率（刀制用 Sharp，锤制用 Blunt）
@@ -128,7 +128,7 @@ namespace Binguin.Feature.Rods
             if (stuff == null) return 1f;
             StatDef stat = MaxHpStat;
             if (stat == null) return 1f;
-            return stuff.GetStatValueAbstract(stat, null);
+            return stuff.stuffProps == null ? 1f : stuff.stuffProps.statFactors.GetStatFactorFromList(stat);
         }
 
         // 食物 → 鱼饵效果（判定顺序：特殊 def → 肉 → 素 → 兜底无忌口）

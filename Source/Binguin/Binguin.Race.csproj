@@ -1,138 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!--
-    冰鹅族构建配置（Visual Studio / Rider / dotnet 共用）。
-    从模组根目录执行：dotnet build Source/Binguin/Binguin.Race.sln -c Release
-    或执行 Source/build.ps1。两种方式都需要 .NET SDK。
-    每位协作者复制 Binguin.local.props.example 为 Binguin.local.props，
-    填写自己的游戏与 HAR 路径。只提交模板，不提交本机配置。
-    详细说明见 Source/BUILDING.md。
-  -->
+  <!-- RimWorld 1.7 使用 .NET 10；固定参考包自动还原，无需本机游戏或 HAR 路径。 -->
   <PropertyGroup>
-    <!-- 本机 HAR 1.6 的目标框架为 net48；使用 net472 会拒绝该引用（MSB3274）。
-         程序集版本 4.0.0.0 不等于目标框架 net40。新增 API 仍需游戏内验证。 -->
-    <TargetFramework>net48</TargetFramework>
-    <!-- 保留 C# 5 以兼容已有源码；它不是 RimWorld 的硬性要求。 -->
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>5</LangVersion>
     <AssemblyName>Binguin</AssemblyName>
     <RootNamespace>Binguin</RootNamespace>
-    <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <!-- 当前不生成 PDB；调试时可按需调整。 -->
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
     <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
-    <!-- 保留原有的文档与过时 API 警告抑制；程序集冲突警告不再隐藏。 -->
     <NoWarn>$(NoWarn);CS1591;CS0618</NoWarn>
+    <RimWorldReferenceVersion>1.7.4985-unstable</RimWorldReferenceVersion>
   </PropertyGroup>
-
-  <!-- 本机配置在默认目录推导之前导入；命令行 -p 属性优先。
-       RimWorldDir 为游戏根目录；ManagedDir 可直接指定引用程序集目录。
-       HarDir 为 HAR 根目录；HarAssemblyPath 可覆盖默认的 1.6 DLL 路径。
-       各默认值只在属性为空时设置，避免覆盖协作者的本机配置。 -->
   <Import Project="Binguin.local.props" Condition="Exists('Binguin.local.props')" />
   <PropertyGroup>
-    <!-- ★ 2026-10-11：兼容 1.6 与 1.7 两种安装布局。
-         1.6 及以前：引用程序集在 <游戏根>\RimWorldWin64_Data\Managed\
-         1.7（Waylith 新引擎）：没有 RimWorldWin64_Data，Assembly-CSharp.dll
-           和 UnityStubs.dll 都在【游戏根目录】。
-         两级 Condition：先试旧的 Managed 目录，不存在就退回游戏根。 -->
-    <ManagedDir Condition="'$(ManagedDir)' == '' and '$(RimWorldDir)' != '' and Exists('$(RimWorldDir)\RimWorldWin64_Data\Managed')">$(RimWorldDir)\RimWorldWin64_Data\Managed</ManagedDir>
     <ManagedDir Condition="'$(ManagedDir)' == '' and '$(RimWorldDir)' != ''">$(RimWorldDir)</ManagedDir>
-    <!-- 1.7 用 UnityStubs.dll 一次性提供 UnityEngine / Unity.Mathematics 全部类型 -->
-    <UsesUnityStubs Condition="Exists('$(ManagedDir)\UnityStubs.dll')">true</UsesUnityStubs>
-    <HarAssemblyPath Condition="'$(HarAssemblyPath)' == '' and '$(HarDir)' != '' and Exists('$(HarDir)\1.7\Assemblies\AlienRace.dll')">$(HarDir)\1.7\Assemblies\AlienRace.dll</HarAssemblyPath>
-    <HarAssemblyPath Condition="'$(HarAssemblyPath)' == '' and '$(HarDir)' != '' and '$(HarAssemblyPath)' == ''">$(HarDir)\1.6\Assemblies\AlienRace.dll</HarAssemblyPath>
-    <CustomOutputDir Condition="'$(CustomOutputDir)' == ''">$(MSBuildProjectDirectory)\..\..\</CustomOutputDir>
-    <GameModsDir Condition="'$(GameModsDir)' == ''">$(CustomOutputDir)</GameModsDir>
+    <CustomOutputDir Condition="'$(CustomOutputDir)' == ''">$(MSBuildProjectDirectory)/../../</CustomOutputDir>
   </PropertyGroup>
-
-  <!-- SDK 自动收集本项目及子目录的 .cs，并排除 bin/obj。
-       游戏和 HAR 引用均设 Private=false，不复制进构建输出。 -->
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-
-  <!-- ★ 1.7（Waylith）：Unity 被移出游戏本体，由 UnityStubs.dll 提供兼容层。
-       实测该 DLL 含 UnityEngine 命名空间下的 Vector2/3、Color、Rect、Mathf、
-       Texture2D、Font、GUI、Material、Shader、Matrix4x4、Quaternion、Time
-       以及 Unity.Mathematics —— 本模组用到的类型全部覆盖。
-       ⇒ 1.7 下**不需要安装 Unity**，只引用这一个 DLL 即可。 -->
-  <ItemGroup Condition="'$(UsesUnityStubs)' == 'true'">
-    <Reference Include="UnityStubs">
-      <HintPath>$(ManagedDir)\UnityStubs.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <!-- ★ 1.7 的渲染层搬到了 Waylith（`Material` / `DrawPropertyBlock`
-         等类型定义在 Waylith.dll 里，UnityStubs 只是转发声明）。
-         缺它会在 `Comp_BinguinBoardDraw` / `BandVisitFlow` 报 CS0012。 -->
-    <Reference Include="Waylith">
-      <HintPath>$(ManagedDir)\Waylith.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-
-  <!-- ★ 1.6 及以前：Unity 是游戏自带的若干模块 DLL（逐个引用）。 -->
-  <ItemGroup Condition="'$(UsesUnityStubs)' != 'true'">
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>$(ManagedDir)\UnityEngine.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>$(ManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Unity.Mathematics">
-      <HintPath>$(ManagedDir)\Unity.Mathematics.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="AlienRace">
-      <HintPath>$(HarAssemblyPath)</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <!-- Harmony 版本由公共项目统一；仅用于编译，游戏运行时由 Harmony 前置提供。 -->
     <PackageReference Include="Lib.Harmony" Version="2.4.1" PrivateAssets="all" ExcludeAssets="runtime" />
-    <!-- 官方参考程序集包，避免每人另装 .NET Framework Developer Pack。 -->
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="$(RimWorldReferenceVersion)" PrivateAssets="all" ExcludeAssets="runtime" Condition="'$(ManagedDir)' == ''" />
   </ItemGroup>
-
-  <!-- 在解析引用前检查全部文件；缺失时直接报路径错误，避免未解析引用被忽略。 -->
-  <Target Name="CheckDependencyPaths" BeforeTargets="ResolveAssemblyReferences" Condition="'$(DesignTimeBuild)' != 'true'">
-    <Error Condition="'$(ManagedDir)' == ''"
-           Code="BINGUIN001" Text="请在 Binguin.local.props 中设置 RimWorldDir，或通过 -p:RimWorldDir 指定游戏目录（也可直接设置 ManagedDir）。" />
-    <Error Condition="'$(HarAssemblyPath)' == ''"
-           Code="BINGUIN002" Text="请在 Binguin.local.props 中设置 HarDir（HAR 模组根目录），或设置 HarAssemblyPath 指向 RimWorld 1.6 的 AlienRace.dll。" />
-    <ItemGroup>
-      <_RequiredDependency Include="@(Reference->'%(HintPath)')" />
-    </ItemGroup>
-    <Error Condition="!Exists('%(_RequiredDependency.Identity)')"
-           Code="BINGUIN003" Text="找不到引用 DLL：%(_RequiredDependency.Identity)。请检查 Binguin.local.props 中的路径和依赖版本。" />
+  <ItemGroup Condition="'$(ManagedDir)' != ''">
+    <Reference Include="Assembly-CSharp" HintPath="$(ManagedDir)/Assembly-CSharp.dll" Private="false" />
+    <Reference Include="UnityStubs" HintPath="$(ManagedDir)/UnityStubs.dll" Private="false" />
+    <Reference Include="Waylith" HintPath="$(ManagedDir)/Waylith.dll" Private="false" />
+  </ItemGroup>
+  <Target Name="CheckDependencyPaths" BeforeTargets="ResolveAssemblyReferences" Condition="'$(ManagedDir)' != '' and '$(DesignTimeBuild)' != 'true'">
+    <Error Condition="'%(Reference.HintPath)' != '' and !Exists('%(Reference.HintPath)')" Code="BINGUIN003" Text="找不到 RimWorld 1.7 引用：%(Reference.HintPath)。省略 RimWorldDir/ManagedDir 可自动使用参考包。" />
   </Target>
-
-  <!-- 保留 SDK 默认 bin 输出，再仅将本项目 DLL 复制到模组 Assemblies。
-       不扫描整个输出目录，避免把游戏、HAR 或 Harmony DLL 随模组发布。
-       About.xml 已在模组目录中，无需复制给自己。 -->
   <Target Name="CopyToCustomDirectory" AfterTargets="Build">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(CustomOutputDir)\Assemblies" SkipUnchangedFiles="true" />
-    <Message Importance="high" Text="已复制 $(TargetFileName) 到 $(CustomOutputDir)\Assemblies" />
-  </Target>
-
-  <!-- 可选：-p:DeployToGame=true 更新 GameModsDir 中的 DLL。目标须为已安装的完整模组目录。 -->
-  <Target Name="DeployToGame" AfterTargets="CopyToCustomDirectory" Condition="'$(DeployToGame)' == 'true'">
-    <Error Condition="!Exists('$(GameModsDir)')" Text="部署目录不存在：$(GameModsDir)。请设置 GameModsDir 为完整模组目录。" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GameModsDir)\Assemblies" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(CustomOutputDir)/Assemblies" SkipUnchangedFiles="true" />
+    <Message Importance="high" Text="已复制 $(TargetFileName) 到 $(CustomOutputDir)/Assemblies" />
   </Target>
 </Project>

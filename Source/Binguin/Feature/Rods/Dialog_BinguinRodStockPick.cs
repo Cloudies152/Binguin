@@ -72,8 +72,10 @@ namespace Binguin.Feature.Rods
 
         public override Vector2 InitialSize
         {
-            get { return new Vector2(660f, 470f); }
+            get { return new Vector2(660f, 640f); }
         }
+
+        private Vector2 bodyScroll;
 
         public override void DoWindowContents(Rect inRect)
         {
@@ -83,7 +85,14 @@ namespace Binguin.Feature.Rods
                 "Binguin_RodStock_01".Translate());
             Text.Font = GameFont.Small;
 
-            float y = inRect.y + 38f;
+            Rect windowRect = inRect;
+            Rect bodyRect = new Rect(inRect.x, inRect.y + 38f, inRect.width, Mathf.Max(1f, inRect.height - 82f));
+            float contentHeight = 24f + RowH * BinguinRodPartStock.Slots.Length + 6f
+                + (pickingSlot >= 0 ? 102f : 0f) + 24f + 66f + 32f;
+            Rect bodyView = new Rect(0f, 0f, bodyRect.width - 20f, contentHeight);
+            Widgets.BeginScrollView(bodyRect, ref bodyScroll, bodyView);
+            inRect = bodyView;
+            float y = 0f;
 
             Widgets.Label(new Rect(inRect.x, y, inRect.width, 22f),
                 "Binguin_RodStock_02".Translate());
@@ -158,7 +167,8 @@ namespace Binguin.Feature.Rods
             }
             else
             {
-                Rect wView = new Rect(0f, 0f, wRect.width - 20f, 34f * ((workers.Count + 3) / 4) + 8f);
+                int workerColumns = Mathf.Max(1, Mathf.FloorToInt((wRect.width - 20f + 8f) / 156f));
+                Rect wView = new Rect(0f, 0f, wRect.width - 20f, 34f * ((workers.Count + workerColumns - 1) / workerColumns) + 8f);
                 Widgets.BeginScrollView(wRect, ref workerScroll, wView);
                 const float WB = 148f;      // ★ 按钮要够宽，否则长名字被截断
                 const float HB = 30f;
@@ -201,6 +211,8 @@ namespace Binguin.Feature.Rods
                 GUI.color = oldColor;
             }
 
+            Widgets.EndScrollView();
+            inRect = windowRect;
             // ================= 底部按钮 =================
             float by = inRect.y + inRect.height - 34f;
             Rect cancelRect = new Rect(inRect.x + inRect.width - 320f, by, 150f, 30f);
