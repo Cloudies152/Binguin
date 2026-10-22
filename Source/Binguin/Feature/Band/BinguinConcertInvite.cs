@@ -111,6 +111,32 @@ namespace Binguin.Feature.Band
                 {
                     continue;   // 已经邀过
                 }
+                // ★★ 2026-10-22 修作者反馈「邀请多个派系，只来了一个」：
+                //   贵宾们会带着 `LordJob_BinguinCrowd` 的防守职责，**互有敌意的两拨会在场地里打起来**
+                //   （事件观众那边早就有这条检查，自办邀请这里漏了）。
+                //   ⇒ 已邀请的派系里有和它敌对的，就不再提供这条邀请。
+                if (booking != null && booking.invitedFactionIds != null
+                    && booking.invitedFactionIds.Count > 0)
+                {
+                    bool clash = false;
+                    for (int k = 0; k < all.Count; k++)
+                    {
+                        Faction other = all[k];
+                        if (other == null || other == f) continue;
+                        if (!booking.invitedFactionIds.Contains(other.loadID)) continue;
+                        if (f.HostileTo(other))
+                        {
+                            clash = true;
+                            break;
+                        }
+                    }
+                    if (clash)
+                    {
+                        BinguinLogUtility.Log("不提供邀请：" + f.Name
+                            + " 与已邀请的派系互有敌意，同场会打起来。", severity: 1, isDebug: false);
+                        continue;
+                    }
+                }
                 result.Add(f);
             }
             return result;
@@ -188,6 +214,7 @@ namespace Binguin.Feature.Band
 
             IntVec3 entry = FindEntryCell(map);
             List<int> handled = new List<int>();
+            List<Faction> alreadySpawned = new List<Faction>();
             foreach (KeyValuePair<int, int> kv in booking.acceptedGuests)
             {
                 Faction f = null;
@@ -205,11 +232,32 @@ namespace Binguin.Feature.Band
                 {
                     continue;   // 派系没了（被灭等）—— 跳过
                 }
+                // ★★ 2026-10-22：互有敌意的派系不能同场 —— 贵宾带的是
+                //   `LordJob_BinguinCrowd`（DefendPoint 职责），两拨敌对会在场地里打起来，
+                //   结果就是"只来一个派系"。先到的留下，后来的这次就不来了。
+                Faction clash = null;
+                for (int k = 0; k < alreadySpawned.Count; k++)
+                {
+                    if (f.HostileTo(alreadySpawned[k]))
+                    {
+                        clash = alreadySpawned[k];
+                        break;
+                    }
+                }
+                if (clash != null)
+                {
+                    Messages.Message("Binguin_ConcertGuestHostile".Translate(f.Name, clash.Name),
+                        MessageTypeDefOf.NegativeEvent);
+                    BinguinLogUtility.Log("贵宾名单里 " + f.Name + " 与 " + clash.Name
+                        + " 互有敌意，本次跳过（否则会在场地打起来）。", severity: 1, isDebug: false);
+                    continue;
+                }
                 PawnKindDef kind = PickGuestKind(f);
                 if (kind == null)
                 {
                     continue;
                 }
+                int countBefore = spawned.Count;
                 for (int n = 0; n < kv.Value; n++)
                 {
                     try
@@ -234,6 +282,13 @@ namespace Binguin.Feature.Band
                             severity: 1, isDebug: false);
                     }
                 }
+                // 诊断用：这个派系实际来了几个人（2026-10-22 排查"只来一个派系"）
+                if (spawned.Count > countBefore)
+                {
+                    alreadySpawned.Add(f);
+                }
+                BinguinLogUtility.Log("贵宾：" + f.Name + " 到场 " + (spawned.Count - countBefore)
+                    + " 人（预约 " + kv.Value + " 人）。", isDebug: false);
             }
             for (int i = 0; i < handled.Count; i++)
             {

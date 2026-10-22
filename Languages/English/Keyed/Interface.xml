@@ -83,6 +83,9 @@
   <Binguin_Interface_080>No available colonists can assemble this rod.</Binguin_Interface_080>
   <Binguin_Interface_082>(not selected)</Binguin_Interface_082>
   <Binguin_Interface_083>Ranged strike enabled: Zenith Fish Strike (experimental)</Binguin_Interface_083>
+  <Binguin_Interface_084>Compatibility (off by default)</Binguin_Interface_084>
+  <Binguin_Interface_085>Main-thread pre-draw workaround (turn this off first if the game freezes)</Binguin_Interface_085>
+  <Binguin_Interface_086>Moves Binguin entities' pre-draw to the main thread to avoid a 1.7 parallel-draw concurrency error; the root cause is unconfirmed and it may conflict with third-party draw patches, so it is off by default.</Binguin_Interface_086>
   <Binguin_WorkOnRod_NoTable>No usable rod assembly table is available.</Binguin_WorkOnRod_NoTable>
   <Binguin_BandQuest_NoStart>The Binguin band waited six hours without a concert and has left.</Binguin_BandQuest_NoStart>
   <Binguin_Debug_RodKit_Label>(Debug) Spawn rod assembly kit</Binguin_Debug_RodKit_Label>

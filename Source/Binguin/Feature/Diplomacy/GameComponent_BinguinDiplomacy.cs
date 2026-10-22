@@ -531,6 +531,21 @@ namespace Binguin.Feature.Diplomacy
             //   ⇒ `BinguinPierceAim` 与 `Command_BinguinPierce` 整段注释保留在
             //     `Command_BinguinAbility.cs`，调用点一并注释掉。
             // BinguinPierceAim.DrawAimVisualTick();
+
+            // ★ 2026-10-22 作者要求：外交官在等答复期间，头顶也显示问号
+            //   （和乐队主唱开演前那个一样；直接复用 BinguinBandConcert.DrawQuestionMark，
+            //    画法照抄原版 OverlayDrawer.RenderQuestionMarkOverlay）。
+            try
+            {
+                if (diplomat != null && IsDiplomatWaiting(diplomat))
+                {
+                    BinguinBandConcert.DrawQuestionMark(diplomat);
+                }
+            }
+            catch (Exception)
+            {
+                // 纯视觉，出错不影响外交流程
+            }
         }
 
         private Pawn diplomat;
@@ -953,7 +968,11 @@ namespace Binguin.Feature.Diplomacy
             int stayTicks = kind == RespAccepted ? StayTicksIfAccepted
                 : (kind == RespNeutral ? StayTicksIfNeutral : RefusalMaxLeaveTicks);
             leavingTick = GenTicks.TicksGame + stayTicks;
+            BinguinLogUtility.Log("外交答复：kind=" + kind + "，开始安排离场（找地图边缘格）。",
+                isDebug: false);
             TryStartDeparture();
+            BinguinLogUtility.Log("外交答复：离场安排完成，leaveTarget=" + leaveTarget
+                + "。", isDebug: false);
         }
 
         // ---------- 交谈入口（2026-08-22：殖民者点击外交官才进入事件） ----------
@@ -1027,15 +1046,30 @@ namespace Binguin.Feature.Diplomacy
                     return;
                 }
                 IntVec3 cell;
+                // ★★ 2026-10-22 修"选完外交选项就死机"：
+                //   原来验证器里对**每个候选格**都调 `diplomat.CanReach(...)`。
+                //   `CellFinder.TryFindRandomEdgeCellWith` 会试很多个边缘格，
+                //   而这个档位地图大、区域数据又刚重建过 ⇒ 每次 CanReach 都要
+                //   重跑一遍区域/寻路，几十上百次叠起来就是几十秒到几分钟的"死机"。
+                //   ⇒ 验证器只做**便宜的**可走检查，找到格子后再统一做一次 CanReach。
                 if (CellFinder.TryFindRandomEdgeCellWith(
                         delegate(IntVec3 c)
                         {
-                            return c.Walkable(map)
-                                && diplomat.CanReach(c, PathEndMode.OnCell, Danger.Some);
+                            return c.Walkable(map) && !c.Fogged(map);
                         },
                         map, 0.5f, out cell))
                 {
-                    leaveTarget = cell;
+                    if (diplomat.CanReach(cell, PathEndMode.OnCell, Danger.Some))
+                    {
+                        leaveTarget = cell;
+                    }
+                    else
+                    {
+                        // 到不了就退而求其次：场地中心（她的计时离场兜底仍然生效）
+                        leaveTarget = map.Center;
+                        BinguinLogUtility.Log("外交官到不了地图边缘，改走向地图中心，按计时离场。",
+                            severity: 1, isDebug: false);
+                    }
                 }
             }
             if (leaveTarget.IsValid && diplomat.pather != null && !diplomat.pather.MovingNow)
@@ -1228,8 +1262,10 @@ namespace Binguin.Feature.Diplomacy
                     IntVec3 near = CellFinder.RandomClosewalkCellNear(anchor.Position, map, 8,
                         delegate(IntVec3 c)
                         {
-                            return c.Walkable(map)
-                                && d.CanReach(c, PathEndMode.OnCell, Danger.Some);
+                            // ★ 2026-10-22：验证器里别调 CanReach（每个候选格一次寻路，
+                            //   地图大时会卡几十秒）。这里只做便宜的可走检查，
+                            //   选好格子后下面统一做一次 CanReach。
+                            return c.Walkable(map) && !c.Fogged(map);
                         });
                     if (near.IsValid)
                     {

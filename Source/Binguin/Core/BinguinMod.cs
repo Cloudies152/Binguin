@@ -33,10 +33,25 @@ namespace Binguin.Core
         /// </summary>
         public bool enableVoidStrike = false;
 
+        /// <summary>
+        /// ★★ 2026-10-22 新增：主线程预绘制兼容补丁（左爻 2026-10-22 加的
+        /// `Patch_BinguinMainThreadPreDraw`）的开关。
+        ///
+        /// 背景：1.7 的绘制先在主线程 `EnsureInitialized`，再在工作线程并行
+        /// `ParallelPreDraw`；作者日志里出现过这条并行链上的并发集合异常。
+        /// 那个补丁把冰鹅族实体的预绘制挪到主线程来回避 —— 但它自己标注
+        /// **根因未确认、未实测**，而它 hook 的是全局 `Thing.DynamicDrawPhase`，
+        /// 一旦和第三方绘制补丁（ChezhouLib / HAR 的线程局部上下文）发生
+        /// 锁顺序冲突，表现就是**画面卡死**。
+        /// ⇒ 默认 **关闭**（出问题可以先怀疑这里）；需要时在 Mod 选项里打开。
+        /// </summary>
+        public bool enableMainThreadPreDraw = false;
+
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_Values.Look<bool>(ref enableVoidStrike, "enableVoidStrike", false, false);
+            Scribe_Values.Look<bool>(ref enableMainThreadPreDraw, "enableMainThreadPreDraw", false, false);
         }
     }
 
@@ -80,6 +95,19 @@ namespace Binguin.Core
             {
                 // 即时生效：不需要重开存档。场上已装备的剑会在下一帧刷新技能按钮。
                 BinguinLogUtility.Log("尚方宝剑远程斩击 = " + (Settings.enableVoidStrike ? "开" : "关"));
+            }
+            ls.GapLine();
+            ls.Gap(6f);
+            ls.Label("Binguin_Interface_045".Translate().ToString());
+            ls.Gap(4f);
+            bool beforePreDraw = Settings.enableMainThreadPreDraw;
+            ls.CheckboxLabeled("Binguin_Interface_046".Translate().ToString(),
+                ref Settings.enableMainThreadPreDraw,
+                "Binguin_Interface_047".Translate().ToString());
+            if (beforePreDraw != Settings.enableMainThreadPreDraw)
+            {
+                BinguinLogUtility.Log("主线程预绘制兼容补丁 = "
+                    + (Settings.enableMainThreadPreDraw ? "开" : "关"));
             }
             ls.GapLine();
             ls.Gap(6f);

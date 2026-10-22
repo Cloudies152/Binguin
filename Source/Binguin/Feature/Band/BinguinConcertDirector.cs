@@ -148,9 +148,32 @@ namespace Binguin.Feature.Band
                     GiveGuestsLord(guests, map, b.venueCenter);
                 }
 
+                // 诊断用：观众里"殖民者 / 贵宾"各多少（2026-10-22 排查"只来一个派系"）
+                int guestInAudience = 0;
+                if (b.guests != null)
+                {
+                    for (int i = 0; i < b.guests.Count; i++)
+                    {
+                        Pawn g = b.guests[i];
+                        if (g == null) continue;
+                        if (Audience.Contains(g)) { guestInAudience++; continue; }
+                        // 没进观众名单的人：把原因打出来，下次复测一眼就能定位
+                        string why = g.Dead ? "已经死了"
+                            : (!g.Spawned ? "不在图上（走了/被带走）"
+                            : (g.Map != map ? "在别的地图"
+                            : (g.Downed ? "倒地"
+                            : (g.InMentalState ? "精神崩溃"
+                            : (g.Drafted ? "被征召"
+                            : (g.InBed() ? "躺在床上" : "其它"))))));
+                        BinguinLogUtility.Log("贵宾 " + g.LabelShort + "（"
+                            + (g.Faction != null ? g.Faction.Name : "?") + "）没进观众名单："
+                            + why, severity: 1, isDebug: false);
+                    }
+                }
                 BinguinLogUtility.Log("自办演唱会开演：主唱 1 人、乐手 "
-                    + (Performers.Count - 1) + " 人、观众 " + Audience.Count + " 人。",
-                    isDebug: false);
+                    + (Performers.Count - 1) + " 人、观众 " + Audience.Count + " 人（其中贵宾 "
+                    + guestInAudience + " 人；预约里贵宾名单 " + (b.guests != null ? b.guests.Count : 0)
+                    + " 人）。", isDebug: false);
             }
             catch (System.Exception e)
             {
@@ -225,21 +248,37 @@ namespace Binguin.Feature.Band
         }
 
         /// <summary>
-        /// 演唱会结束后给**来访的派系**加好感（作者要求：听完后和所有派系加关系）。
-        /// ★ 只给真正被邀请且答应的派系加；敌对派系不动。
+        /// 演唱会结束后给**到场观演的派系**加好感（作者要求：听完后和所有派系加关系）。
+        /// ★ 只给**真正到场的人所属派系**加；只是"发了邀请"（婉拒/派系被灭）的不算。
+        /// ★★ 2026-10-22 修作者反馈：「邀请多个派系，只来了一个，多个派系都加了好感」——
+        ///   原来的判断是 `invitedFactionIds`（只要是"邀过"就给），婉拒的也会白拿好感。
+        ///   现在改成扫 `b.guests` 里**还活着、还在地图上**的贵宾，按他们的派系给。
         /// </summary>
         public static void GrantGoodwill(BinguinConcertBooking b)
         {
-            if (b == null || b.invitedFactionIds == null || b.invitedFactionIds.Count == 0) return;
+            if (b == null || b.guests == null || b.guests.Count == 0)
+            {
+                return;   // 一个贵宾都没到场 ⇒ 没有"来访派系"可加
+            }
             if (Find.FactionManager == null) return;
             Faction player = Faction.OfPlayer;
             if (player == null) return;
+
+            HashSet<int> attended = new HashSet<int>();
+            for (int i = 0; i < b.guests.Count; i++)
+            {
+                Pawn g = b.guests[i];
+                if (g == null || g.Dead || !g.Spawned || g.Faction == null) continue;
+                attended.Add(g.Faction.loadID);
+            }
+            if (attended.Count == 0) return;
+
             List<Faction> all = Find.FactionManager.AllFactionsListForReading;
             for (int i = 0; i < all.Count; i++)
             {
                 Faction f = all[i];
                 if (f == null || f.def == null || f.IsPlayer) continue;
-                if (!b.invitedFactionIds.Contains(f.loadID)) continue;
+                if (!attended.Contains(f.loadID)) continue;
                 if (f.HostileTo(player)) continue;
                 try
                 {
@@ -423,6 +462,21 @@ namespace Binguin.Feature.Band
 
         /// <summary>观众 job 的 defName（每 250 tick 都要比对，别反复查 DefDatabase）。</summary>
         private const string WatchJobDefName = "Binguin_WatchConcert";
+
+        /// <summary>
+        /// 给「乐队来访」事件的观众派观看 job。
+        /// ★★ 2026-10-22 修作者反馈：「演唱会事件的观众不会在麦克风前面站着听了」——
+        ///   事件那套只看**椅子**（`FindFreeSeat`），场地没椅子/椅子被占就什么都不派，
+        ///   观众于是留在闲逛点。这里复用自办演出的 `AudienceSpot`：
+        ///   先找**台前**的椅子，没有就站到麦克风正前方 3~7 格，并且 targetB = 麦克风（面朝舞台）。
+        /// </summary>
+        public static bool SendStandingWatchJob(Pawn p, IntVec3 venue, Map map)
+        {
+            if (p == null || map == null || !venue.IsValid) return false;
+            Thing mic = FindNearestInstrument(map, Dialog_BinguinConcertSetup.MicDefName, venue);
+            SendWatchJob(p, venue, map, mic);
+            return true;
+        }
 
         /// <summary>
         /// 演出期间**重新派奏乐 job**。

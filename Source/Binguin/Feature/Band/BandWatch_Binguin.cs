@@ -152,6 +152,9 @@ namespace Binguin.Feature.Band
     /// </summary>
     public class GameComponent_BinguinBandWatch : GameComponent
     {
+        // ★ 2026-10-22：用来检测"本场演出刚开始"，好清空上一场的座位/站位占用表。
+        private bool wasActive;
+
         public GameComponent_BinguinBandWatch(Game game) : base()
         {
         }
@@ -180,8 +183,17 @@ namespace Binguin.Feature.Band
             // ---- ① 开演前：主唱站到麦克风前等 ----
             if (!BinguinConcert.Active)
             {
+                wasActive = false;
                 KeepSingerAtMic();
                 return;
+            }
+
+            // ★★ 2026-10-22：本场开演第一次进来时清空"座位/站位"占用表，
+            //   否则上一场的占位会残留到这一场（`AudienceSpot` 每次都会往里登记）。
+            if (!wasActive)
+            {
+                wasActive = true;
+                BinguinConcertDirector.ResetSeats();
             }
 
             // ---- ② 开演后：先把乐手按到乐器前演奏（用户反馈缺的就是这一步）----
@@ -204,7 +216,11 @@ namespace Binguin.Feature.Band
                     if (!Valid(p, map)) continue;
                     if (p.CurJob != null && p.CurJob.def != null
                         && p.CurJob.def.defName == "Binguin_WatchConcert") continue;   // 已经入座
-                    TrySeat(p, map, center);
+                    // ★★ 2026-10-22 修作者反馈「事件观众不会在麦克风前站着听」：
+                    //   原来只认椅子（没椅子就什么都不派）⇒ 先试椅子，
+                    //   没椅子就复用自办演出的"台前站位 + 面朝麦克风"。
+                    if (TrySeat(p, map, center)) continue;
+                    BinguinConcertDirector.SendStandingWatchJob(p, center, map);
                 }
             }
             catch (Exception e)
@@ -345,13 +361,14 @@ namespace Binguin.Feature.Band
                 && p.jobs != null && p.mindState != null;
         }
 
-        private static void TrySeat(Pawn p, Map map, IntVec3 center)
+        /// <summary>给观众找个椅子坐下看；没椅子/椅子都被占时返回 false（由调用方走"站到台前"）。</summary>
+        private static bool TrySeat(Pawn p, Map map, IntVec3 center)
         {
             Building seat = FindFreeSeat(p, map, center);
-            if (seat == null) return;
+            if (seat == null) return false;
 
             JobDef def = DefDatabase<JobDef>.GetNamedSilentFail("Binguin_WatchConcert");
-            if (def == null) return;
+            if (def == null) return false;
 
             Job job = JobMaker.MakeJob(def);
             job.targetA = seat;
@@ -362,6 +379,7 @@ namespace Binguin.Feature.Band
             job.expiryInterval = -1;
             job.playerForced = false;
             p.jobs.StartJob(job, JobCondition.InterruptForced);
+            return true;
         }
 
         /// <summary>场地 20 格内、没人占的可坐建筑。</summary>

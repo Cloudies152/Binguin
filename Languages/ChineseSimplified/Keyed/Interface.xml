@@ -83,6 +83,9 @@
   <Binguin_Interface_080>没有可以来装配的殖民者（全部倒地 / 死亡）。</Binguin_Interface_080>
   <Binguin_Interface_082>（未选）</Binguin_Interface_082>
   <Binguin_Interface_083>远程斩击：已启用（测试玩法，能力栏 → 天顶鱼斩）</Binguin_Interface_083>
+  <Binguin_Interface_084>兼容性（默认关闭）</Binguin_Interface_084>
+  <Binguin_Interface_085>主线程预绘制兼容补丁（遇到卡死先关这里）</Binguin_Interface_085>
+  <Binguin_Interface_086>把冰鹅族实体的预绘制放到主线程，用于回避 1.7 并行绘制的并发异常；根因未确认，可能与第三方绘制补丁冲突导致卡死，默认关闭。</Binguin_Interface_086>
   <Binguin_WorkOnRod_NoTable>找不到可用的鱼竿装配台。</Binguin_WorkOnRod_NoTable>
   <Binguin_BandQuest_NoStart>冰鹅族乐队等了六小时仍未开演，收拾东西离开了。</Binguin_BandQuest_NoStart>
   <Binguin_Debug_RodKit_Label>（调试）生成装配测试套件</Binguin_Debug_RodKit_Label>

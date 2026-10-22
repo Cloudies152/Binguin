@@ -644,6 +644,7 @@
   <Binguin_ConcertInvite_Accepted          >{0} 接受了邀请，届时会派 {1} 位贵宾前来观演。</Binguin_ConcertInvite_Accepted          >
   <Binguin_ConcertInvite_Declined          >{0} 婉拒了演唱会邀请。</Binguin_ConcertInvite_Declined          >
   <Binguin_ConcertInvite_NoBooking         >（需要先筹备一场演唱会，并定下日子）</Binguin_ConcertInvite_NoBooking         >
+  <Binguin_ConcertGuestHostile             >{0} 与 {1} 互有敌意，这次没能同场观演。</Binguin_ConcertGuestHostile             >
   <Binguin_ResumeRod_NoJobDef              >法继续装配（找不到 job 定义）</Binguin_ResumeRod_NoJobDef              >
   <Binguin_Ticket_Dropped                  > 银（实物落地={0}）</Binguin_Ticket_Dropped                  >
   <Binguin_Ticket_Income                   >演唱会门票收入：{0} 银（{1} 位观众 × {2} 银 × 场地系数 {3}）</Binguin_Ticket_Income                   >
