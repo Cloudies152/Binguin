@@ -49,12 +49,12 @@
     <iconPath>UI/Icons/Genes/Gene_QuickMovespeed</iconPath>
   </GeneDef>
 
-  <!-- ============ 鱼类爱好（食用含鱼食物 +8 心情） ============ -->
+  <!-- ============ 鱼类爱好（食用含鱼食物 +5 心情） ============ -->
   <GeneDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Gene_FishLover</defName>
     <label>鱼类爱好</label>
     <labelShortAdj>爱鱼</labelShortAdj>
-    <description>食用含有鱼类的食物时心情 +8。</description>
+    <description>食用含有鱼类的食物时心情 +5。</description>
     <displayCategory>Miscellaneous</displayCategory>
     <geneClass>Binguin.Feature.RaceTraits.Gene_BinguinFishLover, Binguin</geneClass>
     <biostatCpx>1</biostatCpx>
@@ -69,7 +69,7 @@
       <li>
         <label>吃了鲜美的鱼</label>
         <description>鲜美的鱼肉让我精神焕发！</description>
-        <baseMoodEffect>8</baseMoodEffect>
+        <baseMoodEffect>5</baseMoodEffect>
       </li>
     </stages>
   </ThoughtDef>
@@ -108,18 +108,23 @@
     <iconPath>UI/Icons/Genes/Gene_FastLearning</iconPath>
   </GeneDef>
 
-  <!-- ============ 娱乐至上（娱乐下降 ×110%） ============ -->
+  <!-- ============ 娱乐至上（娱乐下降 ×110%，睡觉回体力 ×95%） ============ -->
   <GeneDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Gene_RecreationLover</defName>
     <label>娱乐至上</label>
     <labelShortAdj>享乐</labelShortAdj>
-    <description>娱乐值下降速度提升 10%，需要更多娱乐才能保持快乐。</description>
+    <description>娱乐值下降速度提升 10%，休息效率降低 5%，需要更多娱乐、睡得更久才能保持状态。</description>
     <displayCategory>Miscellaneous</displayCategory>
     <statFactors>
       <JoyFallRateFactor>1.1</JoyFallRateFactor>
+      <!-- ★ 2026-10-19 作者要求：睡觉回体力慢 5%（不是"休息值掉得快"）
+           ⇒ 用 `RestRateMultiplier`（休息恢复速率）乘 0.95，
+           不要用 `RestFallRateFactor`（那是"休息值下降速度"，语义相反）。 -->
+      <RestRateMultiplier>0.95</RestRateMultiplier>
     </statFactors>
     <biostatCpx>1</biostatCpx>
-    <biostatMet>2</biostatMet>
+    <!-- ★ 2026-10-19 作者要求：代谢 +1（原 +2 ⇒ +3） -->
+    <biostatMet>3</biostatMet>
     <iconPath>UI/Icons/Genes/Gene_Sanguine</iconPath>
   </GeneDef>
 
@@ -129,17 +134,28 @@
   <XenotypeDef>
     <defName>Binguin_Xenotype</defName>
     <label>冰鹅种</label>
-    <description>冰鹅族的基因组合：寒域观测者、滑冰与捕鱼能手、天生的机械维护者与研究者。</description>
+    <description>冰鹅族的基因组合：寒域观测者、滑冰与捕鱼能手、天生的机械维护者、研究者与艺术家。</description>
     <iconPath>UI/Icons/Xenotypes/Baseliner</iconPath>
     <inheritable>true</inheritable>
     <genes>
-      <!-- 原版 -->
+      <!-- 原版：耐寒（MinTemp_SmallDecrease，met -1） -->
       <li>MinTemp_SmallDecrease</li>
+      <!-- 原版：惧热（MaxTemp_SmallDecrease，met +1） -->
       <li>MaxTemp_SmallDecrease</li>
+      <!-- 原版：种植无能（AptitudePoor_Plants，种植 -4，met +1）
+           ★ 2026-10-19 作者要求保留 -->
       <li>AptitudePoor_Plants</li>
-      <li>AptitudePoor_Melee</li>
+      <!-- 原版：艺术出色（AptitudeStrong_Artistic，艺术 +4，cpx 2 / met -1）
+           ★ 2026-10-19 作者要求新增；原版「格斗才疏 AptitudePoor_Melee」已按作者要求移除 -->
+      <li>AptitudeStrong_Artistic</li>
+      <!-- 原版：慢性子（MoveSpeed_Slow，移速 -0.2，met +3） -->
       <li>MoveSpeed_Slow</li>
-      <li>Mood_Sanguine</li>
+      <!-- 原版：天性乐观（Mood_Optimist，心情 +5，cpx 2 / met -1）
+           ★ 2026-10-19：作者原话「天性豁达改成天性乐观」= **换成这个基因**
+             （不是改个名字）：天性乐观 Mood_Optimist = +5 心情 / 代谢 -1；
+             而天性豁达 Mood_Sanguine = +10 心情 / 代谢 -2。 -->
+      <li>Mood_Optimist</li>
+      <!-- 原版：极度冷静（Aggression_DeadCalm，met -1） -->
       <li>Aggression_DeadCalm</li>
       <!-- 自定义 -->
       <!-- ★★★ 2026-09-23：纯白绒羽必须列在这里！

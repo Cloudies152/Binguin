@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ============================================================================
+     冰鹅族 · 对**原版基因中文名**的覆盖（2026-10-19 作者要求）
+
+     ★ 只改这一个：
+       `AptitudePoor_Plants` 是原版 `AptitudePoor` 模板生成的基因，
+       官方中文模板是 `{0}才疏` ⇒ 显示「种植才疏」。作者要求叫「种植无能」。
+
+     ★ 为什么只覆盖这一个 gene、不动模板：
+       改 `AptitudePoor.label` 模板会把所有「X才疏」都变成「X无能」
+       （射击/格斗/医疗…），那不是作者要的。
+       `GeneDefGenerator` 生成的基因会在
+       `LoadedLanguage.InjectIntoData_AfterImpliedDefs` 这一轮被注入，
+       所以按**生成后的 defName** 写 key 是有效的
+       （IL 实证：两个注入阶段 BeforeImpliedDefs / AfterImpliedDefs）。
+
+     ★ 注：2026-10-19 之前这里还覆盖过 `Mood_Sanguine.label`（天性豁达→天性乐观），
+       后来作者确认「天性乐观」指的是**另一个基因** `Mood_Optimist`（+5 心情 / 代谢 -1），
+       已经直接把基因换成 Mood_Optimist，不再需要覆盖名字。
+
+     ★ 没装 Biotech 时这个 def 不存在 ⇒ 翻译报告里 1 条「未找到 Def」提示，
+       不会报错、不影响运行（基因本身也都 MayRequire Biotech）。
+     ============================================================================ -->
+<LanguageData>
+  <AptitudePoor_Plants.label>种植无能</AptitudePoor_Plants.label>
+</LanguageData>

@@ -162,19 +162,21 @@
         <!-- 种族基因（HAR 的 raceGenes：无论异种如何都带有的基因）
              原版引用 + 自定义基因（定义见 Defs/Feature/RaceTraits/GeneDefs_Binguin.xml） -->
         <raceGenes MayRequire="Ludeon.RimWorld.Biotech">
-          <!-- 原版：耐寒 -->
+          <!-- 原版：耐寒（MinTemp_SmallDecrease，met -1） -->
           <li><defName>MinTemp_SmallDecrease</defName></li>
-          <!-- 原版：惧热 -->
+          <!-- 原版：惧热（MaxTemp_SmallDecrease，met +1） -->
           <li><defName>MaxTemp_SmallDecrease</defName></li>
-          <!-- 原版：种植才疏 -->
+          <!-- 原版：种植无能（AptitudePoor_Plants，种植 -4，met +1） -->
           <li><defName>AptitudePoor_Plants</defName></li>
-          <!-- 原版：格斗才疏 -->
-          <li><defName>AptitudePoor_Melee</defName></li>
-          <!-- 原版：慢性子（slow runner，移速降低） -->
+          <!-- 原版：艺术出色（AptitudeStrong_Artistic，艺术 +4，cpx 2 / met -1）
+               ★ 2026-10-19 作者要求新增；原版「格斗才疏 AptitudePoor_Melee」已移除 -->
+          <li><defName>AptitudeStrong_Artistic</defName></li>
+          <!-- 原版：慢性子（slow runner，移速 -0.2，met +3） -->
           <li><defName>MoveSpeed_Slow</defName></li>
-          <!-- 原版：天性豁达（very happy，心情常驻高位） -->
-          <li><defName>Mood_Sanguine</defName></li>
-          <!-- 原版：极度冷静（dead calm，永不主动斗殴/狂暴） -->
+          <!-- 原版：天性乐观（Mood_Optimist，心情 +5，cpx 2 / met -1）
+               ★ 2026-10-19：这是**换基因**不是改名 —— 原来是天性豁达 Mood_Sanguine（+10 / -2） -->
+          <li><defName>Mood_Optimist</defName></li>
+          <!-- 原版：极度冷静（dead calm，永不主动斗殴/狂暴，met -1） -->
           <li><defName>Aggression_DeadCalm</defName></li>
           <!-- ★ 自定义：纯白绒羽 —— 用 skinColorOverride 把肤色【硬性定死】为纯白。
                这是根治"每只冰鹅肤色都不一样"的关键：只改 colorChannels 治不了本，
@@ -188,10 +190,28 @@
           <li><defName>Binguin_Gene_FishLover</defName></li>
           <!-- 自定义：机工高手 -->
           <li><defName>Binguin_Gene_MechExpert</defName></li>
-          <!-- 自定义：娱乐至上（娱乐下降×110%） -->
+          <!-- 自定义：娱乐至上（娱乐下降 ×110%、休息下降 ×105%） -->
           <li><defName>Binguin_Gene_RecreationLover</defName></li>
         </raceGenes>
       </generalSettings>
+
+      <!-- ==================== 心情限制（2026-10-19 作者要求）====================
+           ★ 作者原话：「帮我把冰鹅族的"湿漉漉-3"的心情删掉」。
+             对应的原版 ThoughtDef 是 **`SoakingWet`**（淋雨、涉水时获得，-3 心情 / 0.1 天），
+             来源有两个：天气的 `<weatherThought>` 和地形的 `<traversedThought>`。
+
+           ★ 机制：HAR 的 `thoughtSettings.cannotReceiveThoughts` 会被它自己的
+             Harmony 补丁（`ThoughtUtility.CanGetThought` 的 postfix）读取，
+             原版 `MemoryThoughtHandler.TryGainMemory` 里正好会先调
+             `ThoughtUtility.CanGetThought(pawn, def)` ⇒ 冰鹅族从此收不到这条记忆。
+             （语法照抄工坊里用 HAR 的种族，例如 Rakinlike 的 `Races_Rakinlike.xml`。）
+
+           ★ 只影响冰鹅族，不改原版 Def、不影响其他种族。 -->
+      <thoughtSettings>
+        <cannotReceiveThoughts>
+          <li>SoakingWet</li>
+        </cannotReceiveThoughts>
+      </thoughtSettings>
 
       <!-- ==================== 外观样式表（2026-09-24 新增：自绘头发） ====================
            ★ 作用：把冰鹅族的【可选发型】限定到我们自己的 BinguinHair 一组，

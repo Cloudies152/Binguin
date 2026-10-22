@@ -19,6 +19,11 @@
      ★ 纯装饰：
        · `useHitPoints = true` ⇒ **有血量、可以选中和拆除**（作者 2026-10-17 要求「当然要能拆啊」）
        · `building.isInert = true` ⇒ 不参与任何 AI（不会变 chill 点、不占家区）
+       · ★★ `building.isEdifice = false` ⇒ **不占"建筑格"**，乐器/家具可以直接摆在舞台上
+         （原版 Ideology 的「地板雕版」floor covering 就是这么写的：
+           Data/Ideology/Defs/ThingDefs_Misc/FloorCoverings.xml 的 BuildingFloorCoveringBase。
+           作者 2026-10-18 反馈「不能和乐器一起放置」就是缺了这一条：
+           默认 isEdifice=true 会注册进 edificeGrid，乐器蓝图判定"格子被建筑占用"。）
        · `passability = Standable` ⇒ 小人直接走在上面，不挡路
        · `castShadow = false`    ⇒ 不投影，纯平面装饰
 
@@ -67,6 +72,13 @@
     </costList>
 
     <building>
+      <!-- ★★ 2026-10-18 作者反馈：「不能和乐器一起放置」
+           原因：默认 isEdifice=true ⇒ 舞台注册进 edificeGrid ⇒ 乐器蓝图判定"格子被建筑占用"。
+           原版「文化雕版」（Ideology 的 floor covering，见
+           Data/Ideology/Defs/ThingDefs_Misc/FloorCoverings.xml 的 BuildingFloorCoveringBase）
+           就是 <isEdifice>false</isEdifice> ⇒ 不占建筑格，家具/乐器可以直接摆上去。
+           ⇒ 舞台、小舞台板都改成非 edifice。 -->
+      <isEdifice>false</isEdifice>
       <isInert>true</isInert>
       <expandHomeArea>false</expandHomeArea>
       <ai_chillDestination>false</ai_chillDestination>
@@ -121,6 +133,13 @@
     </costList>
 
     <building>
+      <!-- ★★ 2026-10-18 作者反馈：「不能和乐器一起放置」
+           原因：默认 isEdifice=true ⇒ 舞台注册进 edificeGrid ⇒ 乐器蓝图判定"格子被建筑占用"。
+           原版「文化雕版」（Ideology 的 floor covering，见
+           Data/Ideology/Defs/ThingDefs_Misc/FloorCoverings.xml 的 BuildingFloorCoveringBase）
+           就是 <isEdifice>false</isEdifice> ⇒ 不占建筑格，家具/乐器可以直接摆上去。
+           ⇒ 舞台、小舞台板都改成非 edifice。 -->
+      <isEdifice>false</isEdifice>
       <isInert>true</isInert>
       <expandHomeArea>false</expandHomeArea>
       <ai_chillDestination>false</ai_chillDestination>
@@ -136,3 +155,5 @@
   </ThingDef>
 
 </Defs>
+
+

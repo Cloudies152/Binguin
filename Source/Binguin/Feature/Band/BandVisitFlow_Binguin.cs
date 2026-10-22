@@ -944,7 +944,15 @@ namespace Binguin.Feature.Band
             if (wasActive && !now)
             {
                 wasActive = false;
-                BinguinBandConcert.EndConcert(Find.AnyPlayerHomeMap);
+                // ★★ 2026-10-18：只有「乐队来访」事件在场时才走这套收尾。
+                //   自办演唱会也共用 `BinguinConcert.Active`，原来这里会顺手
+                //   **掉 1~3 把武器 + 给冰鹅派系 +20 好感**（自办演出不该有这些）。
+                //   自办演出现在由 `BinguinConcertDirector.EndPerformance` 收尾
+                //   （只给正在看的观众发心情 + 放贵宾回家）。
+                if (BinguinBandConcert.bandArrived)
+                {
+                    BinguinBandConcert.EndConcert(Find.AnyPlayerHomeMap);
+                }
             }
             else if (now)
             {

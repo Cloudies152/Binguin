@@ -509,7 +509,14 @@
   </ThingDef>
 
 
-  <!-- ==================== 心情：听了演唱会（用户定稿 +12 / 10 天） ==================== -->
+  <!-- ==================== 心情：听了演唱会（2026-10-18 四档曲线） ====================
+       ★ 原来是单档固定 +12 / 10 天。
+       ★ 2026-10-18 作者给定四档数值 ⇒ 4 个 stage：
+           0 乏味 -2  /  1 普通 +2  /  2 难忘 +5  /  3 共鸣 +10
+         散场时由 `BinguinConcertDirector.EndPerformance` 按
+         `booking.outcomeTier`（开演掷出的档位）用
+         `ThoughtMaker.MakeThought(def, tier)` 指定 stage。
+         期望心情：质量 0 → +2.5，0.5 → +4.7，1 → +5.6（见 BinguinConcertQuality 的曲线注释）。 -->
   <ThoughtDef>
     <defName>Binguin_AttendedConcert</defName>
     <thoughtClass>Thought_Memory</thoughtClass>
@@ -517,9 +524,24 @@
     <stackLimit>1</stackLimit>
     <stages>
       <li>
-        <label>听了冰鹅族演唱会</label>
-        <description>那场演出太棒了，美妙的旋律至今还在脑子里回响。</description>
-        <baseMoodEffect>12</baseMoodEffect>
+        <label>听了一场乏味的演出</label>
+        <description>台上平平淡淡，没什么记忆点，听完反而有点索然无味。</description>
+        <baseMoodEffect>-2</baseMoodEffect>
+      </li>
+      <li>
+        <label>听了一场普通的演出</label>
+        <description>中规中矩的一场演出，不算好也不算差。</description>
+        <baseMoodEffect>2</baseMoodEffect>
+      </li>
+      <li>
+        <label>听了一场难忘的演出</label>
+        <description>演奏得很棒，几首曲子都让人久久难忘。</description>
+        <baseMoodEffect>5</baseMoodEffect>
+      </li>
+      <li>
+        <label>听了一场引起共鸣的演出</label>
+        <description>台上的歌像是唱给自己听的，听完心里久久不能平静。</description>
+        <baseMoodEffect>10</baseMoodEffect>
       </li>
     </stages>
   </ThoughtDef>
