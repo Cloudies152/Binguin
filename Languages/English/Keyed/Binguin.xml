@@ -71,7 +71,7 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_CompFishPond_01                 >Not stocked</Binguin_CompFishPond_01>
   <Binguin_CompFishPond_02                 >Stock with fry</Binguin_CompFishPond_02>
   <Binguin_CompFishPond_03                 >Add fry</Binguin_CompFishPond_03>
-  <Binguin_CompFishPond_04                 >Once a species is chosen, a colonist will carry 1 such fish into the pond (settling the species to be raised).\nAdjacent fish ponds connect into one large pond when placed.</Binguin_CompFishPond_04>
+  <Binguin_CompFishPond_04                 >Only an empty pond can be stocked: once a species is chosen, a colonist will carry 1 such fish into the pond (settling the species to be raised).\nAdjacent fish ponds connect into one large pond when placed.</Binguin_CompFishPond_04>
   <Binguin_CompFishPond_05                 >Carry 1 more</Binguin_CompFishPond_05>
   <Binguin_CompFishPond_06                 >Put into the pond (fish +1).</Binguin_CompFishPond_06>
   <Binguin_CompFishPond_07                 >Fish</Binguin_CompFishPond_07>
@@ -98,6 +98,8 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_CompFishPond_28                 >Crab trap module: </Binguin_CompFishPond_28>
   <Binguin_CompFishPond_29                 >on</Binguin_CompFishPond_29>
   <Binguin_CompFishPond_30                 >off</Binguin_CompFishPond_30>
+  <Binguin_CompFishPond_31                 >The split pond exceeded the remaining capacity; {0} fish were dropped on the ground.</Binguin_CompFishPond_31>
+  <Binguin_CompFishPond_32                 >This pond already has fish - only an empty pond (0 fish) can be stocked.</Binguin_CompFishPond_32>
   <Binguin_CompFishingBait_01              >Not in water (invalid)</Binguin_CompFishingBait_01>
   <Binguin_CompFishingBait_02              >Fish </Binguin_CompFishingBait_02>
   <Binguin_CompFishingBait_03              >Bait nutrition: </Binguin_CompFishingBait_03>
@@ -289,7 +291,7 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_DialogPondKeep_01               >Retain fish count (catch floor)</Binguin_DialogPondKeep_01>
   <Binguin_DialogPondKeep_02               >Current:</Binguin_DialogPondKeep_02>
   <Binguin_DialogPondKeep_03               > fish (group capacity </Binguin_DialogPondKeep_03>
-  <Binguin_DialogPondKeep_04               >When the fish population falls below this value, fishing and crab pot modules stop catching, letting the fish breed and recover.\nSet 0 = keep none (may fish them out).</Binguin_DialogPondKeep_04>
+  <Binguin_DialogPondKeep_04               >When the fish population falls below this value, fishing and crab pot modules stop catching, letting the fish breed and recover.\nSet 0 = keep none (may fish them out; the pond then becomes empty and needs re-stocking).</Binguin_DialogPondKeep_04>
   <Binguin_DialogPondKeep_05               >Clear (keep none)</Binguin_DialogPondKeep_05>
   <Binguin_DialogPondKeep_06               >Keep half (</Binguin_DialogPondKeep_06>
   <Binguin_DialogRodAssembly_01            >Assemble fishing rod</Binguin_DialogRodAssembly_01>
@@ -323,6 +325,7 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_DialogStockFish_05              >Could not find </Binguin_DialogStockFish_05>
   <Binguin_DialogStockFish_06              > in storage, catch one or buy one first.</Binguin_DialogStockFish_06>
   <Binguin_DialogStockFish_07              >No available colonist to haul the fingerlings.</Binguin_DialogStockFish_07>
+  <Binguin_DialogStockFish_08              >This pond already has fish.\nOnly an empty pond can be stocked (fish it empty first to change species).</Binguin_DialogStockFish_08>
   <Binguin_FloatMenuOptionProviderDiplomacy_01>Talk with the binguin diplomat</Binguin_FloatMenuOptionProviderDiplomacy_01>
   <Binguin_FloatMenuOptionProviderDiplomacy_02>No talk quest def found.</Binguin_FloatMenuOptionProviderDiplomacy_02>
   <Binguin_FloatMenuOptionProviderDiplomacy_03>The diplomat is no longer waiting here.</Binguin_FloatMenuOptionProviderDiplomacy_03>
@@ -364,7 +367,7 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_GameComponentDiplomacy_36       >Binguin diplomat visits</Binguin_GameComponentDiplomacy_36>
   <Binguin_JobDriverPondStock_01           >Placed 1 </Binguin_JobDriverPondStock_01>
   <Binguin_JobDriverPondStock_02           > into the fish pond.</Binguin_JobDriverPondStock_02>
-  <Binguin_JobDriverPondStock_03           >Cannot place: the fish pond already holds another fish species (adjacent ponds must be separated), or the school is full.</Binguin_JobDriverPondStock_03>
+  <Binguin_JobDriverPondStock_03           >Cannot place: only an empty pond (0 fish) can be stocked - this pond already has fish.</Binguin_JobDriverPondStock_03>
   <Binguin_JobDriverWillingLoad_01         >The target is not wearing Willing Armor.</Binguin_JobDriverWillingLoad_01>
   <Binguin_JobDriverWillingLoad_02         >Loaded 1 round into the Willing Armor</Binguin_JobDriverWillingLoad_02>
   <Binguin_Jokes_01                        >Q: What's the scariest weather in RimWorld? A: A solar flare - because once the computer loses power, the game just shuts off.</Binguin_Jokes_01>

@@ -71,7 +71,7 @@
   <Binguin_CompFishPond_01                 >未放苗</Binguin_CompFishPond_01>
   <Binguin_CompFishPond_02                 >放入鱼苗</Binguin_CompFishPond_02>
   <Binguin_CompFishPond_03                 >追加鱼苗</Binguin_CompFishPond_03>
-  <Binguin_CompFishPond_04                 >选择鱼种后，殖民者会搬运 1 条该鱼放入鱼池（确定养殖鱼种）。\n相邻鱼池在放置时即连成一个大池。</Binguin_CompFishPond_04>
+  <Binguin_CompFishPond_04                 >只有空池才能放苗：选择鱼种后，殖民者会搬运 1 条该鱼放入鱼池（确定养殖鱼种）。\n相邻鱼池在放置时即连成一个大池。</Binguin_CompFishPond_04>
   <Binguin_CompFishPond_05                 >再搬 1 条</Binguin_CompFishPond_05>
   <Binguin_CompFishPond_06                 >放入鱼池（鱼群 +1）。</Binguin_CompFishPond_06>
   <Binguin_CompFishPond_07                 >钓鱼</Binguin_CompFishPond_07>
@@ -98,6 +98,8 @@
   <Binguin_CompFishPond_28                 >蟹笼模块：</Binguin_CompFishPond_28>
   <Binguin_CompFishPond_29                 >开</Binguin_CompFishPond_29>
   <Binguin_CompFishPond_30                 >关</Binguin_CompFishPond_30>
+  <Binguin_CompFishPond_31                 >拆开的鱼池超出剩余容量，{0} 条鱼已经放到地上。</Binguin_CompFishPond_31>
+  <Binguin_CompFishPond_32                 >这个鱼池已经有鱼了 —— 只有空池（0 条）才能放苗。</Binguin_CompFishPond_32>
   <Binguin_CompFishingBait_01              >不在水域（无效）</Binguin_CompFishingBait_01>
   <Binguin_CompFishingBait_02              >鱼群 </Binguin_CompFishingBait_02>
   <Binguin_CompFishingBait_03              >饵料营养：</Binguin_CompFishingBait_03>
@@ -289,7 +291,7 @@
   <Binguin_DialogPondKeep_01               >保留鱼数（捕捞下限）</Binguin_DialogPondKeep_01>
   <Binguin_DialogPondKeep_02               >当前：</Binguin_DialogPondKeep_02>
   <Binguin_DialogPondKeep_03               > 条（组容量 </Binguin_DialogPondKeep_03>
-  <Binguin_DialogPondKeep_04               >鱼群低于该值时，钓鱼与蟹笼模块停止捕捞，让鱼繁殖恢复。\n设 0 = 不保留（可捕光）。</Binguin_DialogPondKeep_04>
+  <Binguin_DialogPondKeep_04               >鱼群低于该值时，钓鱼与蟹笼模块停止捕捞，让鱼繁殖恢复。\n设 0 = 不保留（可捕光；捕光后池子变空，需要重新放苗）。</Binguin_DialogPondKeep_04>
   <Binguin_DialogPondKeep_05               >清空（不保留）</Binguin_DialogPondKeep_05>
   <Binguin_DialogPondKeep_06               >保留一半（</Binguin_DialogPondKeep_06>
   <Binguin_DialogRodAssembly_01            >合成钓竿</Binguin_DialogRodAssembly_01>
@@ -323,6 +325,7 @@
   <Binguin_DialogStockFish_05              >库存里找不到 </Binguin_DialogStockFish_05>
   <Binguin_DialogStockFish_06              >，先钓一条或购买吧。</Binguin_DialogStockFish_06>
   <Binguin_DialogStockFish_07              >没有可用的殖民者来搬运鱼苗。</Binguin_DialogStockFish_07>
+  <Binguin_DialogStockFish_08              >这个鱼池已经有鱼了。\n只有空池才能放苗（要换鱼种请先把鱼捞空）。</Binguin_DialogStockFish_08>
   <Binguin_FloatMenuOptionProviderDiplomacy_01>与冰鹅族外交官交谈</Binguin_FloatMenuOptionProviderDiplomacy_01>
   <Binguin_FloatMenuOptionProviderDiplomacy_02>未找到交谈任务定义。</Binguin_FloatMenuOptionProviderDiplomacy_02>
   <Binguin_FloatMenuOptionProviderDiplomacy_03>外交官已经不在这里等候了。</Binguin_FloatMenuOptionProviderDiplomacy_03>
@@ -364,7 +367,7 @@
   <Binguin_GameComponentDiplomacy_36       >冰鹅族外交官来访</Binguin_GameComponentDiplomacy_36>
   <Binguin_JobDriverPondStock_01           >已将 1 条</Binguin_JobDriverPondStock_01>
   <Binguin_JobDriverPondStock_02           >放入鱼池。</Binguin_JobDriverPondStock_02>
-  <Binguin_JobDriverPondStock_03           >无法放入：鱼池已养了别的鱼种（需拆开相邻池），或鱼群已满。</Binguin_JobDriverPondStock_03>
+  <Binguin_JobDriverPondStock_03           >无法放入：只有空池（0 条鱼）才能放苗 —— 这个池子已经有鱼了。</Binguin_JobDriverPondStock_03>
   <Binguin_JobDriverWillingLoad_01         >目标没有穿着威灵装甲。</Binguin_JobDriverWillingLoad_01>
   <Binguin_JobDriverWillingLoad_02         >已为威灵装甲装填 1 发</Binguin_JobDriverWillingLoad_02>
   <Binguin_Jokes_01                        >问:环世界最可怕的天气是什么?答:太阳耀斑——毕竟电脑没电了游戏就关了。</Binguin_Jokes_01>

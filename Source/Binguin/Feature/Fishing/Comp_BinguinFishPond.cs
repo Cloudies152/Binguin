@@ -52,7 +52,9 @@ namespace Binguin.Feature.Fishing
         public float reproAccum;           // 繁殖计时
         public float catchAccum;           // 蟹笼计时
         public float feedTickAccum;        // 鱼食消耗计时（每 dayTicks 组内耗 0.5）
-        public float keepMinFish;          // ★ 保留下限：鱼群 ≤ 此值停捕（2026-08-20）
+        public float keepMinFish = 1f;     // ★ 保留下限：鱼群 ≤ 此值停捕
+        //   ★ 2026-10-22 作者要求：默认 1（原来是 0）。蟹笼开着时默认 0 会把池子捞到空，
+        //     而现在"只有空池才能放苗"，捞空之后这池就彻底没鱼了 —— 所以默认留 1 条。
         public int cachedGroupCount = -1;
 
         public Thing leaderThing;          // 组长 Thing；null/self = 组长
@@ -349,12 +351,21 @@ namespace Binguin.Feature.Fishing
             // 分配按池数保留总量，超过剩余总容量的完整鱼掉落。
             int excess = Mathf.FloorToInt(Mathf.Max(0f, totalFish - retained));
             ThingDef fishDef = DefDatabase<ThingDef>.GetNamedSilentFail(species);
+            int dropped = 0;
             while (excess > 0 && fishDef != null)
             {
                 Thing fish = ThingMaker.MakeThing(fishDef);
                 fish.stackCount = Mathf.Min(excess, fishDef.stackLimit);
                 excess -= fish.stackCount;
                 if (!GenPlace.TryPlaceThing(fish, parent.Position, map, ThingPlaceMode.Near, null)) break;
+                dropped += fish.stackCount;
+            }
+            // ★ 2026-10-22：拆池时超出剩余容量的鱼会掉在地上 —— 给个提示，
+            //   否则玩家会以为鱼被吞了。
+            if (dropped > 0)
+            {
+                Messages.Message("Binguin_CompFishPond_31".Translate(dropped.ToString()),
+                    MessageTypeDefOf.NeutralEvent, false);
             }
             leaderThing = null;
             fishCount = 0f;
@@ -533,7 +544,11 @@ namespace Binguin.Feature.Fishing
                     for (int i = 0; i < take; i++)
                     {
                         fishCount -= 1f;
-                        SpawnOneFish();
+                        if (!SpawnOneFish())
+                        {
+                            fishCount += 1f;   // 周围放不下就不算捕到
+                            break;
+                        }
                     }
                 }
             }
@@ -563,7 +578,8 @@ namespace Binguin.Feature.Fishing
 
         // ================= 放苗（殖民者搬运由 JobDriver 完成，成功后调用） =================
 
-        // 把一条鱼放入池中：同种 +1，空池定种 +1。返回是否成功
+        // 把一条鱼放入池中：**只有空池才能放苗**（作者 2026-10-22 要求）。
+        // 空池放苗 = 定种 + 1 条；之后靠自然繁殖长大，不再支持"同种 +1"。
         public bool TryStock(string defName)
         {
             CompBinguinFishPond lead = LeaderComp;
@@ -571,17 +587,20 @@ namespace Binguin.Feature.Fishing
             {
                 return false;
             }
-            if (!string.IsNullOrEmpty(lead.fishDefName) && lead.fishDefName != defName)
+            if (lead.fishCount > 0.01f)
             {
-                return false; // 相邻已养不同鱼种，需先拆开
-            }
-            if (lead.fishCount >= lead.GroupCapacity() - 0.01f)
-            {
-                return false; // 组容量已满（池数 × 20）
+                return false;   // 池里已经有鱼了（要换鱼种/重新放苗只能先捞空）
             }
             lead.fishDefName = defName;
-            lead.fishCount += 1f;
+            lead.fishCount = 1f;
             return true;
+        }
+
+        /// <summary>现在能不能放苗（供对话框判断：只有空池才行）。</summary>
+        public bool CanStockNow()
+        {
+            CompBinguinFishPond lead = LeaderComp;
+            return lead != null && lead.fishCount <= 0.01f;
         }
 
         // 钓鱼扣 1（受保留数保护：<= keepMin 时不钓）
@@ -597,7 +616,11 @@ namespace Binguin.Feature.Fishing
                 return false;
             }
             lead.fishCount -= 1f;
-            lead.SpawnOneFish();
+            if (!lead.SpawnOneFish())
+            {
+                lead.fishCount += 1f;   // ★ 鱼放不出来就扣回去，别让鱼凭空消失
+                return false;
+            }
             return true;
         }
 
@@ -610,21 +633,24 @@ namespace Binguin.Feature.Fishing
                 && lead.fishCount > lead.keepMinFish + 0.01f;
         }
 
-        private void SpawnOneFish()
+        private bool SpawnOneFish()
         {
             CompBinguinFishPond lead = LeaderComp;
             if (lead == null)
             {
-                return;
+                return false;
             }
             ThingDef f = DefDatabase<ThingDef>.GetNamedSilentFail(lead.fishDefName);
             if (f == null || lead.parent == null || lead.parent.Map == null)
             {
-                return;
+                return false;
             }
             Thing fish = ThingMaker.MakeThing(f);
             fish.stackCount = 1;
-            GenPlace.TryPlaceThing(fish, lead.parent.Position, lead.parent.Map, ThingPlaceMode.Near, null);
+            // ★ 2026-10-22：返回值要检查 —— 周围没落点时会生成失败，
+            //   调用方（手动钓/蟹笼）必须把鱼数扣回去，否则鱼就"蒸发"了。
+            return GenPlace.TryPlaceThing(fish, lead.parent.Position, lead.parent.Map,
+                ThingPlaceMode.Near, null);
         }
 
         // ================= Gizmo =================
@@ -641,15 +667,14 @@ namespace Binguin.Feature.Fishing
                 yield break;
             }
 
-            // ★ 2026-09 性能：三个命令按钮原本各查一次 ContentFinder（字典+路径
-            //   解析），一次取好复用（不能做静态缓存：贴图重载会失效）。
+            // 放苗（★ 2026-10-22 作者要求：只有空池才能放苗）
             Texture2D pondIcon = ContentFinder<Texture2D>.Get("Things/Building/Binguin/FishPond", false);
-            // 放苗（有鱼种时也可继续放同种 +1；异种由对话框提示拆池）
+            bool canStock = lead.CanStockNow();
             Command_Action stock = new Command_Action();
-            stock.defaultLabel = string.IsNullOrEmpty(lead.fishDefName) ? "Binguin_CompFishPond_02".Translate() : "Binguin_CompFishPond_03".Translate();
-            stock.defaultDesc = string.IsNullOrEmpty(lead.fishDefName)
+            stock.defaultLabel = "Binguin_CompFishPond_02".Translate();
+            stock.defaultDesc = canStock
                 ? "Binguin_CompFishPond_04".Translate()
-                : "Binguin_CompFishPond_05".Translate() + lead.FishLabel + "Binguin_CompFishPond_06".Translate();
+                : "Binguin_CompFishPond_32".Translate();
             stock.icon = pondIcon;
             stock.action = delegate
             {
@@ -687,7 +712,16 @@ namespace Binguin.Feature.Fishing
                 toggle.defaultDesc = "Binguin_CompFishPond_16".Translate();
                 toggle.icon = ContentFinder<Texture2D>.Get("Things/Building/Binguin/CrabTrap", false);
                 toggle.isActive = delegate { return lead.autoCatchOn; };
-                toggle.toggleAction = delegate { lead.autoCatchOn = !lead.autoCatchOn; };
+                toggle.toggleAction = delegate
+                {
+                    lead.autoCatchOn = !lead.autoCatchOn;
+                    // ★ 2026-10-22：开蟹笼时保留下限至少 1 条 —— 现在"只有空池能放苗"，
+                    //   捞空之后这池就再也放不进去了。
+                    if (lead.autoCatchOn && lead.keepMinFish < 1f)
+                    {
+                        lead.keepMinFish = 1f;
+                    }
+                };
                 yield return toggle;
             }
         }
@@ -770,8 +804,14 @@ namespace Binguin.Feature.Fishing
             Scribe_Values.Look<float>(ref reproAccum, "pondReproAccum", 0f, false);
             Scribe_Values.Look<float>(ref catchAccum, "pondCatchAccum", 0f, false);
             Scribe_Values.Look<float>(ref feedTickAccum, "pondFeedTickAccum", 0f, false);
-            Scribe_Values.Look<float>(ref keepMinFish, "pondKeepMinFish", 0f, false);
+            Scribe_Values.Look<float>(ref keepMinFish, "pondKeepMinFish", 1f, false);
             Scribe_References.Look<Thing>(ref leaderThing, "pondLeaderThing", false);
+            // ★ 2026-10-22 老存档迁移：蟹笼开着但保留下限是 0 的，抬到 1。
+            //   现在"只有空池能放苗"，捞空之后池子没法再放鱼 —— 老档会直接卡死。
+            if (autoCatchOn && keepMinFish < 1f)
+            {
+                keepMinFish = 1f;
+            }
             cachedGroupCount = -1;
         }
     }

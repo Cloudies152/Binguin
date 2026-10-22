@@ -49,11 +49,24 @@ namespace Binguin.Feature.Fishing
             BuildList();
         }
 
+        private bool pondNotEmpty;
+
         private void BuildList()
         {
             availableFish.Clear();
+            fishLabels.Clear();
+            fishNutri.Clear();
+            pondNotEmpty = false;
             if (pond == null || pond.parent == null || pond.parent.Map == null)
             {
+                return;
+            }
+            // ★ 2026-10-22 作者要求：**只有空池才能放苗**。
+            //   池里已经有鱼就直接提示，不再列鱼种（也不再支持"同种 +1"）。
+            CompBinguinFishPond leadComp = pond.LeaderComp;
+            if (leadComp != null && !leadComp.CanStockNow())
+            {
+                pondNotEmpty = true;
                 return;
             }
             ThingCategoryDef fishCat = DefDatabase<ThingCategoryDef>.GetNamedSilentFail("Fish");
@@ -78,19 +91,6 @@ namespace Binguin.Feature.Fishing
             sorted.Sort(delegate (ThingDef a, ThingDef b) { return a.label.CompareTo(b.label); });
             availableFish = sorted;
 
-            // ★ 2026-08-20：若组里已确定鱼种，只允许放同种（追加），
-            //   避免选到异种导致 TryStock 拒绝
-            CompBinguinFishPond lead = pond.LeaderComp;
-            if (lead != null && !string.IsNullOrEmpty(lead.fishDefName))
-            {
-                for (int i = availableFish.Count - 1; i >= 0; i--)
-                {
-                    if (availableFish[i].defName != lead.fishDefName)
-                    {
-                        availableFish.RemoveAt(i);
-                    }
-                }
-            }
             // 名字/营养字符串一次算好（LabelCap 本身有 def 级缓存，这里省掉的是
             // 每帧的营养 stat 查询与数字格式化）
             fishLabels.Clear();
@@ -119,6 +119,12 @@ namespace Binguin.Feature.Fishing
                 "Binguin_DialogStockFish_03".Translate());
 
             float y = inRect.y + 78f;
+            if (pondNotEmpty)
+            {
+                Widgets.Label(new Rect(inRect.x, y, inRect.width, 50f),
+                    "Binguin_DialogStockFish_08".Translate());
+                return;
+            }
             if (availableFish.Count == 0)
             {
                 Widgets.Label(new Rect(inRect.x, y, inRect.width, 50f),
