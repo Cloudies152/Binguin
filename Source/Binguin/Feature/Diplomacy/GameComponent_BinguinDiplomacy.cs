@@ -679,9 +679,11 @@ namespace Binguin.Feature.Diplomacy
                 return true;
             }
             // 开局即与 NPC 冰鹅派系结盟 → 不必再派外交官问共存
-            Faction npc = Find.FactionManager.AllFactions.FirstOrDefault(
-                delegate(Faction f) { return f != null && f.def != null
-                    && f.def.defName == FactionDefName && f != player; });
+            Faction npc = BinguinFactions.GetPeaceful();
+            if (npc == player)
+            {
+                npc = null;   // 玩家自己就是冰鹅派系时，没有"NPC 冰鹅派系"可结盟
+            }
             return npc != null && npc.RelationKindWith(player) == FactionRelationKind.Ally;
         }
 
@@ -922,8 +924,11 @@ namespace Binguin.Feature.Diplomacy
                 {
                     return;
                 }
-                Faction npc = Find.FactionManager.AllFactions.FirstOrDefault(
-                    delegate(Faction f) { return f.def.defName == FactionDefName && f != player; });
+                Faction npc = BinguinFactions.GetPeaceful();
+                if (npc == player)
+                {
+                    npc = null;
+                }
                 if (npc == null || npc.defeated)
                 {
                     return;
@@ -955,8 +960,7 @@ namespace Binguin.Feature.Diplomacy
             }
             responseKind = kind;
 
-            Faction faction = Find.FactionManager.AllFactions.FirstOrDefault(
-                delegate(Faction f) { return f.def.defName == FactionDefName; });
+            Faction faction = BinguinFactions.GetPeaceful();
             if (kind == RespAccepted && faction != null && faction != Faction.OfPlayer)
             {
                 // 愿意共存：立即 +50
@@ -1011,8 +1015,7 @@ namespace Binguin.Feature.Diplomacy
                               "Binguin_GameComponentDiplomacy_29".Translate() +
                               "Binguin_GameComponentDiplomacy_30".Translate();
                 letter.lookTargets = new LookTargets(diplomat);
-                Faction faction = Find.FactionManager.AllFactions.FirstOrDefault(
-                    delegate(Faction f) { return f.def.defName == FactionDefName; });
+                Faction faction = BinguinFactions.GetPeaceful();
                 letter.relatedFaction = faction;
 
                 Find.LetterStack.ReceiveLetter(letter);
@@ -1127,8 +1130,7 @@ namespace Binguin.Feature.Diplomacy
             if (responseKind == RespRefused && !refusalGoodwillApplied)
             {
                 refusalGoodwillApplied = true;
-                Faction faction = Find.FactionManager.AllFactions.FirstOrDefault(
-                    delegate(Faction f) { return f.def.defName == FactionDefName; });
+                Faction faction = BinguinFactions.GetPeaceful();
                 if (faction != null && faction != Faction.OfPlayer)
                 {
                     faction.TryAffectGoodwillWith(Faction.OfPlayer, -75);
@@ -1177,8 +1179,7 @@ namespace Binguin.Feature.Diplomacy
                 return;
             fired = true;
 
-            Faction faction = Find.FactionManager.AllFactions.FirstOrDefault(
-                delegate(Faction f) { return f.def.defName == FactionDefName; });
+            Faction faction = BinguinFactions.GetPeaceful();
             if (faction == null || faction.defeated || faction == Faction.OfPlayer)
             {
                 return;
@@ -1385,8 +1386,7 @@ namespace Binguin.Feature.Diplomacy
         [DebugAction("冰鹅族", "毒垃圾报复：立即触发特制版")]
         public static void TriggerWasteRetaliationNow()
         {
-            Faction f = Find.FactionManager.AllFactions.FirstOrDefault(
-                delegate(Faction x) { return BinguinFactions.IsPeaceful(x); });
+            Faction f = BinguinFactions.GetPeaceful();
             if (f == null)
             {
                 BinguinLogUtility.Log("未找到冰鹅派系。");
@@ -1398,8 +1398,7 @@ namespace Binguin.Feature.Diplomacy
         [DebugAction("冰鹅族", "毒垃圾报复：走原版 PollutionRaid")]
         public static void TriggerWasteRaidNow()
         {
-            Faction f = Find.FactionManager.AllFactions.FirstOrDefault(
-                delegate(Faction x) { return BinguinFactions.IsPeaceful(x); });
+            Faction f = BinguinFactions.GetPeaceful();
             if (f == null)
             {
                 BinguinLogUtility.Log("未找到冰鹅派系。");
@@ -1505,8 +1504,7 @@ namespace Binguin.Feature.Diplomacy
         [DebugAction("冰鹅族", "诊断/修复派系领袖")]
         public static void FixFactionLeader()
         {
-            Faction faction = Find.FactionManager.AllFactions.FirstOrDefault(
-                delegate(Faction f) { return BinguinFactions.IsPeaceful(f); });
+            Faction faction = BinguinFactions.GetPeaceful();
             if (faction == null)
             {
                 BinguinLogUtility.Log("未找到冰鹅派系。");

@@ -52,5 +52,35 @@ namespace Binguin.Helper
         {
             return f != null && f.def != null && f.def.defName == Peaceful;
         }
+
+        // ★ 2026-10-22 优化：外交组件里 9 处都是
+        //   `Find.FactionManager.AllFactions.FirstOrDefault(f => f.def.defName == "Binguin")`，
+        //   每次都要分配闭包 + 线性扫派系表。这里缓存一次；派系被灭/销毁时下次重新找。
+        private static Faction cachedPeaceful;
+
+        /// <summary>取「和平冰鹅派系」（派外交官那支）；没有就返回 null（下次调用会重试）。</summary>
+        public static Faction GetPeaceful()
+        {
+            if (cachedPeaceful != null && !cachedPeaceful.defeated && cachedPeaceful.def != null)
+            {
+                return cachedPeaceful;
+            }
+            cachedPeaceful = null;
+            FactionManager fm = Find.FactionManager;
+            if (fm == null)
+            {
+                return null;
+            }
+            System.Collections.Generic.List<Faction> all = fm.AllFactionsListForReading;
+            for (int i = 0; i < all.Count; i++)
+            {
+                if (IsPeaceful(all[i]))
+                {
+                    cachedPeaceful = all[i];
+                    break;
+                }
+            }
+            return cachedPeaceful;
+        }
     }
 }

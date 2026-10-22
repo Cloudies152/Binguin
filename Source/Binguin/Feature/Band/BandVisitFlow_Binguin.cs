@@ -323,19 +323,15 @@ namespace Binguin.Feature.Band
         //   但它是 private 调不到，所以这里照抄它的画法（IL 实证）：
         //     pos = thing.DrawPos；y = 覆盖层高度；pawn 还要 x += size.x - 0.52、z += size.z - 0.45
         //     然后用 MeshPool.plane05 + UI/Overlays/QuestionMark 材质画一个 mesh。
-        private static Material questionMarkMat;
-
+        //   ★ 2026-10-22：材质移到 `BinguinOverlayMaterials`（带 StaticConstructorOnStartup），
+        //     消除"静态 Material 未在主线程构造"的加载警告。
         public static void DrawQuestionMark(Pawn p)
         {
             try
             {
                 if (p == null || !p.Spawned || p.Map == null) return;
-                if (questionMarkMat == null)
-                {
-                    questionMarkMat = MaterialPool.MatFrom("UI/Overlays/QuestionMark",
-                        ShaderDatabase.MetaOverlay);
-                }
-                if (questionMarkMat == null) return;
+                Material mat = BinguinOverlayMaterials.QuestionMark;
+                if (mat == null) return;
                 Vector3 pos = p.DrawPos;
                 pos.y = AltitudeLayer.MetaOverlays.AltitudeFor();
                 if (p.def != null)
@@ -343,7 +339,7 @@ namespace Binguin.Feature.Band
                     pos.x += p.def.size.x - 0.52f;
                     pos.z += p.def.size.z - 0.45f;
                 }
-                Graphics.DrawMesh(MeshPool.plane05, pos, Quaternion.identity, questionMarkMat, 0);
+                Graphics.DrawMesh(MeshPool.plane05, pos, Quaternion.identity, mat, 0);
             }
             catch (Exception)
             {

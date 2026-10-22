@@ -304,6 +304,13 @@ namespace Binguin.Feature.Band
         /// <summary>已被占用的站位（椅子格/台前格），避免两个观众挤在同一格。</summary>
         private static readonly HashSet<IntVec3> ClaimedSpots = new HashSet<IntVec3>();
 
+        /// <summary>
+        /// 上次"重新收集观众名单"的 tick。
+        /// ★ 2026-10-22：名单收集要扫全图 pawn，不能每 250 tick 都做；
+        ///   现在每 1000 tick 才重收一次（`KeepAudienceWatching` 里判断）。
+        /// </summary>
+        private static int lastAudienceCollectTick = -9999;
+
         /// <summary>清空座位/站位占用表。</summary>
         public static void ResetSeats()
         {
@@ -546,14 +553,23 @@ namespace Binguin.Feature.Band
             try
             {
                 Thing mic = FindNearestInstrument(map, Dialog_BinguinConcertSetup.MicDefName, venue);
-                List<Pawn> audience = CollectAudience(b, map);
+                // ★ 2026-10-22 优化：`CollectAudience` 会扫全图所有 pawn（含所有派系），
+                //   原来每 250 tick 就重扫一遍（4 小时演出 = 240 次全图扫描）。
+                //   改成：每 1000 tick（约 17 秒）才重新收集一次名单；其余时候
+                //   只用已有名单补派 job —— 观众中途被别的活抢走照样 250 tick 内回来。
+                if (Audience == null || Audience.Count == 0
+                    || GenTicks.TicksGame - lastAudienceCollectTick >= 1000)
+                {
+                    lastAudienceCollectTick = GenTicks.TicksGame;
+                    Audience = CollectAudience(b, map);
+                }
+                List<Pawn> audience = Audience;
                 for (int i = 0; i < audience.Count; i++)
                 {
                     Pawn p = audience[i];
                     if (IsWatching(p)) continue;
                     SendWatchJob(p, venue, map, mic);
                 }
-                Audience = audience;
             }
             catch (System.Exception e)
             {

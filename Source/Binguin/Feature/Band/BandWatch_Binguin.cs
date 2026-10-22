@@ -387,7 +387,10 @@ namespace Binguin.Feature.Band
         {
             Dictionary<Map, BinguinSeatAvailability> cache = GameComponent_BinguinPerformanceState.Current.seatCache;
             BinguinSeatAvailability snapshot;
-            if (!cache.TryGetValue(map, out snapshot) || GenTicks.TicksGame - snapshot.tick >= 60)
+            // ★ 2026-10-22 优化（保留左爻原有缓存设计）：快照缓存从 60 tick 放宽到 250 tick。
+            //   重建一次要扫全图所有人造建筑；演唱会/乐队来访持续几小时，
+            //   而座位在几秒内几乎不会变，250 tick（约 4 秒）足够新。
+            if (!cache.TryGetValue(map, out snapshot) || GenTicks.TicksGame - snapshot.tick >= 250)
             {
                 snapshot = new BinguinSeatAvailability();
                 snapshot.tick = GenTicks.TicksGame;
