@@ -30,7 +30,7 @@ namespace Binguin.Feature.Fishing
 
         public override Vector2 InitialSize
         {
-            get { return new Vector2(380f, 230f); }
+            get { return new Vector2(400f, 300f); }
         }
 
         public override void DoWindowContents(Rect inRect)
@@ -47,6 +47,10 @@ namespace Binguin.Feature.Fishing
                 capCache = lead.GroupCapacity();
             }
             float cap = capCache;
+            if (lead.keepMinFish > cap)
+            {
+                lead.keepMinFish = cap;
+            }
 
             Text.Font = GameFont.Medium;
             Widgets.Label(new Rect(inRect.x, inRect.y, inRect.width, 30f), "Binguin_DialogPondKeep_01".Translate());
@@ -58,7 +62,25 @@ namespace Binguin.Feature.Fishing
             y += 32f;
             Widgets.Label(new Rect(inRect.x, y, inRect.width, 34f),
                 "Binguin_DialogPondKeep_04".Translate());
-            y += 46f;
+            y += 40f;
+
+            // ★ 2026-10-22 作者要求：和蟹笼（管理鱼群）一样用**滑块**调捕捞限制。
+            float newLimit = Widgets.HorizontalSlider(
+                new Rect(inRect.x, y, inRect.width, 22f),
+                lead.keepMinFish, 0f, cap, true, null, null, null, -1f);
+            if (Mathf.Abs(newLimit - lead.keepMinFish) > 0.01f)
+            {
+                lead.keepMinFish = Mathf.Round(newLimit);
+            }
+            y += 30f;
+
+            // 说明蟹笼下一次实际会捕几条（受保留下限与水面上限共同限制）
+            int ponds = lead.CachedGroupPondCount();
+            int allowedByKeep = Mathf.FloorToInt(Mathf.Max(0f, lead.fishCount - lead.keepMinFish));
+            int perCatch = Mathf.Min(ponds, allowedByKeep);
+            Widgets.Label(new Rect(inRect.x, y, inRect.width, 26f),
+                "Binguin_DialogPondKeep_07".Translate(perCatch.ToString(), ponds.ToString()));
+            y += 30f;
 
             float btnW = 62f;
             float btnH = 34f;

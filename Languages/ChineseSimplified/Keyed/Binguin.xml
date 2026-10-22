@@ -294,6 +294,7 @@
   <Binguin_DialogPondKeep_04               >鱼群低于该值时，钓鱼与蟹笼模块停止捕捞，让鱼繁殖恢复。\n设 0 = 不保留（可捕光；捕光后池子变空，需要重新放苗）。</Binguin_DialogPondKeep_04>
   <Binguin_DialogPondKeep_05               >清空（不保留）</Binguin_DialogPondKeep_05>
   <Binguin_DialogPondKeep_06               >保留一半（</Binguin_DialogPondKeep_06>
+  <Binguin_DialogPondKeep_07               >蟹笼下一轮最多捕 {0} 条（每轮按池数 {1} 条上限，并受上面的保留下限限制）。</Binguin_DialogPondKeep_07>
   <Binguin_DialogRodAssembly_01            >合成钓竿</Binguin_DialogRodAssembly_01>
   <Binguin_DialogRodAssembly_02            >竿身（长制×120%伤害 / 短制×80%冷却）</Binguin_DialogRodAssembly_02>
   <Binguin_DialogRodAssembly_03            >竿头（刀制：割25/刺25 / 锤制：钝32/捅15）</Binguin_DialogRodAssembly_03>

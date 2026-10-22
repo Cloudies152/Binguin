@@ -294,6 +294,7 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_DialogPondKeep_04               >When the fish population falls below this value, fishing and crab pot modules stop catching, letting the fish breed and recover.\nSet 0 = keep none (may fish them out; the pond then becomes empty and needs re-stocking).</Binguin_DialogPondKeep_04>
   <Binguin_DialogPondKeep_05               >Clear (keep none)</Binguin_DialogPondKeep_05>
   <Binguin_DialogPondKeep_06               >Keep half (</Binguin_DialogPondKeep_06>
+  <Binguin_DialogPondKeep_07               >The crab pot module will catch at most {0} next cycle (cap {1} per cycle by pond count, limited by the floor above).</Binguin_DialogPondKeep_07>
   <Binguin_DialogRodAssembly_01            >Assemble fishing rod</Binguin_DialogRodAssembly_01>
   <Binguin_DialogRodAssembly_02            >Rod body (long: x120% damage / short: x80% cooldown)</Binguin_DialogRodAssembly_02>
   <Binguin_DialogRodAssembly_03            >Rod head (blade: cut 25/stab 25 / hammer: blunt 32/poke 15)</Binguin_DialogRodAssembly_03>
