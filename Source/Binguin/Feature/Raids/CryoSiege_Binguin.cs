@@ -947,6 +947,12 @@ namespace Binguin.Feature.Raids
     public static class Patch_BinguinCryoSiegeAssault
     {
 
+        /// <summary>把 true/false 换成玩家看得懂的"是/否"（检视文字里别直接 ToString 布尔）。</summary>
+        private static string YesNo(bool v)
+        {
+            return (v ? "Binguin_Common_Yes" : "Binguin_Common_No").Translate().ToString();
+        }
+
         public static void Postfix(LordToil_Siege __instance)
         {
             try
@@ -1129,10 +1135,10 @@ namespace Binguin.Feature.Raids
                         int skill = probe.skills != null
                             ? probe.skills.GetSkill(SkillDefOf.Construction).Level : -1;
                         why = "Binguin_CryoSiege_02".Translate() + probe.LabelShort + "Binguin_CryoSiege_03".Translate() + skill + "）："
-                            + "Binguin_CryoSiege_04".Translate() + canTouch
+                            + "Binguin_CryoSiege_04".Translate() + YesNo(canTouch)
                             + "Binguin_CryoSiege_05".Translate() + (blocker != null ? blocker.LabelShort : (string)"Binguin_CryoSiege_06".Translate())
-                            + "Binguin_CryoSiege_07".Translate() + canHaul
-                            + "Binguin_CryoSiege_08".Translate() + canFinish;
+                            + "Binguin_CryoSiege_07".Translate() + YesNo(canHaul)
+                            + "Binguin_CryoSiege_08".Translate() + YesNo(canFinish);
                         break;
                     }
                 }

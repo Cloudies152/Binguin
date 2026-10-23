@@ -80,9 +80,11 @@ namespace Binguin.Feature.Band
             float ratio = total > 0 ? filled / (float)total : 0f;
             float q = BinguinConcertQuality.WeightPersonnel * ratio;
             return BinguinConcertCompUtil.Make(
-                "Binguin_Interface_021".Translate().ToString() + filled + "/" + total,
+                "Binguin_ConcertFactor_Personnel_Label".Translate(
+                    filled.ToString(), total.ToString()).ToString(),
                 q,
-                "Binguin_Interface_022".Translate().ToString() + (BinguinConcertQuality.WeightPersonnel * 100f).ToString("0") + "Binguin_Interface_023".Translate().ToString());
+                "Binguin_ConcertFactor_Personnel_Desc".Translate(
+                    (BinguinConcertQuality.WeightPersonnel * 100f).ToString("0")).ToString());
         }
     }
 
@@ -104,11 +106,12 @@ namespace Binguin.Feature.Band
             if (ratio > 1f) ratio = 1f;
             float q = BinguinConcertQuality.WeightArtistic * ratio;
             return BinguinConcertCompUtil.Make(
-                "Binguin_Interface_024".Translate().ToString() + sum + "/" + BinguinConcertQuality.ArtisticSumForMax,
+                "Binguin_ConcertFactor_Artistic_Label".Translate(
+                    sum.ToString(), BinguinConcertQuality.ArtisticSumForMax.ToString()).ToString(),
                 q,
-                "Binguin_Interface_025".Translate().ToString()
-                + BinguinConcertQuality.ArtisticSumForMax + "Binguin_Interface_026".Translate().ToString()
-                + (BinguinConcertQuality.WeightArtistic * 100f).ToString("0") + "Binguin_Interface_023".Translate().ToString());
+                "Binguin_ConcertFactor_Artistic_Desc".Translate(
+                    BinguinConcertQuality.ArtisticSumForMax.ToString(),
+                    (BinguinConcertQuality.WeightArtistic * 100f).ToString("0")).ToString());
         }
     }
 
@@ -130,12 +133,15 @@ namespace Binguin.Feature.Band
             }
             float q = BinguinConcertQuality.LightScore(n);
             return BinguinConcertCompUtil.Make(
-                "Binguin_Interface_027".Translate().ToString() + n + "/" + BinguinConcertQuality.LightCountForMax,
+                "Binguin_ConcertFactor_Light_Label".Translate(
+                    n.ToString(), BinguinConcertQuality.LightCountForMax.ToString()).ToString(),
                 q,
-                "Binguin_Interface_028".Translate().ToString() + BinguinConcertQuality.LightRadius.ToString("0")
-                + "Binguin_Interface_029".Translate().ToString()
-                + (BinguinConcertQuality.LightWeightPerLight * 100f).ToString("0") + "Binguin_Interface_030".Translate().ToString()
-                + BinguinConcertQuality.LightCountForMax + "Binguin_Interface_031".Translate().ToString());
+                "Binguin_ConcertFactor_Light_Desc".Translate(
+                    BinguinConcertQuality.LightRadius.ToString("0"),
+                    (BinguinConcertQuality.LightWeightPerLight * 100f).ToString("0"),
+                    BinguinConcertQuality.LightCountForMax.ToString(),
+                    (BinguinConcertQuality.LightWeightPerLight
+                        * BinguinConcertQuality.LightCountForMax * 100f).ToString("0")).ToString());
         }
     }
 }

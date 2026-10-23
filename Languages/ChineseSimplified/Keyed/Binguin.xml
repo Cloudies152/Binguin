@@ -245,13 +245,13 @@
   <Binguin_CryoSiege_01                    >（没有任何工兵职责的人，无法探测）</Binguin_CryoSiege_01>
   <Binguin_CryoSiege_02                    >【判定】探测者 </Binguin_CryoSiege_02>
   <Binguin_CryoSiege_03                    >（建造 </Binguin_CryoSiege_03>
-  <Binguin_CryoSiege_04                    >可接触=</Binguin_CryoSiege_04>
-  <Binguin_CryoSiege_05                    > 阻挡物=</Binguin_CryoSiege_05>
+  <Binguin_CryoSiege_04                    >可接触：</Binguin_CryoSiege_04>
+  <Binguin_CryoSiege_05                    >，阻挡物：</Binguin_CryoSiege_05>
   <Binguin_CryoSiege_06                    >无</Binguin_CryoSiege_06>
-  <Binguin_CryoSiege_07                    > 可交付材料=</Binguin_CryoSiege_07>
-  <Binguin_CryoSiege_08                    > 可完工=</Binguin_CryoSiege_08>
+  <Binguin_CryoSiege_07                    >，可交付材料：</Binguin_CryoSiege_07>
+  <Binguin_CryoSiege_08                    >，可完工：</Binguin_CryoSiege_08>
   <Binguin_CryoSiege_09                    >（未找到冷冻器蓝图）</Binguin_CryoSiege_09>
-  <Binguin_CryoSiege_10                    >（TotalMaterialCost 返回 null —— 材质解析失败）</Binguin_CryoSiege_10>
+  <Binguin_CryoSiege_10                    >（材料信息暂不可用）</Binguin_CryoSiege_10>
   <Binguin_CryoSiege_11                    >（需要/场地 30 格内已有：</Binguin_CryoSiege_11>
   <Binguin_CryoSiege_12                    >大气冷冻器运转满 24 小时后自毁，冰鹅族部队放弃阵地发起总攻！</Binguin_CryoSiege_12>
   <Binguin_CryoSiege_13                    >冰鹅族工兵已经全部倒下，围攻部队放弃阵地发起冲锋！</Binguin_CryoSiege_13>
@@ -641,7 +641,7 @@
   <Binguin_ConcertSetup_Cancel             >取消</Binguin_ConcertSetup_Cancel             >
   <Binguin_ConcertSetup_LeadLost           >主唱已无法登台，演唱会取消了</Binguin_ConcertSetup_LeadLost           >
   <Binguin_ConcertSetup_Booked             >演唱会已定在 {0} 天后（{1}）。到日子自动开演；期间可以去通讯台给别的派系发邀请函。</Binguin_ConcertSetup_Booked             >
-  <Binguin_ConcertSetup_NoSongs            >还没有任何曲目 —— 检查 Defs/Features/Band/Concerts_Songs_Binguin.xml</Binguin_ConcertSetup_NoSongs            >
+  <Binguin_ConcertSetup_NoSongs            >还没有选曲目：先在演唱会设置里选几首歌吧。</Binguin_ConcertSetup_NoSongs            >
   <Binguin_ConcertInvite_Menu               >演唱会邀请（{0}）</Binguin_ConcertInvite_Menu               >
   <Binguin_ConcertInvite_MenuDesc          >向 {0} 发出演唱会邀请，请他们派人来观看。他们会按票价付费。</Binguin_ConcertInvite_MenuDesc          >
   <Binguin_ConcertInvite_Sent              >已向 {0} 发出演唱会邀请，对方正在考虑。</Binguin_ConcertInvite_Sent              >
@@ -650,7 +650,7 @@
   <Binguin_ConcertInvite_NoBooking         >（需要先筹备一场演唱会，并定下日子）</Binguin_ConcertInvite_NoBooking         >
   <Binguin_ConcertGuestHostile             >{0} 与 {1} 互有敌意，这次没能同场观演。</Binguin_ConcertGuestHostile             >
   <Binguin_ResumeRod_NoJobDef              >法继续装配（找不到 job 定义）</Binguin_ResumeRod_NoJobDef              >
-  <Binguin_Ticket_Dropped                  > 银（实物落地={0}）</Binguin_Ticket_Dropped                  >
+  <Binguin_Ticket_Dropped                  > 银（其中 {0} 银以实物掉落）</Binguin_Ticket_Dropped                  >
   <Binguin_Ticket_Income                   >演唱会门票收入：{0} 银（{1} 位观众 × {2} 银 × 场地系数 {3}）</Binguin_Ticket_Income                   >
   <Binguin_Ticket_Income2                  >演唱会门票收入 {0} 银，但场地边没找到落点，银两已直接计入。</Binguin_Ticket_Income2                  >
   <Binguin_UnfinishedRod_Continue          >续装</Binguin_UnfinishedRod_Continue          >
@@ -688,4 +688,13 @@
   <!-- ★ 2026-10-18：四档概率预测（开演按钮悬浮说明） -->
   <Binguin_ConcertSetup_Prediction           >预计：{0} {1}% · {2} {3}% · {4} {5}% · {6} {7}%（质量 {8}%）</Binguin_ConcertSetup_Prediction           >
   <Binguin_UserSongs_NoFolder                >没找到歌曲库文件夹，请先在 Mod 选项里点「打开歌曲库文件夹」。</Binguin_UserSongs_NoFolder                >
+  <Binguin_Common_Yes                        >是</Binguin_Common_Yes>
+  <Binguin_Common_No                         >否</Binguin_Common_No>
+  <Binguin_ConcertDetail_Line               >人数 {0}/{1}，艺术 {2}/{3}，灯光 {4}/{5}，总质量 {6}%【{7}】</Binguin_ConcertDetail_Line>
+  <Binguin_ConcertFactor_Personnel_Label    >人数 {0}/{1}</Binguin_ConcertFactor_Personnel_Label>
+  <Binguin_ConcertFactor_Personnel_Desc     >每个乐器都要有人演出才算满；权重 {0}%。</Binguin_ConcertFactor_Personnel_Desc>
+  <Binguin_ConcertFactor_Artistic_Label     >艺术总和 {0}/{1}</Binguin_ConcertFactor_Artistic_Label>
+  <Binguin_ConcertFactor_Artistic_Desc      >所有演出者的艺术等级之和；到 {0} 为满，权重 {1}%。</Binguin_ConcertFactor_Artistic_Desc>
+  <Binguin_ConcertFactor_Light_Label        >灯光 {0}/{1}</Binguin_ConcertFactor_Light_Label>
+  <Binguin_ConcertFactor_Light_Desc         >场地 {0} 格内的演唱会灯数量；每盏加 {1}%，{2} 盏为满，权重 {3}%。</Binguin_ConcertFactor_Light_Desc>
 </LanguageData>

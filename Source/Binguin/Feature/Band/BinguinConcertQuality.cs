@@ -350,10 +350,13 @@ namespace Binguin.Feature.Band
             int art = ArtisticSum(b);
             int lights = CountLights(map, center);
             float q = Compute(b, map);
-            return "Binguin_Interface_021".Translate().ToString() + filled + "/" + TotalSlots + "（30%）"
-                + "Binguin_Interface_032".Translate().ToString() + art + "/" + ArtisticSumForMax + "（50%）"
-                + "Binguin_Interface_033".Translate().ToString() + lights + "/" + LightCountForMax + "（20%）"
-                + "Binguin_Interface_034".Translate().ToString() + (q * 100f).ToString("0") + "%【" + TierLabel(q) + "】";
+            // ★ 2026-10-23 文案：原来是把几段碎片硬拼（"人数 3/5（30%）艺术总和 60/60（50%）…"），
+            //   读起来像日志。改成一条完整句，参数交给翻译键。
+            return "Binguin_ConcertDetail_Line".Translate(
+                filled.ToString(), TotalSlots.ToString(),
+                art.ToString(), ArtisticSumForMax.ToString(),
+                lights.ToString(), LightCountForMax.ToString(),
+                (q * 100f).ToString("0"), TierLabel(q)).ToString();
         }
 
         // ── 内部 ──

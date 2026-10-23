@@ -245,13 +245,13 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_CryoSiege_01                    >(undetectable by anyone with no sapper duty)</Binguin_CryoSiege_01>
   <Binguin_CryoSiege_02                    >[Detect] detector </Binguin_CryoSiege_02>
   <Binguin_CryoSiege_03                    >(Building </Binguin_CryoSiege_03>
-  <Binguin_CryoSiege_04                    >Reachable=</Binguin_CryoSiege_04>
-  <Binguin_CryoSiege_05                    > Blocker=</Binguin_CryoSiege_05>
+  <Binguin_CryoSiege_04                    >Reachable: </Binguin_CryoSiege_04>
+  <Binguin_CryoSiege_05                    >, blocker: </Binguin_CryoSiege_05>
   <Binguin_CryoSiege_06                    >none</Binguin_CryoSiege_06>
-  <Binguin_CryoSiege_07                    > Deliverable material=</Binguin_CryoSiege_07>
-  <Binguin_CryoSiege_08                    > Completable=</Binguin_CryoSiege_08>
+  <Binguin_CryoSiege_07                    >, deliverable material: </Binguin_CryoSiege_07>
+  <Binguin_CryoSiege_08                    >, finishable: </Binguin_CryoSiege_08>
   <Binguin_CryoSiege_09                    >(no freezer blueprint found)</Binguin_CryoSiege_09>
-  <Binguin_CryoSiege_10                    >(TotalMaterialCost returned null - material resolution failed)</Binguin_CryoSiege_10>
+  <Binguin_CryoSiege_10                    >(material information unavailable)</Binguin_CryoSiege_10>
   <Binguin_CryoSiege_11                    >(Required/Within 30 cells of the site:</Binguin_CryoSiege_11>
   <Binguin_CryoSiege_12                    >Once the atmosphere freezer has run for a full 24 hours it will self-destruct, and the binguin force will abandon its position for a final assault!</Binguin_CryoSiege_12>
   <Binguin_CryoSiege_13                    >Every binguin sapper has fallen; the siege force abandons its position and charges!</Binguin_CryoSiege_13>
@@ -640,7 +640,7 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_ConcertSetup_Cancel             >Cancel</Binguin_ConcertSetup_Cancel             >
   <Binguin_ConcertSetup_LeadLost           >The lead singer can no longer perform; the concert was cancelled.</Binguin_ConcertSetup_LeadLost           >
   <Binguin_ConcertSetup_Booked             >The concert is scheduled in {0} day(s) ({1}). It will start automatically. Meanwhile, invite other factions from the comms console.</Binguin_ConcertSetup_Booked             >
-  <Binguin_ConcertSetup_NoSongs            >No songs defined yet - check Defs/Features/Band/Concerts_Songs_Binguin.xml.</Binguin_ConcertSetup_NoSongs            >
+  <Binguin_ConcertSetup_NoSongs            >No songs chosen yet - pick a few in the concert setup window.</Binguin_ConcertSetup_NoSongs            >
   <Binguin_ConcertInvite_Menu               >Concert invitation ({0})</Binguin_ConcertInvite_Menu               >
   <Binguin_ConcertInvite_MenuDesc          >Invite {0} to send guests to watch the concert. They will pay for their tickets.</Binguin_ConcertInvite_MenuDesc          >
   <Binguin_ConcertInvite_Sent              >A concert invitation has been sent to {0}; they are considering it.</Binguin_ConcertInvite_Sent              >
@@ -649,7 +649,7 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_ConcertInvite_NoBooking         >(prepare a concert and set a date first)</Binguin_ConcertInvite_NoBooking         >
   <Binguin_ConcertGuestHostile             >{0} and {1} are hostile to each other, so they could not attend together.</Binguin_ConcertGuestHostile             >
   <Binguin_ResumeRod_NoJobDef              >Cannot continue assembly (job def not found).</Binguin_ResumeRod_NoJobDef              >
-  <Binguin_Ticket_Dropped                  > silver (dropped = {0})</Binguin_Ticket_Dropped                  >
+  <Binguin_Ticket_Dropped                  > silver ({0} of it dropped as items)</Binguin_Ticket_Dropped                  >
   <Binguin_Ticket_Income                   >Concert ticket income: {0} silver ({1} viewers x {2} silver x venue factor {3})</Binguin_Ticket_Income                   >
   <Binguin_Ticket_Income2                  >Concert ticket income {0} silver, but no drop spot was found near the venue; the silver was credited directly.</Binguin_Ticket_Income2                  >
   <Binguin_UnfinishedRod_Continue          >Continue assembly</Binguin_UnfinishedRod_Continue          >
@@ -687,4 +687,13 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <!-- ★ 2026-10-18: four-tier probability prediction (start-concert tooltip) -->
   <Binguin_ConcertSetup_Prediction           >Predicted: {0} {1}% · {2} {3}% · {4} {5}% · {6} {7}% (quality {8}%)</Binguin_ConcertSetup_Prediction           >
   <Binguin_UserSongs_NoFolder                >Song library folder not found. Use "Open song library folder" in mod options first.</Binguin_UserSongs_NoFolder                >
+  <Binguin_Common_Yes                        >yes</Binguin_Common_Yes>
+  <Binguin_Common_No                         >no</Binguin_Common_No>
+  <Binguin_ConcertDetail_Line               >Performers {0}/{1}, art {2}/{3}, lights {4}/{5}, total quality {6}% [{7}]</Binguin_ConcertDetail_Line>
+  <Binguin_ConcertFactor_Personnel_Label    >Performers {0}/{1}</Binguin_ConcertFactor_Personnel_Label>
+  <Binguin_ConcertFactor_Personnel_Desc     >Every instrument needs a performer for full marks; weight {0}%.</Binguin_ConcertFactor_Personnel_Desc>
+  <Binguin_ConcertFactor_Artistic_Label     >Art total {0}/{1}</Binguin_ConcertFactor_Artistic_Label>
+  <Binguin_ConcertFactor_Artistic_Desc      >Sum of all performers' Artistic levels; {0} counts as full, weight {1}%.</Binguin_ConcertFactor_Artistic_Desc>
+  <Binguin_ConcertFactor_Light_Label        >Lights {0}/{1}</Binguin_ConcertFactor_Light_Label>
+  <Binguin_ConcertFactor_Light_Desc         >Concert lights within {0} cells; each adds {1}%, {2} lights for full marks, weight {3}%.</Binguin_ConcertFactor_Light_Desc>
 </LanguageData>
