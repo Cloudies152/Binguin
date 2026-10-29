@@ -696,4 +696,15 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_ConcertFactor_Artistic_Desc      >Sum of all performers' Artistic levels; {0} counts as full, weight {1}%.</Binguin_ConcertFactor_Artistic_Desc>
   <Binguin_ConcertFactor_Light_Label        >Lights {0}/{1}</Binguin_ConcertFactor_Light_Label>
   <Binguin_ConcertFactor_Light_Desc         >Concert lights within {0} cells; each adds {1}%, {2} lights for full marks, weight {3}%.</Binguin_ConcertFactor_Light_Desc>
+  <Binguin_HairHighlight_Gizmo                >Hair streak</Binguin_HairHighlight_Gizmo>
+  <Binguin_HairHighlight_GizmoDesc            >Dye a few strands of this binguin's hair a color of your choice.</Binguin_HairHighlight_GizmoDesc>
+  <Binguin_HairHighlight_Title                >Hair streak</Binguin_HairHighlight_Title>
+  <Binguin_HairHighlight_Enable               >Enable streak</Binguin_HairHighlight_Enable>
+  <Binguin_HairHighlight_Red                  >Red</Binguin_HairHighlight_Red>
+  <Binguin_HairHighlight_Green                >Green</Binguin_HairHighlight_Green>
+  <Binguin_HairHighlight_Blue                 >Blue</Binguin_HairHighlight_Blue>
+  <Binguin_HairHighlight_Preview              >Current color</Binguin_HairHighlight_Preview>
+  <Binguin_HairHighlight_Presets              >Presets</Binguin_HairHighlight_Presets>
+  <Binguin_HairHighlight_Hint                 >Works on the mod's own hairstyles only. Hats hide the hair, and the streak hides with it.</Binguin_HairHighlight_Hint>
+  <Binguin_HairHighlight_StationMenu             >Dye hair streaks…</Binguin_HairHighlight_StationMenu>
 </LanguageData>

@@ -697,4 +697,15 @@
   <Binguin_ConcertFactor_Artistic_Desc      >所有演出者的艺术等级之和；到 {0} 为满，权重 {1}%。</Binguin_ConcertFactor_Artistic_Desc>
   <Binguin_ConcertFactor_Light_Label        >灯光 {0}/{1}</Binguin_ConcertFactor_Light_Label>
   <Binguin_ConcertFactor_Light_Desc         >场地 {0} 格内的演唱会灯数量；每盏加 {1}%，{2} 盏为满，权重 {3}%。</Binguin_ConcertFactor_Light_Desc>
+  <Binguin_HairHighlight_Gizmo                >挑染</Binguin_HairHighlight_Gizmo>
+  <Binguin_HairHighlight_GizmoDesc            >给这个冰鹅族小人挑染几缕头发，颜色自选。</Binguin_HairHighlight_GizmoDesc>
+  <Binguin_HairHighlight_Title                >挑染</Binguin_HairHighlight_Title>
+  <Binguin_HairHighlight_Enable               >启用挑染</Binguin_HairHighlight_Enable>
+  <Binguin_HairHighlight_Red                  >红</Binguin_HairHighlight_Red>
+  <Binguin_HairHighlight_Green                >绿</Binguin_HairHighlight_Green>
+  <Binguin_HairHighlight_Blue                 >蓝</Binguin_HairHighlight_Blue>
+  <Binguin_HairHighlight_Preview              >当前颜色</Binguin_HairHighlight_Preview>
+  <Binguin_HairHighlight_Presets              >预设颜色</Binguin_HairHighlight_Presets>
+  <Binguin_HairHighlight_Hint                 >只对自绘的冰鹅族发型生效。戴帽子时头发不显示，挑染也会一起隐藏。</Binguin_HairHighlight_Hint>
+  <Binguin_HairHighlight_StationMenu             >挑染头发…</Binguin_HairHighlight_StationMenu>
 </LanguageData>

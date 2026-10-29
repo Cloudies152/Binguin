@@ -102,6 +102,14 @@ namespace Binguin.Patch
                 typeof(Patch_BinguinMainThreadPreDraw), "Prefix",
                 typeof(Patch_BinguinMainThreadPreDraw), "Postfix");
 
+            // ★ 2026-10-29 挑染：发型节点之后再画一遍"挑染层"，并给冰鹅族加「挑染」按钮
+            SafePatch(harmony, AccessTools.Method(typeof(PawnRenderNodeWorker), "AppendDrawRequests"),
+                "挑染：PawnRenderNodeWorker.AppendDrawRequests",
+                null, null, typeof(Patch_BinguinHairHighlightDraw), "Postfix");
+            SafePatch(harmony, AccessTools.Method(typeof(Building_StylingStation), "GetFloatMenuOptions"),
+                "挑染：梳妆台右键菜单（挑染头发…）",
+                null, null, typeof(Patch_BinguinHairHighlightStation), "Postfix");
+
             // 静态版（真计算）：static float CostToMoveIntoCell(Pawn, IntVec3)
             MethodInfo staticTarget = typeof(Pawn_PathFollower).GetMethod(
                 "CostToMoveIntoCell",
