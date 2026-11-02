@@ -51,6 +51,12 @@ namespace Binguin.Feature.Fishing
         public bool autoCatchOn;           // 蟹笼模块
         public float reproAccum;           // 繁殖计时
         public float catchAccum;           // 蟹笼计时
+        /// <summary>
+        /// 已扣鱼数、还没生成到地上的"待放"数量。
+        /// ★ 2026-11-02：蟹笼一次捕「池数」条，原来在同一 tick 里全部生成，
+        ///   20 个池子的组会一帧冒出 20 条鱼。现在改成每个 Rare tick 放一条。
+        /// </summary>
+        public int pendingCatch;
         public float feedTickAccum;        // 鱼食消耗计时（每 dayTicks 组内耗 0.5）
         public float keepMinFish = 1f;     // ★ 保留下限：鱼群 ≤ 此值停捕
         //   ★ 2026-10-22 作者要求：默认 1（原来是 0）。蟹笼开着时默认 0 会把池子捞到空，
@@ -179,6 +185,9 @@ namespace Binguin.Feature.Fishing
             {
                 leaderThing = null;
             }
+            // ★ 2026-11-02 错峰：新池组把蟹笼计时随机打散，避免同一批建成的池组
+            //   在同一 tick 一起捕鱼（每个池组一次捕「池数」条）。
+            catchAccum = Rand.Range(0f, Props.catchIntervalTicks / 250f);
             // ★ 2026-08-20 连接贴图：新池放进地图 → 自己与四邻的连接 mask
             //   都变了 → 重打地图网格（MapMeshOnly 建筑贴图在 mesh 里）
             DirtyConnectionVisuals(parent.Map);
@@ -302,7 +311,7 @@ namespace Binguin.Feature.Fishing
             DirtyConnectionVisuals(map);
             CompBinguinFishPond oldLeader = LeaderComp;
             if (map == null || PondDef == null || oldLeader == null) return;
-            float totalFish = oldLeader.fishCount;
+            float totalFish = oldLeader.fishCount + oldLeader.pendingCatch;
             string species = oldLeader.fishDefName;
             bool automatic = oldLeader.autoCatchOn;
             float reserve = oldLeader.keepMinFish;
@@ -337,6 +346,7 @@ namespace Binguin.Feature.Fishing
                     c.cachedGroupCount = -1;
                     c.fishDefName = species;
                     c.fishCount = 0f;
+                    c.pendingCatch = 0;
                 }
                 processedPonds += group.Count;
                 int cumulative = retained * processedPonds / count;
@@ -369,6 +379,7 @@ namespace Binguin.Feature.Fishing
             }
             leaderThing = null;
             fishCount = 0f;
+            pendingCatch = 0;
         }
 
         // ================= 组信息（BFS：相邻 且 LeaderComp 相同） =================
@@ -495,6 +506,20 @@ namespace Binguin.Feature.Fishing
                 return;
             }
 
+            // ★ 2026-11-02：先把上一轮"待放"的鱼放掉（每个 Rare tick 一条）
+            if (pendingCatch > 0)
+            {
+                if (SpawnOneFish())
+                {
+                    pendingCatch--;
+                }
+                else
+                {
+                    fishCount += pendingCatch;   // 周围放不下，把没放的还回去
+                    pendingCatch = 0;
+                }
+            }
+
             const float rarePerDay = 60000f / 250f; // 240 次/天
             // ★ 2026-09 性能：这一轮 tick 原来最多跑 3 次组 BFS（GetGroupThings：
             //   一次算鱼食、CachedGroupPondCount 再跑两次）。现在整轮只跑一次，
@@ -541,14 +566,11 @@ namespace Binguin.Feature.Fishing
                     // 不捕到低于保留数
                     int allowed = Mathf.FloorToInt(Mathf.Max(0f, fishCount - keepMinFish));
                     int take = Mathf.Min(n, allowed);
-                    for (int i = 0; i < take; i++)
+                    if (take > 0)
                     {
-                        fishCount -= 1f;
-                        if (!SpawnOneFish())
-                        {
-                            fishCount += 1f;   // 周围放不下就不算捕到
-                            break;
-                        }
+                        // ★ 2026-11-02：先扣鱼数，再交给 pendingCatch 分批生成
+                        fishCount -= take;
+                        pendingCatch += take;
                     }
                 }
             }
@@ -721,6 +743,11 @@ namespace Binguin.Feature.Fishing
                     {
                         lead.keepMinFish = 1f;
                     }
+                    // ★ 2026-11-02 错峰：刚打开时随机一下计时，不要和别的池组对齐
+                    if (lead.autoCatchOn && lead.catchAccum <= 0f)
+                    {
+                        lead.catchAccum = Rand.Range(0f, lead.Props.catchIntervalTicks / 250f);
+                    }
                 };
                 yield return toggle;
             }
@@ -803,6 +830,7 @@ namespace Binguin.Feature.Fishing
             Scribe_Values.Look<bool>(ref autoCatchOn, "pondAutoCatch", false, false);
             Scribe_Values.Look<float>(ref reproAccum, "pondReproAccum", 0f, false);
             Scribe_Values.Look<float>(ref catchAccum, "pondCatchAccum", 0f, false);
+            Scribe_Values.Look<int>(ref pendingCatch, "pondPendingCatch", 0, false);
             Scribe_Values.Look<float>(ref feedTickAccum, "pondFeedTickAccum", 0f, false);
             Scribe_Values.Look<float>(ref keepMinFish, "pondKeepMinFish", 1f, false);
             Scribe_References.Look<Thing>(ref leaderThing, "pondLeaderThing", false);
