@@ -49,7 +49,7 @@ namespace Binguin.Feature.Fishing
         public string fishDefName = "";    // 组鱼种（"" = 未放苗）
         public float fishCount;            // 组鱼群
         public bool autoCatchOn;           // 蟹笼模块
-        public float reproAccum;           // 繁殖计时
+        public float reproAccum;           // 旧版繁殖计时（2026-11-03 起不再使用；保留仅为兼容旧存档）
         public float catchAccum;           // 蟹笼计时
         /// <summary>
         /// 已扣鱼数、还没生成到地上的"待放"数量。
@@ -541,17 +541,21 @@ namespace Binguin.Feature.Fishing
                 }
             }
 
-            // 繁殖：每池每天自然 4 / 鱼食 6（+50%）
-            reproAccum += 1f;
-            if (reproAccum >= rarePerDay)
+            // ★★ 2026-11-03 作者定稿的繁殖曲线（逻辑斯蒂式，峰值在 K/2）：
+            //   每池每天 = 基础 1 条
+            //             + 打窝 0.5 条（+50%，只在组内有鱼食时）
+            //             + 曲线 0~1 条（4N(K−N)/K²，N=K/2 时正好 1 ⇒ 总速翻倍）
+            //   ⇒ 峰值（K/2、有打窝）= 1 + 0.5 + 1 = **2.5 条/池/天**
+            //   曲线两端为 0：鱼很少时不会一夜爆池，接近满池时也不会无限堆。
+            //   按每个 Rare tick 分摊（perDay / 240），生长是连续的。
+            float cap = ponds * MaxFishPerPond;
+            if (fishCount < cap)
             {
-                reproAccum = 0f;
-                float cap = ponds * MaxFishPerPond;
-                if (fishCount < cap)
-                {
-                    float gain = (groupFeed > 0f ? 6f : 4f) * ponds;
-                    fishCount = Mathf.Min(cap, fishCount + gain);
-                }
+                float k = Mathf.Max(1f, cap);
+                float curve = 4f * fishCount * (k - fishCount) / (k * k);
+                if (curve < 0f) curve = 0f;
+                float perDayPerPond = 1f + (groupFeed > 0f ? 0.5f : 0f) + curve;
+                fishCount = Mathf.Min(cap, fishCount + perDayPerPond * ponds / rarePerDay);
             }
 
             // 蟹笼模块：每 catchIntervalTicks 捕 池数 条；保留下限保护
