@@ -707,4 +707,9 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_HairHighlight_Presets              >Presets</Binguin_HairHighlight_Presets>
   <Binguin_HairHighlight_Hint                 >Works on the mod's own hairstyles only. Hats hide the hair, and the streak hides with it.</Binguin_HairHighlight_Hint>
   <Binguin_HairHighlight_StationMenu             >Dye hair streaks…</Binguin_HairHighlight_StationMenu>
+  <Binguin_CompFishPond_33>Temperature control</Binguin_CompFishPond_33>
+  <Binguin_CompFishPond_34>Ignores temperature: below 0°C or above 58°C the fish stop breeding and 1 per pond dies each day. Draws 200W per pond (each pond must be connected to power).</Binguin_CompFishPond_34>
+  <Binguin_CompFishPond_35>Temperature control: {0} (water {1}°C, safe 0~58°C)</Binguin_CompFishPond_35>
+  <Binguin_CompFishPond_36>on</Binguin_CompFishPond_36>
+  <Binguin_CompFishPond_37>off</Binguin_CompFishPond_37>
 </LanguageData>

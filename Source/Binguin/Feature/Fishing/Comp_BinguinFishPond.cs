@@ -27,6 +27,7 @@ using RimWorld;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using Binguin.Helper;
 
 namespace Binguin.Feature.Fishing
 {
@@ -49,6 +50,13 @@ namespace Binguin.Feature.Fishing
         public string fishDefName = "";    // 组鱼种（"" = 未放苗）
         public float fishCount;            // 组鱼群
         public bool autoCatchOn;           // 蟹笼模块
+        /// <summary>
+        /// 调温模块（2026-11-03）：开启后无视温度影响，每池耗电 200W。
+        /// 不开启时：水温 &lt; 0℃ 或 &gt; 58℃ → 不繁殖，且每池每天死 1 条。
+        /// </summary>
+        public bool heaterOn;
+        public float dieAccum;             // 温度不适时的死亡计时（Rare tick 累加）
+        public float cachedTemp = 21f;     // 最近一次 Rare tick 的组平均温度（给检视面板用）
         public float reproAccum;           // 旧版繁殖计时（2026-11-03 起不再使用；保留仅为兼容旧存档）
         public float catchAccum;           // 蟹笼计时
         /// <summary>
@@ -171,6 +179,11 @@ namespace Binguin.Feature.Fishing
                     {
                         leaderThing = null;
                     }
+                }
+                // ★ 2026-11-03 读档：调温模块开着的话，把本组的 200W/池 重新挂上
+                if (heaterOn)
+                {
+                    ApplyHeaterPower();
                 }
                 return;
             }
@@ -316,6 +329,7 @@ namespace Binguin.Feature.Fishing
             bool automatic = oldLeader.autoCatchOn;
             float reserve = oldLeader.keepMinFish;
             float repro = oldLeader.reproAccum, caught = oldLeader.catchAccum, fed = oldLeader.feedTickAccum;
+            bool heated = oldLeader.heaterOn;
             List<Thing> remaining = new List<Thing>();
             foreach (Thing pond in map.listerThings.ThingsOfDef(PondDef))
             {
@@ -357,6 +371,9 @@ namespace Binguin.Feature.Fishing
                 leader.reproAccum = repro;
                 leader.catchAccum = caught;
                 leader.feedTickAccum = fed;
+                leader.heaterOn = heated;
+                leader.dieAccum = 0f;
+                leader.ApplyHeaterPower();
             }
             // 分配按池数保留总量，超过剩余总容量的完整鱼掉落。
             int excess = Mathf.FloorToInt(Mathf.Max(0f, totalFish - retained));
@@ -530,6 +547,31 @@ namespace Binguin.Feature.Fishing
             cachedGroupFeed = GroupFeedNutritionOf(group);
             float groupFeed = cachedGroupFeed;
 
+            // ★★ 2026-11-03 温度系统：
+            //   水温 < 0℃ 或 > 58℃ → 不繁殖，且每池每天死 1 条；
+            //   开了调温模块并且每个池都通着电 → 无视温度（每池 200W）。
+            float temp = GroupTemperature(group);
+            cachedTemp = temp;
+            bool heaterWorks = heaterOn && GroupPowered(group);
+            bool tempOk = heaterWorks || (temp >= 0f && temp <= 58f);
+            if (!tempOk)
+            {
+                dieAccum += 1f;
+                if (dieAccum >= rarePerDay)
+                {
+                    dieAccum = 0f;
+                    float die = Mathf.Min(fishCount, ponds);   // 每池每天 1 条
+                    fishCount -= die;
+                    BinguinLogUtility.Log("鱼池水温 " + temp.ToString("0.0")
+                        + "℃ 超出 0~58℃，且未开调温模块：本次死亡 " + die.ToString("0")
+                        + " 条鱼。", severity: 1, isDebug: false);
+                }
+            }
+            else
+            {
+                dieAccum = 0f;
+            }
+
             // 鱼食消耗：有营养时每 dayTicks 从组内容器耗 0.5
             if (groupFeed > 0f)
             {
@@ -548,8 +590,9 @@ namespace Binguin.Feature.Fishing
             //   ⇒ 峰值（K/2、有打窝）= 1 + 0.5 + 1 = **2.5 条/池/天**
             //   曲线两端为 0：鱼很少时不会一夜爆池，接近满池时也不会无限堆。
             //   按每个 Rare tick 分摊（perDay / 240），生长是连续的。
+            //   ★ 温度不适宜时整段不执行（只死不生）。
             float cap = ponds * MaxFishPerPond;
-            if (fishCount < cap)
+            if (tempOk && fishCount < cap)
             {
                 float k = Mathf.Max(1f, cap);
                 float curve = 4f * fishCount * (k - fishCount) / (k * k);
@@ -576,6 +619,81 @@ namespace Binguin.Feature.Fishing
                         fishCount -= take;
                         pendingCatch += take;
                     }
+                }
+            }
+        }
+
+        // ================= 温度 / 调温模块（2026-11-03） =================
+
+        /// <summary>组内所有池的平均温度（有池没图时回退 21℃）。</summary>
+        private static float GroupTemperature(List<Thing> group)
+        {
+            if (group == null || group.Count == 0)
+            {
+                return 21f;
+            }
+            float sum = 0f;
+            int n = 0;
+            for (int i = 0; i < group.Count; i++)
+            {
+                Thing t = group[i];
+                if (t == null || !t.Spawned || t.Map == null)
+                {
+                    continue;
+                }
+                sum += t.Position.GetTemperature(t.Map);
+                n++;
+            }
+            return n > 0 ? sum / n : 21f;
+        }
+
+        /// <summary>组内**每个**池都通着电（且没断电）才算调温模块生效。</summary>
+        private static bool GroupPowered(List<Thing> group)
+        {
+            if (group == null || group.Count == 0)
+            {
+                return false;
+            }
+            for (int i = 0; i < group.Count; i++)
+            {
+                Thing t = group[i];
+                if (t == null || !t.Spawned)
+                {
+                    return false;
+                }
+                CompPowerTrader pt = t.TryGetComp<CompPowerTrader>();
+                if (pt == null || !pt.PowerOn || pt.PowerNet == null)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>把调温模块的耗电（每池 200W）应用到组内每个池；关闭时归零。</summary>
+        public void ApplyHeaterPower()
+        {
+            List<Thing> group = GetGroupThings();
+            for (int i = 0; i < group.Count; i++)
+            {
+                Thing t = group[i];
+                if (t == null || !t.Spawned)
+                {
+                    continue;
+                }
+                CompPowerTrader pt = t.TryGetComp<CompPowerTrader>();
+                if (pt == null)
+                {
+                    continue;
+                }
+                if (heaterOn)
+                {
+                    pt.PowerOn = true;
+                    pt.PowerOutput = -200f;   // 负数 = 耗电 200W
+                }
+                else
+                {
+                    pt.PowerOutput = 0f;
                 }
             }
         }
@@ -755,6 +873,19 @@ namespace Binguin.Feature.Fishing
                 };
                 yield return toggle;
             }
+
+            // ★ 2026-11-03 调温模块：开启后无视温度，每池 200W
+            Command_Toggle heater = new Command_Toggle();
+            heater.defaultLabel = "Binguin_CompFishPond_33".Translate();
+            heater.defaultDesc = "Binguin_CompFishPond_34".Translate();
+            heater.icon = ContentFinder<Texture2D>.Get("Things/Building/Binguin/FishPond", false);
+            heater.isActive = delegate { return lead.heaterOn; };
+            heater.toggleAction = delegate
+            {
+                lead.heaterOn = !lead.heaterOn;
+                lead.ApplyHeaterPower();
+            };
+            yield return heater;
         }
 
         private void StartFishing(CompBinguinFishPond lead)
@@ -823,7 +954,10 @@ namespace Binguin.Feature.Fishing
                 + "Binguin_CompFishPond_25".Translate() + lead.keepMinFish.ToString("0") + "）\n"
                 + "Binguin_CompFishPond_26".Translate() + feed.ToString("0.0") + " / " + (n * CompBinguinPondFeed.MaxNutrition).ToString("0")
                 + (feed > 0f ? (string)"Binguin_CompFishPond_27".Translate() : "") + "\n"
-                + "Binguin_CompFishPond_28".Translate() + (lead.autoCatchOn ? "Binguin_CompFishPond_29".Translate() : "Binguin_CompFishPond_30".Translate());
+                + "Binguin_CompFishPond_28".Translate() + (lead.autoCatchOn ? "Binguin_CompFishPond_29".Translate() : "Binguin_CompFishPond_30".Translate())
+                + "\n" + "Binguin_CompFishPond_35".Translate(
+                    (lead.heaterOn ? "Binguin_CompFishPond_36" : "Binguin_CompFishPond_37").Translate(),
+                    lead.cachedTemp.ToString("0.0"));
         }
 
         public override void PostExposeData()
@@ -832,6 +966,8 @@ namespace Binguin.Feature.Fishing
             Scribe_Values.Look<string>(ref fishDefName, "pondFishDef", "", false);
             Scribe_Values.Look<float>(ref fishCount, "pondFishCount", 0f, false);
             Scribe_Values.Look<bool>(ref autoCatchOn, "pondAutoCatch", false, false);
+            Scribe_Values.Look<bool>(ref heaterOn, "pondHeaterOn", false, false);
+            Scribe_Values.Look<float>(ref dieAccum, "pondDieAccum", 0f, false);
             Scribe_Values.Look<float>(ref reproAccum, "pondReproAccum", 0f, false);
             Scribe_Values.Look<float>(ref catchAccum, "pondCatchAccum", 0f, false);
             Scribe_Values.Look<int>(ref pendingCatch, "pondPendingCatch", 0, false);

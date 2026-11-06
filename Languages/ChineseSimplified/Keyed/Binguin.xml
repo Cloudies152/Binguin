@@ -708,4 +708,9 @@
   <Binguin_HairHighlight_Presets              >预设颜色</Binguin_HairHighlight_Presets>
   <Binguin_HairHighlight_Hint                 >只对自绘的冰鹅族发型生效。戴帽子时头发不显示，挑染也会一起隐藏。</Binguin_HairHighlight_Hint>
   <Binguin_HairHighlight_StationMenu             >挑染头发…</Binguin_HairHighlight_StationMenu>
+  <Binguin_CompFishPond_33>调温模块</Binguin_CompFishPond_33>
+  <Binguin_CompFishPond_34>开启后无视温度影响：0°C 以下或 58°C 以上不繁殖，且每池每天死 1 条。耗电 200W/池（每池都要通电）。</Binguin_CompFishPond_34>
+  <Binguin_CompFishPond_35>调温模块：{0}（水温 {1}°C，适宜 0~58°C）</Binguin_CompFishPond_35>
+  <Binguin_CompFishPond_36>开</Binguin_CompFishPond_36>
+  <Binguin_CompFishPond_37>关</Binguin_CompFishPond_37>
 </LanguageData>

@@ -86,6 +86,9 @@
         <stackLimit>50</stackLimit>
         <drawContainedThing>false</drawContainedThing>
       </li>
+    <li Class="CompProperties_Power">
+      <basePowerConsumption>0</basePowerConsumption>
+    </li>
     <li Class="Binguin.Feature.Fishing.CompProperties_BinguinFishPond, Binguin"></li>
     </comps>
     <researchPrerequisites>
