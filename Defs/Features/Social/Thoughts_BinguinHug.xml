@@ -12,7 +12,7 @@
     <stackLimitForSameOtherPawn>1</stackLimitForSameOtherPawn>
     <stages>
       <li>
-        <label>被拥抱</label>
+        <label>拥抱</label>
         <description>有人抱了抱我，心里暖暖的。</description>
         <baseMoodEffect>5</baseMoodEffect>
       </li>

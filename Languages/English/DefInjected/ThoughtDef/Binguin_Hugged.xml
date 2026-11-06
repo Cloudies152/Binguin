@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
-  <Binguin_Hugged.label>hugged</Binguin_Hugged.label>
+  <Binguin_Hugged.label>hug</Binguin_Hugged.label>
   <Binguin_Hugged.description>Someone gave me a warm hug.</Binguin_Hugged.description>
-  <Binguin_Hugged.stages.0.label>hugged</Binguin_Hugged.stages.0.label>
+  <Binguin_Hugged.stages.0.label>hug</Binguin_Hugged.stages.0.label>
   <Binguin_Hugged.stages.0.description>Someone hugged me and it felt warm.</Binguin_Hugged.stages.0.description>
 </LanguageData>
