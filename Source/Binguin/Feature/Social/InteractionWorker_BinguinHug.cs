@@ -63,7 +63,9 @@ namespace Binguin.Feature.Social
             {
                 return 0f;
             }
-            return 0.3f;
+            // ★ 2026-11-06 作者要"平均 3 天一次"：原版权重合计约 1.11，
+            //   抽中概率 = w/(w+1.11)；每次尝试平均 6600 tick ⇒ w≈0.04 时约 3 天一次。
+            return 0.04f;
         }
 
         private static bool HasHugThought(Pawn pawn)
