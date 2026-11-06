@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- ★ 2026-11-06：拥抱带来的心情（双方各 +5）。
+       stackLimit = 1 ⇒ 同一个人身上最多只有一层，抱多少次都只 +5（不叠加）。
+       durationDays = 1 ⇒ 持续 1 天。 -->
+  <ThoughtDef>
+    <defName>Binguin_Hugged</defName>
+    <thoughtClass>Thought_MemorySocial</thoughtClass>
+    <durationDays>1</durationDays>
+    <stackLimit>1</stackLimit>
+    <stackLimitForSameOtherPawn>1</stackLimitForSameOtherPawn>
+    <stages>
+      <li>
+        <label>被拥抱</label>
+        <description>有人抱了抱我，心里暖暖的。</description>
+        <baseMoodEffect>5</baseMoodEffect>
+      </li>
+    </stages>
+  </ThoughtDef>
+
+</Defs>

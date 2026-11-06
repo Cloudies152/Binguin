@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- ★ 2026-11-06：冰鹅族「拥抱」互动。
+       由 InteractionWorker_BinguinHug 决定触发概率（只有冰鹅族发起、对同阵营殖民者）。
+       双方心情由下面的 InteractionDef 里 initiatorThought / recipientThought 给出。 -->
+  <InteractionDef>
+    <defName>Binguin_Hug</defName>
+    <label>拥抱</label>
+    <workerClass>Binguin.Feature.Social.InteractionWorker_BinguinHug, Binguin</workerClass>
+    <symbol>Things/Mote/SpeechSymbols/Chitchat</symbol>
+    <socialFightBaseChance>0</socialFightBaseChance>
+    <initiatorThought>Binguin_Hugged</initiatorThought>
+    <recipientThought>Binguin_Hugged</recipientThought>
+    <initiatorXpGainSkill>Social</initiatorXpGainSkill>
+    <initiatorXpGainAmount>4</initiatorXpGainAmount>
+    <logRulesInitiator>
+      <rulesStrings>
+        <li>r_logentry->[INITIATOR_nameDef] 给了 [RECIPIENT_nameDef] 一个拥抱。</li>
+        <li>r_logentry->[INITIATOR_nameDef] 抱了抱 [RECIPIENT_nameDef]。</li>
+      </rulesStrings>
+    </logRulesInitiator>
+    <logRulesRecipient>
+      <rulesStrings>
+        <li>r_logentry->[RECIPIENT_nameDef] 被 [INITIATOR_nameDef] 抱了抱。</li>
+      </rulesStrings>
+    </logRulesRecipient>
+  </InteractionDef>
+
+</Defs>
