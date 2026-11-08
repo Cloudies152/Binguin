@@ -713,4 +713,10 @@
   <Binguin_CompFishPond_35>调温模块：{0}（水温 {1}°C，适宜 0~58°C）</Binguin_CompFishPond_35>
   <Binguin_CompFishPond_36>开</Binguin_CompFishPond_36>
   <Binguin_CompFishPond_37>关</Binguin_CompFishPond_37>
+  <Binguin_ConcertScene_Open>演唱会现场</Binguin_ConcertScene_Open>
+  <Binguin_ConcertScene_OpenDesc>从观众席正面看这场演唱会。舞台、乐器、乐手、灯光、观众都会按场地上的实际情况出现。</Binguin_ConcertScene_OpenDesc>
+  <Binguin_ConcertScene_Title>演唱会现场</Binguin_ConcertScene_Title>
+  <Binguin_ConcertScene_Lights>灯光 {0}</Binguin_ConcertScene_Lights>
+  <Binguin_ConcertScene_Audience>观众 {0}</Binguin_ConcertScene_Audience>
+  <Binguin_ConcertScene_NoBand>乐手还没上场</Binguin_ConcertScene_NoBand>
 </LanguageData>

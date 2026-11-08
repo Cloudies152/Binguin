@@ -712,4 +712,10 @@ The ultimate creation of the Frostspeaker: an eight-barrel laser gatling. Once i
   <Binguin_CompFishPond_35>Temperature control: {0} (water {1}°C, safe 0~58°C)</Binguin_CompFishPond_35>
   <Binguin_CompFishPond_36>on</Binguin_CompFishPond_36>
   <Binguin_CompFishPond_37>off</Binguin_CompFishPond_37>
+  <Binguin_ConcertScene_Open>Concert view</Binguin_ConcertScene_Open>
+  <Binguin_ConcertScene_OpenDesc>Watch the concert from the front row. Stage, instruments, performers, lights and audience appear according to what is actually at the venue.</Binguin_ConcertScene_OpenDesc>
+  <Binguin_ConcertScene_Title>Concert view</Binguin_ConcertScene_Title>
+  <Binguin_ConcertScene_Lights>Lights {0}</Binguin_ConcertScene_Lights>
+  <Binguin_ConcertScene_Audience>Audience {0}</Binguin_ConcertScene_Audience>
+  <Binguin_ConcertScene_NoBand>No performers on stage yet</Binguin_ConcertScene_NoBand>
 </LanguageData>

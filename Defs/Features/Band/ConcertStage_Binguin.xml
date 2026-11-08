@@ -91,6 +91,9 @@
     <researchPrerequisites>
       <li>Binguin_ResearchMusic</li>
     </researchPrerequisites>
+    <comps>
+      <li Class="Binguin.Feature.Band.CompProperties_BinguinConcertStageView, Binguin" />
+    </comps>
   </ThingDef>
 
 
@@ -152,6 +155,9 @@
     <researchPrerequisites>
       <li>Binguin_ResearchMusic</li>
     </researchPrerequisites>
+    <comps>
+      <li Class="Binguin.Feature.Band.CompProperties_BinguinConcertStageView, Binguin" />
+    </comps>
   </ThingDef>
 
 </Defs>
