@@ -27,11 +27,11 @@ namespace Binguin.Feature.Band
 
         private static readonly string[] SlotTexPaths =
         {
-            "Things/Building/Joy/Binguin/UI/Band_Microphone",
-            "Things/Building/Joy/Binguin/UI/Band_Guitar",
-            "Things/Building/Joy/Binguin/UI/Band_Keyboard",
-            "Things/Building/Joy/Binguin/UI/Band_DrumKit",
-            "Things/Building/Joy/Binguin/UI/Band_Bass"
+            "Things/Building/Joy/Binguin/Band_Microphone",
+            "Things/Building/Joy/Binguin/Band_Guitar",
+            "Things/Building/Joy/Binguin/Band_Keyboard",
+            "Things/Building/Joy/Binguin/Band_DrumKit",
+            "Things/Building/Joy/Binguin/Band_Bass"
         };
 
         private static readonly Color[] BeamColors =
@@ -242,8 +242,11 @@ namespace Binguin.Feature.Band
                         Texture2D it = Tex(SlotTexPaths[i]);
                         if (it != null)
                         {
-                            float w = size;
-                            float h = Mathf.Min(size, w * it.height / Mathf.Max(1, it.width));
+                            // ★ 按游戏里的占地格数定宽：鼓 3 格、键盘 2 格、其余 1 格，
+                            //   高度按原图比例走（鼓 384×128、键盘 256×128、其余 128×128）。
+                            int cells = inst.def != null && inst.def.size.x > 0 ? inst.def.size.x : SlotCells[i];
+                            float w = size * 0.80f * cells;
+                            float h = w * it.height / Mathf.Max(1, it.width);
                             Widgets.DrawBoxSolid(new Rect(cx - w / 2f, instY + h * 0.5f, w, h * 0.4f), new Color(0f, 0f, 0f, 0.18f));
                             GUI.DrawTexture(new Rect(cx - w / 2f, instY, w, h), it);
                         }
@@ -288,5 +291,7 @@ namespace Binguin.Feature.Band
         // 正好落在"吉他-麦克风""麦克风-键盘"两处空档里。
         private static readonly float[] SlotXFactor = { 0.50f, 0.30f, 0.70f, 0.39f, 0.61f };
         private static readonly bool[] SlotBackRow = { false, false, false, true, true };
+        /// <summary>占地格数（乐器找不到时的兜底；正常按 ThingDef.size.x）。</summary>
+        private static readonly int[] SlotCells = { 1, 1, 2, 3, 1 };
     }
 }
