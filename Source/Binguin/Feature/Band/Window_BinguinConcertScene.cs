@@ -201,36 +201,49 @@ namespace Binguin.Feature.Band
                 GUI.DrawTexture(new Rect(0f, 330f, inRect.width, 250f), stageTex);
             }
 
-            // ---- 5 个位置：乐手 + 乐器 ----
-            for (int i = 0; i < 5; i++)
+            // ---- 5 个位置：乐手 + 乐器（按游戏内真实布局，先画后排再画前排） ----
+            for (int row = 0; row < 2; row++)
             {
-                float cx = SlotX(i, inRect.width);
-
-                Pawn pawn = i < performers.Count ? performers[i] : null;
-                if (pawn != null)
+                bool backRow = row == 1;
+                for (int i = 0; i < 5; i++)
                 {
-                    RenderTexture rt = PortraitsCache.Get(pawn, new Vector2(150f, 150f), Rot4.South,
-                        default(Vector3), 1f, true, true, true, true, null, null, false, null);
-                    if (rt != null)
+                    if (SlotBackRow[i] != backRow)
                     {
-                        GUI.DrawTexture(new Rect(cx - 75f, 225f, 150f, 150f), rt);
+                        continue;
                     }
-                }
-                else
-                {
-                    Widgets.DrawBoxSolid(new Rect(cx - 42f, 290f, 84f, 130f), new Color(0f, 0f, 0f, 0.22f));
-                }
+                    float cx = inRect.width * SlotXFactor[i];
+                    float scale = backRow ? 0.76f : 1f;
+                    float size = 150f * scale;
+                    float portraitY = backRow ? 190f : 240f;
+                    float instY = backRow ? 292f : 358f;
 
-                Thing inst = instruments[i];
-                if (inst != null)
-                {
-                    Texture2D it = Tex(SlotTexPaths[i]);
-                    if (it != null)
+                    Pawn pawn = i < performers.Count ? performers[i] : null;
+                    if (pawn != null)
                     {
-                        float w = 150f;
-                        float h = Mathf.Min(150f, w * it.height / Mathf.Max(1, it.width));
-                        Widgets.DrawBoxSolid(new Rect(cx - w / 2f, 372f, w, h * 0.55f), new Color(0f, 0f, 0f, 0.18f));
-                        GUI.DrawTexture(new Rect(cx - w / 2f, 365f, w, h), it);
+                        RenderTexture rt = PortraitsCache.Get(pawn, new Vector2(size, size), Rot4.South,
+                            default(Vector3), 1f, true, true, true, true, null, null, false, null);
+                        if (rt != null)
+                        {
+                            GUI.DrawTexture(new Rect(cx - size / 2f, portraitY, size, size), rt);
+                        }
+                    }
+                    else
+                    {
+                        Widgets.DrawBoxSolid(new Rect(cx - size * 0.28f, portraitY + size * 0.42f, size * 0.56f, size * 0.58f),
+                            new Color(0f, 0f, 0f, 0.22f));
+                    }
+
+                    Thing inst = instruments[i];
+                    if (inst != null)
+                    {
+                        Texture2D it = Tex(SlotTexPaths[i]);
+                        if (it != null)
+                        {
+                            float w = size;
+                            float h = Mathf.Min(size, w * it.height / Mathf.Max(1, it.width));
+                            Widgets.DrawBoxSolid(new Rect(cx - w / 2f, instY + h * 0.5f, w, h * 0.4f), new Color(0f, 0f, 0f, 0.18f));
+                            GUI.DrawTexture(new Rect(cx - w / 2f, instY, w, h), it);
+                        }
                     }
                 }
             }
@@ -261,9 +274,13 @@ namespace Binguin.Feature.Band
             }
         }
 
-        private static float SlotX(int i, float width)
-        {
-            return Mathf.Lerp(width * 0.16f, width * 0.84f, i / 4f);
-        }
+        /// <summary>
+        /// 舞台布局（对齐 BandVisit_Binguin.cs 里作者定死的坐标）：
+        ///   前排：键盘(x-3,西) / 麦克风(x+0,中) / 吉他(x+2,东)
+        ///   后排：贝斯(x-3,西) / 架子鼓(x+2,东)（比前排再往后退 3 格）
+        /// 观众在舞台北侧、面朝南看 → 画面左右镜像（东 = 画面左）。
+        /// </summary>
+        private static readonly float[] SlotXFactor = { 0.50f, 0.32f, 0.68f, 0.32f, 0.68f };
+        private static readonly bool[] SlotBackRow = { false, false, false, true, true };
     }
 }
