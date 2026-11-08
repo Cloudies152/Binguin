@@ -212,11 +212,14 @@ namespace Binguin.Feature.Band
                         continue;
                     }
                     float cx = inRect.width * SlotXFactor[i];
-                    float scale = backRow ? 0.76f : 1f;
+                    // 透视：后排人更远 → 更小、更高，并在水平方向朝画面中心收拢，
+                    // 这样两件后排乐器正好错开出现在前排三人之间，不会被完全挡住。
+                    float scale = backRow ? 0.60f : 1f;
                     float size = 150f * scale;
-                    float portraitY = backRow ? 190f : 240f;
-                    float instY = backRow ? 292f : 358f;
+                    float portraitY = backRow ? 178f : 252f;
+                    float instY = backRow ? 262f : 372f;
 
+                    if (backRow) GUI.color = new Color(0.82f, 0.82f, 0.88f, 1f);
                     Pawn pawn = i < performers.Count ? performers[i] : null;
                     if (pawn != null)
                     {
@@ -245,6 +248,7 @@ namespace Binguin.Feature.Band
                             GUI.DrawTexture(new Rect(cx - w / 2f, instY, w, h), it);
                         }
                     }
+                    GUI.color = Color.white;
                 }
             }
 
@@ -280,7 +284,9 @@ namespace Binguin.Feature.Band
         ///   后排：贝斯(x-3,西) / 架子鼓(x+2,东)（比前排再往后退 3 格）
         /// 观众在舞台北侧、面朝南看 → 画面左右镜像（东 = 画面左）。
         /// </summary>
-        private static readonly float[] SlotXFactor = { 0.50f, 0.32f, 0.68f, 0.32f, 0.68f };
+        // 前排：吉他(0.30) 麦克风(0.50) 键盘(0.70)；后排按透视收拢到 0.39 / 0.61，
+        // 正好落在"吉他-麦克风""麦克风-键盘"两处空档里。
+        private static readonly float[] SlotXFactor = { 0.50f, 0.30f, 0.70f, 0.39f, 0.61f };
         private static readonly bool[] SlotBackRow = { false, false, false, true, true };
     }
 }
