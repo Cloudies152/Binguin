@@ -216,8 +216,8 @@ namespace Binguin.Feature.Band
                     // 这样两件后排乐器正好错开出现在前排三人之间，不会被完全挡住。
                     float scale = backRow ? 0.60f : 1f;
                     float size = 150f * scale;
-                    float portraitY = backRow ? 178f : 252f;
-                    float instY = backRow ? 262f : 372f;
+                    float portraitY = backRow ? 225f : 300f;
+                    float instY = backRow ? 300f : 380f;
 
                     if (backRow) GUI.color = new Color(0.82f, 0.82f, 0.88f, 1f);
                     Pawn pawn = i < performers.Count ? performers[i] : null;
