@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   冰岩 / 冰岩砖：
   冰岩 = 采切石一体机在冰面采出的原岩（类似原版岩石块 ChunkGranite），
@@ -14,7 +14,8 @@
     <label>冰岩</label>
     <description>从寒原冰层深处采出的冰蓝岩块，冷冽剔透。可在切石桌上切成冰岩砖。</description>
     <graphicData>
-      <color>(150,175,210)</color>
+      <texPath>Things/Item/Chunk/Binguin/IceRock</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
     </graphicData>
     <statBases>
       <Mass>20</Mass>

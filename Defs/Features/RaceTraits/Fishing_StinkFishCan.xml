@@ -101,7 +101,7 @@
     <!-- ★ 清掉继承来的 recipeMaker（详见上面那段说明，别删）。 -->
     <recipeMaker IsNull="true" />
     <graphicData>
-      <texPath>Things/Item/Resource/Shell/Shell_Toxic</texPath>
+      <texPath>Things/Item/Resource/Binguin/StinkFishCan</texPath>
       <graphicClass>Graphic_StackCount</graphicClass>
     </graphicData>
     <comps>

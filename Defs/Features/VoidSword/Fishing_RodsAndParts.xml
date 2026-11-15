@@ -46,7 +46,7 @@
     <description>冰鹅族渔道的终点之作：以世界上十四种鱼（）各二十五尾）凝聚而成的一柄剑。剑身就是一条鱼——鳞光为刃、鱼尾为柄。执剑者只要念动真言，十四条鱼的虚影便自天顶轮番斩落，每一尾都带着能击碎骨血的寒能。\n\n（远程斩击属于测试玩法，默认关闭；在【选项 → Mod 设置 → 冰鹅族】里可启用。）</description>
     <graphicData>
       <!-- 专用鱼剑贴图尚未制作，临时使用 Odyssey 鲑鱼贴图及其堆叠图形加载方式。 -->
-      <texPath>Things/Item/Fish/Salmon</texPath>
+      <texPath>Things/Item/Equipment/WeaponMelee/Binguin/VoidSwordFish</texPath>
       <graphicClass>Graphic_StackCount</graphicClass>
     </graphicData>
     <uiIconScale>1.15</uiIconScale>
