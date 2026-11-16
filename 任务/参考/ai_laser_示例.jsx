@@ -1,16 +1,14 @@
 #target illustrator
-// 激光机枪 v7 —— 用上 Pathfinder 真挖孔 + 线性渐变做体积
-// 256x128，屏幕坐标（y 向下）
+// v13 —— 按参考图逐行分布确定的主块结构 + 冰鹅族画风
 function C(r,g,b){ var c=new RGBColor(); c.red=r; c.green=g; c.blue=b; return c; }
-var H = 128;
+var H=128, K=256/66;
 
-var LINE  = C(18,22,28);
-var BODY_D= C(40,50,62), BODY=C(64,76,89), BODY_L=C(96,112,128);
-var PART_D= C(72,96,116), PART=C(103,132,155), PART_L=C(138,166,188);
-var BARR_D= C(14,18,24), BARR=C(34,42,52), BARR_L=C(72,84,98);
-var WHITE = C(232,237,242);
-var CYAN_D= C(46,116,146), CYAN=C(127,216,240), CYAN_L=C(206,246,255);
+var LINE=C(16,18,22), BODY=C(64,76,89), BODY_L=C(98,114,130), BODY_D=C(38,48,60);
+var PART=C(103,132,155), PART_L=C(142,168,190);
+var DARK=C(22,27,34), DARK_L=C(58,68,80);
+var WHITE=C(224,229,234), ICE_D=C(56,130,158), ICE=C(127,216,240), ICE_L=C(206,246,255);
 
+function X(v){ return v*K; }
 function box(doc,x,y,w,h,fill,lw,r){
   var t=H-y;
   var p=(r&&r>0)?doc.pathItems.roundedRectangle(t,x,w,h,r,r):doc.pathItems.rectangle(t,x,w,h);
@@ -26,99 +24,69 @@ function poly(doc,pts,closed,color,w,fill){
     p.strokeCap=StrokeCap.ROUNDENDCAP;p.strokeJoin=StrokeJoin.ROUNDENDJOIN;}
   return p;
 }
-// 线性渐变填充（垂直方向渐变，模拟圆柱体积）
-function gradBox(doc,x,y,w,h,r,dark,light,lw,angleReverse){
-  var grad = doc.gradients.add();
-  grad.type = GradientType.LINEAR;
-  grad.gradientStops[0].color = angleReverse ? light : dark;
-  grad.gradientStops[0].rampPoint = 0;
-  grad.gradientStops[1].color = angleReverse ? dark : light;
-  grad.gradientStops[1].rampPoint = 100;
-  var t=H-y;
-  var p=(r&&r>0)?doc.pathItems.roundedRectangle(t,x,w,h,r,r):doc.pathItems.rectangle(t,x,w,h);
-  p.filled=true;
-  var gc=new GradientColor(); gc.gradient=grad;
-  gc.origin=[x, H-y];                 // 顶部
-  gc.destination=[x, H-(y+h)];        // 底部
-  gc.angle=90;                        // 垂直
-  p.fillColor=gc;
-  if(lw!==0){p.stroked=true;p.strokeColor=LINE;p.strokeWidth=(lw||2.2);}else{p.stroked=false;}
-  return p;
+function tint(doc,x,y,w,h,color,mode,op,r){
+  var p=box(doc,x,y,w,h,color,0,(r||1.5));
+  p.opacity=op; p.blendingMode=mode; return p;
 }
-// 用 Pathfinder 在 target 上挖掉 cutters（真镂空）
-function cutHoles(doc, target, cutters){
-  doc.selection = null;
-  target.selected = true;
-  for (var i=0;i<cutters.length;i++) cutters[i].selected = true;
-  app.executeMenuCommand("group");
-  app.executeMenuCommand("Live Pathfinder Subtract");
-  app.executeMenuCommand("expandStyle");
-  app.executeMenuCommand("ungroup");
+// 结构块：坐标用参考图单位
+function blk(doc,rx,ry,rw,rh,base,rad,lw){
+  var x=X(rx),y=X(ry),w=X(rw),h=X(rh);
+  box(doc,x,y,w,h,base,(lw||2.2),(rad||2.5));
+  if(h>X(2)){
+    tint(doc,x+1.2,y+1.2,w-2.4,h*0.30,BODY_L,BlendModes.SCREEN,28,Math.max(1,(rad||2.5)-1));
+    tint(doc,x+1.2,y+h-1.2-h*0.20,w-2.4,h*0.20,BODY_D,BlendModes.MULTIPLY,24,Math.max(1,(rad||2.5)-1));
+    box(doc,x+2,y+2,w-4,1.0,WHITE,0,0.5);
+  }
 }
 
 function main(){
   var doc=app.documents.add(DocumentColorSpace.RGB,256,128);
 
-  // ===== 枪托 =====
-  poly(doc,[[16,62],[46,56],[58,56],[58,96],[28,100]],true,LINE,2.4,BODY);
-  box(doc,19,64,26,5,BODY_L,0,1.5);
-  box(doc,16,64,7,32,BODY_D,2.0,1.5);
-  box(doc,28,76,24,7,PART,1.8,1.5);
-  box(doc,29,77,22,2,WHITE,0,1);
+  // 1) 顶部小模块（x14-27, y0-4）
+  blk(doc, 14, 0, 13, 4.5, BODY, 1.6, 2.0);
 
-  // ===== 机匣（渐变体积）=====
-  gradBox(doc,56,52,70,46,4,BODY_D,BODY_L,2.6,false);
-  box(doc,62,64,24,28,PART,2.0,2);
-  box(doc,63.4,65.4,21.2,7,PART_L,0,1.5);
-  for(var i=0;i<3;i++){
-    gradBox(doc,65.5+i*6.5,70,4,18,1.2,CYAN_D,CYAN,1.2,false);
-    box(doc,66.4+i*6.5,71.5,1.6,12,CYAN_L,0,0.8);
+  // 2) 上沿横条（x2-61, y4-6）
+  blk(doc, 2, 4, 59, 3, BODY, 1.6, 2.0);
+
+  // 3) 主机匣（x0-65, y6-17）
+  blk(doc, 0, 6, 65.5, 11, BODY, 2.4, 2.6);
+
+  // 4) 前下部（x4-61, y17-21）
+  blk(doc, 4, 17, 57, 4.5, BODY, 2.0, 2.2);
+
+  // 5) 中部块（x2-37, y21-23）
+  blk(doc, 2, 21, 35, 2.8, BODY, 1.6, 1.8);
+
+  // 6) 握把（x2-15, y23-28）
+  poly(doc,[[X(0.4),X(16.6)],[X(15.2),X(16.6)],[X(13.2),X(28)],[X(3.6),X(28)]],true,LINE,2.2,BODY);
+  poly(doc,[[X(1.4),X(17.4)],[X(14.2),X(17.4)],[X(12.4),X(27.2)],[X(4.6),X(27.2)]],false,PART_L,1.3,null);
+  for(var g=0;g<3;g++) box(doc, X(4.6), X(24.0+g*1.5), X(7.2-g*0.9), X(0.8), BODY_D, 0, 0.4);
+
+  // ===== 内部细节 =====
+  // 长能量条（x36-56, y9.5-13）
+  box(doc, X(35.5), X(9.2), X(21), X(4.2), ICE_D, 1.4, 1.2);
+  box(doc, X(36.2), X(9.9), X(19.6), X(2.8), ICE, 0, 1.0);
+  box(doc, X(36.9), X(10.2), X(18.2), X(1.0), ICE_L, 0, 0.5);
+
+  // 竖排能量格（x30-48, y14.5-19.5）
+  for(var i=0;i<5;i++){
+    box(doc, X(30.5+i*3.6), X(14.6), X(2.4), X(4.6), ICE_D, 0.9, 0.7);
+    box(doc, X(31.0+i*3.6), X(15.1), X(1.5), X(3.6), ICE, 0, 0.5);
   }
-  box(doc,84,64,5,10,BARR_D,1.4,1);
 
-  // ===== 顶部电池 =====
-  gradBox(doc,74,30,46,20,3,BODY_D,BODY_L,2.4,false);
-  box(doc,78,36,38,8,CYAN_D,1.6,2);
-  box(doc,80,37.5,34,4,CYAN,0,1.5);
-  box(doc,81,38.3,32,1.2,WHITE,0,0.6);
-  for(var j=0;j<7;j++) box(doc,78+j*6,25,4,5,BARR_D,1.2,0.8);
+  // 弹匣（x20-24, y14-22）
+  box(doc, X(20), X(13.6), X(4.8), X(8.4), DARK, 1.8, 1.4);
+  for(var r=0;r<3;r++) box(doc, X(20.7), X(15.0+r*2.4), X(3.4), X(1.1), PART, 0, 0.4);
 
-  // ===== 护罩：先画主体，再挖真孔 =====
-  var shroud = gradBox(doc,124,52,98,44,4,BARR_D,BARR_L,2.6,false);
-  var vents = [];
-  for(var k=0;k<4;k++) vents.push(box(doc,138+k*20,88,12,4,C(0,0,0),0,1));
-  for(var m=0;m<3;m++) vents.push(box(doc,150,58+m*5,10,3.2,C(0,0,0),0,0.8));
-  cutHoles(doc, shroud, vents);
+  // 枪口（x59-65, y6-13 区域前端）
+  box(doc, X(59.5), X(6.6), X(5.5), X(6.4), DARK, 2.0, 1.6);
+  box(doc, X(60.6), X(9.4), X(3.4), X(2.4), ICE, 1.2, 0.8);
 
-  // 护罩上的附加件
-  box(doc,128,58,90,7,PART,1.6,2);
-  box(doc,129,59,88,2,PART_L,0,1);
-  box(doc,150,52,6,44,PART,1.6,1);
-  box(doc,190,52,6,44,PART,1.6,1);
-  gradBox(doc,128,70,90,16,2,CYAN_D,CYAN,1.6,false);
-  box(doc,131.5,74,83,3.4,WHITE,0,0);
-  box(doc,131.5,79,83,3,CYAN_L,0,0);
+  // 扳机护圈（x15-20）
+  poly(doc,[[X(14.8),X(17)],[X(14.8),X(20.4)],[X(17.6),X(21.6)],[X(20.4),X(20.4)],[X(20.4),X(17)]],false,LINE,1.9,null);
 
-  // ===== 枪口 =====
-  gradBox(doc,222,54,18,40,3,BARR_D,BARR_L,2.4,true);
-  for(var n=0;n<3;n++) box(doc,225,60+n*10,12,4,C(10,13,17),0,1);
-  box(doc,236,66,5,16,CYAN,1.4,1);
-  box(doc,237.2,68,2.6,12,CYAN_L,0,0.8);
-
-  // ===== 握把 =====
-  poly(doc,[[92,98],[112,98],[106,124],[86,124]],true,LINE,2.4,PART);
-  poly(doc,[[95,100],[110,100],[106,120],[89,120]],false,PART_D,1.2,null);
-  for(var g=0;g<3;g++) box(doc,92+g*0.8,104+g*6,14,2,PART_D,0,1);
-
-  // ===== 弹匣 =====
-  gradBox(doc,124,88,24,34,3,BARR_D,BARR_L,2.4,false);
-  for(var r2=0;r2<3;r2++) box(doc,128,94+r2*8,16,2.4,PART,0,1);
-
-  // ===== 扳机护圈 + 拉机柄 =====
-  poly(doc,[[112,96],[112,107],[121,111],[130,107],[130,96]],false,LINE,2.2,null);
-  box(doc,116,98,3,9,BARR_D,1.0,1);
-  box(doc,58,60,12,4,PART,1.4,1);
-  box(doc,70,57,4,10,BARR_D,1.2,1);
+  // 后部细节：尾部斜面高光
+  poly(doc,[[X(0.8),X(7)],[X(0.8),X(15.6)],[X(3.4),X(15.6)],[X(3.4),X(7)]],false,WHITE,1.0,null);
 
   doc.artboards[0].artboardRect=[0,128,256,0];
   var o=new ExportOptionsPNG24();o.artBoardClipping=true;o.antiAliasing=true;o.transparency=true;
