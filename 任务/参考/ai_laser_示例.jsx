@@ -1,20 +1,18 @@
 #target illustrator
-// v14 —— 冰鹅族激光机枪：保留参考图布局，重排几何与比例，追求好看
+// v17 —— 明度结构对齐 AI 画法：白顶面 + 灰蓝中段 + 近黑，多段过渡
 function C(r,g,b){ var c=new RGBColor(); c.red=r; c.green=g; c.blue=b; return c; }
 var H = 128;
 
-var LINE   = C(16,18,22);
-var BODY   = C(64,76,89);
-var BODY_L = C(100,116,132);
-var BODY_D = C(38,48,60);
-var PART   = C(103,132,155);
-var PART_L = C(148,172,194);
-var DARK   = C(24,30,38);
-var DARK_L = C(62,72,84);
-var WHITE  = C(228,233,238);
-var ICE_D  = C(52,124,152);
+var LINE   = C(11,13,16);
+var WHITE  = C(246,248,250);
+var WHITE_D= C(206,214,222);
+var MID    = C(86,96,110);
+var MID_D  = C(58,68,80);
+var DARK   = C(24,29,37);
+var DARK_L = C(52,60,72);
 var ICE    = C(127,216,240);
-var ICE_L  = C(208,246,255);
+var ICE_D  = C(52,124,152);
+var ICE_L  = C(210,246,255);
 
 function box(doc,x,y,w,h,fill,lw,r){
   var t=H-y;
@@ -35,65 +33,69 @@ function tint(doc,x,y,w,h,color,mode,op,r){
   var p=box(doc,x,y,w,h,color,0,(r||1.5));
   p.opacity=op; p.blendingMode=mode; return p;
 }
-// 体积块：底 + 顶部亮带 + 底部暗带 + 高光线
-function mass(doc,x,y,w,h,base,rad,lw){
-  box(doc,x,y,w,h,base,(lw||2.2),(rad||3));
-  if(h>10){
-    tint(doc,x+2,y+2,w-4,h*0.28,BODY_L,BlendModes.SCREEN,30,Math.max(1,(rad||3)-1));
-    tint(doc,x+2,y+h-2-h*0.20,w-4,h*0.20,BODY_D,BlendModes.MULTIPLY,26,Math.max(1,(rad||3)-1));
-    box(doc,x+3,y+3,w-6,1.2,WHITE,0,0.6);
-  }
+// 白顶面 + 灰蓝中段 + 暗底 的复合块（模仿 AI 的明度分层）
+function gradMass(doc,x,y,w,h,rad,lw,topRatio){
+  var tr = topRatio || 0.42;
+  box(doc,x,y,w,h,MID,(lw||2.2),(rad||3));                 // 中段基色
+  box(doc,x+1.6,y+1.6,w-3.2,h*tr,WHITE,0,Math.max(1,(rad||3)-0.8));   // 顶部白
+  box(doc,x+1.6,y+1.6,w-3.2,h*tr*0.55,WHITE,0,Math.max(1,(rad||3)-0.8)); // 再加亮
+  box(doc,x+1.6,y+h-1.6-h*0.26,w-3.2,h*0.26,MID_D,0,Math.max(1,(rad||3)-0.8)); // 底部中暗
+  box(doc,x+1.6,y+h-1.6-h*0.10,w-3.2,h*0.10,DARK,0,Math.max(1,(rad||3)-0.8));  // 最底暗
+  // 白面与中段之间加过渡带
+  tint(doc,x+1.6,y+1.6+h*tr*0.8,w-3.2,h*0.18,MID,BlendModes.MULTIPLY,30,Math.max(1,(rad||3)-0.8));
+  box(doc,x+2.6,y+2.6,w-5.2,1.2,WHITE,0,0.6);              // 顶部高光线
 }
 
 function main(){
   var doc=app.documents.add(DocumentColorSpace.RGB,256,128);
 
-  // ===== 枪托（斜切）=====
-  poly(doc,[[10,42],[42,34],[52,34],[52,74],[18,78]],true,LINE,2.4,BODY);
-  poly(doc,[[12,44],[41,37],[50,37],[50,44],[13,52]],false,BODY_L,1.6,null);
-  box(doc,10,42,7,34,BODY_D,2.2,2);                 // 托底板
-  box(doc,14,58,26,7,PART,1.8,2);                   // 贴腮块
-  box(doc,15,59,24,2,WHITE,0,1);
+  // ===== 枪托 =====
+  poly(doc,[[8,40],[40,32],[52,32],[52,76],[16,80]],true,LINE,2.4,MID);
+  poly(doc,[[10,42],[39,35],[50,35],[50,58],[12,62]],true,LINE,0,WHITE);
+  box(doc,8,40,7,36,DARK,2.2,2);
+  box(doc,14,62,26,7,MID,1.8,2);
+  box(doc,15,63,24,2,WHITE,0,1);
 
   // ===== 机匣 =====
-  mass(doc,50,38,100,40,BODY,4,2.8);
-  box(doc,54,42,92,5,WHITE,0,2);                    // 顶面白条
-  // 顶部导轨
-  for(var i=0;i<11;i++) box(doc,56+i*8,34,5,5,DARK,1.2,1);
+  gradMass(doc,50,34,102,46,4,2.8,0.44);
+  // 面板分缝（细线，模仿 AI 的刻画）
+  box(doc,52,56,98,1.2,DARK,0,0.4);
+  box(doc,120,36,1.2,42,DARK,0,0.4);
 
   // ===== 顶部电池 =====
-  mass(doc,64,14,44,22,BODY,3,2.6);
-  box(doc,68,18,36,10,ICE_D,1.6,2);
-  box(doc,70,20,32,6,ICE,0,1.5);
-  box(doc,72,21,28,2,ICE_L,0,0.8);
-  box(doc,72,30,28,3,DARK,1.2,1);                   // 电池底座\n  box(doc,70,33,6,7,BODY,1.4,1);\n  box(doc,96,33,6,7,BODY,1.4,1);
+  gradMass(doc,66,10,44,24,3,2.6,0.40);
+  box(doc,70,15,36,12,ICE_D,1.6,2);
+  box(doc,72,17,32,8,ICE,0,1.5);
+  box(doc,74,18.4,28,2.4,ICE_L,0,1);
+  box(doc,74,29,28,3,DARK,1.2,1);
 
   // ===== 握把 + 扳机护圈 =====
-  poly(doc,[[92,78],[114,78],[108,112],[86,112]],true,LINE,2.4,PART);
-  poly(doc,[[94,81],[111,81],[106,108],[89,108]],false,PART_L,1.6,null);
-  for(var g=0;g<3;g++) box(doc,89+g*0.6,88+g*6,17-g*1.2,2.4,BODY_D,0,1);
-  poly(doc,[[114,78],[114,90],[124,96],[136,90],[136,78]],false,LINE,2.2,null);
-
-  // ===== 弹匣 =====
+  poly(doc,[[92,80],[114,80],[108,114],[86,114]],true,LINE,2.4,MID);
+  poly(doc,[[94,83],[111,83],[106,110],[89,110]],true,LINE,0,WHITE);
+  for(var g=0;g<3;g++) box(doc,89+g*0.6,90+g*7,17-g*1.2,2.4,MID_D,0,1);
+  poly(doc,[[114,80],[114,94],[124,100],[136,94],[136,80]],false,LINE,2.2,null);
 
   // ===== 前护木 =====
-  mass(doc,150,44,58,26,BODY,4,2.6);
-  box(doc,154,48,50,4,WHITE,0,1.6);
-  for(var k=0;k<4;k++) box(doc,156+k*12,58,8,8,ICE_D,1.2,1.4);
-  for(var k2=0;k2<4;k2++) box(doc,157.4+k2*12,59.4,5.2,5.2,ICE,0,1);
+  gradMass(doc,152,42,54,28,4,2.6,0.40);
+  // 散热口
+  for(var k=0;k<4;k++){
+    box(doc,158+k*12,54,8,10,ICE_D,1.4,1.4);
+    box(doc,159.4+k*12,55.4,5.2,7.2,ICE,0,1);
+  }
 
   // ===== 枪管 + 制退器 =====
-  mass(doc,208,50,40,14,DARK,3,2.2);
-  box(doc,212,52,18,3,DARK_L,0,1);
-  box(doc,244,42,14,30,BODY,2.4,3);
-  box(doc,246,47,9,3,ICE_D,1.0,0.8);
-  box(doc,246,53,9,3,ICE_D,1.0,0.8);
-  box(doc,246,59,9,3,ICE,1.0,0.8);
+  box(doc,206,52,40,12,DARK,2.2,2);
+  box(doc,210,54,32,2.4,DARK_L,0,1);
+  box(doc,244,44,14,28,MID,2.4,3);
+  for(var m=0;m<3;m++) box(doc,246,48+m*7,9,3.4,ICE_D,1.0,0.8);
 
-  // ===== 侧面能量条 =====
-  box(doc,54,52,90,10,ICE_D,1.8,2);
-  box(doc,57,54.5,84,5,ICE,0,1.5);
-  box(doc,59,56,80,1.6,ICE_L,0,0.8);
+  // ===== 机匣侧面能量条 =====
+  box(doc,56,60,88,10,ICE_D,1.8,2);
+  box(doc,59,62.4,82,5,ICE,0,1.5);
+  box(doc,61,64,78,1.6,ICE_L,0,0.8);
+
+  // ===== 顶部导轨 =====
+  for(var i=0;i<10;i++) box(doc,56+i*9,30,5,5,DARK,1.2,1);
 
   doc.artboards[0].artboardRect=[0,128,256,0];
   var o=new ExportOptionsPNG24();o.artBoardClipping=true;o.antiAliasing=true;o.transparency=true;
