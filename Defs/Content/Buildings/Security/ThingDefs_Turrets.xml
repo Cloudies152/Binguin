@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   自动加特林塔（2026-08-20 用户需求，参考原版自动加农炮 Turret_Autocannon）
   - 冰鹅族建筑（designationCategory=BinguinBuilding），占地 2x2（四格）
@@ -10,7 +10,7 @@
   - 属性：精度 .40/.40/.30/.30；弹 12 / 穿甲 0.22 / 弹速 88；
     20 连发、间隔 6 tick；冷却 3.5s；射程 32.9；最小范围 6；
     抑止 0.5（1.6 无抑止系统，仅注释）
-  - 贴图借用原版：底座 TurretHeavy_Base / 炮管 TurretAutocannon_Top /
+  - 底座借用原版：TurretHeavy_Base / 炮管自制：Binguin/GatlingTurretTop /
     菜单图标 TurretAutocannon_MenuIcon（后续可换自制）
 -->
 <Defs>
@@ -126,7 +126,7 @@
     <label>加特林炮管</label>
     <description>六管加特林炮管，装于炮塔上以极速连射。</description>
     <graphicData>
-      <texPath>Things/Building/Security/TurretAutocannon_Top</texPath>
+      <texPath>Things/Building/Security/Binguin/GatlingTurretTop</texPath>
       <graphicClass>Graphic_Single</graphicClass>
     </graphicData>
     <statBases>
@@ -304,7 +304,7 @@
     <label>迷你霰弹枪</label>
     <description>两管霰弹，装在自动机枪塔的云台上。</description>
     <graphicData>
-      <texPath>Things/Building/Security/TurretMini_Top</texPath>
+      <texPath>Things/Building/Security/Binguin/ShotgunTurretTop</texPath>
       <graphicClass>Graphic_Single</graphicClass>
     </graphicData>
     <statBases>
