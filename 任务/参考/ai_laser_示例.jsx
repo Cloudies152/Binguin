@@ -1,108 +1,86 @@
 #target illustrator
-// 激光加特林 256x128 —— 屏幕坐标（y 向下），内部自动转换为 Illustrator 坐标（y 向上）
+// 激光加特林 v3 —— 256x128 屏幕坐标（y 向下）
 function C(r,g,b){ var c=new RGBColor(); c.red=r; c.green=g; c.blue=b; return c; }
+var H = 128;
+var BLACK=C(16,18,22), DGRAY=C(52,62,74), GRAYBLUE=C(64,76,89), BLUE=C(103,132,155);
+var WHITE=C(224,229,234), CYAN=C(127,216,240), CYAN_D=C(58,132,160);
+var T1=C(186,198,210), T2=C(103,132,155), T3=C(30,38,48), HI=C(216,226,236);
 
-var BLACK   = C(16,18,22);
-var GRAYBLUE= C(64,76,89);
-var BLUE    = C(103,132,155);
-var WHITE   = C(224,229,234);
-var CYAN    = C(127,216,240);
-var CYAN_D  = C(70,150,180);
-var T_TOP   = C(178,190,202);
-var T_BOT   = C(32,40,50);
-
-var H = 128;   // 画布高，用于翻转 y
-
-// 屏幕坐标：x,y 为左上角
-function box(doc, x, y, w, h, fill, lw, radius){
-  var topAI = H - y;                     // 屏幕顶部 y -> Illustrator 顶部
-  var p;
-  if (radius && radius > 0) p = doc.pathItems.roundedRectangle(topAI, x, w, h, radius, radius);
-  else                      p = doc.pathItems.rectangle(topAI, x, w, h);
-  p.filled = true; p.fillColor = fill;
-  p.stroked = (lw !== 0);
-  if (lw !== 0) { p.strokeColor = BLACK; p.strokeWidth = (lw === undefined ? 2.2 : lw); }
+function box(doc,x,y,w,h,fill,lw,r){
+  var t = H - y;
+  var p = (r && r>0) ? doc.pathItems.roundedRectangle(t,x,w,h,r,r) : doc.pathItems.rectangle(t,x,w,h);
+  p.filled=true; p.fillColor=fill;
+  if (lw!==0){ p.stroked=true; p.strokeColor=BLACK; p.strokeWidth=(lw||2.2); } else { p.stroked=false; }
   return p;
 }
-
-function circ(doc, cx, cy, r, fill, lw){
-  var p = doc.pathItems.ellipse(H - cy + r, cx - r, r*2, r*2);
-  p.filled = true; p.fillColor = fill;
-  if (lw !== 0) { p.stroked = true; p.strokeColor = BLACK; p.strokeWidth = (lw === undefined ? 2.2 : lw); }
+function circ(doc,cx,cy,r,fill,lw){
+  var p=doc.pathItems.ellipse(H-cy+r, cx-r, r*2, r*2);
+  p.filled=true; p.fillColor=fill;
+  if (lw!==0){ p.stroked=true; p.strokeColor=BLACK; p.strokeWidth=(lw||2.2); } else { p.stroked=false; }
   return p;
 }
-
-function seg(doc, x1, y1, x2, y2, color, w){
-  var p = doc.pathItems.add();
-  p.setEntirePath([[x1, H - y1], [x2, H - y2]]);
-  p.closed = false; p.filled = false; p.stroked = true;
-  p.strokeColor = color; p.strokeWidth = w;
-  p.strokeCap = StrokeCap.ROUNDENDCAP; p.strokeJoin = StrokeJoin.ROUNDENDJOIN;
-  return p;
+function seg(doc,x1,y1,x2,y2,color,w){
+  var p=doc.pathItems.add(); p.setEntirePath([[x1,H-y1],[x2,H-y2]]);
+  p.closed=false; p.filled=false; p.stroked=true; p.strokeColor=color; p.strokeWidth=w;
+  p.strokeCap=StrokeCap.ROUNDENDCAP; p.strokeJoin=StrokeJoin.ROUNDENDJOIN; return p;
 }
-
-function poly(doc, pts, closed, color, w, fill){
-  var a = [];
-  for (var i = 0; i < pts.length; i++) a.push([pts[i][0], H - pts[i][1]]);
-  var p = doc.pathItems.add();
-  p.setEntirePath(a);
-  p.closed = closed;
-  if (fill) { p.filled = true; p.fillColor = fill; } else { p.filled = false; }
-  p.stroked = true; p.strokeColor = color; p.strokeWidth = w;
-  p.strokeCap = StrokeCap.ROUNDENDCAP; p.strokeJoin = StrokeJoin.ROUNDENDJOIN;
-  return p;
+function poly(doc,pts,closed,color,w,fill){
+  var a=[]; for(var i=0;i<pts.length;i++) a.push([pts[i][0],H-pts[i][1]]);
+  var p=doc.pathItems.add(); p.setEntirePath(a); p.closed=closed;
+  if(fill){p.filled=true;p.fillColor=fill;}else{p.filled=false;}
+  p.stroked=true; p.strokeColor=color; p.strokeWidth=w;
+  p.strokeCap=StrokeCap.ROUNDENDCAP; p.strokeJoin=StrokeJoin.ROUNDENDJOIN; return p;
 }
 
 function main(){
-  var doc = app.documents.add(DocumentColorSpace.RGB, 256, 128);
+  var doc=app.documents.add(DocumentColorSpace.RGB,256,128);
 
-  // ===== 尾部散热片 =====
-  box(doc, 62, 50, 26, 28, GRAYBLUE, 2.2, 3);
-  for (var i = 0; i < 3; i++) box(doc, 65, 54 + i*7, 11, 4, BLUE, 1.4, 1);
-
-  // ===== 六管：上亮 / 中中 / 下暗 =====
-  box(doc, 146, 36, 60, 15, T_TOP, 2.6, 2.8);
-  seg(doc, 149, 38.6, 203, 38.6, C(214,224,234), 1.6);
-  box(doc, 146, 77, 60, 15, T_BOT, 2.6, 2.8);
-  seg(doc, 149, 79.6, 203, 79.6, C(96,108,122), 1.6);
-  box(doc, 146, 53, 62, 20, BLUE, 2.6, 2.8);            // 中管压上层
-  seg(doc, 149, 56.6, 205, 56.6, C(150,168,182), 1.8);
+  // ===== 枪管簇：上亮 / 中中 / 下暗（六管环排俯视三根）=====
+  box(doc,140,44,66,15,T1,2.6,3);
+  seg(doc,143,46.4,203,46.4,HI,1.6);
+  box(doc,140,82,66,15,T3,2.6,3);
+  seg(doc,143,84.4,203,84.4,C(96,108,122),1.6);
+  box(doc,140,62,68,20,T2,2.6,3);
+  seg(doc,143,65.4,205,65.4,C(158,176,190),1.8);
+  // 中间两道箍
+  box(doc,158,42,7,58,DGRAY,2.2,2);
+  box(doc,188,42,7,58,DGRAY,2.2,2);
 
   // ===== 机匣 =====
-  box(doc, 84, 46, 62, 34, GRAYBLUE, 2.6, 3.5);
-  box(doc, 87, 48, 56, 6, WHITE, 0, 1.5);                // 顶面白条
-  box(doc, 116, 56, 26, 20, BLUE, 2.0, 2);               // 侧面分块
+  box(doc,66,46,76,44,GRAYBLUE,2.8,4);
+  box(doc,70,49,68,7,WHITE,0,2);
+  box(doc,116,60,22,24,BLUE,2.0,2);
 
-  // ===== 能量电池 =====
-  box(doc, 92, 56, 18, 20, CYAN_D, 2.2, 2);
-  box(doc, 95, 59, 12, 14, CYAN, 1.6, 2);
-  seg(doc, 97, 63, 105, 63, C(228,251,255), 1.4);
+  // ===== 顶部大电池 =====
+  box(doc,80,24,34,26,CYAN_D,2.4,3);
+  box(doc,84,28,26,18,CYAN,1.8,2.5);
+  seg(doc,88,33,106,33,C(236,252,255),1.8);
+  box(doc,86,46,22,4,DGRAY,1.8,1);      // 电池底座
 
-  // ===== 提把 =====
-  box(doc, 98, 26, 40, 7, GRAYBLUE, 2.2, 2.5);
-  box(doc, 102, 33, 7, 13, GRAYBLUE, 2.0, 1.5);
-  box(doc, 127, 33, 7, 13, GRAYBLUE, 2.0, 1.5);
+  // ===== 提把（拱形，跨在机匣上）=====
+  box(doc,112,26,40,7,GRAYBLUE,2.2,3);
+  box(doc,114,33,7,14,GRAYBLUE,2.0,2);
+  box(doc,143,33,7,14,GRAYBLUE,2.0,2);
+
+  // ===== 尾部 =====
+  box(doc,40,54,28,30,DGRAY,2.2,3);
+  for(var i=0;i<3;i++) box(doc,43,58+i*8,12,4,BLUE,1.2,1);
 
   // ===== 握把 + 扳机护圈 =====
-  box(doc, 108, 80, 20, 32, BLUE, 2.2, 3);
-  poly(doc, [[122,80],[122,92],[130,96],[138,92],[138,80]], false, BLACK, 2.2, null);
+  box(doc,96,88,22,34,BLUE,2.2,3.5);
+  poly(doc,[[112,88],[112,102],[120,107],[128,102],[128,88]],false,BLACK,2.2,null);
 
-  // ===== 枪口环 + 冰蓝辉光 =====
-  box(doc, 206, 32, 13, 64, GRAYBLUE, 2.6, 3.6);
-  circ(doc, 212.5, 64, 9.5, CYAN, 1.8);
-  circ(doc, 212.5, 64, 3.6, C(232,252,255), 0);
+  // ===== 枪口环 =====
+  box(doc,206,38,13,66,GRAYBLUE,2.6,4);
+  circ(doc,212.5,71,10,CYAN,1.8);
+  circ(doc,212.5,71,3.8,C(234,252,255),0);
 
-  doc.artboards[0].artboardRect = [0, 128, 256, 0];
-
-  var o = new ExportOptionsPNG24();
-  o.artBoardClipping = true; o.antiAliasing = true; o.transparency = true;
-  doc.exportFile(new File("W:/dsh/zengbing/Tools/laser_ai.png"), ExportType.PNG24, o);
-
-  var o2 = new ExportOptionsPNG24();
-  o2.artBoardClipping = true; o2.antiAliasing = true; o2.transparency = true;
-  o2.horizontalScale = 200; o2.verticalScale = 200;
-  doc.exportFile(new File("W:/dsh/zengbing/Tools/laser_ai_2x.png"), ExportType.PNG24, o2);
-
+  doc.artboards[0].artboardRect=[0,128,256,0];
+  var o=new ExportOptionsPNG24(); o.artBoardClipping=true; o.antiAliasing=true; o.transparency=true;
+  doc.exportFile(new File("W:/dsh/zengbing/Tools/laser_ai.png"),ExportType.PNG24,o);
+  var o2=new ExportOptionsPNG24(); o2.artBoardClipping=true; o2.antiAliasing=true; o2.transparency=true;
+  o2.horizontalScale=200; o2.verticalScale=200;
+  doc.exportFile(new File("W:/dsh/zengbing/Tools/laser_ai_2x.png"),ExportType.PNG24,o2);
   doc.close(SaveOptions.DONOTSAVECHANGES);
   return "ok";
 }
