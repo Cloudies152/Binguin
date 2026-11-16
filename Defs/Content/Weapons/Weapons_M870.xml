@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- ============================================================================
+       冰鹅族泵动霰弹枪（Remington 870 原型）· 2026-11-16
+
+       作者需求：「第二把霰弹枪是 M870，目前游戏没有做，就按原版的泵动霰弹枪数值来，
+       然后冷却时间缩短一点。」
+
+       ⇒ 数值蓝本：原版 Gun_PumpShotgun
+         · 精度 0.80 / 0.87 / 0.77 / 0.64
+         · 预热 0.9s，射程 15.9，弹丸 Bullet_Shotgun（单发，不连喷）
+         · 质量 3.4，工作量 12000
+         · 冷却：原版 **1.25** → 这里 **1.00**（缩短 20%）
+       ============================================================================ -->
+  <ThingDef ParentName="BaseGunWithQuality">
+    <defName>Binguin_PumpShotgun_M870</defName>
+    <label>冰鹅泵动霰弹枪</label>
+    <description>冰鹅族照着旧时代图纸做的泵动霰弹枪：白漆枪身、冰蓝护木，枪管下一根管状弹仓。单发威力足，射速比常见泵动更快一些。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/Binguin/M870</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <soundInteract>Interact_Shotgun</soundInteract>
+    <weaponClasses>
+      <li>ShortShots</li>
+    </weaponClasses>
+    <thingSetMakerTags>
+      <li>RewardStandardQualitySuper</li>
+    </thingSetMakerTags>
+    <statBases>
+      <WorkToMake>12000</WorkToMake>
+      <Mass>3.4</Mass>
+      <AccuracyTouch>0.80</AccuracyTouch>
+      <AccuracyShort>0.87</AccuracyShort>
+      <AccuracyMedium>0.77</AccuracyMedium>
+      <AccuracyLong>0.64</AccuracyLong>
+      <!-- ★ 原版泵动霰弹枪是 1.25，这里缩短到 1.00 -->
+      <RangedWeapon_Cooldown>1.00</RangedWeapon_Cooldown>
+    </statBases>
+    <costList>
+      <Steel>70</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>Bullet_Shotgun</defaultProjectile>
+        <warmupTime>0.9</warmupTime>
+        <range>15.9</range>
+        <soundCast>Shot_Shotgun</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>9</muzzleFlashScale>
+      </li>
+    </verbs>
+    <weaponTags>
+      <li>Gun</li>
+      <li>IndustrialGunAdvanced</li>
+      <li>ShortShots</li>
+      <li>BinguinMachined</li>
+      <li>BinguinGunShotgun</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponRanged</li>
+    </tradeTags>
+    <tools>
+      <li>
+        <label>stock</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+      <li>
+        <label>barrel</label>
+        <capacities>
+          <li>Blunt</li>
+          <li>Poke</li>
+        </capacities>
+        <power>9</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+    </tools>
+    <researchPrerequisites>
+      <li>Binguin_ResearchMachining</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <RecipeDef>
+    <defName>Recipe_Binguin_PumpShotgun_M870</defName>
+    <label>制作冰鹅泵动霰弹枪</label>
+    <jobString>正在制作冰鹅泵动霰弹枪……</jobString>
+    <workAmount>12000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedGun</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>70</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>2</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_PumpShotgun_M870>1</Binguin_PumpShotgun_M870>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>4</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchMachining</researchPrerequisite>
+  </RecipeDef>
+
+</Defs>
