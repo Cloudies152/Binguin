@@ -1,17 +1,16 @@
 #target illustrator
-// 激光机枪 v4 —— 单管设计，参考 Vortex_Beater 的剪影与配色
+// 激光机枪 v5 —— 单管；配色回归本项目武器规范；细节加强
 // 256x128，屏幕坐标（y 向下）
 function C(r,g,b){ var c=new RGBColor(); c.red=r; c.green=g; c.blue=b; return c; }
 var H = 128;
 
-var BLACK = C(12,14,18);
-var NAVY  = C(34,45,58);      // 主体深海军蓝
-var NAVY2 = C(40,52,66);      // 次级块
-var GRAY  = C(58,70,84);      // 灰件
-var GRAY2 = C(88,100,114);
-var MINT  = C(95,227,208);    // 薄荷青（参照图强调色）
-var MINT2 = C(140,245,230);
-var MUZ   = C(16,20,26);
+var BLACK  = C(16,18,22);      // #101216 描边
+var BODY   = C(64,76,89);      // #404C59 机身
+var PART   = C(103,132,155);   // #67849B 部件
+var DARK   = C(22,27,34);      // 枪管/深色
+var WHITE  = C(224,229,234);   // #E0E5EA 高光
+var CYAN   = C(127,216,240);   // #7FD8F0 能量
+var CYAN_D = C(58,132,160);
 
 function box(doc,x,y,w,h,fill,lw,r){
   var t=H-y;
@@ -37,43 +36,61 @@ function poly(doc,pts,closed,color,w,fill){
 function main(){
   var doc=app.documents.add(DocumentColorSpace.RGB,256,128);
 
-  // ===== 枪托（后部斜切）=====
-  poly(doc,[[18,64],[46,58],[56,58],[56,96],[30,100]],true,BLACK,2.4,NAVY);
-  box(doc,24,70,20,6,MINT,0,0);              // 托上能量条
+  // ===== 枪托 =====
+  poly(doc,[[16,62],[46,56],[58,56],[58,96],[28,100]],true,BLACK,2.4,BODY);
+  box(doc,20,62,26,5,WHITE,0,1.5);            // 托顶高光
+  box(doc,16,64,7,32,DARK,2.0,1.5);           // 托底板
+  box(doc,28,76,24,7,PART,1.8,1.5);           // 贴腮块
 
   // ===== 机匣 =====
-  box(doc,54,54,68,44,NAVY,2.6,4);
-  box(doc,58,58,60,7,NAVY2,0,2);             // 顶面
-  // 侧面凹槽 + 竖排能量格
-  box(doc,62,66,22,26,NAVY2,2.0,2);
-  for(var i=0;i<3;i++) box(doc,65+i*6.5,70,4,18,MINT,1.2,1);
+  box(doc,56,52,70,46,BODY,2.6,4);
+  box(doc,59,56,64,6,WHITE,0,1.5);            // 顶部高光条
+  box(doc,62,64,24,28,PART,2.0,2);            // 侧面板
+  for(var i=0;i<3;i++) box(doc,65.5+i*6.5,68,4,20,CYAN,1.2,1);   // 能量格
+  box(doc,84,64,5,10,DARK,1.4,1);             // 抛壳口
+  circ(doc,84,84,2.0,DARK,1.2);               // 螺栓
+  circ(doc,84,92,2.0,DARK,1.2);
 
-  // ===== 顶部电池（横向）=====
-  box(doc,76,32,44,20,NAVY2,2.4,3);
-  box(doc,80,36,36,8,MINT,1.6,2);
-  box(doc,80,46,36,3,GRAY,0,1);
+  // ===== 顶部电池 + 导轨 =====
+  box(doc,74,30,46,20,BODY,2.4,3);
+  box(doc,78,34,38,8,CYAN_D,1.6,2);
+  box(doc,80,36,34,4,CYAN,0,1.5);
+  for(var j=0;j<7;j++) box(doc,78+j*6,25,4,5,DARK,1.2,0.8);      // 导轨齿
 
-  // ===== 长枪管 + 护罩 =====
-  box(doc,122,56,102,34,GRAY,2.6,4);
-  box(doc,126,60,94,10,NAVY,0,2);            // 上沿
-  box(doc,130,72,86,12,MINT,1.6,2);          // 长能量条
-  box(doc,130,74.5,86,7,MINT2,0,0);          // 高光
-  // 护罩散热缝
-  for(var j=0;j<4;j++) box(doc,140+j*18,86,10,3,NAVY,0,1);
-  // 枪口
-  box(doc,224,58,16,30,MUZ,2.4,3);
-  circ(doc,236,73,6,MINT,1.8);
+  // ===== 长护罩 / 枪管 =====
+  box(doc,124,52,98,44,DARK,2.6,4);
+  box(doc,128,56,90,10,BODY,1.8,2);           // 上盖
+  box(doc,128,58,90,6,PART,0,1.5);
+  box(doc,128,70,90,18,CYAN_D,1.6,2);         // 能量槽底座
+  box(doc,130,73,86,12,CYAN,1.4,2);
+  box(doc,132,75.5,82,6,WHITE,0,0);           // 能量槽高光
+  for(var k=0;k<4;k++) box(doc,138+k*20,88,12,3,DARK,0,1);       // 底部散热缝
+  // 加强箍
+  box(doc,150,52,6,44,PART,1.6,1);
+  box(doc,190,52,6,44,PART,1.6,1);
 
-  // ===== 握把 =====
-  poly(doc,[[90,98],[110,98],[106,124],[86,124]],true,BLACK,2.4,NAVY2);
+  // ===== 枪口制退器 =====
+  box(doc,222,54,18,40,DARK,2.4,3);
+  for(var m=0;m<3;m++) box(doc,225,58+m*11,12,4,BLACK,0,1);      // 制退口
+  circ(doc,236,74,5,CYAN,1.6);
 
-  // ===== 弹匣（下方）=====
-  box(doc,122,90,22,32,NAVY2,2.4,3);
-  box(doc,126,96,14,4,MINT,1.2,1);
-  box(doc,126,104,14,4,MINT,1.2,1);
+  // ===== 握把（带防滑槽）=====
+  poly(doc,[[92,98],[112,98],[106,124],[86,124]],true,BLACK,2.4,PART);
+  for(var g=0;g<3;g++) box(doc,93+g*1.0,106+g*5,16,2.5,DARK,0,1);
 
-  // ===== 扳机护圈 =====
-  poly(doc,[[110,96],[110,106],[118,110],[126,106],[126,96]],false,BLACK,2.2,null);
+  // ===== 弹匣 =====
+  box(doc,124,88,24,34,DARK,2.4,3);
+  box(doc,128,94,16,3,PART,0,1);
+  box(doc,128,102,16,3,PART,0,1);
+  box(doc,128,110,16,3,PART,0,1);
+
+  // ===== 扳机 + 护圈 =====
+  poly(doc,[[112,96],[112,107],[121,111],[130,107],[130,96]],false,BLACK,2.2,null);
+  box(doc,116,98,3,9,DARK,1.0,1);
+
+  // ===== 拉机柄 =====
+  box(doc,60,60,10,4,PART,1.4,1);
+  box(doc,70,58,4,8,DARK,1.2,1);
 
   doc.artboards[0].artboardRect=[0,128,256,0];
   var o=new ExportOptionsPNG24();o.artBoardClipping=true;o.antiAliasing=true;o.transparency=true;
