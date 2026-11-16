@@ -69,8 +69,6 @@ function main(){
     box(doc,66.5+i*6.5,71.5,2,12,CYAN_L,0,0.8);
   }
   box(doc,84,64,5,10,BARR,1.4,1);
-  circ(doc,84,84,2.0,BODY_D,1.2);
-  circ(doc,84,92,2.0,BODY_D,1.2);
 
   // ===== 顶部电池 =====
   mass(doc,74,30,46,20,BODY,BODY_L,BODY_D,3,2.4);
