@@ -1,21 +1,28 @@
 #target illustrator
-// v19 —— 照 Shotgun(DP-12) 的画法：细黑描边 + 白色边缘高光 + 平涂
+// v20 —— 严格按豆包给的规范实现
+// 色板：描边 #1A1A1A / 深灰 #3A424A / 浅灰 #E8ECF0 / 结构蓝 #4888B2 / 能量蓝 #54C8F0 / 内发光 #86E0FF / 阴影 #282E34
+// 线宽：外轮廓 3pt，内部 1.5pt；高光白 2~4px 无透明度；阴影 #282E34 只在大的块右下 2~3px
+// 比例：尾仓 18% / 机匣 42% / 枪管 30%；机匣上壳:下壳 = 1.6:1
 function C(r,g,b){ var c=new RGBColor(); c.red=r; c.green=g; c.blue=b; return c; }
 var H=128;
 
-var BLK  = C(0,0,0);
-var BODY = C(74,83,96);      // #4A5360
-var BODY_L = C(94,104,118);
-var BLUE = C(76,123,157);    // #4C7B9D
-var BLUE_L = C(110,150,180);
-var WHT  = C(255,255,255);
-var ICE  = C(127,216,240), ICE_D=C(52,124,152), ICE_L=C(216,247,255);
+var K1 = C(26,26,26);      // #1A1A1A 描边
+var DG = C(58,66,74);      // #3A424A 深灰壳体
+var LG = C(232,236,240);   // #E8ECF0 浅灰壳体
+var SB = C(72,136,178);    // #4888B2 结构蓝
+var EB = C(84,200,240);    // #54C8F0 能量蓝
+var EB2= C(134,224,255);   // #86E0FF 内发光
+var SH = C(40,46,52);      // #282E34 阴影
+var WH = C(255,255,255);   // 高光白
+
+var LW_OUT = 3.0;   // 外轮廓
+var LW_IN  = 1.5;   // 内部线
 
 function box(doc,x,y,w,h,fill,lw,r){
   var t=H-y;
   var p=(r&&r>0)?doc.pathItems.roundedRectangle(t,x,w,h,r,r):doc.pathItems.rectangle(t,x,w,h);
   p.filled=true; p.fillColor=fill;
-  if(lw!==0){p.stroked=true;p.strokeColor=BLK;p.strokeWidth=(lw||1.6);}else{p.stroked=false;}
+  if(lw!==0){p.stroked=true;p.strokeColor=K1;p.strokeWidth=(lw||LW_IN);}else{p.stroked=false;}
   return p;
 }
 function poly(doc,pts,closed,color,w,fill){
@@ -23,88 +30,81 @@ function poly(doc,pts,closed,color,w,fill){
   var p=doc.pathItems.add();p.setEntirePath(a);p.closed=closed;
   if(fill){p.filled=true;p.fillColor=fill;}else{p.filled=false;}
   if(w>0){p.stroked=true;p.strokeColor=color;p.strokeWidth=w;
-    p.strokeCap=StrokeCap.ROUNDENDCAP;p.strokeJoin=StrokeJoin.ROUNDENDJOIN;}
+    p.strokeCap=StrokeCap.BUTTENDCAP;p.strokeJoin=StrokeJoin.ROUNDENDJOIN;}
   return p;
 }
-// DP-12 式：平涂 + 细黑描边 + 顶边白色高光条
-function cel(doc,x,y,w,h,fill,rad,lw,rim){
-  box(doc,x,y,w,h,fill,(lw||1.6),(rad||2));
-  if(rim!==false && h>6){
-    box(doc,x+1.2,y+1.2,w-2.4,2.0,WHT,0,0.8);
-  }
-}
-function celPoly(doc,pts,fill,lw,rim){
-  poly(doc,pts,true,BLK,(lw||1.6),fill);
-  if(rim) {
-    var rp=[]; var n=pts.length;
-    // 顶边高光：沿多边形上沿内缩一条
-    for(var i=0;i<n;i++){
-      var p=pts[i];
-      if(p[1] < pts[(i+1)%n][1]) rp.push([p[0]+1.5,p[1]+1.8]);
-    }
-    if(rp.length>=2) poly(doc,rp,false,WHT,1.6,null);
-  }
+// 高光条（白，无透明度）
+function hi(doc,x,y,w,h){ box(doc,x,y,w,h,WH,0,0.5); }
+// 右下阴影
+function sh(doc,x,y,w,h){ box(doc,x,y,w,h,SH,0,0.5); }
+// 螺丝凹槽
+function screw(doc,x,y,s){
+  box(doc,x,y,s,s,DG,LW_IN,1.2);
+  box(doc,x+1,y+1,s-2,s-2,SH,0,0.8);
 }
 
 function main(){
   var doc=app.documents.add(DocumentColorSpace.RGB,256,128);
+  var Y0=44, Y1=86;     // 机匣上下沿
+  var UH=26, LH=16;     // 上壳 26 / 下壳 16 ≈1.6
 
-  // ===== 枪托（斜切，白边高光）=====
-  celPoly(doc,[[8,40],[40,32],[54,32],[54,78],[16,82]],BODY,1.8,true);
-  box(doc,8,40,6,42,BLK,1.6,1.5);
-  box(doc,14,64,26,7,BLUE,1.4,1.2);
-  box(doc,15,65,24,2,WHT,0,0.8);
+  // ===== 1) 尾仓储能仓（x8-51, 18%）=====
+  box(doc, 8, Y0, 43, 46, DG, LW_OUT, 2);
+  // 小切角
+  poly(doc,[[8,Y0],[8,Y0+46],[14,Y0+46],[8,Y0+40]],true,K1,0,SH);
+  // 横向分割线（暗示储能舱分层）
+  box(doc, 10, Y0+22, 39, LW_IN, DG, LW_IN, 0);
+  hi(doc, 11, Y0+2.5, 37, 3);
+  sh(doc, 10, Y0+42, 39, 2.5);
 
-  // ===== 机匣 =====
-  cel(doc,54,34,100,42,BODY,3,1.9);
-  box(doc,54,34,100,4,WHT,0,2);          // 顶面白条
-  // 侧面蓝色分块
-  cel(doc,60,42,88,18,BLUE,2,1.6);
-  box(doc,62,43.6,84,2.4,BLUE_L,0,1.2);
-  // 能量核心
-  box(doc,66,48,76,8,ICE_D,1.4,1.4);
-  box(doc,68,49.4,72,5.2,ICE,0,1);
-  box(doc,70,50.4,68,1.6,ICE_L,0,0.7);
+  // ===== 2) 机匣（x51-152, 42%）=====
+  box(doc, 51, Y0, 101, UH+LH, DG, LW_OUT, 2.5);
+  // 上壳体（浅灰镶板）
+  box(doc, 54, Y0+2, 95, UH-4, LG, LW_IN, 1.5);
+  hi(doc, 56, Y0+3.5, 91, 3);
+  // 上壳与下壳分界
+  box(doc, 53, Y0+UH, 97, LW_IN, DG, LW_IN, 0);
 
-  // ===== 顶部电池 =====
-  cel(doc,68,8,42,24,BODY,3,1.8);
-  box(doc,68,8,42,3.4,WHT,0,1.5);
-  box(doc,72,15,34,11,ICE_D,1.4,1.4);
-  box(doc,74,16.4,30,8.2,ICE,0,1);
-  box(doc,76,17.4,26,2,ICE_L,0,0.8);
-  // 电池到机匣的导线
-  poly(doc,[[112,24],[120,30],[122,34]],false,BLK,2.0,null);
+  // 能量槽（内嵌，缩在上壳里）
+  box(doc, 60, Y0+9, 78, 12, DG, LW_IN, 1.2);
+  box(doc, 61.5, Y0+10.5, 75, 9, EB, 0, 1);
+  box(doc, 64.5, Y0+13, 69, 4, EB2, 0, 0.8);      // 内发光（缩小居中）
 
-  // ===== 握把 =====
-  celPoly(doc,[[96,76],[118,76],[112,114],[88,114]],BLUE,1.8,true);
-  for(var g=0;g<4;g++) box(doc,92+g*0.4,88+g*6,17-g*1.0,1.8,BLACK_FIX(),0,0.6);
-  // 扳机护圈
-  poly(doc,[[118,76],[118,94],[128,100],[140,94],[140,76]],false,BLK,1.8,null);
+  // 侧面螺丝凹槽（3 个）
+  screw(doc, 56, Y0+24, 5);
+  screw(doc, 66, Y0+24, 5);
+  screw(doc, 138, Y0+24, 5);
 
-  // ===== 前护木 =====
-  celPoly(doc,[[156,30],[212,30],[218,38],[218,72],[210,80],[156,80]],BODY,1.9,true);
-  // 散热口（黑孔 + 冰蓝内光）
-  for(var k=0;k<4;k++){
-    box(doc,161+k*12,50,9,20,BLK,0,1);
-    box(doc,162.2+k*12,51.4,6.6,17.2,ICE_D,0,0.8);
-    box(doc,163.2+k*12,52.6,4.6,4.0,ICE,0,0.5);
+  // ===== 3) 瞄具（扁平，贴合机匣顶，高≤6px）=====
+  box(doc, 96, Y0-6, 30, 6, DG, LW_IN, 1.2);
+  box(doc, 99, Y0-4.6, 24, 3.2, EB, 0, 0.6);
+
+  // ===== 4) 主握把（垂直实心，复刻 DP12 语言）=====
+  box(doc, 74, Y1, 20, 30, SB, LW_OUT, 3);
+  hi(doc, 76, Y1+2, 5, 24);
+  sh(doc, 74+16, Y1+4, 3, 24);
+
+  // ===== 5) 护木（x152-196）=====
+  box(doc, 152, Y0+6, 44, 30, LG, LW_OUT, 2);
+  hi(doc, 154, Y0+8, 40, 3);
+  // 4 个指示灯收进凹槽
+  for(var i=0;i<4;i++){
+    box(doc, 157+i*10, Y0+16, 7, 9, DG, LW_IN, 1);
+    box(doc, 158.2+i*10, Y0+17.2, 4.6, 6.6, EB, 0, 0.6);
   }
-  box(doc,158,44,52,2.2,WHT,0,1);
+  // 导轨短线
+  for(var r2=0;r2<4;r2++) box(doc, 158+r2*10, Y0+9.5, 6, 1.5, K1, 0, 0);
 
-  // ===== 枪管 =====
-  box(doc,218,50,22,14,BLK,1.6,1.5);
-  box(doc,220,51.5,18,2.0,C(90,98,110),0,0.8);
+  // ===== 6) 前握把（机匣前端下方）=====
+  box(doc, 160, Y1-2, 16, 24, SB, LW_OUT, 3);
+  hi(doc, 162, Y1+1, 4, 18);
 
-  // ===== 制退器 =====
-  cel(doc,238,42,16,30,BODY,2,1.8);
-  box(doc,238,42,16,3,WHT,0,1.2);
-  for(var m=0;m<3;m++){
-    box(doc,240,47+m*8,12,4.4,BLK,0,0.8);
-    box(doc,241.2,48.2+m*8,9.6,2.0,ICE_D,0,0.6);
-  }
-
-  // ===== 导轨齿 =====
-  for(var i=0;i<10;i++) box(doc,58+i*9,29.5,6,4.5,C(40,46,56),1.1,0.8);
+  // ===== 7) 能量枪管（逐渐收窄 + 根部环 + 末端 1 个能量环）=====
+  poly(doc,[[196,Y0+10],[230,Y0+14],[230,Y0+26],[196,Y0+28]],true,K1,LW_OUT,DG);
+  hi(doc, 199, Y0+12, 28, 2.4);
+  box(doc, 196, Y0+8, 4, 22, DG, LW_IN, 1);       // 根部环
+  box(doc, 228, Y0+13, 6, 15, DG, LW_IN, 1);      // 末端环
+  box(doc, 229, Y0+16, 4, 9, EB, 0, 0.6);
 
   doc.artboards[0].artboardRect=[0,128,256,0];
   var o=new ExportOptionsPNG24();o.artBoardClipping=true;o.antiAliasing=true;o.transparency=true;
@@ -115,5 +115,4 @@ function main(){
   doc.close(SaveOptions.DONOTSAVECHANGES);
   return "ok";
 }
-function BLACK_FIX(){ return C(30,36,44); }
 main();
