@@ -51,6 +51,17 @@ namespace Binguin.Feature.Band
         {
             EndTick = GenTicks.TicksGame + ticks;
             BinguinLogUtility.Log("演唱会开始，持续 " + (ticks / (float)TicksPerHour).ToString("0.#") + " 小时。");
+
+            // 演唱会同时释放一次「内心的呐喊」（不受 15 天冷却限制，也没有施法者）。
+            // 特殊人物尚未实装，这里先作为演唱会的固定效果。
+            try
+            {
+                Binguin.Feature.SkillCounter.InnerCry_Binguin.Trigger(true);
+            }
+            catch (Exception e)
+            {
+                BinguinLogUtility.Log("演唱会释放内心的呐喊失败：" + e.Message, severity: 1, isDebug: false);
+            }
         }
 
         public static void Stop()
