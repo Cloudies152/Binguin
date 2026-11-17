@@ -50,12 +50,18 @@ namespace Binguin.Feature.SkillCounter
         /// </summary>
         private const int ReissueRefreshTicks = 120;
 
-        /// <summary>单个单位最长走路撤退时间，超时改走离场 Job。</summary>
-        private const int MaxWalkTicks = 900;
+        /// <summary>单个单位最长走路撤退时间：1 小时，超时改走离场 Job。</summary>
+        private const int MaxWalkTicks = 2500;
 
         /// <summary>离场 Job 阶段最长等待时间，超时直接移出地图。</summary>
         /// <summary>离场 Job 阶段最长等待时间：2 小时（1 小时 = 2500 tick）。</summary>
         private const int MaxExitJobTicks = 2 * 2500;
+
+        /// <summary>倒地单位最多跟踪多久（2 小时），之后丢弃跟踪（不移出）。</summary>
+        private const int MaxDownedTrackTicks = 2 * 2500;
+
+        /// <summary>已移出单位 ID 的记录上限，超出清空，避免长期存档无限增长。</summary>
+        private const int MaxRemovedIds = 5000;
 
         /// <summary>距离目标边缘多少格内视作「已走到」。</summary>
         private const int EdgeReachRadius = 2;
@@ -198,9 +204,14 @@ namespace Binguin.Feature.SkillCounter
                     continue;
                 }
 
-                // 倒地：不管（不移出、不追）
+                // 倒地：不管（不移出、不追）。
+                // 但跟踪有上限，避免长期存档里越积越多：超过 2 小时后丢弃跟踪。
                 if (p.Downed)
                 {
+                    if (now - e.startTick > MaxDownedTrackTicks)
+                    {
+                        e.done = true;
+                    }
                     continue;
                 }
 
@@ -221,6 +232,11 @@ namespace Binguin.Feature.SkillCounter
                 if (p.Position != e.lastPos)
                 {
                     e.lastPos = p.Position;
+                    e.lastMoveTick = now;
+                }
+                else if (p.pather != null && p.pather.Moving)
+                {
+                    // 还在走，只是慢（雪地、断腿、负重）：不算卡住
                     e.lastMoveTick = now;
                 }
                 else if (now - e.lastMoveTick > StuckTicks)
@@ -490,7 +506,13 @@ namespace Binguin.Feature.SkillCounter
                 return false;
             }
 
-            if (p.HostileTo(Faction.OfPlayer))
+            Faction player = Faction.OfPlayerSilentFail;
+            if (player == null)
+            {
+                return false;
+            }
+
+            if (p.HostileTo(player))
             {
                 return true;
             }
@@ -538,7 +560,7 @@ namespace Binguin.Feature.SkillCounter
             bool isEntity = IsAnomalyEntity(p);
             bool isAggroAnimal = p.RaceProps != null && p.RaceProps.Animal && p.InAggroMentalState;
 
-            IntVec3 exit = FindExitCell(p.Map, p.PositionHeld);
+            IntVec3 exit = FindExitCell(p);
             if (!exit.IsValid)
             {
                 // ④ 地图上没有可离开的方格 → 走到离地图中心最远处
@@ -603,8 +625,30 @@ namespace Binguin.Feature.SkillCounter
         // 目标点计算
         // ============================================================
 
-        /// <summary>找离该单位最近的可站立地图边缘格。</summary>
-        private static IntVec3 FindExitCell(Map map, IntVec3 from)
+        /// <summary>
+        /// 找离该单位最近、且**真正可到达**的地图边缘格。
+        /// 先用原版 RCellFinder（会考虑可达性），失败再退回自己按环形扫描。
+        /// </summary>
+        private static IntVec3 FindExitCell(Pawn pawn)
+        {
+            IntVec3 vanillaSpot;
+            try
+            {
+                if (RCellFinder.TryFindBestExitSpot(pawn, out vanillaSpot))
+                {
+                    return vanillaSpot;
+                }
+            }
+            catch (Exception)
+            {
+                // 原版工具失败时继续走下面的扫描
+            }
+
+            return FindExitCellByScan(pawn.Map, pawn.PositionHeld);
+        }
+
+        /// <summary>按环形扫描找最近的可站立边缘格（原版工具失败时的兜底）。</summary>
+        private static IntVec3 FindExitCellByScan(Map map, IntVec3 from)
         {
             IntVec3 best = IntVec3.Invalid;
             int bestDist = int.MaxValue;
@@ -706,6 +750,13 @@ namespace Binguin.Feature.SkillCounter
                     if (exitMapJobDef == null)
                     {
                         exitMapJobDef = DefDatabase<JobDef>.GetNamedSilentFail("ExitMap");
+                    }
+
+                    if (exitMapJobDef == null)
+                    {
+                        BinguinLogUtility.WarningOnce(
+                            "强制撤退：找不到原版离场 Job（ExitMapBest / ExitMap），离场阶段将退化为直接移出地图。",
+                            962231);
                     }
                 }
                 return exitMapJobDef;
@@ -862,6 +913,12 @@ namespace Binguin.Feature.SkillCounter
                 Lord lord = p.Spawned ? p.GetLord() : null;
 
                 removedIds.Add(p.thingIDNumber);
+                if (removedIds.Count > MaxRemovedIds)
+                {
+                    removedIds.Clear();
+                    BinguinLogUtility.Log(
+                        "强制撤退：已移出单位记录超过上限，已重置（不影响本次效果）。", isDebug: false);
+                }
 
                 if (p.Spawned)
                 {
@@ -891,6 +948,12 @@ namespace Binguin.Feature.SkillCounter
         {
             try
             {
+                // 只对人形单位做阵营转换：动物 / 机械体没有「难民」概念
+                if (p.RaceProps != null && !p.RaceProps.Humanlike)
+                {
+                    return;
+                }
+
                 Faction target = GetRefugeeFaction();
 
                 if (target == null)
