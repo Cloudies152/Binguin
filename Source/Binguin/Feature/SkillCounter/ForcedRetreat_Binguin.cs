@@ -65,7 +65,16 @@ namespace Binguin.Feature.SkillCounter
 
             /// <summary>Job 被抢走的次数。连续被抢说明 AI 在跟我们拉锯。</summary>
             public int stealCount;
+
+            /// <summary>上一次所在格，用于判断是否卡住（被墙挡住）。</summary>
+            public IntVec3 lastPos;
+
+            /// <summary>最后一次发生位移的 tick。</summary>
+            public int lastMoveTick;
         }
+
+        /// <summary>原地不动超过多少 tick 判定为「被墙挡住 / 走不通」。</summary>
+        private const int StuckTicksBeforeTeleport = 120;
 
         private static readonly List<RetreatEntry> active = new List<RetreatEntry>();
 
@@ -165,6 +174,12 @@ namespace Binguin.Feature.SkillCounter
                     continue;
                 }
 
+                // 倒地的不处理：让他躺着（会被俘虏/失血），既不追也不移出
+                if (p.Downed)
+                {
+                    continue;
+                }
+
                 if (p.Position.InHorDistOf(e.target, EdgeReachRadius) || now - e.startTick > MaxRetreatTicks)
                 {
                     RemoveFromMap(e);
@@ -172,9 +187,24 @@ namespace Binguin.Feature.SkillCounter
                     continue;
                 }
 
-                // 倒地 / 无法移动：等它恢复；超过时限由上面的超时处理
-                if (p.Downed || !p.health.capacities.CapableOf(PawnCapacityDefOf.Moving))
+                // 无法移动（不是倒地，而是瘫痪等）：等恢复；超时由上面的时限处理
+                if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Moving))
                 {
+                    continue;
+                }
+
+                // 卡死检测：长时间没挪窝 = 被墙 / 门挡住，直接瞬移到边缘
+                if (p.Position != e.lastPos)
+                {
+                    e.lastPos = p.Position;
+                    e.lastMoveTick = now;
+                }
+                else if (now - e.lastMoveTick > StuckTicksBeforeTeleport)
+                {
+                    BinguinLogUtility.Log(
+                        "强制撤退：" + p.LabelShort + " 被障碍挡住，瞬移到地图边缘。", isDebug: false);
+                    TryTeleportToExit(e);
+                    e.lastMoveTick = now;
                     continue;
                 }
 
@@ -430,6 +460,9 @@ namespace Binguin.Feature.SkillCounter
             e.map = p.Map;
             e.startTick = now;
             e.lastIssueTick = -999;
+            e.stealCount = 0;
+            e.lastPos = p.PositionHeld;
+            e.lastMoveTick = now;
 
             IntVec3 exit = FindExitCell(p.Map, p.PositionHeld);
             if (!exit.IsValid)
@@ -522,7 +555,11 @@ namespace Binguin.Feature.SkillCounter
             {
                 Pawn p = e.pawn;
 
-                // ★ 先把它从 Lord 里踢出去。
+                // ★ 先剥离精神状态的接管（狂暴 / 猎杀 / 恐惧等）。
+                //   精神状态会压住 Job，清掉之后 Job 才能真正跑起来。
+                ClearMentalState(p);
+
+                // ★ 再把它从 Lord 里踢出去。
                 //   绝大多数「Job 被抢」的根源就是袭击领主（LordJob_AssaultColony）
                 //   的 toil 在每 tick 给成员重新派单；踢出 lord 后没人再抢。
                 DetachFromLord(p);
@@ -534,6 +571,9 @@ namespace Binguin.Feature.SkillCounter
                 job.locomotionUrgency = LocomotionUrgency.Sprint;
                 job.expiryInterval = 600;
                 job.checkOverrideOnExpire = false;
+
+                // ★ 路被门挡住时允许砸门（1.7 的 Job 没有 canBash，墙靠下面的卡死检测处理）
+                job.canBashDoors = true;
 
                 p.jobs.StartJob(job, JobCondition.InterruptForced, null, false, true);
 
@@ -548,6 +588,45 @@ namespace Binguin.Feature.SkillCounter
                 BinguinLogUtility.WarningOnce(
                     "强制撤退：下发撤退 Job 失败，将改为移出地图。" + ex.Message, 962214);
                 return true;
+            }
+        }
+
+        /// <summary>
+        /// 清掉单位当前的精神状态，让 Job 能真正生效。
+        /// 只做「解除」，不做「施加」，因此不受任何「精神状态免疫」影响。
+        /// </summary>
+        private static void ClearMentalState(Pawn p)
+        {
+            try
+            {
+                if (!p.InMentalState)
+                {
+                    return;
+                }
+
+                MentalState state = p.MentalState;
+                if (state == null)
+                {
+                    return;
+                }
+
+                MentalStateDef def = state.def;
+                state.RecoverFromState();
+
+                // RecoverFromState 可能因为 mod 保护没生效，再补一次硬复位
+                if (p.InMentalState && p.mindState != null && p.mindState.mentalStateHandler != null)
+                {
+                    p.mindState.mentalStateHandler.Reset();
+                }
+
+                BinguinLogUtility.Log(
+                    "强制撤退：已解除 " + p.LabelShort + " 的精神状态「"
+                    + (def != null ? def.label : "未知") + "」。", isDebug: false);
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：解除精神状态失败。" + ex.Message, 962221);
             }
         }
 
