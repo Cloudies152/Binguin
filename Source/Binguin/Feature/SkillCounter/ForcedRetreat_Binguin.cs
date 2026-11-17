@@ -60,9 +60,13 @@ namespace Binguin.Feature.SkillCounter
 
         private static readonly List<RetreatEntry> active = new List<RetreatEntry>();
 
+        /// <summary>已被移出地图过的单位（用于识别「又被刷回来」的单位）。</summary>
+        private static readonly HashSet<int> removedIds = new HashSet<int>();
+
         private static int suppressUntilTick = -1;
         private static int nextSuppressScanTick;
         private static Map suppressMap;
+        private static Faction refugeeFaction;
 
         /// <summary>当前正在撤退的单位数量。</summary>
         public static int ActiveCount
@@ -196,6 +200,28 @@ namespace Binguin.Feature.SkillCounter
             for (int i = 0; i < spawned.Count; i++)
             {
                 Pawn p = spawned[i];
+                if (p == null || p.Dead || !p.Spawned || p.Destroyed)
+                {
+                    continue;
+                }
+
+                // 被移出过又重新出现的单位：先把阵营转成中立，再撤一次
+                if (removedIds.Contains(p.thingIDNumber))
+                {
+                    if (!CanBeHandled(p))
+                    {
+                        continue;
+                    }
+
+                    NeutralizeFaction(p);
+
+                    if (StartRetreat(p, now))
+                    {
+                        started++;
+                    }
+                    continue;
+                }
+
                 if (!IsRetreatTarget(p))
                 {
                     continue;
@@ -215,14 +241,9 @@ namespace Binguin.Feature.SkillCounter
             return started;
         }
 
-        private static bool IsRetreatTarget(Pawn p)
+        /// <summary>自己人、囚犯、奴隶、任务居客一律不处理。</summary>
+        private static bool CanBeHandled(Pawn p)
         {
-            if (p == null || p.Dead || !p.Spawned || p.Destroyed)
-            {
-                return false;
-            }
-
-            // 兜底 C：任务绑定单位不动，避免任务失败 / 报错
             if (p.IsQuestLodger())
             {
                 return false;
@@ -234,6 +255,107 @@ namespace Binguin.Feature.SkillCounter
             }
 
             if (p.Faction != null && p.Faction.def != null && p.Faction.def.isPlayer)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 把单位阵营转为「难民阵营」（原版 OutlanderRefugee，中立）。
+        /// 之后再走一遍撤退流程，让它离开地图。
+        /// </summary>
+        private static void NeutralizeFaction(Pawn p)
+        {
+            try
+            {
+                Faction target = GetRefugeeFaction();
+
+                if (target == null)
+                {
+                    // 原版难民派系不可用时的兜底：无派系 = 中立
+                    if (p.Faction == null)
+                    {
+                        return;
+                    }
+
+                    BinguinLogUtility.WarningOnce(
+                        "强制撤退：找不到难民派系，退化为无派系中立。", 962217);
+                    p.SetFaction(null);
+                    p.mindState.enemyTarget = null;
+                    return;
+                }
+
+                if (p.Faction == target)
+                {
+                    return;
+                }
+
+                Lord lord = p.GetLord();
+                if (lord != null)
+                {
+                    lord.Notify_PawnLost(p, PawnLostCondition.Undefined);
+                }
+
+                string oldFaction = p.Faction != null ? p.Faction.Name : "无";
+                p.SetFaction(target);
+                p.mindState.enemyTarget = null;
+
+                BinguinLogUtility.Log(
+                    "强制撤退：" + p.LabelShort + " 由「" + oldFaction + "」转入难民阵营，再次撤退。",
+                    isDebug: false);
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：转中立失败。" + ex.Message, 962216);
+            }
+        }
+
+        /// <summary>难民派系：优先复用世界已有的，没有就生成一个（隐藏派系，不显示在地图上）。</summary>
+        private static Faction GetRefugeeFaction()
+        {
+            FactionDef def = DefDatabase<FactionDef>.GetNamedSilentFail("OutlanderRefugee");
+            if (def == null)
+            {
+                return null;
+            }
+
+            if (refugeeFaction != null && refugeeFaction.def == def && !refugeeFaction.defeated)
+            {
+                return refugeeFaction;
+            }
+
+            Faction existing = Find.FactionManager.FirstFactionOfDef(def);
+            if (existing != null && !existing.defeated)
+            {
+                refugeeFaction = existing;
+                return existing;
+            }
+
+            try
+            {
+                Faction created = FactionGenerator.NewGeneratedFaction(new FactionGeneratorParms(def));
+                if (created != null)
+                {
+                    Find.FactionManager.Add(created);
+                    refugeeFaction = created;
+                }
+
+                return created;
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：生成难民派系失败。" + ex.Message, 962218);
+                return null;
+            }
+        }
+
+        private static bool IsRetreatTarget(Pawn p)
+        {
+            if (!CanBeHandled(p))
             {
                 return false;
             }
