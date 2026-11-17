@@ -36,6 +36,13 @@ namespace Binguin.Feature.SkillCounter
         /// <summary>重新下发撤退指令的间隔（tick）。</summary>
         private const int ReissueInterval = 15;
 
+        /// <summary>
+        /// 两次「真正下发 Job」的最小间隔（tick）。
+        /// 防止被抢 Job 时每 tick 反复 StopAll + StartJob（那才真的吃性能）。
+        /// 6 tick = 最多 10 次/秒/单位。
+        /// </summary>
+        private const int MinIssueCooldown = 6;
+
         /// <summary>单个单位最长撤退时间（tick），超时直接移出地图。</summary>
         private const int MaxRetreatTicks = 900;
 
@@ -217,36 +224,49 @@ namespace Binguin.Feature.SkillCounter
                     continue;
                 }
 
-                if (now - e.lastIssueTick >= ReissueInterval || !IsRunningRetreatJob(e))
-                {
-                    // 被抢的次数：每发现一次 Job 不是我们的，就记一笔
-                    if (!IsRunningRetreatJob(e))
-                    {
-                        e.stealCount++;
-                    }
+                // 性能：每 tick 只做一次「Job 还是不是我们的」判断，
+                // 且真正下发 Job 有最小间隔，避免和抢 Job 的 mod 每 tick 拉锯。
+                bool running = IsRunningRetreatJob(e);
 
-                    bool blocked = IssueRetreatJob(e, now);
-                    if (blocked)
+                if (running)
+                {
+                    // Job 还在跑：只在超过复查间隔时才重发一次（顺便刷新超时）
+                    if (now - e.lastIssueTick < ReissueInterval)
                     {
-                        RemoveFromMap(e);
-                        active.RemoveAt(i);
                         continue;
                     }
-
-                    // 抢得太多：先尝试直接瞬移到边缘（跳过寻路与 Job）
-                    if (e.stealCount >= MaxStealBeforeTeleport && e.stealCount < MaxStealBeforeRemove)
+                }
+                else
+                {
+                    // Job 被抢：计数，但最快每 MinIssueCooldown tick 才重发一次
+                    e.stealCount++;
+                    if (now - e.lastIssueTick < MinIssueCooldown)
                     {
-                        TryTeleportToExit(e);
+                        continue;
                     }
+                }
 
-                    // 还在拉锯：放弃撤退演出，直接移出地图
-                    if (e.stealCount >= MaxStealBeforeRemove)
-                    {
-                        BinguinLogUtility.Log(
-                            "强制撤退：" + p.LabelShort + " 的 Job 反复被抢，直接移出地图。", isDebug: false);
-                        RemoveFromMap(e);
-                        active.RemoveAt(i);
-                    }
+                bool blocked = IssueRetreatJob(e, now);
+                if (blocked)
+                {
+                    RemoveFromMap(e);
+                    active.RemoveAt(i);
+                    continue;
+                }
+
+                // 抢得太多：先尝试直接瞬移到边缘（跳过寻路与 Job）
+                if (e.stealCount >= MaxStealBeforeTeleport && e.stealCount < MaxStealBeforeRemove)
+                {
+                    TryTeleportToExit(e);
+                }
+
+                // 还在拉锯：放弃撤退演出，直接移出地图
+                if (e.stealCount >= MaxStealBeforeRemove)
+                {
+                    BinguinLogUtility.Log(
+                        "强制撤退：" + p.LabelShort + " 的 Job 反复被抢，直接移出地图。", isDebug: false);
+                    RemoveFromMap(e);
+                    active.RemoveAt(i);
                 }
             }
         }
