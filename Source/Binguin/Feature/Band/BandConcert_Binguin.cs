@@ -153,6 +153,9 @@ namespace Binguin.Feature.Band
     /// <summary>把演唱会状态存进存档（放在已有的乐队组件里一起存）。</summary>
     public class GameComponent_BinguinConcertState : GameComponent
     {
+        /// <summary>已经处理过「结束劝退」的那一场（存 endTick，避免重复触发）。</summary>
+        public int lastRetreatEndTick = -1;
+
         public GameComponent_BinguinConcertState(Game game) : base()
         {
         }
@@ -160,26 +163,35 @@ namespace Binguin.Feature.Band
         public override void ExposeData()
         {
             base.ExposeData();
-            // 演出截止时刻由 PerformanceState 持久化。
+            Scribe_Values.Look<int>(ref lastRetreatEndTick, "binguinConcertLastRetreatEndTick", -1);
         }
 
         public override void GameComponentTick()
         {
             if (Find.TickManager == null) return;
-            // 演唱会期间定期劝退已经打起来的敌人（每 250 tick 扫一次，够快也不费）
-            if (Find.TickManager.TicksGame % 250 != 0) return;
-            if (!BinguinConcert.Active) return;
+
+            // 只在【演唱会结束的那一刻】劝退一次，进行中不再反复扫。
             try
             {
+                int end = BinguinConcert.EndTick;
+                if (end <= 0) return;                                   // 没有演唱会
+                if (Find.TickManager.TicksGame < end) return;           // 还没结束
+                if (lastRetreatEndTick == end) return;                  // 这一场已经处理过
+
+                lastRetreatEndTick = end;
+
                 List<Map> maps = Find.Maps;
+                int total = 0;
                 for (int i = 0; i < maps.Count; i++)
                 {
-                    BinguinConcertRetreat.MakeRaidersRetreat(maps[i], true);
+                    total += BinguinConcertRetreat.MakeRaidersRetreat(maps[i], true);
                 }
+
+                BinguinLogUtility.Log("演唱会结束，劝退敌人 " + total + " 名。");
             }
             catch (Exception e)
             {
-                BinguinLogUtility.Log("演唱会劝退敌人失败：" + e.Message, severity: 2, isDebug: false);
+                BinguinLogUtility.Log("演唱会结束劝退失败：" + e.Message, severity: 2, isDebug: false);
             }
         }
     }
