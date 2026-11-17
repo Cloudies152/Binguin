@@ -9,92 +9,92 @@ using Binguin.Helper;
 
 namespace Binguin.Feature.SkillCounter
 {
+    /// <summary>撤退模式（按难度循序渐进）。</summary>
+    public enum RetreatMode
+    {
+        /// <summary>普通敌人：正常走到地图边缘再离开。</summary>
+        WalkToEdge = 0,
+
+        /// <summary>死战不退 / 发狂动物 / 异象实体：直接走「离场 Job」。</summary>
+        ExitJob = 1,
+
+        /// <summary>地图没有可离开的边缘格：走到离地图中心最远处再离开。</summary>
+        FarthestPoint = 2
+    }
+
     /// <summary>
     /// 强制撤退（技能对抗）
     /// ============================================================
-    /// 需求：让全图所有「敌对」或「发狂的中立」单位撤退，**且无论如何都要生效**。
+    /// 分级处理（循序渐进）：
+    ///   ① 能撤退的普通敌人 → 正常走到最近的地图边缘 → 离场
+    ///   ② 死战不退的敌人（Job 反复被抢）→ 改走「离场 Job」
+    ///   ③ 发狂动物 / 异象实体 → 直接走「离场 Job」
+    ///   ④ 地图上没有可离开的方格 → 走到离地图中心最远的地方 → 离场
     ///
-    /// 为什么不用常规做法：
-    ///   - 精神状态（MentalState）→ 可被 mod 免疫 / 清除
-    ///   - Hediff（如 Fleeing）    → 可被免疫 / 驱散
-    ///   - XML Def 属性            → 可被补丁改写
-    ///   - Harmony Patch           → 可被其他补丁覆盖或跳过
-    ///
-    /// 本实现只走引擎底层、没有「免疫」判定的通道：
-    ///   1) 直接改写 Pawn 的 Job（JobDefOf.Goto），强制其朝最近的地图边缘移动；
-    ///   2) 每 15 tick 复查并重新下发（对手动改 Job 的 AI 也无效化）；
-    ///   3) 走到边缘 / 超过时限 / Job 被完全拦截 → 直接 DeSpawn + PassToWorld，
-    ///      移出地图（只经过 Thing / WorldPawns 层）。
-    ///
-    /// 三重兜底：
-    ///   A) 地图没有可走边缘 → 直接移出地图（不再静默失败）
-    ///   B) 效果后一段时间内持续复查：被移除后又被重新刷出来的单位，会再被撤一次
-    ///   C) 任务绑定单位（IsQuestLodger）跳过，避免崩任务
+    /// 不用 XML / 精神状态施加 / Hediff / Harmony Patch：
+    ///   - 只「解除」精神状态，不「施加」
+    ///   - 只改写 Job、脱离 Lord、移出地图（Thing / WorldPawns 层）
     /// </summary>
     public static class ForcedRetreat_Binguin
     {
-        /// <summary>重新下发撤退指令的间隔（tick）。</summary>
+        // ---------------------------------------------------------------- 时间参数
+        /// <summary>Job 仍在跑时的复查间隔。</summary>
         private const int ReissueInterval = 15;
 
-        /// <summary>
-        /// 两次「真正下发 Job」的最小间隔（tick）。
-        /// 防止被抢 Job 时每 tick 反复 StopAll + StartJob（那才真的吃性能）。
-        /// 6 tick = 最多 10 次/秒/单位。
-        /// </summary>
+        /// <summary>两次「真正下发 Job」的最小间隔，防止每 tick 拉锯。</summary>
         private const int MinIssueCooldown = 6;
 
-        /// <summary>单个单位最长撤退时间（tick），超时直接移出地图。</summary>
-        private const int MaxRetreatTicks = 900;
+        /// <summary>单个单位最长走路撤退时间，超时改走离场 Job。</summary>
+        private const int MaxWalkTicks = 900;
+
+        /// <summary>离场 Job 阶段最长等待时间，超时直接移出地图。</summary>
+        private const int MaxExitJobTicks = 240;
 
         /// <summary>距离目标边缘多少格内视作「已走到」。</summary>
         private const int EdgeReachRadius = 2;
 
-        /// <summary>默认的持续压制时长（tick，60 秒）。</summary>
+        /// <summary>走路阶段被抢多少次 Job 后，判定为「死战不退」，改走离场 Job。</summary>
+        private const int StealsBeforeExitJob = 6;
+
+        /// <summary>离场 Job 阶段被抢多少次后，直接移出地图。</summary>
+        private const int StealsBeforeRemove = 24;
+
+        /// <summary>原地不动超过多少 tick 判定被墙挡住（判定后放手不管）。</summary>
+        private const int StuckTicks = 120;
+
+        /// <summary>默认持续压制时长（60 秒）。</summary>
         private const int DefaultSuppressTicks = 3600;
 
-        /// <summary>持续压制期间的复查间隔（tick，1 秒）。</summary>
+        /// <summary>持续压制期间的复查间隔（1 秒）。</summary>
         private const int SuppressScanInterval = 60;
-
-        /// <summary>连续被抢多少次 Job 后，判定「走不出去」，改为瞬移到边缘或直接移出。</summary>
-        private const int MaxStealBeforeTeleport = 12;
-
-        /// <summary>连续被抢多少次 Job 后，放弃撤退演出，直接移出地图。</summary>
-        private const int MaxStealBeforeRemove = 40;
 
         private sealed class RetreatEntry
         {
             public Pawn pawn;
             public Map map;
             public IntVec3 target;
+            public RetreatMode mode;
             public int startTick;
             public int lastIssueTick;
-            public bool removeNow;
-
-            /// <summary>Job 被抢走的次数。连续被抢说明 AI 在跟我们拉锯。</summary>
+            public int modeStartTick;
             public int stealCount;
-
-            /// <summary>上一次所在格，用于判断是否卡住（被墙挡住）。</summary>
             public IntVec3 lastPos;
-
-            /// <summary>最后一次发生位移的 tick。</summary>
             public int lastMoveTick;
+
+            /// <summary>已处理完毕，等待主循环移除（避免边遍历边删）。</summary>
+            public bool done;
         }
 
-        /// <summary>原地不动超过多少 tick 判定为「被墙挡住 / 走不通」。</summary>
-        private const int StuckTicksBeforeTeleport = 120;
-
         private static readonly List<RetreatEntry> active = new List<RetreatEntry>();
-
-        /// <summary>已被移出地图过的单位（用于识别「又被刷回来」的单位）。</summary>
         private static readonly HashSet<int> removedIds = new HashSet<int>();
-
-        /// <summary>被墙卡住、已放弃处理的单位（本效果内不再干预）。</summary>
         private static readonly HashSet<int> stuckIds = new HashSet<int>();
 
         private static int suppressUntilTick = -1;
         private static int nextSuppressScanTick;
         private static Map suppressMap;
         private static Faction refugeeFaction;
+        private static JobDef exitMapJobDef;
+        private static readonly Dictionary<int, IntVec3> farthestCellCache = new Dictionary<int, IntVec3>();
 
         /// <summary>当前正在撤退的单位数量。</summary>
         public static int ActiveCount
@@ -110,11 +110,7 @@ namespace Binguin.Feature.SkillCounter
         /// 让指定地图上所有敌对 / 发狂的中立单位撤退。
         /// </summary>
         /// <param name="map">目标地图。</param>
-        /// <param name="suppressTicks">
-        /// 持续压制时长：这段时间内每秒复查一次地图，新出现 / 被重新刷出的敌对单位会继续被撤。
-        /// 传 0 表示只执行一次。默认 3600 tick（60 秒）。
-        /// </param>
-        /// <returns>本次直接下达撤退令的单位数量。</returns>
+        /// <param name="suppressTicks">持续压制时长；0 表示只执行一次。默认 60 秒。</param>
         public static int RetreatAll(Map map, int suppressTicks = DefaultSuppressTicks)
         {
             if (map == null)
@@ -126,9 +122,7 @@ namespace Binguin.Feature.SkillCounter
 
             if (suppressTicks > 0)
             {
-                // 新的一次施放：重置「被墙卡住」名单，让它们重新尝试一次
                 stuckIds.Clear();
-
                 suppressMap = map;
                 suppressUntilTick = Math.Max(suppressUntilTick, now + suppressTicks);
                 nextSuppressScanTick = now + SuppressScanInterval;
@@ -149,12 +143,11 @@ namespace Binguin.Feature.SkillCounter
             return total;
         }
 
-        /// <summary>逐帧推进。由 GameComponent_BinguinForcedRetreat 调用。</summary>
+        /// <summary>逐帧推进。</summary>
         public static void Tick()
         {
             int now = Find.TickManager.TicksGame;
 
-            // 兜底 B：持续压制窗口内定期复查
             if (suppressMap != null
                 && now <= suppressUntilTick
                 && now >= nextSuppressScanTick)
@@ -173,100 +166,62 @@ namespace Binguin.Feature.SkillCounter
                 RetreatEntry e = active[i];
                 Pawn p = e.pawn;
 
+                if (e.done)
+                {
+                    active.RemoveAt(i);
+                    continue;
+                }
+
                 if (p == null || p.Dead || !p.Spawned || p.Map != e.map)
                 {
                     active.RemoveAt(i);
                     continue;
                 }
 
-                // 兜底 A：一开始就没找到边缘 → 直接移出地图
-                if (e.removeNow)
-                {
-                    RemoveFromMap(e);
-                    active.RemoveAt(i);
-                    continue;
-                }
-
-                // 倒地的不处理：让他躺着（会被俘虏/失血），既不追也不移出
+                // 倒地：不管（不移出、不追）
                 if (p.Downed)
                 {
                     continue;
                 }
 
-                if (p.Position.InHorDistOf(e.target, EdgeReachRadius) || now - e.startTick > MaxRetreatTicks)
+                // 到达目标点 → 离开地图
+                if (p.Position.InHorDistOf(e.target, EdgeReachRadius))
                 {
                     RemoveFromMap(e);
                     active.RemoveAt(i);
                     continue;
                 }
 
-                // 无法移动（不是倒地，而是瘫痪等）：等恢复；超时由上面的时限处理
                 if (!p.health.capacities.CapableOf(PawnCapacityDefOf.Moving))
                 {
                     continue;
                 }
 
-                // 卡死检测：长时间没挪窝 = 被墙挡住。
-                // 被墙卡住的单位不再干预——交给它自己的 AI，我们只是不再管。
+                // 被墙挡住：放手，交还 AI，本次效果内不再处理
                 if (p.Position != e.lastPos)
                 {
                     e.lastPos = p.Position;
                     e.lastMoveTick = now;
                 }
-                else if (now - e.lastMoveTick > StuckTicksBeforeTeleport)
+                else if (now - e.lastMoveTick > StuckTicks)
                 {
                     BinguinLogUtility.Log(
-                        "强制撤退：" + p.LabelShort + " 被障碍挡住，放弃对该单位的撤退处理。",
-                        isDebug: false);
+                        "强制撤退：" + p.LabelShort + " 被障碍挡住，放弃对该单位的处理。", isDebug: false);
                     stuckIds.Add(p.thingIDNumber);
                     ReleasePawn(p);
                     active.RemoveAt(i);
                     continue;
                 }
 
-                // 性能：每 tick 只做一次「Job 还是不是我们的」判断，
-                // 且真正下发 Job 有最小间隔，避免和抢 Job 的 mod 每 tick 拉锯。
-                bool running = IsRunningRetreatJob(e);
+                switch (e.mode)
+                {
+                    case RetreatMode.ExitJob:
+                        TickExitJob(e, now);
+                        break;
 
-                if (running)
-                {
-                    // Job 还在跑：只在超过复查间隔时才重发一次（顺便刷新超时）
-                    if (now - e.lastIssueTick < ReissueInterval)
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    // Job 被抢：计数，但最快每 MinIssueCooldown tick 才重发一次
-                    e.stealCount++;
-                    if (now - e.lastIssueTick < MinIssueCooldown)
-                    {
-                        continue;
-                    }
-                }
-
-                bool blocked = IssueRetreatJob(e, now);
-                if (blocked)
-                {
-                    RemoveFromMap(e);
-                    active.RemoveAt(i);
-                    continue;
-                }
-
-                // 抢得太多：先尝试直接瞬移到边缘（跳过寻路与 Job）
-                if (e.stealCount >= MaxStealBeforeTeleport && e.stealCount < MaxStealBeforeRemove)
-                {
-                    TryTeleportToExit(e);
-                }
-
-                // 还在拉锯：放弃撤退演出，直接移出地图
-                if (e.stealCount >= MaxStealBeforeRemove)
-                {
-                    BinguinLogUtility.Log(
-                        "强制撤退：" + p.LabelShort + " 的 Job 反复被抢，直接移出地图。", isDebug: false);
-                    RemoveFromMap(e);
-                    active.RemoveAt(i);
+                    default:
+                        TickWalk(e, now);
+                        break;
                 }
             }
         }
@@ -276,8 +231,120 @@ namespace Binguin.Feature.SkillCounter
         {
             active.Clear();
             stuckIds.Clear();
+            farthestCellCache.Clear();
             suppressMap = null;
             suppressUntilTick = -1;
+        }
+
+        // ============================================================
+        // 两种推进模式
+        // ============================================================
+
+        /// <summary>走路模式：朝目标点走；走不动就升级为离场 Job。</summary>
+        private static void TickWalk(RetreatEntry e, int now)
+        {
+            if (now - e.startTick > MaxWalkTicks)
+            {
+                SwitchToExitJob(e, now, "走路超时");
+                return;
+            }
+
+            bool running = IsRunningJob(e, JobDefOf.Goto);
+            if (running)
+            {
+                if (now - e.lastIssueTick < ReissueInterval)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                e.stealCount++;
+                if (now - e.lastIssueTick < MinIssueCooldown)
+                {
+                    return;
+                }
+
+                // 被抢太多次 → 判定「死战不退」，改走离场 Job
+                if (e.stealCount >= StealsBeforeExitJob)
+                {
+                    SwitchToExitJob(e, now, "Job 反复被抢");
+                    return;
+                }
+            }
+
+            IssueJob(e, now, JobDefOf.Goto, e.target);
+        }
+
+        /// <summary>离场 Job 模式：直接让单位走原版的离场 Job 离开地图。</summary>
+        private static void TickExitJob(RetreatEntry e, int now)
+        {
+            if (now - e.modeStartTick > MaxExitJobTicks)
+            {
+                BinguinLogUtility.Log(
+                    "强制撤退：" + e.pawn.LabelShort + " 离场 Job 超时，直接移出地图。", isDebug: false);
+                RemoveFromMap(e);
+                e.done = true;
+                return;
+            }
+
+            JobDef exitDef = ExitMapJobDef;
+            bool running = exitDef != null && IsRunningJob(e, exitDef);
+
+            if (!running)
+            {
+                e.stealCount++;
+                if (e.stealCount >= StealsBeforeRemove)
+                {
+                    BinguinLogUtility.Log(
+                        "强制撤退：" + e.pawn.LabelShort + " 离场 Job 也被拦，直接移出地图。", isDebug: false);
+                    RemoveFromMap(e);
+                    e.done = true;
+                    return;
+                }
+
+                if (now - e.lastIssueTick < MinIssueCooldown)
+                {
+                    return;
+                }
+            }
+            else if (now - e.lastIssueTick < ReissueInterval)
+            {
+                return;
+            }
+
+            if (exitDef == null)
+            {
+                // 找不到原版离场 Job：退化为直接移出
+                RemoveFromMap(e);
+                e.done = true;
+                return;
+            }
+
+            IssueJob(e, now, exitDef, e.target);
+        }
+
+        private static void SwitchToExitJob(RetreatEntry e, int now, string reason)
+        {
+            e.mode = RetreatMode.ExitJob;
+            e.modeStartTick = now;
+            e.stealCount = 0;
+            e.lastIssueTick = -999;
+
+            BinguinLogUtility.Log(
+                "强制撤退：" + e.pawn.LabelShort + " 改走离场 Job（" + reason + "）。", isDebug: false);
+        }
+
+        private static void RemoveEntry(RetreatEntry e)
+        {
+            for (int i = 0; i < active.Count; i++)
+            {
+                if (active[i] == e)
+                {
+                    active.RemoveAt(i);
+                    return;
+                }
+            }
         }
 
         // ============================================================
@@ -296,13 +363,12 @@ namespace Binguin.Feature.SkillCounter
                     continue;
                 }
 
-                // 被墙卡住过的单位：本效果内不再干预
                 if (stuckIds.Contains(p.thingIDNumber))
                 {
                     continue;
                 }
 
-                // 被移出过又重新出现的单位：先把阵营转成中立，再撤一次
+                // 被移出过又重新出现：先转难民阵营，再撤一次
                 if (removedIds.Contains(p.thingIDNumber))
                 {
                     if (!CanBeHandled(p))
@@ -338,7 +404,6 @@ namespace Binguin.Feature.SkillCounter
             return started;
         }
 
-        /// <summary>自己人、囚犯、奴隶、任务居客一律不处理。</summary>
         private static bool CanBeHandled(Pawn p)
         {
             if (p.IsQuestLodger())
@@ -359,10 +424,399 @@ namespace Binguin.Feature.SkillCounter
             return true;
         }
 
+        private static bool IsRetreatTarget(Pawn p)
+        {
+            if (!CanBeHandled(p))
+            {
+                return false;
+            }
+
+            if (p.HostileTo(Faction.OfPlayer))
+            {
+                return true;
+            }
+
+            if (p.InAggroMentalState)
+            {
+                return true;
+            }
+
+            MentalStateDef msd = p.MentalStateDef;
+            if (msd != null
+                && (msd == MentalStateDefOf.Manhunter || msd == MentalStateDefOf.ManhunterPermanent))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        // ============================================================
+        // 开始一次撤退
+        // ============================================================
+
+        private static bool StartRetreat(Pawn p, int now)
+        {
+            for (int i = 0; i < active.Count; i++)
+            {
+                if (active[i].pawn == p)
+                {
+                    return false;
+                }
+            }
+
+            RetreatEntry e = new RetreatEntry();
+            e.pawn = p;
+            e.map = p.Map;
+            e.startTick = now;
+            e.lastIssueTick = -999;
+            e.modeStartTick = now;
+            e.stealCount = 0;
+            e.lastPos = p.PositionHeld;
+            e.lastMoveTick = now;
+
+            // 决定走哪种模式
+            bool isEntity = IsAnomalyEntity(p);
+            bool isAggroAnimal = p.RaceProps != null && p.RaceProps.Animal && p.InAggroMentalState;
+
+            IntVec3 exit = FindExitCell(p.Map, p.PositionHeld);
+            if (!exit.IsValid)
+            {
+                // ④ 地图上没有可离开的方格 → 走到离地图中心最远处
+                e.mode = RetreatMode.FarthestPoint;
+                e.target = FindFarthestCell(p.Map);
+                if (!e.target.IsValid)
+                {
+                    return false;
+                }
+
+                BinguinLogUtility.Log(
+                    "强制撤退：" + p.LabelShort + " 无可用边缘，改走「离地图中心最远处」。", isDebug: false);
+            }
+            else if (isEntity || isAggroAnimal)
+            {
+                // ③ 发狂动物 / 异象实体 → 直接离场 Job
+                e.mode = RetreatMode.ExitJob;
+                e.target = exit;
+                BinguinLogUtility.Log(
+                    "强制撤退：" + p.LabelShort + "（" + (isEntity ? "异象实体" : "发狂动物")
+                    + "）直接走离场 Job。", isDebug: false);
+            }
+            else
+            {
+                // ①② 普通敌人 → 正常走过去；被抢多了在 TickWalk 里升级为离场 Job
+                e.mode = RetreatMode.WalkToEdge;
+                e.target = exit;
+            }
+
+            active.Add(e);
+
+            if (e.mode == RetreatMode.ExitJob)
+            {
+                JobDef exitDef = ExitMapJobDef;
+                if (exitDef != null)
+                {
+                    IssueJob(e, now, exitDef, e.target);
+                }
+            }
+            else
+            {
+                IssueJob(e, now, JobDefOf.Goto, e.target);
+            }
+
+            return true;
+        }
+
+        /// <summary>是否为 Anomaly 异象实体。</summary>
+        private static bool IsAnomalyEntity(Pawn p)
+        {
+            try
+            {
+                return p.IsEntity;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        // ============================================================
+        // 目标点计算
+        // ============================================================
+
+        /// <summary>找离该单位最近的可站立地图边缘格。</summary>
+        private static IntVec3 FindExitCell(Map map, IntVec3 from)
+        {
+            IntVec3 best = IntVec3.Invalid;
+            int bestDist = int.MaxValue;
+
+            int maxRing = Math.Max(8, map.Size.x / 4);
+            for (int ring = 0; ring < maxRing; ring++)
+            {
+                for (int x = ring; x < map.Size.x - ring; x++)
+                {
+                    CheckCell(map, from, new IntVec3(x, 0, ring), ref best, ref bestDist);
+                    CheckCell(map, from, new IntVec3(x, 0, map.Size.z - 1 - ring), ref best, ref bestDist);
+                }
+
+                for (int z = ring; z < map.Size.z - ring; z++)
+                {
+                    CheckCell(map, from, new IntVec3(ring, 0, z), ref best, ref bestDist);
+                    CheckCell(map, from, new IntVec3(map.Size.x - 1 - ring, 0, z), ref best, ref bestDist);
+                }
+
+                if (best.IsValid && ring > 2)
+                {
+                    break;
+                }
+            }
+
+            return best;
+        }
+
         /// <summary>
-        /// 把单位阵营转为「难民阵营」（原版 OutlanderRefugee，中立）。
-        /// 之后再走一遍撤退流程，让它离开地图。
+        /// 找地图上「离地图中心最远」的可站立格。
+        /// 用于整张地图都没有可用边缘的情况。结果按地图缓存。
         /// </summary>
+        private static IntVec3 FindFarthestCell(Map map)
+        {
+            IntVec3 cached;
+            if (farthestCellCache.TryGetValue(map.uniqueID, out cached))
+            {
+                return cached;
+            }
+
+            IntVec3 center = map.Center;
+            IntVec3 best = IntVec3.Invalid;
+            int bestDist = -1;
+
+            for (int x = 0; x < map.Size.x; x++)
+            {
+                for (int z = 0; z < map.Size.z; z++)
+                {
+                    IntVec3 c = new IntVec3(x, 0, z);
+                    if (!c.Walkable(map) || !c.Standable(map))
+                    {
+                        continue;
+                    }
+
+                    int dist = (c - center).LengthHorizontalSquared;
+                    if (dist > bestDist)
+                    {
+                        bestDist = dist;
+                        best = c;
+                    }
+                }
+            }
+
+            farthestCellCache[map.uniqueID] = best;
+            return best;
+        }
+
+        private static void CheckCell(Map map, IntVec3 from, IntVec3 c, ref IntVec3 best, ref int bestDist)
+        {
+            if (!c.InBounds(map))
+            {
+                return;
+            }
+
+            if (!c.Walkable(map) || !c.Standable(map))
+            {
+                return;
+            }
+
+            int dist = (c - from).LengthHorizontalSquared;
+            if (dist < bestDist)
+            {
+                bestDist = dist;
+                best = c;
+            }
+        }
+
+        // ============================================================
+        // Job 下发
+        // ============================================================
+
+        private static JobDef ExitMapJobDef
+        {
+            get
+            {
+                if (exitMapJobDef == null)
+                {
+                    exitMapJobDef = DefDatabase<JobDef>.GetNamedSilentFail("ExitMapBest");
+                    if (exitMapJobDef == null)
+                    {
+                        exitMapJobDef = DefDatabase<JobDef>.GetNamedSilentFail("ExitMap");
+                    }
+                }
+                return exitMapJobDef;
+            }
+        }
+
+        private static bool IsRunningJob(RetreatEntry e, JobDef def)
+        {
+            if (e.pawn.jobs == null || e.pawn.CurJob == null || def == null)
+            {
+                return false;
+            }
+
+            if (e.pawn.CurJobDef != def)
+            {
+                return false;
+            }
+
+            return e.pawn.CurJob.targetA.Cell == e.target;
+        }
+
+        private static void IssueJob(RetreatEntry e, int now, JobDef def, IntVec3 cell)
+        {
+            try
+            {
+                Pawn p = e.pawn;
+
+                ClearMentalState(p);
+                DetachFromLord(p);
+
+                p.jobs.StopAll(false, true);
+
+                Job job = new Job(def, cell);
+                job.locomotionUrgency = LocomotionUrgency.Sprint;
+                job.expiryInterval = 600;
+                job.checkOverrideOnExpire = false;
+                job.canBashDoors = true;
+
+                p.jobs.StartJob(job, JobCondition.InterruptForced, null, false, true);
+                p.mindState.enemyTarget = null;
+
+                e.lastIssueTick = now;
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：下发 Job 失败，将改为移出地图。" + ex.Message, 962214);
+                RemoveFromMap(e);
+                e.done = true;
+            }
+        }
+
+        /// <summary>解除单位当前精神状态（只解除，不施加）。</summary>
+        private static void ClearMentalState(Pawn p)
+        {
+            try
+            {
+                if (!p.InMentalState)
+                {
+                    return;
+                }
+
+                MentalState state = p.MentalState;
+                if (state == null)
+                {
+                    return;
+                }
+
+                MentalStateDef def = state.def;
+                state.RecoverFromState();
+
+                if (p.InMentalState && p.mindState != null && p.mindState.mentalStateHandler != null)
+                {
+                    p.mindState.mentalStateHandler.Reset();
+                }
+
+                BinguinLogUtility.Log(
+                    "强制撤退：已解除 " + p.LabelShort + " 的精神状态「"
+                    + (def != null ? def.label : "未知") + "」。", isDebug: false);
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：解除精神状态失败。" + ex.Message, 962221);
+            }
+        }
+
+        /// <summary>把单位从所属 Lord 中移除，断掉袭击领主的每 tick 派单。</summary>
+        private static void DetachFromLord(Pawn p)
+        {
+            try
+            {
+                Lord lord = p.GetLord();
+                if (lord == null)
+                {
+                    return;
+                }
+
+                lord.RemovePawn(p);
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：脱离 Lord 失败。" + ex.Message, 962219);
+            }
+        }
+
+        /// <summary>交还控制权（被墙卡住时用）。</summary>
+        private static void ReleasePawn(Pawn p)
+        {
+            try
+            {
+                if (p.jobs != null && p.CurJob != null)
+                {
+                    JobDef cur = p.CurJobDef;
+                    if (cur == JobDefOf.Goto || cur == ExitMapJobDef)
+                    {
+                        p.jobs.EndCurrentJob(JobCondition.InterruptForced, false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：交还控制权失败。" + ex.Message, 962222);
+            }
+        }
+
+        // ============================================================
+        // 移出地图 / 阵营转换
+        // ============================================================
+
+        private static void RemoveFromMap(RetreatEntry e)
+        {
+            Pawn p = e.pawn;
+            if (p == null || p.Destroyed)
+            {
+                return;
+            }
+
+            try
+            {
+                Lord lord = p.Spawned ? p.GetLord() : null;
+
+                removedIds.Add(p.thingIDNumber);
+
+                if (p.Spawned)
+                {
+                    p.DeSpawn(DestroyMode.Vanish);
+                }
+
+                if (!p.Destroyed)
+                {
+                    Find.WorldPawns.PassToWorld(p);
+                }
+
+                if (lord != null)
+                {
+                    lord.Notify_PawnLost(p, PawnLostCondition.Undefined);
+                }
+
+                BinguinLogUtility.Log("强制撤退：已将 " + p.LabelShort + " 移出地图。", isDebug: false);
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce("强制撤退：移出地图失败。" + ex.Message, 962215);
+            }
+        }
+
+        /// <summary>把单位阵营转为「难民阵营」（原版 OutlanderRefugee）。</summary>
         private static void NeutralizeFaction(Pawn p)
         {
             try
@@ -371,7 +825,6 @@ namespace Binguin.Feature.SkillCounter
 
                 if (target == null)
                 {
-                    // 原版难民派系不可用时的兜底：无派系 = 中立
                     if (p.Faction == null)
                     {
                         return;
@@ -405,12 +858,10 @@ namespace Binguin.Feature.SkillCounter
             }
             catch (Exception ex)
             {
-                BinguinLogUtility.WarningOnce(
-                    "强制撤退：转中立失败。" + ex.Message, 962216);
+                BinguinLogUtility.WarningOnce("强制撤退：转中立失败。" + ex.Message, 962216);
             }
         }
 
-        /// <summary>难民派系：优先复用世界已有的，没有就生成一个（隐藏派系，不显示在地图上）。</summary>
         private static Faction GetRefugeeFaction()
         {
             FactionDef def = DefDatabase<FactionDef>.GetNamedSilentFail("OutlanderRefugee");
@@ -444,344 +895,13 @@ namespace Binguin.Feature.SkillCounter
             }
             catch (Exception ex)
             {
-                BinguinLogUtility.WarningOnce(
-                    "强制撤退：生成难民派系失败。" + ex.Message, 962218);
+                BinguinLogUtility.WarningOnce("强制撤退：生成难民派系失败。" + ex.Message, 962218);
                 return null;
             }
         }
 
-        private static bool IsRetreatTarget(Pawn p)
-        {
-            if (!CanBeHandled(p))
-            {
-                return false;
-            }
-
-            if (p.HostileTo(Faction.OfPlayer))
-            {
-                return true;
-            }
-
-            if (p.InAggroMentalState)
-            {
-                return true;
-            }
-
-            MentalStateDef msd = p.MentalStateDef;
-            if (msd != null
-                && (msd == MentalStateDefOf.Manhunter || msd == MentalStateDefOf.ManhunterPermanent))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
         // ============================================================
-        // 内部实现
-        // ============================================================
-
-        private static bool StartRetreat(Pawn p, int now)
-        {
-            for (int i = 0; i < active.Count; i++)
-            {
-                if (active[i].pawn == p)
-                {
-                    return false;
-                }
-            }
-
-            RetreatEntry e = new RetreatEntry();
-            e.pawn = p;
-            e.map = p.Map;
-            e.startTick = now;
-            e.lastIssueTick = -999;
-            e.stealCount = 0;
-            e.lastPos = p.PositionHeld;
-            e.lastMoveTick = now;
-
-            IntVec3 exit = FindExitCell(p.Map, p.PositionHeld);
-            if (!exit.IsValid)
-            {
-                // 兜底 A：地图没有可走的边缘（四面环山 / 深水 / 全封闭）
-                e.target = p.PositionHeld;
-                e.removeNow = true;
-                active.Add(e);
-                BinguinLogUtility.Log(
-                    "强制撤退：地图无可用边缘，直接移出 " + p.LabelShort + "。", isDebug: false);
-                return true;
-            }
-
-            e.target = exit;
-            e.removeNow = false;
-            active.Add(e);
-            IssueRetreatJob(e, now);
-            return true;
-        }
-
-        /// <summary>找离该单位最近的可站立地图边缘格。</summary>
-        private static IntVec3 FindExitCell(Map map, IntVec3 from)
-        {
-            IntVec3 best = IntVec3.Invalid;
-            int bestDist = int.MaxValue;
-
-            int maxRing = Math.Max(8, map.Size.x / 4);
-            for (int ring = 0; ring < maxRing; ring++)
-            {
-                for (int x = ring; x < map.Size.x - ring; x++)
-                {
-                    CheckEdgeCell(map, from, new IntVec3(x, 0, ring), ref best, ref bestDist);
-                    CheckEdgeCell(map, from, new IntVec3(x, 0, map.Size.z - 1 - ring), ref best, ref bestDist);
-                }
-
-                for (int z = ring; z < map.Size.z - ring; z++)
-                {
-                    CheckEdgeCell(map, from, new IntVec3(ring, 0, z), ref best, ref bestDist);
-                    CheckEdgeCell(map, from, new IntVec3(map.Size.x - 1 - ring, 0, z), ref best, ref bestDist);
-                }
-
-                if (best.IsValid && ring > 2)
-                {
-                    break;
-                }
-            }
-
-            return best;
-        }
-
-        private static void CheckEdgeCell(Map map, IntVec3 from, IntVec3 c, ref IntVec3 best, ref int bestDist)
-        {
-            if (!c.InBounds(map))
-            {
-                return;
-            }
-
-            if (!c.Walkable(map) || !c.Standable(map))
-            {
-                return;
-            }
-
-            int dist = (c - from).LengthHorizontalSquared;
-            if (dist < bestDist)
-            {
-                bestDist = dist;
-                best = c;
-            }
-        }
-
-        private static bool IsRunningRetreatJob(RetreatEntry e)
-        {
-            if (e.pawn.jobs == null || e.pawn.CurJob == null)
-            {
-                return false;
-            }
-
-            if (e.pawn.CurJobDef != JobDefOf.Goto)
-            {
-                return false;
-            }
-
-            return e.pawn.CurJob.targetA.Cell == e.target;
-        }
-
-        /// <returns>true 表示被彻底拦截，应改为移出地图。</returns>
-        private static bool IssueRetreatJob(RetreatEntry e, int now)
-        {
-            try
-            {
-                Pawn p = e.pawn;
-
-                // ★ 先剥离精神状态的接管（狂暴 / 猎杀 / 恐惧等）。
-                //   精神状态会压住 Job，清掉之后 Job 才能真正跑起来。
-                ClearMentalState(p);
-
-                // ★ 再把它从 Lord 里踢出去。
-                //   绝大多数「Job 被抢」的根源就是袭击领主（LordJob_AssaultColony）
-                //   的 toil 在每 tick 给成员重新派单；踢出 lord 后没人再抢。
-                DetachFromLord(p);
-
-                // 抢走控制权：停掉一切正在做的事（含战斗 / 攻击 / 搬运）
-                p.jobs.StopAll(false, true);
-
-                Job job = new Job(JobDefOf.Goto, e.target);
-                job.locomotionUrgency = LocomotionUrgency.Sprint;
-                job.expiryInterval = 600;
-                job.checkOverrideOnExpire = false;
-
-                // ★ 路被门挡住时允许砸门（1.7 的 Job 没有 canBash，墙靠下面的卡死检测处理）
-                job.canBashDoors = true;
-
-                p.jobs.StartJob(job, JobCondition.InterruptForced, null, false, true);
-
-                // 断掉当前目标，避免边走边回身打人
-                p.mindState.enemyTarget = null;
-
-                e.lastIssueTick = now;
-                return !IsRunningRetreatJob(e);
-            }
-            catch (Exception ex)
-            {
-                BinguinLogUtility.WarningOnce(
-                    "强制撤退：下发撤退 Job 失败，将改为移出地图。" + ex.Message, 962214);
-                return true;
-            }
-        }
-
-        /// <summary>
-        /// 清掉单位当前的精神状态，让 Job 能真正生效。
-        /// 只做「解除」，不做「施加」，因此不受任何「精神状态免疫」影响。
-        /// </summary>
-        private static void ClearMentalState(Pawn p)
-        {
-            try
-            {
-                if (!p.InMentalState)
-                {
-                    return;
-                }
-
-                MentalState state = p.MentalState;
-                if (state == null)
-                {
-                    return;
-                }
-
-                MentalStateDef def = state.def;
-                state.RecoverFromState();
-
-                // RecoverFromState 可能因为 mod 保护没生效，再补一次硬复位
-                if (p.InMentalState && p.mindState != null && p.mindState.mentalStateHandler != null)
-                {
-                    p.mindState.mentalStateHandler.Reset();
-                }
-
-                BinguinLogUtility.Log(
-                    "强制撤退：已解除 " + p.LabelShort + " 的精神状态「"
-                    + (def != null ? def.label : "未知") + "」。", isDebug: false);
-            }
-            catch (Exception ex)
-            {
-                BinguinLogUtility.WarningOnce(
-                    "强制撤退：解除精神状态失败。" + ex.Message, 962221);
-            }
-        }
-
-        /// <summary>
-        /// 放手：结束我们下发的 Job，把控制权还给单位自己的 AI。
-        /// 用于「被墙卡住就不管」的情况。
-        /// </summary>
-        private static void ReleasePawn(Pawn p)
-        {
-            try
-            {
-                if (p.jobs != null && p.CurJobDef == JobDefOf.Goto)
-                {
-                    p.jobs.EndCurrentJob(JobCondition.InterruptForced, false);
-                }
-            }
-            catch (Exception ex)
-            {
-                BinguinLogUtility.WarningOnce(
-                    "强制撤退：交还控制权失败。" + ex.Message, 962222);
-            }
-        }
-
-        /// <summary>把单位从所属 Lord（袭击队 / 商队护卫等）中移除，断掉 AI 派单来源。</summary>
-        private static void DetachFromLord(Pawn p)        {
-            try
-            {
-                Lord lord = p.GetLord();
-                if (lord == null)
-                {
-                    return;
-                }
-
-                lord.RemovePawn(p);
-            }
-            catch (Exception ex)
-            {
-                BinguinLogUtility.WarningOnce(
-                    "强制撤退：脱离 Lord 失败。" + ex.Message, 962219);
-            }
-        }
-
-        /// <summary>
-        /// 直接把单位瞬移到撤退目标格。
-        /// 绕过寻路与 Job——被抢 Job / 走不通时的第二级手段。
-        /// </summary>
-        private static void TryTeleportToExit(RetreatEntry e)
-        {
-            Pawn p = e.pawn;
-            if (p == null || !p.Spawned || !e.target.IsValid)
-            {
-                return;
-            }
-
-            try
-            {
-                if (!e.target.InBounds(e.map) || !e.target.Standable(e.map))
-                {
-                    return;
-                }
-
-                // 目标格被别的单位占了就先跳过（下一 tick 再试）
-                if (e.target.GetFirstPawn(e.map) != null)
-                {
-                    return;
-                }
-
-                p.Position = e.target;
-                p.Notify_Teleported(false, false);
-            }
-            catch (Exception ex)
-            {
-                BinguinLogUtility.WarningOnce(
-                    "强制撤退：瞬移到边缘失败。" + ex.Message, 962220);
-            }
-        }
-
-        /// <summary>
-        /// 直接把单位移出地图。
-        /// 只经过 Thing / WorldPawns 层，不经过 hediff、精神状态、免疫、抗性等任何判定。
-        /// </summary>
-        private static void RemoveFromMap(RetreatEntry e)
-        {
-            Pawn p = e.pawn;
-            if (p == null || p.Destroyed)
-            {
-                return;
-            }
-
-            try
-            {
-                Lord lord = p.Spawned ? p.GetLord() : null;
-
-                if (p.Spawned)
-                {
-                    p.DeSpawn(DestroyMode.Vanish);
-                }
-
-                if (!p.Destroyed)
-                {
-                    Find.WorldPawns.PassToWorld(p);
-                }
-
-                if (lord != null)
-                {
-                    lord.Notify_PawnLost(p, PawnLostCondition.Undefined);
-                }
-
-                BinguinLogUtility.Log("强制撤退：已将 " + p.LabelShort + " 移出地图。", isDebug: false);
-            }
-            catch (Exception ex)
-            {
-                BinguinLogUtility.WarningOnce(
-                    "强制撤退：移出地图失败。" + ex.Message, 962215);
-            }
-        }
-
-        // ============================================================
-        // 开发用入口（技能暂不实装，先用调试菜单验证）
+        // 开发用入口
         // ============================================================
 
         [DebugAction("冰鹅族", "技能对抗：全图强制撤退",
@@ -803,11 +923,7 @@ namespace Binguin.Feature.SkillCounter
         }
     }
 
-    /// <summary>
-    /// 逐帧驱动。
-    /// RimWorld 通过反射扫描所有 GameComponent 子类并自动实例化，
-    /// 因此不需要任何 Def / XML 就能拿到一个每 tick 的回调。
-    /// </summary>
+    /// <summary>逐帧驱动：RimWorld 反射扫描 GameComponent 子类并自动实例化，无需 Def。</summary>
     public class GameComponent_BinguinForcedRetreat : GameComponent
     {
         public GameComponent_BinguinForcedRetreat(Game game)
