@@ -48,6 +48,12 @@ namespace Binguin.Feature.SkillCounter
         /// <summary>持续压制期间的复查间隔（tick，1 秒）。</summary>
         private const int SuppressScanInterval = 60;
 
+        /// <summary>连续被抢多少次 Job 后，判定「走不出去」，改为瞬移到边缘或直接移出。</summary>
+        private const int MaxStealBeforeTeleport = 12;
+
+        /// <summary>连续被抢多少次 Job 后，放弃撤退演出，直接移出地图。</summary>
+        private const int MaxStealBeforeRemove = 40;
+
         private sealed class RetreatEntry
         {
             public Pawn pawn;
@@ -56,6 +62,9 @@ namespace Binguin.Feature.SkillCounter
             public int startTick;
             public int lastIssueTick;
             public bool removeNow;
+
+            /// <summary>Job 被抢走的次数。连续被抢说明 AI 在跟我们拉锯。</summary>
+            public int stealCount;
         }
 
         private static readonly List<RetreatEntry> active = new List<RetreatEntry>();
@@ -171,9 +180,31 @@ namespace Binguin.Feature.SkillCounter
 
                 if (now - e.lastIssueTick >= ReissueInterval || !IsRunningRetreatJob(e))
                 {
+                    // 被抢的次数：每发现一次 Job 不是我们的，就记一笔
+                    if (!IsRunningRetreatJob(e))
+                    {
+                        e.stealCount++;
+                    }
+
                     bool blocked = IssueRetreatJob(e, now);
                     if (blocked)
                     {
+                        RemoveFromMap(e);
+                        active.RemoveAt(i);
+                        continue;
+                    }
+
+                    // 抢得太多：先尝试直接瞬移到边缘（跳过寻路与 Job）
+                    if (e.stealCount >= MaxStealBeforeTeleport && e.stealCount < MaxStealBeforeRemove)
+                    {
+                        TryTeleportToExit(e);
+                    }
+
+                    // 还在拉锯：放弃撤退演出，直接移出地图
+                    if (e.stealCount >= MaxStealBeforeRemove)
+                    {
+                        BinguinLogUtility.Log(
+                            "强制撤退：" + p.LabelShort + " 的 Job 反复被抢，直接移出地图。", isDebug: false);
                         RemoveFromMap(e);
                         active.RemoveAt(i);
                     }
@@ -491,6 +522,11 @@ namespace Binguin.Feature.SkillCounter
             {
                 Pawn p = e.pawn;
 
+                // ★ 先把它从 Lord 里踢出去。
+                //   绝大多数「Job 被抢」的根源就是袭击领主（LordJob_AssaultColony）
+                //   的 toil 在每 tick 给成员重新派单；踢出 lord 后没人再抢。
+                DetachFromLord(p);
+
                 // 抢走控制权：停掉一切正在做的事（含战斗 / 攻击 / 搬运）
                 p.jobs.StopAll(false, true);
 
@@ -512,6 +548,61 @@ namespace Binguin.Feature.SkillCounter
                 BinguinLogUtility.WarningOnce(
                     "强制撤退：下发撤退 Job 失败，将改为移出地图。" + ex.Message, 962214);
                 return true;
+            }
+        }
+
+        /// <summary>把单位从所属 Lord（袭击队 / 商队护卫等）中移除，断掉 AI 派单来源。</summary>
+        private static void DetachFromLord(Pawn p)
+        {
+            try
+            {
+                Lord lord = p.GetLord();
+                if (lord == null)
+                {
+                    return;
+                }
+
+                lord.RemovePawn(p);
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：脱离 Lord 失败。" + ex.Message, 962219);
+            }
+        }
+
+        /// <summary>
+        /// 直接把单位瞬移到撤退目标格。
+        /// 绕过寻路与 Job——被抢 Job / 走不通时的第二级手段。
+        /// </summary>
+        private static void TryTeleportToExit(RetreatEntry e)
+        {
+            Pawn p = e.pawn;
+            if (p == null || !p.Spawned || !e.target.IsValid)
+            {
+                return;
+            }
+
+            try
+            {
+                if (!e.target.InBounds(e.map) || !e.target.Standable(e.map))
+                {
+                    return;
+                }
+
+                // 目标格被别的单位占了就先跳过（下一 tick 再试）
+                if (e.target.GetFirstPawn(e.map) != null)
+                {
+                    return;
+                }
+
+                p.Position = e.target;
+                p.Notify_Teleported(false, false);
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：瞬移到边缘失败。" + ex.Message, 962220);
             }
         }
 
