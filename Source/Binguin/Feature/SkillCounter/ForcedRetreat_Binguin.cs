@@ -44,11 +44,18 @@ namespace Binguin.Feature.SkillCounter
         /// <summary>两次「真正下发 Job」的最小间隔，防止每 tick 拉锯。</summary>
         private const int MinIssueCooldown = 6;
 
+        /// <summary>
+        /// 单位最近这么多个 tick 内还在移动，就不要再重发 Job
+        /// （重发会 StopAll 打断寻路，反而让它走得更慢）。
+        /// </summary>
+        private const int ReissueRefreshTicks = 120;
+
         /// <summary>单个单位最长走路撤退时间，超时改走离场 Job。</summary>
         private const int MaxWalkTicks = 900;
 
         /// <summary>离场 Job 阶段最长等待时间，超时直接移出地图。</summary>
-        private const int MaxExitJobTicks = 900;
+        /// <summary>离场 Job 阶段最长等待时间：2 小时（1 小时 = 2500 tick）。</summary>
+        private const int MaxExitJobTicks = 2 * 2500;
 
         /// <summary>距离目标边缘多少格内视作「已走到」。</summary>
         private const int EdgeReachRadius = 2;
@@ -296,6 +303,12 @@ namespace Binguin.Feature.SkillCounter
             bool running = IsRunningJob(e, JobDefOf.Goto);
             if (running)
             {
+                // 正在正常移动就不打扰它（重发会打断寻路，反而让它走得更慢）
+                if (now - e.lastMoveTick < ReissueRefreshTicks)
+                {
+                    return;
+                }
+
                 if (now - e.lastIssueTick < ReissueInterval)
                 {
                     return;
@@ -350,6 +363,12 @@ namespace Binguin.Feature.SkillCounter
 
             if (running)
             {
+                // 正在正常移动就不打扰它
+                if (now - e.lastMoveTick < ReissueRefreshTicks)
+                {
+                    return;
+                }
+
                 if (now - e.lastIssueTick < ReissueInterval)
                 {
                     return;
