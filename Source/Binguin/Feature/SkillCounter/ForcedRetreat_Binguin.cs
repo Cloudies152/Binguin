@@ -48,7 +48,7 @@ namespace Binguin.Feature.SkillCounter
         private const int MaxWalkTicks = 900;
 
         /// <summary>离场 Job 阶段最长等待时间，超时直接移出地图。</summary>
-        private const int MaxExitJobTicks = 240;
+        private const int MaxExitJobTicks = 900;
 
         /// <summary>距离目标边缘多少格内视作「已走到」。</summary>
         private const int EdgeReachRadius = 2;
@@ -91,7 +91,7 @@ namespace Binguin.Feature.SkillCounter
 
         private static int suppressUntilTick = -1;
         private static int nextSuppressScanTick;
-        private static Map suppressMap;
+        private static readonly List<Map> suppressMaps = new List<Map>();
         private static Faction refugeeFaction;
         private static JobDef exitMapJobDef;
         private static readonly Dictionary<int, IntVec3> farthestCellCache = new Dictionary<int, IntVec3>();
@@ -123,7 +123,13 @@ namespace Binguin.Feature.SkillCounter
             if (suppressTicks > 0)
             {
                 stuckIds.Clear();
-                suppressMap = map;
+
+                // 多张地图各自记录（内心的呐喊会同时作用于所有地图）
+                if (!suppressMaps.Contains(map))
+                {
+                    suppressMaps.Add(map);
+                }
+
                 suppressUntilTick = Math.Max(suppressUntilTick, now + suppressTicks);
                 nextSuppressScanTick = now + SuppressScanInterval;
             }
@@ -148,12 +154,19 @@ namespace Binguin.Feature.SkillCounter
         {
             int now = Find.TickManager.TicksGame;
 
-            if (suppressMap != null
+            if (suppressMaps.Count > 0
                 && now <= suppressUntilTick
                 && now >= nextSuppressScanTick)
             {
                 nextSuppressScanTick = now + SuppressScanInterval;
-                SweepMap(suppressMap, now);
+                for (int m = 0; m < suppressMaps.Count; m++)
+                {
+                    Map sm = suppressMaps[m];
+                    if (sm != null && Find.Maps.Contains(sm))
+                    {
+                        SweepMap(sm, now);
+                    }
+                }
             }
 
             if (active.Count == 0)
@@ -261,8 +274,9 @@ namespace Binguin.Feature.SkillCounter
         {
             active.Clear();
             stuckIds.Clear();
+            removedIds.Clear();
             farthestCellCache.Clear();
-            suppressMap = null;
+            suppressMaps.Clear();
             suppressUntilTick = -1;
         }
 
@@ -289,11 +303,14 @@ namespace Binguin.Feature.SkillCounter
             }
             else
             {
-                e.stealCount++;
+                // 只有「上一次下发之后又过了冷却期」才计一次被抢，
+                // 否则 Job 刚下发、还没生效的瞬间也会被误判成被抢。
                 if (now - e.lastIssueTick < MinIssueCooldown)
                 {
                     return;
                 }
+
+                e.stealCount++;
 
                 // 被抢太多次 → 判定「死战不退」，改走离场 Job
                 if (e.stealCount >= StealsBeforeExitJob)
@@ -319,10 +336,32 @@ namespace Binguin.Feature.SkillCounter
             }
 
             JobDef exitDef = ExitMapJobDef;
-            bool running = exitDef != null && IsRunningJob(e, exitDef);
-
-            if (!running)
+            if (exitDef == null)
             {
+                // 找不到原版离场 Job：退化为直接移出
+                RemoveFromMap(e);
+                e.done = true;
+                return;
+            }
+
+            // 离场 Job 由 driver 自己找出口，targetA 未必等于我们给的格子，
+            // 所以这里只看 Job 类型，不比对目标格。
+            bool running = IsRunningJobOfDef(e, exitDef);
+
+            if (running)
+            {
+                if (now - e.lastIssueTick < ReissueInterval)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (now - e.lastIssueTick < MinIssueCooldown)
+                {
+                    return;
+                }
+
                 e.stealCount++;
                 if (e.stealCount >= StealsBeforeRemove)
                 {
@@ -332,23 +371,6 @@ namespace Binguin.Feature.SkillCounter
                     e.done = true;
                     return;
                 }
-
-                if (now - e.lastIssueTick < MinIssueCooldown)
-                {
-                    return;
-                }
-            }
-            else if (now - e.lastIssueTick < ReissueInterval)
-            {
-                return;
-            }
-
-            if (exitDef == null)
-            {
-                // 找不到原版离场 Job：退化为直接移出
-                RemoveFromMap(e);
-                e.done = true;
-                return;
             }
 
             IssueJob(e, now, exitDef, e.target);
@@ -363,18 +385,6 @@ namespace Binguin.Feature.SkillCounter
 
             BinguinLogUtility.Log(
                 "强制撤退：" + e.pawn.LabelShort + " 改走离场 Job（" + reason + "）。", isDebug: false);
-        }
-
-        private static void RemoveEntry(RetreatEntry e)
-        {
-            for (int i = 0; i < active.Count; i++)
-            {
-                if (active[i] == e)
-                {
-                    active.RemoveAt(i);
-                    return;
-                }
-            }
         }
 
         // ============================================================
@@ -696,6 +706,17 @@ namespace Binguin.Feature.SkillCounter
             }
 
             return e.pawn.CurJob.targetA.Cell == e.target;
+        }
+
+        /// <summary>只比对 Job 类型（离场 Job 用：driver 会自己挑出口格）。</summary>
+        private static bool IsRunningJobOfDef(RetreatEntry e, JobDef def)
+        {
+            if (e.pawn.jobs == null || e.pawn.CurJob == null || def == null)
+            {
+                return false;
+            }
+
+            return e.pawn.CurJobDef == def;
         }
 
         private static void IssueJob(RetreatEntry e, int now, JobDef def, IntVec3 cell)
