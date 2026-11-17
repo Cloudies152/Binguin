@@ -197,7 +197,7 @@ namespace Binguin.Feature.SkillCounter
                     continue;
                 }
 
-                // 被墙挡住：放手，交还 AI，本次效果内不再处理
+                // 卡住判定：区分「被抢导致卡住」和「被墙挡住」
                 if (p.Position != e.lastPos)
                 {
                     e.lastPos = p.Position;
@@ -205,6 +205,36 @@ namespace Binguin.Feature.SkillCounter
                 }
                 else if (now - e.lastMoveTick > StuckTicks)
                 {
+                    JobDef curDef = e.mode == RetreatMode.ExitJob ? ExitMapJobDef : JobDefOf.Goto;
+                    bool jobStolen = !IsRunningJob(e, curDef);
+
+                    if (jobStolen)
+                    {
+                        // ★ 被抢卡住：不结束处理，直接改走离场 Job 继续
+                        if (e.mode != RetreatMode.ExitJob)
+                        {
+                            SwitchToExitJob(e, now, "卡住且 Job 被抢");
+                        }
+                        else
+                        {
+                            e.stealCount++;
+                            if (e.stealCount >= StealsBeforeRemove)
+                            {
+                                BinguinLogUtility.Log(
+                                    "强制撤退：" + p.LabelShort + " 离场 Job 反复被抢，直接移出地图。",
+                                    isDebug: false);
+                                RemoveFromMap(e);
+                                e.done = true;
+                                continue;
+                            }
+                        }
+
+                        // 重置卡住计时，继续走
+                        e.lastMoveTick = now;
+                        continue;
+                    }
+
+                    // 走的是我们自己的 Job 却不动 = 被墙挡住 → 放手，交还 AI
                     BinguinLogUtility.Log(
                         "强制撤退：" + p.LabelShort + " 被障碍挡住，放弃对该单位的处理。", isDebug: false);
                     stuckIds.Add(p.thingIDNumber);
