@@ -20,25 +20,33 @@ namespace Binguin.Feature.SkillCounter
     ///   - XML Def 属性            → 可被补丁改写
     ///   - Harmony Patch           → 可被其他补丁覆盖或跳过
     ///
-    /// 本实现只使用引擎底层、无法被「免疫」的通道：
+    /// 本实现只走引擎底层、没有「免疫」判定的通道：
     ///   1) 直接改写 Pawn 的 Job（JobDefOf.Goto），强制其朝最近的地图边缘移动；
     ///   2) 每 15 tick 复查并重新下发（对手动改 Job 的 AI 也无效化）；
-    ///   3) 走到边缘、超过时限、或 Job 被完全拦截 → 直接 DeSpawn + PassToWorld，
-    ///      把单位移出地图（只经过 Thing / WorldPawns 层，
-    ///      不经过任何 hediff / 精神状态 / 免疫判定）。
+    ///   3) 走到边缘 / 超过时限 / Job 被完全拦截 → 直接 DeSpawn + PassToWorld，
+    ///      移出地图（只经过 Thing / WorldPawns 层）。
     ///
-    /// 不新增任何 Def（无需 XML），逐帧推进由反射自动注册的 GameComponent 提供。
+    /// 三重兜底：
+    ///   A) 地图没有可走边缘 → 直接移出地图（不再静默失败）
+    ///   B) 效果后一段时间内持续复查：被移除后又被重新刷出来的单位，会再被撤一次
+    ///   C) 任务绑定单位（IsQuestLodger）跳过，避免崩任务
     /// </summary>
     public static class ForcedRetreat_Binguin
     {
         /// <summary>重新下发撤退指令的间隔（tick）。</summary>
         private const int ReissueInterval = 15;
 
-        /// <summary>最长撤退时间（tick），超时直接移出地图。</summary>
+        /// <summary>单个单位最长撤退时间（tick），超时直接移出地图。</summary>
         private const int MaxRetreatTicks = 900;
 
         /// <summary>距离目标边缘多少格内视作「已走到」。</summary>
         private const int EdgeReachRadius = 2;
+
+        /// <summary>默认的持续压制时长（tick，60 秒）。</summary>
+        private const int DefaultSuppressTicks = 3600;
+
+        /// <summary>持续压制期间的复查间隔（tick，1 秒）。</summary>
+        private const int SuppressScanInterval = 60;
 
         private sealed class RetreatEntry
         {
@@ -47,10 +55,14 @@ namespace Binguin.Feature.SkillCounter
             public IntVec3 target;
             public int startTick;
             public int lastIssueTick;
-            public bool jobBlocked;
+            public bool removeNow;
         }
 
         private static readonly List<RetreatEntry> active = new List<RetreatEntry>();
+
+        private static int suppressUntilTick = -1;
+        private static int nextSuppressScanTick;
+        private static Map suppressMap;
 
         /// <summary>当前正在撤退的单位数量。</summary>
         public static int ActiveCount
@@ -63,52 +75,41 @@ namespace Binguin.Feature.SkillCounter
         // ============================================================
 
         /// <summary>
-        /// 让指定地图上所有敌对 / 发狂的中立单位撤退。返回受影响数量。
-        /// 技能效果直接调用本方法即可，不做任何「可否生效」的前置判定。
+        /// 让指定地图上所有敌对 / 发狂的中立单位撤退。
         /// </summary>
-        public static int RetreatAll(Map map)
+        /// <param name="map">目标地图。</param>
+        /// <param name="suppressTicks">
+        /// 持续压制时长：这段时间内每秒复查一次地图，新出现 / 被重新刷出的敌对单位会继续被撤。
+        /// 传 0 表示只执行一次。默认 3600 tick（60 秒）。
+        /// </param>
+        /// <returns>本次直接下达撤退令的单位数量。</returns>
+        public static int RetreatAll(Map map, int suppressTicks = DefaultSuppressTicks)
         {
             if (map == null)
             {
                 return 0;
             }
 
-            List<Pawn> targets = new List<Pawn>();
-            IReadOnlyList<Pawn> spawned = map.mapPawns.AllPawnsSpawned;
-            for (int i = 0; i < spawned.Count; i++)
+            int now = Find.TickManager.TicksGame;
+
+            if (suppressTicks > 0)
             {
-                Pawn p = spawned[i];
-                if (IsRetreatTarget(p))
-                {
-                    targets.Add(p);
-                }
+                suppressMap = map;
+                suppressUntilTick = Math.Max(suppressUntilTick, now + suppressTicks);
+                nextSuppressScanTick = now + SuppressScanInterval;
             }
 
-            int started = 0;
-            for (int i = 0; i < targets.Count; i++)
-            {
-                if (StartRetreat(targets[i]))
-                {
-                    started++;
-                }
-            }
-
-            if (started > 0)
-            {
-                BinguinLogUtility.Log("强制撤退：已对 " + started + " 个单位下撤退令。", isDebug: false);
-            }
-
-            return started;
+            return SweepMap(map, now);
         }
 
         /// <summary>对所有已生成地图生效。</summary>
-        public static int RetreatAllMaps()
+        public static int RetreatAllMaps(int suppressTicks = DefaultSuppressTicks)
         {
             int total = 0;
             List<Map> maps = Find.Maps;
             for (int i = 0; i < maps.Count; i++)
             {
-                total += RetreatAll(maps[i]);
+                total += RetreatAll(maps[i], suppressTicks);
             }
             return total;
         }
@@ -116,12 +117,22 @@ namespace Binguin.Feature.SkillCounter
         /// <summary>逐帧推进。由 GameComponent_BinguinForcedRetreat 调用。</summary>
         public static void Tick()
         {
+            int now = Find.TickManager.TicksGame;
+
+            // 兜底 B：持续压制窗口内定期复查
+            if (suppressMap != null
+                && now <= suppressUntilTick
+                && now >= nextSuppressScanTick)
+            {
+                nextSuppressScanTick = now + SuppressScanInterval;
+                SweepMap(suppressMap, now);
+            }
+
             if (active.Count == 0)
             {
                 return;
             }
 
-            int now = Find.TickManager.TicksGame;
             for (int i = active.Count - 1; i >= 0; i--)
             {
                 RetreatEntry e = active[i];
@@ -129,6 +140,14 @@ namespace Binguin.Feature.SkillCounter
 
                 if (p == null || p.Dead || !p.Spawned || p.Map != e.map)
                 {
+                    active.RemoveAt(i);
+                    continue;
+                }
+
+                // 兜底 A：一开始就没找到边缘 → 直接移出地图
+                if (e.removeNow)
+                {
+                    RemoveFromMap(e);
                     active.RemoveAt(i);
                     continue;
                 }
@@ -148,10 +167,8 @@ namespace Binguin.Feature.SkillCounter
 
                 if (now - e.lastIssueTick >= ReissueInterval || !IsRunningRetreatJob(e))
                 {
-                    IssueRetreatJob(e, now);
-
-                    // 下发不出去 → 视为被彻底拦截，直接移出地图
-                    if (e.jobBlocked)
+                    bool blocked = IssueRetreatJob(e, now);
+                    if (blocked)
                     {
                         RemoveFromMap(e);
                         active.RemoveAt(i);
@@ -164,15 +181,49 @@ namespace Binguin.Feature.SkillCounter
         public static void Clear()
         {
             active.Clear();
+            suppressMap = null;
+            suppressUntilTick = -1;
         }
 
         // ============================================================
-        // 目标筛选
+        // 扫描与筛选
         // ============================================================
+
+        private static int SweepMap(Map map, int now)
+        {
+            int started = 0;
+            IReadOnlyList<Pawn> spawned = map.mapPawns.AllPawnsSpawned;
+            for (int i = 0; i < spawned.Count; i++)
+            {
+                Pawn p = spawned[i];
+                if (!IsRetreatTarget(p))
+                {
+                    continue;
+                }
+
+                if (StartRetreat(p, now))
+                {
+                    started++;
+                }
+            }
+
+            if (started > 0)
+            {
+                BinguinLogUtility.Log("强制撤退：对 " + started + " 个单位下撤退令。", isDebug: false);
+            }
+
+            return started;
+        }
 
         private static bool IsRetreatTarget(Pawn p)
         {
             if (p == null || p.Dead || !p.Spawned || p.Destroyed)
+            {
+                return false;
+            }
+
+            // 兜底 C：任务绑定单位不动，避免任务失败 / 报错
+            if (p.IsQuestLodger())
             {
                 return false;
             }
@@ -211,7 +262,7 @@ namespace Binguin.Feature.SkillCounter
         // 内部实现
         // ============================================================
 
-        private static bool StartRetreat(Pawn p)
+        private static bool StartRetreat(Pawn p, int now)
         {
             for (int i = 0; i < active.Count; i++)
             {
@@ -221,22 +272,28 @@ namespace Binguin.Feature.SkillCounter
                 }
             }
 
-            IntVec3 exit = FindExitCell(p.Map, p.PositionHeld);
-            if (!exit.IsValid)
-            {
-                return false;
-            }
-
             RetreatEntry e = new RetreatEntry();
             e.pawn = p;
             e.map = p.Map;
-            e.target = exit;
-            e.startTick = Find.TickManager.TicksGame;
+            e.startTick = now;
             e.lastIssueTick = -999;
-            e.jobBlocked = false;
 
+            IntVec3 exit = FindExitCell(p.Map, p.PositionHeld);
+            if (!exit.IsValid)
+            {
+                // 兜底 A：地图没有可走的边缘（四面环山 / 深水 / 全封闭）
+                e.target = p.PositionHeld;
+                e.removeNow = true;
+                active.Add(e);
+                BinguinLogUtility.Log(
+                    "强制撤退：地图无可用边缘，直接移出 " + p.LabelShort + "。", isDebug: false);
+                return true;
+            }
+
+            e.target = exit;
+            e.removeNow = false;
             active.Add(e);
-            IssueRetreatJob(e, e.startTick);
+            IssueRetreatJob(e, now);
             return true;
         }
 
@@ -305,7 +362,8 @@ namespace Binguin.Feature.SkillCounter
             return e.pawn.CurJob.targetA.Cell == e.target;
         }
 
-        private static void IssueRetreatJob(RetreatEntry e, int now)
+        /// <returns>true 表示被彻底拦截，应改为移出地图。</returns>
+        private static bool IssueRetreatJob(RetreatEntry e, int now)
         {
             try
             {
@@ -325,20 +383,19 @@ namespace Binguin.Feature.SkillCounter
                 p.mindState.enemyTarget = null;
 
                 e.lastIssueTick = now;
-                e.jobBlocked = !IsRunningRetreatJob(e);
+                return !IsRunningRetreatJob(e);
             }
             catch (Exception ex)
             {
-                e.jobBlocked = true;
                 BinguinLogUtility.WarningOnce(
                     "强制撤退：下发撤退 Job 失败，将改为移出地图。" + ex.Message, 962214);
+                return true;
             }
         }
 
         /// <summary>
         /// 直接把单位移出地图。
-        /// 只经过 Thing / WorldPawns 层，不经过 hediff、精神状态、免疫、抗性等任何判定，
-        /// 因此无法被常见防护方式拦截。
+        /// 只经过 Thing / WorldPawns 层，不经过 hediff、精神状态、免疫、抗性等任何判定。
         /// </summary>
         private static void RemoveFromMap(RetreatEntry e)
         {
@@ -359,7 +416,6 @@ namespace Binguin.Feature.SkillCounter
 
                 if (!p.Destroyed)
                 {
-                    // 完全移出地图：只经过 Thing / WorldPawns 层
                     Find.WorldPawns.PassToWorld(p);
                 }
 
@@ -388,6 +444,15 @@ namespace Binguin.Feature.SkillCounter
         {
             int n = RetreatAll(Find.CurrentMap);
             Messages.Message("已强制 " + n + " 个单位开始撤退。", MessageTypeDefOf.NeutralEvent);
+        }
+
+        [DebugAction("冰鹅族", "技能对抗：撤退（仅一次，无持续压制）",
+            actionType = DebugActionType.Action,
+            allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        private static void Debug_RetreatOnce()
+        {
+            int n = RetreatAll(Find.CurrentMap, 0);
+            Messages.Message("已强制 " + n + " 个单位开始撤退（单次）。", MessageTypeDefOf.NeutralEvent);
         }
     }
 
