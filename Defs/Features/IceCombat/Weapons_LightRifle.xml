@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  冰鹅族轻型步枪（Binguin_LightRifle）
+  ============================================================
+  原型：XM8 卡宾枪（短小、顶部贯穿提把、尾部滑动托、半透明弹匣）
+  定位：介于「冰鹅族冲锋枪」与「冰鹅族突击步枪」之间的中量级自动步枪
+        —— 比突击步枪轻、开火更快、射程略短，精度略低于突击步枪
+
+  弹道沿用突击步枪的冰爆弹（Binguin_Bullet_Assault），保持冰爆机制一致：
+  命中累积与面板伤害等量的冰爆，100% 时随机崩碎一个部位。
+
+  研究前置与突击步枪相同：Binguin_ResearchFrostAssault
+  制作台：冰鹅族机加工台（Binguin_MachiningTable）
+-->
+<Defs>
+
+  <!-- ============ 冰鹅族轻型步枪 ============ -->
+  <ThingDef ParentName="BaseGunWithQuality">
+    <defName>Binguin_LightRifle</defName>
+    <label>冰鹅族轻型步枪</label>
+    <description>冰鹅族工匠以寒铁削薄枪身打造的轻型步枪：顶部一条贯穿式提把，机匣短而挺，弹匣以半透冰晶制成，能看见内部凝着霜的弹丸。比突击步枪更轻、更快，射程稍短。弹头内封着冰爆寒能，命中会在目标体内凝集与伤害等量的冰爆（1 伤害 = 1% 冰爆，品质越高越猛烈），蓄满 100% 时寒能会骤然崩碎目标的一个身体部位。轻便易携，是冰鹅族巡逻部队的制式装备。</description>
+    <graphicData>
+      <texPath>Things/Item/Equipment/WeaponRanged/Binguin/LightRifle</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <soundInteract>Interact_Rifle</soundInteract>
+    <weaponClasses>
+      <li>RangedHeavy</li>
+    </weaponClasses>
+    <thingSetMakerTags>
+      <li>RewardStandardQualitySuper</li>
+    </thingSetMakerTags>
+    <statBases>
+      <WorkToMake>24000</WorkToMake>
+      <Mass>3.0</Mass>
+      <AccuracyTouch>0.82</AccuracyTouch>
+      <AccuracyShort>0.72</AccuracyShort>
+      <AccuracyMedium>0.62</AccuracyMedium>
+      <AccuracyLong>0.50</AccuracyLong>
+      <RangedWeapon_Cooldown>1.35</RangedWeapon_Cooldown>
+    </statBases>
+    <costList>
+      <Plasteel>30</Plasteel>
+      <Steel>55</Steel>
+      <ComponentSpacer>1</ComponentSpacer>
+      <ComponentIndustrial>3</ComponentIndustrial>
+    </costList>
+    <verbs>
+      <li>
+        <verbClass>Verb_Shoot</verbClass>
+        <hasStandardCommand>true</hasStandardCommand>
+        <defaultProjectile>Binguin_Bullet_Assault</defaultProjectile>
+        <warmupTime>0.8</warmupTime>
+        <range>31.9</range>
+        <burstShotCount>3</burstShotCount>
+        <ticksBetweenBurstShots>9</ticksBetweenBurstShots>
+        <soundCast>Shot_AssaultRifle</soundCast>
+        <soundCastTail>GunTail_Heavy</soundCastTail>
+        <muzzleFlashScale>9</muzzleFlashScale>
+      </li>
+    </verbs>
+    <weaponTags>
+      <li>Gun</li>
+      <li>IndustrialGunAdvanced</li>
+      <li>BinguinMachined</li>
+      <li>BinguinGunAssault</li>
+    </weaponTags>
+    <tradeTags>
+      <li>WeaponRanged</li>
+    </tradeTags>
+    <tools>
+      <li>
+        <label>grip</label>
+        <capacities>
+          <li>Blunt</li>
+        </capacities>
+        <power>8</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+      <li>
+        <label>barrel</label>
+        <capacities>
+          <li>Blunt</li>
+          <li>Poke</li>
+        </capacities>
+        <power>8</power>
+        <cooldownTime>2</cooldownTime>
+      </li>
+    </tools>
+    <researchPrerequisites>
+      <li>Binguin_ResearchFrostAssault</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+  <!-- ============ 制作配方 ============ -->
+  <RecipeDef>
+    <defName>Recipe_Binguin_LightRifle</defName>
+    <label>制作冰鹅族轻型步枪</label>
+    <jobString>正在制作冰鹅族轻型步枪……</jobString>
+    <workAmount>24000</workAmount>
+    <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+    <workSkill>Crafting</workSkill>
+    <effectWorking>Smith</effectWorking>
+    <soundWorking>Recipe_Machining</soundWorking>
+    <unfinishedThingDef>UnfinishedGun</unfinishedThingDef>
+    <ingredients>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>Steel</li>
+          </thingDefs>
+        </filter>
+        <count>120</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentIndustrial</li>
+          </thingDefs>
+        </filter>
+        <count>3</count>
+      </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
+    </ingredients>
+    <products>
+      <Binguin_LightRifle>1</Binguin_LightRifle>
+    </products>
+    <recipeUsers>
+      <li>Binguin_MachiningTable</li>
+    </recipeUsers>
+    <skillRequirements>
+      <Crafting>6</Crafting>
+    </skillRequirements>
+    <researchPrerequisite>Binguin_ResearchFrostAssault</researchPrerequisite>
+  </RecipeDef>
+
+</Defs>
