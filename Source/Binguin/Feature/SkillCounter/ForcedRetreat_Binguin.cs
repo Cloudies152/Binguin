@@ -81,6 +81,9 @@ namespace Binguin.Feature.SkillCounter
         /// <summary>已被移出地图过的单位（用于识别「又被刷回来」的单位）。</summary>
         private static readonly HashSet<int> removedIds = new HashSet<int>();
 
+        /// <summary>被墙卡住、已放弃处理的单位（本效果内不再干预）。</summary>
+        private static readonly HashSet<int> stuckIds = new HashSet<int>();
+
         private static int suppressUntilTick = -1;
         private static int nextSuppressScanTick;
         private static Map suppressMap;
@@ -116,6 +119,9 @@ namespace Binguin.Feature.SkillCounter
 
             if (suppressTicks > 0)
             {
+                // 新的一次施放：重置「被墙卡住」名单，让它们重新尝试一次
+                stuckIds.Clear();
+
                 suppressMap = map;
                 suppressUntilTick = Math.Max(suppressUntilTick, now + suppressTicks);
                 nextSuppressScanTick = now + SuppressScanInterval;
@@ -193,7 +199,8 @@ namespace Binguin.Feature.SkillCounter
                     continue;
                 }
 
-                // 卡死检测：长时间没挪窝 = 被墙 / 门挡住，直接瞬移到边缘
+                // 卡死检测：长时间没挪窝 = 被墙挡住。
+                // 被墙卡住的单位不再干预——交给它自己的 AI，我们只是不再管。
                 if (p.Position != e.lastPos)
                 {
                     e.lastPos = p.Position;
@@ -202,9 +209,11 @@ namespace Binguin.Feature.SkillCounter
                 else if (now - e.lastMoveTick > StuckTicksBeforeTeleport)
                 {
                     BinguinLogUtility.Log(
-                        "强制撤退：" + p.LabelShort + " 被障碍挡住，瞬移到地图边缘。", isDebug: false);
-                    TryTeleportToExit(e);
-                    e.lastMoveTick = now;
+                        "强制撤退：" + p.LabelShort + " 被障碍挡住，放弃对该单位的撤退处理。",
+                        isDebug: false);
+                    stuckIds.Add(p.thingIDNumber);
+                    ReleasePawn(p);
+                    active.RemoveAt(i);
                     continue;
                 }
 
@@ -246,6 +255,7 @@ namespace Binguin.Feature.SkillCounter
         public static void Clear()
         {
             active.Clear();
+            stuckIds.Clear();
             suppressMap = null;
             suppressUntilTick = -1;
         }
@@ -262,6 +272,12 @@ namespace Binguin.Feature.SkillCounter
             {
                 Pawn p = spawned[i];
                 if (p == null || p.Dead || !p.Spawned || p.Destroyed)
+                {
+                    continue;
+                }
+
+                // 被墙卡住过的单位：本效果内不再干预
+                if (stuckIds.Contains(p.thingIDNumber))
                 {
                     continue;
                 }
@@ -630,9 +646,28 @@ namespace Binguin.Feature.SkillCounter
             }
         }
 
-        /// <summary>把单位从所属 Lord（袭击队 / 商队护卫等）中移除，断掉 AI 派单来源。</summary>
-        private static void DetachFromLord(Pawn p)
+        /// <summary>
+        /// 放手：结束我们下发的 Job，把控制权还给单位自己的 AI。
+        /// 用于「被墙卡住就不管」的情况。
+        /// </summary>
+        private static void ReleasePawn(Pawn p)
         {
+            try
+            {
+                if (p.jobs != null && p.CurJobDef == JobDefOf.Goto)
+                {
+                    p.jobs.EndCurrentJob(JobCondition.InterruptForced, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                BinguinLogUtility.WarningOnce(
+                    "强制撤退：交还控制权失败。" + ex.Message, 962222);
+            }
+        }
+
+        /// <summary>把单位从所属 Lord（袭击队 / 商队护卫等）中移除，断掉 AI 派单来源。</summary>
+        private static void DetachFromLord(Pawn p)        {
             try
             {
                 Lord lord = p.GetLord();
