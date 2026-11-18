@@ -96,6 +96,12 @@ namespace Binguin.Feature.SkillCounter
 
             /// <summary>已处理完毕，等待主循环移除（避免边遍历边删）。</summary>
             public bool done;
+
+            /// <summary>
+            /// 必须走到地图边缘才移除（异象实体用）。
+            /// 为 true 时不会因为「被抢」或「超时」被提前移出地图。
+            /// </summary>
+            public bool waitUntilEdge;
         }
 
         private static readonly List<RetreatEntry> active = new List<RetreatEntry>();
@@ -355,7 +361,8 @@ namespace Binguin.Feature.SkillCounter
         /// <summary>离场 Job 模式：直接让单位走原版的离场 Job 离开地图。</summary>
         private static void TickExitJob(RetreatEntry e, int now)
         {
-            if (now - e.modeStartTick > MaxExitJobTicks)
+            // 异象实体：必须走到地图边缘才移除，超时不处理（一直等它走到）
+            if (!e.waitUntilEdge && now - e.modeStartTick > MaxExitJobTicks)
             {
                 BinguinLogUtility.Log(
                     "强制撤退：" + e.pawn.LabelShort + " 离场 Job 超时，直接移出地图。", isDebug: false);
@@ -398,13 +405,22 @@ namespace Binguin.Feature.SkillCounter
                 }
 
                 e.stealCount++;
-                if (e.stealCount >= StealsBeforeRemove)
+
+                // 异象实体不因「被抢」提前移除，只重发，直到它走到边缘
+                if (!e.waitUntilEdge && e.stealCount >= StealsBeforeRemove)
                 {
                     BinguinLogUtility.Log(
                         "强制撤退：" + e.pawn.LabelShort + " 离场 Job 也被拦，直接移出地图。", isDebug: false);
                     RemoveFromMap(e);
                     e.done = true;
                     return;
+                }
+
+                if (e.waitUntilEdge && e.stealCount == StealsBeforeRemove)
+                {
+                    BinguinLogUtility.Log(
+                        "强制撤退：" + e.pawn.LabelShort + "（异象实体）离场 Job 反复被抢，"
+                        + "但仍会等它走到地图边缘再移除。", isDebug: false);
                 }
             }
 
@@ -579,6 +595,10 @@ namespace Binguin.Feature.SkillCounter
                 // ③ 发狂动物 / 异象实体 → 直接离场 Job
                 e.mode = RetreatMode.ExitJob;
                 e.target = exit;
+
+                // 异象实体：必须走到地图边缘才移除，不因超时 / 被抢提前清掉
+                e.waitUntilEdge = isEntity;
+
                 BinguinLogUtility.Log(
                     "强制撤退：" + p.LabelShort + "（" + (isEntity ? "异象实体" : "发狂动物")
                     + "）直接走离场 Job。", isDebug: false);
