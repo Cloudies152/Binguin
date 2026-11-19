@@ -40,8 +40,7 @@
       <RangedWeapon_Cooldown>1.0</RangedWeapon_Cooldown>
     </statBases>
     <costList>
-      <Plasteel>30</Plasteel>
-      <Steel>55</Steel>
+      <Steel>85</Steel>
       <ComponentIndustrial>3</ComponentIndustrial>
     </costList>
     <verbs>
@@ -49,7 +48,7 @@
         <verbClass>Verb_Shoot</verbClass>
         <hasStandardCommand>true</hasStandardCommand>
         <defaultProjectile>Binguin_Bullet_LightRifle</defaultProjectile>
-        <warmupTime>1.0</warmupTime>
+        <warmupTime>1.2</warmupTime>
         <range>31.9</range>
         <burstShotCount>4</burstShotCount>
         <ticksBetweenBurstShots>9</ticksBetweenBurstShots>
