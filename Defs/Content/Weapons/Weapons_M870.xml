@@ -84,7 +84,7 @@
       </li>
     </tools>
     <researchPrerequisites>
-      <li>Binguin_ResearchMachining</li>
+      <li>Binguin_ResearchIcyPeaks</li>
     </researchPrerequisites>
   </ThingDef>
 
@@ -125,7 +125,7 @@
     <skillRequirements>
       <Crafting>4</Crafting>
     </skillRequirements>
-    <researchPrerequisite>Binguin_ResearchMachining</researchPrerequisite>
+    <researchPrerequisite>Binguin_ResearchIcyPeaks</researchPrerequisite>
   </RecipeDef>
 
 </Defs>

@@ -37,22 +37,21 @@
       <AccuracyShort>0.72</AccuracyShort>
       <AccuracyMedium>0.62</AccuracyMedium>
       <AccuracyLong>0.50</AccuracyLong>
-      <RangedWeapon_Cooldown>1.35</RangedWeapon_Cooldown>
+      <RangedWeapon_Cooldown>0.8</RangedWeapon_Cooldown>
     </statBases>
     <costList>
       <Plasteel>30</Plasteel>
       <Steel>55</Steel>
-      <ComponentSpacer>1</ComponentSpacer>
       <ComponentIndustrial>3</ComponentIndustrial>
     </costList>
     <verbs>
       <li>
         <verbClass>Verb_Shoot</verbClass>
         <hasStandardCommand>true</hasStandardCommand>
-        <defaultProjectile>Binguin_Bullet_Assault</defaultProjectile>
+        <defaultProjectile>Binguin_Bullet_LightRifle</defaultProjectile>
         <warmupTime>0.8</warmupTime>
         <range>31.9</range>
-        <burstShotCount>3</burstShotCount>
+        <burstShotCount>4</burstShotCount>
         <ticksBetweenBurstShots>9</ticksBetweenBurstShots>
         <soundCast>Shot_AssaultRifle</soundCast>
         <soundCastTail>GunTail_Heavy</soundCastTail>
@@ -88,7 +87,7 @@
       </li>
     </tools>
     <researchPrerequisites>
-      <li>Binguin_ResearchFrostAssault</li>
+      <li>Binguin_ResearchMachining</li>
     </researchPrerequisites>
   </ThingDef>
 
@@ -120,14 +119,6 @@
         </filter>
         <count>3</count>
       </li>
-      <li>
-        <filter>
-          <thingDefs>
-            <li>ComponentSpacer</li>
-          </thingDefs>
-        </filter>
-        <count>1</count>
-      </li>
     </ingredients>
     <products>
       <Binguin_LightRifle>1</Binguin_LightRifle>
@@ -138,7 +129,24 @@
     <skillRequirements>
       <Crafting>6</Crafting>
     </skillRequirements>
-    <researchPrerequisite>Binguin_ResearchFrostAssault</researchPrerequisite>
+    <researchPrerequisite>Binguin_ResearchMachining</researchPrerequisite>
   </RecipeDef>
+
+  <!-- 轻型步枪专用弹道：伤害 8、穿甲 0.14，沿用冰爆伤害类型 -->
+  <ThingDef ParentName="BaseBullet">
+    <defName>Binguin_Bullet_LightRifle</defName>
+    <label>轻型步枪子弹</label>
+    <graphicData>
+      <texPath>Things/Projectile/Bullet_Small</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+    </graphicData>
+    <projectile>
+      <damageDef>Binguin_IceBulletDamage</damageDef>
+      <damageAmountBase>8</damageAmountBase>
+      <armorPenetrationBase>0.14</armorPenetrationBase>
+      <stoppingPower>0.5</stoppingPower>
+      <speed>70</speed>
+    </projectile>
+  </ThingDef>
 
 </Defs>

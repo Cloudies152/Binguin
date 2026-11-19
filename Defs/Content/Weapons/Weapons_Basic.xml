@@ -184,6 +184,7 @@
     <costList>
       <Steel>120</Steel>
       <ComponentIndustrial>1</ComponentIndustrial>
+      <ComponentSpacer>1</ComponentSpacer>
     </costList>
     <verbs>
       <li>
@@ -229,7 +230,7 @@
       </li>
     </tools>
     <researchPrerequisites>
-      <li>Binguin_ResearchMachining</li>
+      <li>Binguin_ResearchFrostAssault</li>
     </researchPrerequisites>
   </ThingDef>
 
@@ -260,6 +261,14 @@
         </filter>
         <count>1</count>
       </li>
+      <li>
+        <filter>
+          <thingDefs>
+            <li>ComponentSpacer</li>
+          </thingDefs>
+        </filter>
+        <count>1</count>
+      </li>
     </ingredients>
     <products>
       <Binguin_Shotgun>1</Binguin_Shotgun>
@@ -270,7 +279,7 @@
     <skillRequirements>
       <Crafting>4</Crafting>
     </skillRequirements>
-    <researchPrerequisite>Binguin_ResearchMachining</researchPrerequisite>
+    <researchPrerequisite>Binguin_ResearchFrostAssault</researchPrerequisite>
   </RecipeDef>
 
   <!-- 霰弹枪子弹：伤害 20（原版 18） -->
@@ -282,7 +291,7 @@
       <graphicClass>Graphic_Single</graphicClass>
     </graphicData>
     <projectile>
-      <damageDef>Bullet</damageDef>
+      <damageDef>Binguin_IceBulletDamage</damageDef>
       <damageAmountBase>24</damageAmountBase>
       <stoppingPower>3</stoppingPower>
       <armorPenetrationBase>0.16</armorPenetrationBase>
@@ -357,7 +366,7 @@
       </li>
     </tools>
     <researchPrerequisites>
-      <li>Binguin_ResearchMachining</li>
+      <li>Binguin_ResearchIcyPeaks</li>
     </researchPrerequisites>
   </ThingDef>
 
@@ -398,7 +407,7 @@
     <skillRequirements>
       <Crafting>4</Crafting>
     </skillRequirements>
-    <researchPrerequisite>Binguin_ResearchMachining</researchPrerequisite>
+    <researchPrerequisite>Binguin_ResearchIcyPeaks</researchPrerequisite>
   </RecipeDef>
 
   <!-- 杠杆步枪子弹：伤害 20（原版 18） -->
