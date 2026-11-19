@@ -89,7 +89,7 @@
   <ThingDef ParentName="MusicalInstrumentBase">
     <defName>Binguin_Band_DrumKit</defName>
     <label>冰鹅族架子鼓</label>
-    <description>冰鹅族乐队的架子鼓。能把整片冰原震得嗡嗡作响。</description>
+    <description>冰鹅族乐队的架子鼓。能把整片地面震得嗡嗡作响。</description>
     <size>(3,1)</size>
     <interactionCellOffset>(0,0,-1)</interactionCellOffset>
     <!-- ★★★ 2026-09 修复（用户实测「放置地标后依然没法用」的真正原因）：
@@ -147,7 +147,7 @@
   <ThingDef ParentName="MusicalInstrumentBase">
     <defName>Binguin_Band_Microphone</defName>
     <label>冰鹅族麦克风</label>
-    <description>冰鹅族乐队主唱用的立式麦克风。据说能把歌声里的寒气一并放大。</description>
+    <description>冰鹅族乐队主唱用的立式麦克风。据说能把歌声里的情绪一并放大。</description>
     <size>(1,1)</size>
     <!-- ★ 2026-09-23 用户要求：操作点全部挪到乐器【后方】（远离观众那侧），
          让乐手站在乐器背后、面朝观众席演奏；麦克风仍是第一排（离观众最近那排）。
@@ -271,7 +271,7 @@
   <ThingDef ParentName="MusicalInstrumentBase">
     <defName>Binguin_Band_Bass</defName>
     <label>冰鹅族贝斯</label>
-    <description>冰鹅族乐队的四弦贝斯。是整支乐队的稳固骨架。</description>
+    <description>冰鹅族乐队的四弦贝斯。是整支乐队的稳固骨架，只是不容易被发现。</description>
     <size>(1,1)</size>
     <interactionCellOffset>(0,0,-1)</interactionCellOffset>
     <!-- ★★★ 2026-09 修复（用户实测「放置地标后依然没法用」的真正原因）：
@@ -333,7 +333,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_BandOutfit</defName>
     <label>冰鹅族乐队服</label>
-    <description>冰鹅族乐队的演出服。在常服的基础上缀满亮片和流苏，随着动作折射出细碎寒光，站上舞台便自成焦点。</description>
+    <description>冰鹅族乐队的演出服。站上舞台便自成焦点。</description>
     <graphicData>
       <texPath>Things/Apparel/Binguin/BandOutfit</texPath>
       <graphicClass>Graphic_Single</graphicClass>

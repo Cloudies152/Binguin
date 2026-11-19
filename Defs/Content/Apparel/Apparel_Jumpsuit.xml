@@ -17,7 +17,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_PenguinJumpsuit</defName>
     <label>企鹅连体衣</label>
-    <description>冰鹅族最寻常也最亲切的一身衣裳：厚实的连体外套，帽兜、袖口与裤腿都缝得严严实实，正面拼着白肚皮似的浅色布片，背后还缀着一条短短的绒尾。裹上它，风雪与尘沙都被挡在绒羽之外。</description>
+    <description>？！企鹅！？</description>
     <graphicData>
       <texPath>Things/Apparel/Binguin/Tribalwear</texPath>
       <graphicClass>Graphic_Single</graphicClass>

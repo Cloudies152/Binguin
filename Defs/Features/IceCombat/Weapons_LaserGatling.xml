@@ -28,7 +28,7 @@
   <ThingDef ParentName="BaseGunWithQuality">
     <defName>Binguin_LaserGatling</defName>
     <label>冰鹅级极激急击机枪</label>
-    <description>霰雪无垠的终极造物：六管激光机枪，转起来便是一道不散的极光之鞭。 ⏎ （英文全名：Glacier Goose Giga-Gust Graser Gatling）</description>
+    <description>沉迷火力压制的研究者们的终极造物：六管激光机枪，几近无尽的子弹会杀死面前的所有敌人，不过转火是个难事。也许能向不存在的东西射击？ ⏎ （英文全名：Glacier Goose Giga-Gust Graser Gatling）</description>
     <graphicData>
       <texPath>Things/Item/Equipment/WeaponRanged/Binguin/LaserGatling</texPath>
       <graphicClass>Graphic_Single</graphicClass>

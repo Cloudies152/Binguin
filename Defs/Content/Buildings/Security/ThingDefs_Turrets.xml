@@ -19,7 +19,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_Turret_Gatling</defName>
     <label>自动加特林塔</label>
-    <description>冰鹅族以寒铁锻造的六管加特林炮塔：转管怒吼间倾泻 20 发连射的钢铁风暴。炮管需要以钢铁养护——每次射击磨损炮管，耐久耗尽需以钢铁重修炮管；虽然精度平平，密集弹雨足以撕碎正面之敌。</description>
+    <description>冰鹅族模仿自动加农炮锻造的六管加特林炮塔，每次可以倾泻 20 发连射的钢铁风暴。炮管需要以钢铁养护——每次射击磨损炮管，耐久耗尽需以钢铁重修炮管。</description>
     <thingClass>Building_TurretGun</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <drawHighlight>true</drawHighlight>
@@ -192,7 +192,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_Turret_Shotgun</defName>
     <label>小型自动霰弹发射塔</label>
-    <description>冰鹅族把霰弹枪塞进了自动机枪塔的壳子里。射程短得可怜，但只要敌人踏进射程，两管霰弹就会糊他一脸——不需要瞄准手，也不需要怜悯。</description>
+    <description>冰鹅族把霰弹枪塞进了自动机枪塔的壳子里。射程短得可怜，但只要敌人踏进射程，两管霰弹就会糊他一脸。</description>
     <thingClass>Building_TurretGun</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <drawHighlight>true</drawHighlight>
@@ -302,7 +302,7 @@
   <ThingDef ParentName="BaseWeaponTurret">
     <defName>Binguin_Gun_ShotgunTurret</defName>
     <label>迷你霰弹枪</label>
-    <description>两管霰弹，装在自动机枪塔的云台上。</description>
+    <description>两管霰弹，装在自动机枪塔上。</description>
     <graphicData>
       <texPath>Things/Building/Security/Binguin/ShotgunTurretTop</texPath>
       <graphicClass>Graphic_Single</graphicClass>

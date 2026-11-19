@@ -28,7 +28,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_JKUniform</defName>
     <label>冰鹅族JK服</label>
-    <description>观测站里最受欢迎的一身：深蓝与纯白拼色的水手领上衣配百褶裙，胸前系着一枚小小的冰晶结。穿上它的冰鹅族少女走在雪地里，连路过的行商都会多看一眼。</description>
+    <description>深蓝与纯白拼色的水手领上衣配百褶裙，穿上它的冰鹅族少女走在雪地里，连路过的海豹都会多看一眼（？）。</description>
     <graphicData>
       <!-- ★ 原版 T 恤的内部路径是 ShirtBasic（不是 BasicShirt），已核对 def -->
       <texPath>Things/Pawn/Humanlike/Apparel/ShirtBasic/ShirtBasic</texPath>
@@ -109,7 +109,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_MachinistOverall</defName>
     <label>冰鹅族机工装</label>
-    <description>厚实的连体工装，肘部与膝部缝着耐磨的皮革补丁，胸前口袋插满扳手与螺丝刀。穿着它钻进机工台底下修一整天，出来时身上只有机油味，没有半点寒气。</description>
+    <description>厚实的连体工装，肘部与膝部缝着耐磨的皮革补丁，胸前口袋插满扳手与螺丝刀。</description>
     <graphicData>
       <texPath>Things/Apparel/Binguin/Tribalwear</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -192,7 +192,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_DoctorCoat</defName>
     <label>冰鹅族医生服</label>
-    <description>浆洗得发白的长袍，袖口永远卷到手肘。白得干净，血才看得清楚。</description>
+    <description>洗得发白的长袍，在医院里经常见到。</description>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/LabCoat/LabCoat</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -276,7 +276,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_ResearchCoat</defName>
     <label>冰鹅族研究服</label>
-    <description>冰鹅族观测者的工作长袍：浅蓝布料上缝着几只大小不一的口袋，装着星图、算尺。穿上它，无论是推演星轨还是骇入古旧终端，都比旁人快上两成。</description>
+    <description>冰鹅的工作长袍，浅蓝布料上缝着几只大小不一的口袋。</description>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/LabCoat/LabCoat</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -360,7 +360,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_MilitaryUniform</defName>
     <label>冰鹅族军服</label>
-    <description>冰鹅族巡护队的制式军装：肩章上绣着一枚小小的六角雪花。比常服厚实得多，胸口还缀了一块钢制护板。</description>
+    <description>冰鹅族巡护队的制式军装：肩章上绣着一枚小小的六角雪花，胸口多了一块钢制护板。</description>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/FlakVest/FlakVest</texPath>
       <graphicClass>Graphic_Single</graphicClass>

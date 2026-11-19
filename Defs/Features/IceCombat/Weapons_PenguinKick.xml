@@ -36,7 +36,7 @@
   <ThingDef ParentName="BaseGunWithQuality">
     <defName>Binguin_PenguinKick</defName>
     <label>企鹅飞踢！！</label>
-    <description>霰雪无垠的绝技：冰鹅族把圆滚滚的子弹（自愿的）像炮弹一样踢向敌人——中者如遭车碾。</description>
+    <description>冰鹅族的绝技！把圆滚滚的子弹（自愿的）像大运一样踢向敌人！（没有任何一只企鹅受到伤害）</description>
     <graphicData>
       <texPath>Things/Item/Equipment/WeaponRanged/Binguin/PenguinKick</texPath>
       <graphicClass>Graphic_Single</graphicClass>

@@ -27,7 +27,7 @@
   <ScenarioDef ParentName="ScenarioBase">
     <defName>Binguin_Scenario</defName>
     <label>冰鹅族迫降</label>
-    <description>你们在低温休眠舱中醒来，警报与撕裂的金属声刺入耳膜。在飞船解体前，你们勉强挤进逃生舱。数小时后，你们坠落在这颗陌生的边缘世界上——三名冰鹅族观测者，带着寒原的干粮与自制的钓竿。</description>
+    <description>你们在低温休眠舱中醒来，警报与撕裂的金属声刺入耳膜。在飞船解体前，你们勉强挤进逃生舱。数小时后，你们坠落在这颗陌生的边缘世界上——三名冰鹅族殖民者，带着自带的干粮与自制的钓竿。</description>
     <scenario>
       <summary>三名冰鹅族迫降幸存者——企鹅娘们的经典开局。</summary>
       <!-- ★ 2026-08-20 修：玩家派系不能用 NPC 派系 def（Binguin），

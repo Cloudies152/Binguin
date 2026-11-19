@@ -14,7 +14,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_AtmosphereController</defName>
     <label>冰鹅族大气控制仪</label>
-    <description>冰鹅族以寒能驱动天穹的装置。通电后需以 700W 功率充能 24 小时方能操控一次天气；充满时会自动转入低耗能模式（10W），此时可将天气切换为晴、雨、暴风雨、雪或暴风雪。每次操控之后都要重新充能 24 小时，充能期间无法再次改变天象。</description>
+    <description>冰鹅族以寒能驱动天穹的装置。需充能 24 小时才能操控一次天气；充满时会自动转入低耗能模式，此时可将天气切换为晴、雨、暴风雨、雪或暴风雪。每次操控之后都要重新充能 24 小时，充能期间无法再次改变天象。</description>
     <thingClass>Building</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <tickerType>Normal</tickerType>

@@ -26,7 +26,7 @@
     <defName>Binguin_FieldCombatBionicEye</defName>
     <label>野外作战仿生眼</label>
     <labelNoun>一只野外作战仿生眼</labelNoun>
-    <description>已安装的野外作战仿生眼。晶状体外覆防冻晶膜，入光端的气象补偿阵列会实时修正雨雪、沙暴与浓雾造成的成像畸变，因此无论天气多糟，射手的命中判定都和晴天一样。额外的光学增益还让佩戴者的射击精度提升一档。</description>
+    <description>一只为雪原野外作战专门改装的仿生眼。晶状体外覆一层防冻晶膜，入光端加装了气象补偿阵列：雨、雪、沙暴、浓雾都不再让成像发糊，射手在恶劣天气下的命中率与晴天无异。额外的光学增益也让佩戴者的射击精度再提升一档。</description>
     <descriptionHyperlinks>
       <ThingDef>Binguin_FieldCombatBionicEye</ThingDef>
     </descriptionHyperlinks>

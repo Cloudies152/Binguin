@@ -43,7 +43,7 @@
   <ThingDef ParentName="BaseWeapon" MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_VoidSwordFish</defName>
     <label>尚方宝剑</label>
-    <description>冰鹅族渔道的终点之作：以世界上十四种鱼（）各二十五尾）凝聚而成的一柄剑。剑身就是一条鱼——鳞光为刃、鱼尾为柄。执剑者只要念动真言，十四条鱼的虚影便自天顶轮番斩落，每一尾都带着能击碎骨血的寒能。\n\n（远程斩击属于测试玩法，默认关闭；在【选项 → Mod 设置 → 冰鹅族】里可启用。）</description>
+    <description>冰鹅族渔道的终点之作：以世界上十四种鱼（各二十五尾）凝聚而成的一柄剑。剑身就是一条鱼——鳞光为刃、鱼尾为柄。执剑者只要念动真言，十四条鱼的虚影便轮番斩出。\n\n（远程斩击属于测试玩法，默认关闭；在【选项 → Mod 设置 → 冰鹅族】里可启用。）</description>
     <graphicData>
       <!-- 专用鱼剑贴图尚未制作，临时使用 Odyssey 鲑鱼贴图及其堆叠图形加载方式。 -->
       <texPath>Things/Item/Equipment/WeaponMelee/Binguin/VoidSwordFish</texPath>
@@ -105,7 +105,7 @@
   <RecipeDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Recipe_Binguin_VoidSwordFish</defName>
     <label>制作尚方宝剑</label>
-    <description>以寒原上十四种鱼各二十五尾，凝聚成一柄剑。十四条鱼的形意会被收进剑身，成为「天顶鱼斩」的十四道虚影。</description>
+    <description>以星球上十四种鱼各二十五尾，凝聚成一柄剑。十四条鱼的形意会被收进剑身，成为「尚方宝剑」的十四道虚影。</description>
     <jobString>正在凝聚十四种鱼的形意……</jobString>
     <workAmount>120000</workAmount>
     <workSpeedStat>GeneralLaborSpeed</workSpeedStat>

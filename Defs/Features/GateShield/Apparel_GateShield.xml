@@ -22,7 +22,7 @@
   <ThingDef ParentName="ApparelBase">
     <defName>Binguin_GateShield</defName>
     <label>寒门盾</label>
-    <description>冰鹅族最重的护具：双层护盾。持盾者无法射击，但近战之姿如墙——她们以此守住雪原的每一道门。</description>
+    <description>冰鹅族最重的护具：双层护盾。持盾者无法射击。</description>
     <thingClass>Apparel</thingClass>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/ShieldBelt/ShieldBelt</texPath>
@@ -173,7 +173,7 @@
   <ThingDef>
     <defName>Binguin_GateShieldField</defName>
     <label>寒门盾场</label>
-    <description>寒门盾的外层寒冰护罩（由穿戴者携带生成，不应单独存在）。</description>
+    <description>寒门盾的外层寒冰护罩（由穿戴者携带生成）。</description>
     <!-- ★ v20：thingClass = 原版 MechShield——1.6 机械师"随身护盾"实体：
          自带护盾泡泡绘制（DrawAt）与 SetTarget(pawn) 目标跟随；
          useHitPoints=false = 无法被命中（用户要求"带护盾的无法命中的

@@ -11,7 +11,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_AutoStoneMachine</defName>
     <label>采切石一体机</label>
-    <description>冰鹅族打造的自动化石料一体机。通电后自动开采地底岩石；开启切石模式时，采到的岩石块会直接被切成石砖，省去手工搬运与加工。占地两格，耗电 200W。</description>
+    <description>冰鹅族打造的自动化石料一体机。通电后自动开采地底岩石；开启切石模式时，采到的岩石块会直接被切成石砖，省去了加工。</description>
     <tickerType>Normal</tickerType>
     <minifiedDef>MinifiedThing</minifiedDef>
     <thingCategories>
@@ -61,7 +61,7 @@
   <ThingDef ParentName="BuildingBase" MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_AdvancedPollutionPump</defName>
     <label>高级排污泵</label>
-    <description>冰鹅族改良的污染过滤泵，效率是原版排污泵的四倍，净化半径翻倍。抽出的污染物仍会凝成毒废料包，需要搬走。耗电 100W。</description>
+    <description>冰鹅族改良的污染过滤泵，效率是原版排污泵的四倍，净化半径翻倍。抽出的污染物仍会凝成有毒垃圾，需要搬走。</description>
     <tickerType>Normal</tickerType>
     <minifiedDef>MinifiedThing</minifiedDef>
     <thingCategories>
@@ -121,7 +121,7 @@
   <ThingDef ParentName="BenchBase">
     <defName>Binguin_MachiningTable</defName>
     <label>冰鹅族机工台</label>
-    <description>冰鹅族打造的机械加工台，以钢铁机件制成，在刺骨低温中依旧运转如常。可用于制造武器与装甲。</description>
+    <description>冰鹅族的机械加工台，在低温中依旧运转如常。可用于制造冰鹅族的武器与装甲。</description>
     <thingClass>Building_WorkTable</thingClass>
     <graphicData>
       <texPath>Things/Building/Binguin/MachiningTable</texPath>
@@ -179,7 +179,7 @@
   <ThingDef ParentName="BenchBase">
     <defName>Binguin_TailoringTable</defName>
     <label>冰鹅族缝纫台</label>
-    <description>冰鹅族的电动缝纫台，蓝黑机身缀着霜纹，以寒冰纤维织就衣物，低温下依旧运转如常。</description>
+    <description>冰鹅族的电动缝纫台，温下依旧运转如常。</description>
     <thingClass>Building_WorkTable</thingClass>
     <graphicData>
       <texPath>Things/Building/Binguin/TailoringTable</texPath>

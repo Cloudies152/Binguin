@@ -29,7 +29,7 @@
   <ResearchProjectDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_ResearchAdvancedFishing</defName>
     <label>进阶钓鱼学</label>
-    <description>冰鹅族的渔者世代与寒水为伴，如今更上层楼：他们学会编织蟹笼、调配饵料，并将铁与铀锻造成量产型钓竿。从此，寒原的每一条水域都成了他们的粮仓。（奥德赛 DLC 专属）</description>
+    <description>冰鹅族的母星几乎被冰山覆盖，只有水下的鱼可以捕食，于是她们学会编织蟹笼、调配饵料、制作钓竿。</description>
     <tab>Binguin_ResearchTab</tab>
     <techLevel>Industrial</techLevel>
     <baseCost>600</baseCost>
@@ -52,7 +52,7 @@
   <ThingDef ParentName="BuildingBase" MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_CrabTrap</defName>
     <label>蟹笼</label>
-    <description>冰鹅族以寒铁编织的蟹笼，放置在水域中捕该水域的鱼群，或放置在冰面上自动捕获海洋鱼类。每天清晨六时、正午、黄昏六时与午夜各捕一次。</description>
+    <description>冰鹅族编织的蟹笼，放置在水域中捕该水域的鱼群，或放置在冰面上捕获海洋鱼类。</description>
     <thingClass>Building</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <!-- ★ 性能优化（2026-08-20）：每 6h 捕鱼 → Rare（每 250 tick 判定一次） -->
@@ -114,7 +114,7 @@
   <ThingDef ParentName="BuildingBase" MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_FishingBait</defName>
     <label>打窝用具</label>
-    <description>冰鹅族渔民以寒铁与零件制成的饵料架。将任意食物放入其中（营养值上限 5），它便会每天消耗 0.5 营养值向所在水域撒饵，使鱼群以每天 50% 的速率加快增长。每个水域最多放置 2 个。</description>
+    <description>冰鹅族渔民制成的饵料架。将任意食物放入其中，它便会向所在水域撒饵，使鱼群的速率加快增长。每个水域最多放置 2 个。</description>
     <thingClass>Building</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <tickerType>Normal</tickerType>

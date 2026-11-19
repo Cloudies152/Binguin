@@ -57,8 +57,8 @@
   <FactionDef ParentName="FactionBase">
     <categoryTag>Outlander</categoryTag>
     <defName>BinguinHostile</defName>
-    <label>冰鹅·霜牙</label>
-    <description>从冰鹅族母文明中分裂出去的激进支系。他们不再满足于仰望星空，而是坚信唯有把整片寒原都踩在脚下才算完成。装备与战术和同胞一模一样，唯独不再派人交谈。</description>
+    <label>霜牙</label>
+    <description>从冰鹅族母文明中分裂出去的激进支系。坚信唯有把整片寒原都踩在脚下才算完成。装备与战术和同胞一模一样，唯独不再派人交谈。</description>
     <pawnSingular>霜牙冰鹅</pawnSingular>
     <pawnsPlural>霜牙冰鹅</pawnsPlural>
     <fixedName>霜牙</fixedName>

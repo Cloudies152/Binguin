@@ -18,7 +18,7 @@
   <ResearchProjectDef>
     <defName>Binguin_ResearchTianwen</defName>
     <label>天问</label>
-    <description>冰鹅族世代观星的疑问终于凝成一问——"星空何在？" 冰鹅族观测者破译了星辰间的远古信标坐标，学会向深空发射巨量信号。殖民者将以此叩问苍穹：冰鹅族的母舰，正在群星之间等待回应。</description>
+    <description>冰鹅族的疑问终于凝成一问，"星空何在？" 冰鹅族的母舰，正在群星之间等待回应。</description>
     <tab>Binguin_ResearchTab</tab>
     <techLevel>Spacer</techLevel>
     <baseCost>6000</baseCost>
@@ -41,7 +41,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_SignalRelay</defName>
     <label>冰鹅族大型信号发射器</label>
-    <description>一座高耸的寒晶信标塔，以冰鹅族的观测科技向深空发射巨量信号。它必须在露天工作——穹顶会屏蔽来自群星的低语。与冰鹅族保持盟友关系，才能请它代为呼唤母舰。</description>
+    <description>一座高耸的信标塔，以冰鹅族的观测科技向深空发射巨量信号。它必须在露天工作——穹顶会屏蔽信号。与冰鹅族保持盟友关系，才能请它代为呼唤母舰。</description>
     <thingClass>Building</thingClass>
     <size>(2,2)</size>
     <graphicData>
@@ -88,7 +88,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_ShipCapsule</defName>
     <label>冰鹅族飞船型发射仓</label>
-    <description>一座足以容纳殖民者的星间发射仓：冰鹅族母舰对接舱的仿制品。殖民者进入其中，当母舰确认航线后即可点火——送往母舰，或再次前往群星之间。</description>
+    <description>一座足以容纳殖民者的星间发射仓，冰鹅族母舰对接舱的仿制品。殖民者进入其中，送往母舰，或再次前往群星之间。</description>
     <!-- ★ thingClass = 原版 Building_Casket：自带内舱容器（TryAcceptThing/
          EjectContents/ContainedThing），殖民者收纳进舱随存档保存 -->
     <thingClass>Building_Casket</thingClass>

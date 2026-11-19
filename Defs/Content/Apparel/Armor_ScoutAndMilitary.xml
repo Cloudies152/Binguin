@@ -19,7 +19,7 @@
   <ThingDef ParentName="ApparelBase">
     <defName>Binguin_ScoutHelmet</defName>
     <label>哨骑头盔</label>
-    <description>冰鹅族哨骑的高科技头盔，蓝白冰纹外壳内置微型状态电脑。复合板对枪弹与切割有惊人的抗性——寒原皆是哨骑的疆场。</description>
+    <description>冰鹅族哨骑的标准头盔，可以防御常规的子弹。</description>
     <techLevel>Spacer</techLevel>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/ReconArmorHelmet/ReconHelmet</texPath>
@@ -154,7 +154,7 @@
   <ThingDef ParentName="ApparelBase">
     <defName>Binguin_ScoutArmor</defName>
     <label>哨骑装甲</label>
-    <description>冰鹅族哨骑的轻型动力甲，冰晶织片轻若无物却坚逾寒铁。夹层与外壳双重防护，极耐严寒，附真空密封。在无垠霰雪之间，哨骑来去如风。</description>
+    <description>冰鹅族哨骑的轻型动力甲，夹层与外壳双重防护，极耐严寒，附真空密封。</description>
     <techLevel>Spacer</techLevel>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/ReconArmor/ReconArmor</texPath>
@@ -307,7 +307,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_MilitaryHelmet</defName>
     <label>冰鹅族头盔</label>
-    <description>蓝黑配色的军用头盔，护住整个头部。比原版防弹头盔更结实、更保暖，但依旧挡不住正面来的穿甲弹。</description>
+    <description>模仿人类头盔制作的蓝黑配色的军用头盔，可以护住半个头部。</description>
     <techLevel>Industrial</techLevel>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/AdvancedHelmet/AdvancedHelmet</texPath>

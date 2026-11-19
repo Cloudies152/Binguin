@@ -45,7 +45,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_ConcertLightRigTemp</defName>
     <label>临时演唱会灯组</label>
-    <description>野外演出用的临时灯架。两侧各立一根灯柱，中间用钢架连起来悬挂灯具。功率大、覆盖广，适合在空地上搭台；用完可以拆走。</description>
+    <description>野外演出用的临时灯架。功率大、覆盖广，适合在空地上搭台。</description>
 
     <thingClass>Building</thingClass>
     <designationCategory>BinguinBuilding</designationCategory>
@@ -116,7 +116,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_ConcertLight</defName>
     <label>演唱会灯组</label>
-    <description>挂在墙上的演出灯具。体积小、不占地面，沿着墙排一圈就能把舞台照亮。</description>
+    <description>挂在墙上的演出灯具。体积小、不占地面，适合在室内搭台。</description>
 
     <thingClass>Building</thingClass>
     <designationCategory>BinguinBuilding</designationCategory>

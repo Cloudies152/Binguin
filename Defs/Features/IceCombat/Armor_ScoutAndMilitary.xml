@@ -34,7 +34,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_SpiritRobe</defName>
     <label>冰鹅族灵质法袍</label>
-    <description>冰鹅族织者以丝绸布料编经、以玻璃钢抽纬，织出这一袭泛着幽蓝微光的长袍。衣料里夹着极细的晶丝，冷气一旦触上便四散流走——披着它站在暴风雪里，连呼吸都变得轻缓，整个人化作了一道寒风。</description>
+    <description>自从在边缘世界发现了灵能，冰鹅族便开始想办法利用这个工具，于是第一件灵能服饰诞生了。</description>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/Robe/Robe</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -125,7 +125,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_IceCrown</defName>
     <label>冰冠</label>
-    <description>冰鹅族首席观察员的冠冕：一整圈寒晶打磨的细箍，正面立起五枚长短不一的冰棱，光一照便折出细碎的蓝白星芒。</description>
+    <description>冰鹅族的冠冕，美丽的冰上之王。</description>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/Crown/Crown</texPath>
       <graphicClass>Graphic_Single</graphicClass>

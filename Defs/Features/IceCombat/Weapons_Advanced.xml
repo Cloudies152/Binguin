@@ -47,7 +47,7 @@
     <defName>Binguin_IceBurst</defName>
     <hediffClass>Binguin.Feature.IceCombat.Hediff_BinguinIceBurst, Binguin</hediffClass>
     <label>冰爆</label>
-    <description>冰寒能量在体内凝集。达到 100% 时，寒能骤然冻结并崩碎一个身体部位。</description>
+    <description>冰寒能量在体内凝集，寒能会骤然冻结并崩碎一个身体部位。</description>
     <isBad>true</isBad>
     <tendable>false</tendable>
     <makesAlert>false</makesAlert>
@@ -62,7 +62,7 @@
   <ThingDef ParentName="BaseGunWithQuality">
     <defName>Binguin_AssaultRifle</defName>
     <label>冰鹅族突击步枪</label>
-    <description>冰鹅族工匠以寒铁与晶簇凝成的自动突击步枪。弹头内封着一缕冰爆寒能：每次命中都会在目标体内凝集与该发伤害等量的冰爆（1 伤害 = 1% 冰爆，品质越高越猛烈）——当冰爆蓄满 100%，寒能会骤然崩碎目标的一个身体部位。抑止能力 0.5。</description>
+    <description>冰鹅族工匠以寒铁制成的自动突击步枪。弹头内封着寒能。</description>
     <graphicData>
       <texPath>Things/Item/Equipment/WeaponRanged/Binguin/AssaultRifle</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -205,7 +205,7 @@
   <ThingDef ParentName="BaseGunWithQuality">
     <defName>Binguin_PrecisionRifle</defName>
     <label>冰鹅族精确步枪</label>
-    <description>冰鹅族狙击手钟爱的长管精确步枪，寒木枪托上嵌着细碎冰晶。单发沉重、穿甲惊人——上千米外的猎物，也逃不过它的点名。</description>
+    <description>冰鹅族狙击手钟爱的长管精确步枪，可惜边缘世界的人都有手指反应装甲，于是她们决定降低输出，提高射速。</description>
     <graphicData>
       <texPath>Things/Item/Equipment/WeaponRanged/Binguin/PrecisionRifle</texPath>
       <graphicClass>Graphic_Single</graphicClass>

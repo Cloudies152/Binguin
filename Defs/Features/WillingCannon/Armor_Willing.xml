@@ -36,7 +36,7 @@
   <ThingDef ParentName="ApparelBase">
     <defName>Binguin_WillingArmor</defName>
     <label>威灵装甲</label>
-    <description>霰雪无垠的战争造物：以金属为骨、燃料为弦的动力甲。护甲模块随材质增益，内置一门以加固炮管铸造的微型迫击炮——可装填 3 发迫击炮弹。走到哪里，炮火就到哪里。</description>
+    <description>冰鹅族战争造物，模仿掷弹装甲制作的动力甲，内置一门以加固炮管制作的微型迫击炮——可装填 3 发迫击炮弹。</description>
     <thingClass>Apparel</thingClass>
     <!-- ★ 2026-09 性能：删除 <tickerType>Normal</tickerType>。
          本件只有 CompBiocodable（原版，无 CompTick）与运行时挂载的
@@ -163,7 +163,7 @@
   <ThingDef ParentName="ApparelBase">
     <defName>Binguin_WillingHelmet</defName>
     <label>威灵头盔</label>
-    <description>威灵装甲的头盔：全罩式晶面镜，护住整个头部。属性与装甲一脉相承，却轻巧得几乎感觉不到。</description>
+    <description>威灵装甲的头盔，全罩式晶面镜护住整个头部，轻巧得几乎感觉不到。</description>
     <thingClass>Apparel</thingClass>
     <techLevel>Spacer</techLevel>
     <smeltable>false</smeltable>

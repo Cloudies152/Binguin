@@ -103,7 +103,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_PlumeCirclet</defName>
     <label>冰鹅族绒羽头冠</label>
-    <description>用绒羽编成的环冠，正面插着三片长短不一的白色绒羽，羽尖各缀一颗米粒大的冰晶。观测站的少女们说，戴上它去雪原上走一圈，连风都愿意绕着你走。比起部落里那种粗糙的羽冠，编得细密些，护得住头顶，也暖得住额头。</description>
+    <description>用绒羽编成的环冠，正面插着三片长短不一的白色绒羽，羽尖各缀一颗米粒大的冰晶。</description>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/TribalHeaddress/TribalHeaddress</texPath>
       <graphicClass>Graphic_Single</graphicClass>

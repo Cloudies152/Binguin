@@ -12,7 +12,7 @@
   <ThingDef ParentName="ChunkRockBase">
     <defName>Binguin_IceRock</defName>
     <label>冰岩</label>
-    <description>从寒原冰层深处采出的冰蓝岩块，冷冽剔透。可在切石桌上切成冰岩砖。</description>
+    <description>从冰层深处采出的岩块，冷冽剔透。可在切石桌上切成冰岩砖。</description>
     <graphicData>
       <texPath>Things/Item/Chunk/Binguin/IceRock</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -33,7 +33,7 @@
   <ThingDef ParentName="StoneBlocksBase">
     <defName>Binguin_IceRockBrick</defName>
     <label>冰岩砖</label>
-    <description>以冰岩切割而成的冰蓝色砖块。比寻常石材更轻盈坚韧，广受冰鹅族建筑师青睐。</description>
+    <description>以冰岩切割而成的冰蓝色砖块。比寻常石材更轻盈，广受冰鹅族建筑师青睐。</description>
     <graphicData>
       <texPath>Things/Item/Binguin/IceRockBrick</texPath>
       <graphicClass>Graphic_Single</graphicClass>

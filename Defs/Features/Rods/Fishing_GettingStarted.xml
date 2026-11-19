@@ -33,7 +33,7 @@
   <ThingDef ParentName="BaseWeapon" MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_FishingRod</defName>
     <label>量产型钓竿</label>
-    <description>不知道为什么，这个鱼竿的头部绑着铀。握在手中可以当近战武器：竿柄捅刺，竿头钝击。用它钓鱼时，收获率提高 50%。</description>
+    <description>不知道为什么，这个鱼竿的头部绑着铀。可以提高钓鱼效率，握在手中可以当近战武器。</description>
     <graphicData>
       <texPath>Things/Item/Equipment/WeaponMelee/Binguin/FishingRod</texPath>
       <graphicClass>Graphic_Single</graphicClass>

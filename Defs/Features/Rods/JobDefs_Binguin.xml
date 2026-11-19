@@ -16,6 +16,7 @@
   <!-- 自定义类型和组件直接在下方 XML 声明；不再使用启动期占位替换。 -->
   <JobDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_WorkOnUnfinishedRod</defName>
+<label>继续装配半成品钓竿</label>
     <driverClass>Binguin.Feature.Rods.JobDriver_BinguinWorkOnUnfinishedRod, Binguin</driverClass>
     <reportString>working on an unfinished fishing rod.</reportString>
   </JobDef></Defs>

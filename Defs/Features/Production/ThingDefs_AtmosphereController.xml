@@ -12,7 +12,7 @@
   <ThingDef ParentName="BuildingBase" MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Recycler</defName>
     <label>冰鹅族垃圾回收器</label>
-    <description>冰鹅族以钢铁打造的垃圾回收器，将有毒垃圾分解为可再生的矿物。插电后自动运转，可以回收铁、玻璃钢、铀、金或银。</description>
+    <description>自从母星爆破后，冰鹅族痛定思痛研究出了更强的垃圾回收器，将有毒垃圾分解为的矿物。</description>
     <thingClass>Building</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <tickerType>Normal</tickerType>

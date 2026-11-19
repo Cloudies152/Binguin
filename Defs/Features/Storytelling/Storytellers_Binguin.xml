@@ -20,7 +20,7 @@
   <StorytellerDef ParentName="BaseStoryteller">
     <defName>Binguin_StorytellerFrostSpeaker</defName>
     <label>霜语者</label>
-    <description>极地冰原上一位古老的存在，以霜雪为笔、以风暴为句，在万物冻凝的低语间为殖民地谱写传说——冷笑话。她讲述故事的方式与卡桑德拉如出一辙：以逐渐攀升的张力考验你，在灾难与喘息之间往复。</description>
+    <description>极地冰原上一位古老的存在，以霜雪为笔、以风暴为句，低语间为殖民地谱写传说——冷笑话。她讲述故事的方式与卡桑德拉如出一辙。</description>
     <portraitLarge>UI/HeroArt/Storytellers/BinguinStoryteller</portraitLarge>
     <portraitTiny>UI/HeroArt/Storytellers/BinguinStorytellerTiny</portraitTiny>
     <listOrder>15</listOrder>

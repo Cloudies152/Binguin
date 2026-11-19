@@ -25,7 +25,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_Duster</defName>
     <label>冰鹅族风尘大衣</label>
-    <description>冰鹅族观测者们穿在身上的长摆大衣：下摆拖到小腿，挡风、挡沙、也挡得住正午的日头。缝线里夹着一层细密绒羽，既挡尘也蓄暖，是观测站外出巡猎时最稳妥的一件。</description>
+    <description>冰鹅族穿在身上的长摆大衣，炎热地区的穿着首选。</description>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/Duster/Duster</texPath>
       <graphicClass>Graphic_Single</graphicClass>
@@ -113,7 +113,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_Parka</defName>
     <label>冰鹅族风雪大衣</label>
-    <description>极北寒原上最要紧的外套：厚实的绒羽内衬、收紧的袖口与领口，风雪灌不进来，暖气也散不出去。穿上它，冰鹅族的守卫能在零下五十度的野外站上一整夜。</description>
+    <description>非常厚实的外套，没人知道冰鹅族是怎么把它做得这么保温的。</description>
     <graphicData>
       <texPath>Things/Pawn/Humanlike/Apparel/Parka/Parka</texPath>
       <graphicClass>Graphic_Single</graphicClass>

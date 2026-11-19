@@ -21,7 +21,7 @@
   <ThingDef ParentName="BuildingBase" MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_FishPond</defName>
     <label>鱼池</label>
-    <description>冰鹅族以寒铁围出的浅池，放入一条鱼苗即可养殖。多个鱼池相连会连成一个大鱼池，容量随池数增加（每池 20 条）。可以指派殖民者垂钓、投放鱼食加快繁殖，或开启内置蟹笼自动捕鱼。鱼池毫不起眼，袭击者不会特意攻击它。</description>
+    <description>冰鹅族围出的浅池，放入一条鱼苗即可养殖。多个鱼池相连会连成一个大鱼池，容量随池数增加。可以指派殖民者垂钓、投放鱼食加快繁殖，或开启内置蟹笼自动捕鱼。鱼池毫不起眼，袭击者不会特意攻击它。</description>
     <thingClass>Binguin.Feature.Fishing.Building_BinguinPond, Binguin</thingClass>
     <!-- ★ 性能优化（2026-08-20）：繁殖/鱼食/自动捕鱼为分钟级事件 → Rare（每 250 tick） -->
     <tickerType>Rare</tickerType>

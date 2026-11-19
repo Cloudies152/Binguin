@@ -10,7 +10,7 @@
   <ThingDef>
     <defName>Binguin_FishJerky</defName>
     <label>鱼干</label>
-    <description>冰鹅族风干的鱼肉条，耐储存，咸香耐嚼，是寒原远行的干粮。</description>
+    <description>冰鹅族风干的鱼肉条，咸飘香，耐口嚼，远行粮。</description>
     <thingClass>ThingWithComps</thingClass>
     <graphicData>
       <texPath>Things/Item/Binguin/FishJerky</texPath>

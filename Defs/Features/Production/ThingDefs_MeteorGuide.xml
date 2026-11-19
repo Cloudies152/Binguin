@@ -6,7 +6,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_MeteorGuide</defName>
     <label>冰鹅族陨石引导器</label>
-    <description>冰鹅族观测者的杰作：以引力场扫描天穹，捕获坠落的陨石，再按需将它们引导至指定区域。必须露天放置——屋顶会阻挡它的视线。</description>
+    <description>冰鹅族观测者们共同的杰作：以引力场扫描宇宙，捕获坠落的陨石，再按需将它们引导至指定区域。必须露天放置。</description>
     <thingClass>Building</thingClass>
     <drawerType>MapMeshAndRealTime</drawerType>
     <tickerType>Normal</tickerType>

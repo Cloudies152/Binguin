@@ -37,7 +37,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_ConcertStage</defName>
     <label>演唱会舞台</label>
-    <description>一块宽大的木制舞台，铺在地上当作演出场地。它在地板之上、人和物之下，不挡路、不承伤，纯粹是装饰。</description>
+    <description>一块宽大的木制舞台，铺在地上当作演出场地，纯粹是装饰。</description>
 
     <!-- 纯装饰：无血量、不参与 AI -->
     <useHitPoints>true</useHitPoints>
@@ -104,7 +104,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_ConcertStageSmall</defName>
     <label>小舞台板</label>
-    <description>两块见方的木制舞台板。和演唱会舞台同一层，可随意拼接成大台的形状。</description>
+    <description>一块见方的木制舞台板，可随意拼接成大台的形状。</description>
 
     <useHitPoints>true</useHitPoints>
     <altitudeLayer>FloorEmplacement</altitudeLayer>

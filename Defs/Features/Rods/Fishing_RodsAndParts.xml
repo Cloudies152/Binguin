@@ -28,7 +28,7 @@
   <ResearchProjectDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_ResearchMasterFishing</defName>
     <label>高级钓鱼学</label>
-    <description>冰鹅族的渔者已将垂钓化作一门工程学：钓竿装配台、可替换的竿身与竿头、直弯双钩，以及以食物调制的饵料——每一根钓竿，都是量身打造的艺术品……但是，怎么是用来打人的？</description>
+    <description>冰鹅族的工匠已将垂钓化作一门工程学（战斗学？），每一根钓竿，都是量身打造的艺术品……但是，怎么是用来打人的？</description>
     <tab>Binguin_ResearchTab</tab>
     <techLevel>Industrial</techLevel>
     <baseCost>3600</baseCost>
@@ -50,7 +50,7 @@
   <ResearchProjectDef MayRequire="Ludeon.RimWorld.Odyssey">
     <defName>Binguin_ResearchUltimateFishing</defName>
     <label>终极钓鱼学</label>
-    <description>冰鹅族的渔者终于触及垂钓之道的尽头：他们发现，把寒原上每一条鱼的形与意都收进一柄剑里，便能唤出「天顶鱼斩」——十四条鱼的虚影自天顶轮番斩落。传说中，唯有将鱼竿和身体合二为一者才配执此剑。</description>
+    <description>冰鹅族的渔者终于触及垂钓之道的尽头。再见，所有的鱼。</description>
     <tab>Binguin_ResearchTab</tab>
     <techLevel>Spacer</techLevel>
     <baseCost>5000</baseCost>

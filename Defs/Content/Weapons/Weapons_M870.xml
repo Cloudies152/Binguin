@@ -16,7 +16,7 @@
   <ThingDef ParentName="BaseGunWithQuality">
     <defName>Binguin_PumpShotgun_M870</defName>
     <label>冰鹅泵动霰弹枪</label>
-    <description>冰鹅族照着旧时代图纸做的泵动霰弹枪：白漆枪身、冰蓝护木，枪管下一根管状弹仓。单发威力足，射速比常见泵动更快一些。</description>
+    <description>冰鹅族照着过去图纸做的泵动霰弹枪，射速比常见泵动更快一些。</description>
     <graphicData>
       <texPath>Things/Item/Equipment/WeaponRanged/Binguin/M870</texPath>
       <graphicClass>Graphic_Single</graphicClass>

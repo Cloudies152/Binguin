@@ -19,7 +19,7 @@
   <ThingDef ParentName="BuildingBase">
     <defName>Binguin_SpiritIceRock</defName>
     <label>灵造冰岩</label>
-    <description>冰冠凝聚出的灵造冰岩：坚硬、冰凉，足以挡住子弹与风雪，但六个小时后便会重新化作细碎的冰屑。</description>
+    <description>冰冠凝聚出的灵造冰岩：</description>
     <thingClass>Building</thingClass>
     <size>(1,1)</size>
     <graphicData>

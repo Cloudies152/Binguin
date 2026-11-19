@@ -18,7 +18,7 @@
   <ThingDef ParentName="BaseGunWithQuality">
     <defName>Binguin_LightRifle</defName>
     <label>冰鹅族轻型步枪</label>
-    <description>冰鹅族工匠以寒铁削薄枪身打造的轻型步枪：顶部一条贯穿式提把，机匣短而挺，弹匣以半透冰晶制成，能看见内部凝着霜的弹丸。比突击步枪更轻、更快，射程稍短。弹头内封着冰爆寒能，命中会在目标体内凝集与伤害等量的冰爆（1 伤害 = 1% 冰爆，品质越高越猛烈），蓄满 100% 时寒能会骤然崩碎目标的一个身体部位。轻便易携，是冰鹅族巡逻部队的制式装备。</description>
+    <description>冰鹅族工匠打造的轻型步枪：射程稍短，轻便易携，是冰鹅族巡逻部队的制式装备。</description>
     <graphicData>
       <texPath>Things/Item/Equipment/WeaponRanged/Binguin/LightRifle</texPath>
       <graphicClass>Graphic_Single</graphicClass>

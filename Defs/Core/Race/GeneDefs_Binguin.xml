@@ -22,7 +22,7 @@
     <defName>Binguin_Gene_PureWhiteSkin</defName>
     <label>纯白绒羽</label>
     <labelShortAdj>纯白</labelShortAdj>
-    <description>冰鹅族的皮肤天生纯白，不受任何色素影响，肤色恒定。</description>
+    <description>天生纯白，不受任何色素影响，肤色恒定。</description>
     <displayCategory>Cosmetic_Skin</displayCategory>
     <skinColorOverride>(255, 255, 255)</skinColorOverride>
     <randomBrightnessFactor>0</randomBrightnessFactor>
@@ -42,7 +42,7 @@
     <defName>Binguin_Gene_Skating</defName>
     <label>快速滑冰</label>
     <labelShortAdj>滑冰</labelShortAdj>
-    <description>在冰面、雪面与水面上滑行自如，移动速度完全不受地形影响。</description>
+    <description>在冰面、雪面与水面上滑行自如。</description>
     <displayCategory>Miscellaneous</displayCategory>
     <biostatCpx>1</biostatCpx>
     <biostatMet>-1</biostatMet>
@@ -79,7 +79,7 @@
     <defName>Binguin_Gene_MechExpert</defName>
     <label>机工高手</label>
     <labelShortAdj>机工</labelShortAdj>
-    <description>建造速度提升 50%，机械培育速度提升 20%，机械维修速度提升 50%，机械组装（含拆解类）工作速度提升 20%。</description>
+    <description>机械组装（含拆解类）工作速度提升 20%。</description>
     <displayCategory>Miscellaneous</displayCategory>
     <statFactors>
       <ConstructionSpeed>1.5</ConstructionSpeed>
@@ -113,7 +113,7 @@
     <defName>Binguin_Gene_RecreationLover</defName>
     <label>娱乐至上</label>
     <labelShortAdj>享乐</labelShortAdj>
-    <description>娱乐值下降速度提升 10%，休息效率降低 5%，需要更多娱乐、睡得更久才能保持状态。</description>
+    <description>需要更多娱乐、睡得更久才能保持状态。</description>
     <displayCategory>Miscellaneous</displayCategory>
     <statFactors>
       <JoyFallRateFactor>1.1</JoyFallRateFactor>
@@ -134,7 +134,7 @@
   <XenotypeDef MayRequire="Ludeon.RimWorld.Biotech">
     <defName>Binguin_Xenotype</defName>
     <label>冰鹅种</label>
-    <description>冰鹅族的基因组合：寒域观测者、滑冰与捕鱼能手、天生的机械维护者、研究者与艺术家。</description>
+    <description>滑冰与捕鱼能手，研究者与艺术家。</description>
     <iconPath>UI/Icons/Xenotypes/Baseliner</iconPath>
     <inheritable>true</inheritable>
     <genes>

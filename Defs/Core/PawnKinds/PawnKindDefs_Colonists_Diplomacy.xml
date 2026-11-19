@@ -14,7 +14,7 @@
   <ThingDef ParentName="ApparelMakeableBase">
     <defName>Binguin_Tribalwear</defName>
     <label>冰鹅族常服</label>
-    <description>冰鹅族以厚布缝制的连体常服，覆及肩臂躯干与腿脚。极寒之中依旧从容。</description>
+    <description>冰鹅族最常见的服饰，在极寒之中依旧从容。</description>
     <graphicData>
       <texPath>Things/Apparel/Binguin/Tribalwear</texPath>
       <graphicClass>Graphic_Single</graphicClass>
