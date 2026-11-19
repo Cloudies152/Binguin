@@ -37,7 +37,7 @@
       <AccuracyShort>0.72</AccuracyShort>
       <AccuracyMedium>0.62</AccuracyMedium>
       <AccuracyLong>0.50</AccuracyLong>
-      <RangedWeapon_Cooldown>0.8</RangedWeapon_Cooldown>
+      <RangedWeapon_Cooldown>1.0</RangedWeapon_Cooldown>
     </statBases>
     <costList>
       <Plasteel>30</Plasteel>
@@ -49,7 +49,7 @@
         <verbClass>Verb_Shoot</verbClass>
         <hasStandardCommand>true</hasStandardCommand>
         <defaultProjectile>Binguin_Bullet_LightRifle</defaultProjectile>
-        <warmupTime>0.8</warmupTime>
+        <warmupTime>1.0</warmupTime>
         <range>31.9</range>
         <burstShotCount>4</burstShotCount>
         <ticksBetweenBurstShots>9</ticksBetweenBurstShots>
