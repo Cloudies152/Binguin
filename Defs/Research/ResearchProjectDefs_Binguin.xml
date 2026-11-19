@@ -237,14 +237,14 @@
     <description>冰鹅族的匠人把极寒晶簇凝进弹头：冰爆弹命中即在敌体内凝集寒能，冰爆蓄满之时，被击中的部位会骤然冻裂崩碎。</description>
     <tab>Binguin_ResearchTab</tab>
     <techLevel>Industrial</techLevel>
-    <baseCost>1600</baseCost>
+    <baseCost>600</baseCost>
     <!-- ★ 2026-09 用户要求：本科技必须在【高级研究台】上研究 -->
     <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
     <researchViewX>2.80</researchViewX>
     <researchViewY>0.00</researchViewY>
     <prerequisites>
       <li>Binguin_ResearchMachining</li>
-      <li>PrecisionRifling</li>
+      <li>Binguin_ResearchPrecision</li>
     </prerequisites>
   </ResearchProjectDef>
 
@@ -315,6 +315,22 @@
       <li>Binguin_ResearchMachining</li>
       <li>Binguin_ResearchClothing</li>
       <li>FlakArmor</li>
+    </prerequisites>
+  </ResearchProjectDef>
+
+  <!-- 精确射手步枪：突袭冷冻武器的前置研究 -->
+  <ResearchProjectDef>
+    <defName>Binguin_ResearchPrecision</defName>
+    <label>精确射击</label>
+    <description>冰鹅族工匠把寒铁削成细长的枪管，配上精密的瞄具——他们发现了如何让一颗子弹在三百步外仍然笔直。</description>
+    <tab>Binguin_ResearchTab</tab>
+    <techLevel>Industrial</techLevel>
+    <baseCost>1000</baseCost>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <researchViewX>2.40</researchViewX>
+    <researchViewY>0.00</researchViewY>
+    <prerequisites>
+      <li>Binguin_ResearchMachining</li>
     </prerequisites>
   </ResearchProjectDef>
 

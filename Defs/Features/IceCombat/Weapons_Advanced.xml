@@ -275,7 +275,7 @@
     <!-- ★ 2026-08-20 用户改定：两把冰鹅族步枪都由「突袭冷冻武器」解锁
          （无独立精准步枪研究；原版 PrecisionRifling 是研究的前置） -->
     <researchPrerequisites>
-      <li>Binguin_ResearchFrostAssault</li>
+      <li>Binguin_ResearchPrecision</li>
     </researchPrerequisites>
   </ThingDef>
 
@@ -324,7 +324,7 @@
     <skillRequirements>
       <Crafting>7</Crafting>
     </skillRequirements>
-    <researchPrerequisite>Binguin_ResearchFrostAssault</researchPrerequisite>
+    <researchPrerequisite>Binguin_ResearchPrecision</researchPrerequisite>
   </RecipeDef>
 
   <!-- 精确步枪弹：伤害 20，穿甲 46%，弹速 100；同带冰爆（1 伤 = 1%） -->
