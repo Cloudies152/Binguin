@@ -71,6 +71,27 @@ namespace Binguin.Feature.Fishing
         }
 
         // 建筑贴图打进地图网格时调用 → 按连接 mask 选变体贴图打印
+        /// <summary>拆除 / 被毁时把水面地形还原成原地形。</summary>
+        public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
+        {
+            CompBinguinPondWater water = this.GetComp<CompBinguinPondWater>();
+            if (water != null)
+            {
+                water.RestoreNow();
+            }
+            base.DeSpawn(mode);
+        }
+
+        public override void Destroy(DestroyMode mode = DestroyMode.Vanish)
+        {
+            CompBinguinPondWater water = this.GetComp<CompBinguinPondWater>();
+            if (water != null)
+            {
+                water.RestoreNow();
+            }
+            base.Destroy(mode);
+        }
+
         public override void Print(SectionLayer layer)
         {
             Graphic g = null;
