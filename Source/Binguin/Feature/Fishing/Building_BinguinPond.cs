@@ -43,7 +43,7 @@ namespace Binguin.Feature.Fishing
     [StaticConstructorOnStartup]
     public class Building_BinguinPond : Building
     {
-        private static readonly bool UseFrameWater = false;   // true=帧动画水面；false=用原版水着色器
+        private static readonly bool UseFrameWater = true;   // true=帧动画水面；false=用原版水着色器
         private static Graphic[] waterFrames;      // 动态水面帧
         private const int WaterFrameCount = 12;
         private const int WaterFrameTicks = 6;     // 每 6 tick 换一帧

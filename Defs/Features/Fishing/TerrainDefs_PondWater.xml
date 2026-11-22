@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  鱼池水面地形（Waylith 1.7）
-  ============================================================
-  做法：
-    · 贴图 / 深度着色器都跟原版 WaterShallow 一致（波纹、水深由引擎算）
-    · customShader 换成我们自己的 TerrainWater 变体：
-      把最后的“岸边噪声淡出”改成了 alpha = 1，
-      所以水面不会向相邻格子淡化（不再溢出鱼池）
-    · 带上 waterBodyType，引擎才会把水面参数（波纹场、反射贴图）传进着色器
-
-  参考：
-    · 原版注册方式：Data/Core/Defs/ShaderDefs/Shaders.Map.xml（ShaderDef）
-    · RimWorld 1.7 模组更新指南：https://rimworldwiki.com/wiki/Modding_Tutorials
+  鱼池水面地形：只作为「底色」使用。
+  真正的动态水面由 Building_BinguinPond 在建筑层画帧动画（严格 2×2，不溢出）。
+  这里不能用 waterBodyType / waterDepthShader：那会把鱼池注册成水体，
+  引擎按水体边界渲染，范围会超出鱼池格。
 -->
 <Defs>
 
@@ -19,12 +11,9 @@
     <defName>Binguin_PondWater</defName>
     <label>鱼池水面</label>
     <description>鱼池里的静水。</description>
-    <texturePath>Terrain/Surfaces/WaterShallowRamp</texturePath>
-    <customShader>BinguinPondWaterType</customShader>
-    <waterDepthShader>WaterDepth</waterDepthShader>
-    <waterBodyType>Freshwater</waterBodyType>
+    <texturePath>Things/Building/Binguin/PondWaterTile</texturePath>
     <renderPrecedence>394</renderPrecedence>
-    <edgeType>Water</edgeType>
+    <edgeType>Hard</edgeType>
     <fertility>0</fertility>
     <natural>false</natural>
     <avoidWander>true</avoidWander>
@@ -33,7 +22,6 @@
     <extinguishesFire>true</extinguishesFire>
     <driesTo>Gravel</driesTo>
     <tags>
-      <li>Water</li>
       <li>WaterFreshShallow</li>
     </tags>
     <affordances>
