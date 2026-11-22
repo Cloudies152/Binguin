@@ -43,6 +43,10 @@ namespace Binguin.Feature.Fishing
     [StaticConstructorOnStartup]
     public class Building_BinguinPond : Building
     {
+        private static Graphic[] waterFrames;      // 动态水面帧
+        private const int WaterFrameCount = 12;
+        private const int WaterFrameTicks = 6;     // 每 6 tick 换一帧
+
         private static Graphic[] cachedVariants; // mask 0..15 -> 变体贴图
         private static ThingDef cachedPondDef;
 
@@ -55,6 +59,25 @@ namespace Binguin.Feature.Fishing
                     cachedPondDef = DefDatabase<ThingDef>.GetNamedSilentFail("Binguin_FishPond");
                 }
                 return cachedPondDef;
+            }
+        }
+
+        private static Graphic[] WaterFrames
+        {
+            get
+            {
+                if (waterFrames == null)
+                {
+                    waterFrames = new Graphic[WaterFrameCount];
+                    Vector2 size = new Vector2(2f, 2f);
+                    for (int i = 0; i < WaterFrameCount; i++)
+                    {
+                        string path = "Things/Building/Binguin/PondWater/F" + i.ToString("00");
+                        waterFrames[i] = GraphicDatabase.Get<Graphic_Single>(
+                            path, ShaderDatabase.Cutout, size, Color.white);
+                    }
+                }
+                return waterFrames;
             }
         }
 
@@ -92,8 +115,34 @@ namespace Binguin.Feature.Fishing
             base.Destroy(mode);
         }
 
+        /// <summary>在水池范围里画一帧动态水面（整块 2×2，和相邻鱼池无缝衔接）。</summary>
+        private void PrintWater(SectionLayer layer)
+        {
+            try
+            {
+                Graphic[] frames = WaterFrames;
+                if (frames == null || frames.Length == 0)
+                {
+                    return;
+                }
+
+                int frame = (Find.TickManager.TicksGame / WaterFrameTicks) % frames.Length;
+                Graphic g = frames[frame];
+                if (g != null)
+                {
+                    g.Print(layer, this, 0f);
+                }
+            }
+            catch (Exception e)
+            {
+                BinguinLogUtility.WarningOnce("鱼池动态水面绘制失败：" + e.Message, 832613);
+            }
+        }
+
         public override void Print(SectionLayer layer)
         {
+            PrintWater(layer);
+
             Graphic g = null;
             try
             {
