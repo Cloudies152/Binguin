@@ -50,6 +50,12 @@ namespace Binguin.Feature.Fishing
                     return Props.terrainDef;
                 }
 
+                TerrainDef own = DefDatabase<TerrainDef>.GetNamedSilentFail("Binguin_PondWater");
+                if (own != null)
+                {
+                    return own;
+                }
+
                 return DefDatabase<TerrainDef>.GetNamedSilentFail("WaterShallow");
             }
         }

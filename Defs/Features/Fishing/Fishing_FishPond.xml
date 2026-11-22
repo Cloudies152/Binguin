@@ -91,7 +91,9 @@
     </li>
     <li Class="Binguin.Feature.Fishing.CompProperties_BinguinFishPond, Binguin"></li>
     <!-- 水面交给原版水地形渲染：建筑贴图只画岸，中间透明 -->
-    <li Class="Binguin.Feature.Fishing.CompProperties_BinguinPondWater, Binguin"></li>
+    <li Class="Binguin.Feature.Fishing.CompProperties_BinguinPondWater, Binguin">
+      <terrainDef>Binguin_PondWater</terrainDef>
+    </li>
     </comps>
     <researchPrerequisites>
       <li>Binguin_ResearchAdvancedFishing</li>
