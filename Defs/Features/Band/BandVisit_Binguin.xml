@@ -194,7 +194,7 @@
     <uiIconScale>1</uiIconScale>
     <graphicData>
       <texPath>Things/Building/Joy/Binguin/Band_Microphone</texPath>
-      <drawSize>(1.25, 1.25)</drawSize>
+      <drawSize>(1.5, 1.5)</drawSize>
       <graphicClass>Graphic_Single</graphicClass>
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
@@ -314,7 +314,7 @@
     <uiIconScale>1</uiIconScale>
     <graphicData>
       <texPath>Things/Building/Joy/Binguin/Band_Bass</texPath>
-      <drawSize>(1.35, 1.35)</drawSize>
+      <drawSize>(1.5, 1.5)</drawSize>
       <graphicClass>Graphic_Single</graphicClass>
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
