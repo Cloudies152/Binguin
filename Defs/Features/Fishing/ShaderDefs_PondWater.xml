@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  鱼池水面用的自定义着色器（试验）
+  ============================================================
+  来源：复制原版 TerrainWater.frag.glsl，去掉最后的“岸边噪声淡出”：
+        finalCol.a = roughFade(uv, finalCol.a)  →  finalCol.a = 1.0
+        这样水面不会向相邻格子淡化（不再溢出鱼池），但保留原版的动态波纹、
+        光照/日月方向、云影反射。
+
+  文件位置：Binguin_开发版/Shaders/Map/PondWater.{vert,frag}.glsl
+-->
+<Defs>
+
+  <ShaderDef>
+    <defName>BinguinPondWater</defName>
+    <shaderProgram>
+      <vertexShaderFileName>PondWater.vert.glsl</vertexShaderFileName>
+      <fragmentShaderFileName>PondWater.frag.glsl</fragmentShaderFileName>
+      <flipTextureST>false</flipTextureST>
+      <transparent>true</transparent>
+      <depthWrite>false</depthWrite>
+      <cullMode>None</cullMode>
+      <renderQueue>2001</renderQueue>
+      <textureWrapOverrides>
+        <li>
+          <key>_MainTex</key>
+          <value>Repeat</value>
+        </li>
+        <li>
+          <key>_AlphaAddTex</key>
+          <value>Repeat</value>
+        </li>
+        <li>
+          <key>_WaterReflectionTex</key>
+          <value>Repeat</value>
+        </li>
+      </textureWrapOverrides>
+    </shaderProgram>
+  </ShaderDef>
+
+  <ShaderTypeDef>
+    <defName>BinguinPondWaterType</defName>
+    <shaderPath>BinguinPondWater</shaderPath>
+  </ShaderTypeDef>
+
+</Defs>
