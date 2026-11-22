@@ -550,6 +550,12 @@ namespace Binguin.Feature.Fishing
             // ★★ 2026-11-03 温度系统：
             //   水温 < 0℃ 或 > 58℃ → 不繁殖，且每池每天死 1 条；
             //   开了调温模块并且每个池都通着电 → 无视温度（每池 200W）。
+            if (heaterOn)
+            {
+                // 组可能刚并入新池子：每次 Rare tick 重新下发一次供电
+                ApplyHeaterPower();
+            }
+
             float temp = GroupTemperature(group);
             cachedTemp = temp;
             bool heaterWorks = heaterOn && GroupPowered(group);
@@ -668,6 +674,26 @@ namespace Binguin.Feature.Fishing
                 }
             }
             return true;
+        }
+
+        /// <summary>整组一起开/关调温模块（任意一个池的按钮都作用于整片连通水池）。</summary>
+        public void SetHeaterForGroup(bool on)
+        {
+            List<Thing> group = GetGroupThings();
+            for (int i = 0; i < group.Count; i++)
+            {
+                Thing t = group[i];
+                if (t == null || !t.Spawned)
+                {
+                    continue;
+                }
+                CompBinguinFishPond c = t.TryGetComp<CompBinguinFishPond>();
+                if (c != null)
+                {
+                    c.heaterOn = on;
+                }
+            }
+            ApplyHeaterPower();
         }
 
         /// <summary>把调温模块的耗电（每池 200W）应用到组内每个池；关闭时归零。</summary>
@@ -882,8 +908,7 @@ namespace Binguin.Feature.Fishing
             heater.isActive = delegate { return lead.heaterOn; };
             heater.toggleAction = delegate
             {
-                lead.heaterOn = !lead.heaterOn;
-                lead.ApplyHeaterPower();
+                lead.SetHeaterForGroup(!lead.heaterOn);
             };
             yield return heater;
         }
