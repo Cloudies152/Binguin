@@ -123,7 +123,7 @@ void main()
     float adjustedDay = 2.0 * mix(u._DayPercent, 1.0 - u._DayPercent, step(u._DayPercent, 0.5));
     vec2 aspect2 = vec2(1.0, u._MainCameraScreenParams.y / u._MainCameraScreenParams.x);
     float reflectionIntensity = mix(ReflectionIntensityNight, ReflectionIntensityDay, adjustedDay);
-    vec2 reflectionUV = (mix(uv / 16.0, postex * aspect2 * 0.5 + 0.5, ParallaxFactor) + u._GameSeconds * ReflectionSpeed) * ReflectionScale + normal.xz * ReflectionDistance;
+    vec2 reflectionUV = (mix(uv / 16.0, postex * aspect2 * 0.5 + 0.5, ParallaxFactor) + u._GameSeconds * 0.3333 * ReflectionSpeed) * ReflectionScale + normal.xz * ReflectionDistance;
     finalCol.rgb += (1.0 - 2.0 * texture(_WaterReflectionTex, flipV(reflectionUV)).rgb) * reflectionIntensity;
 
     finalCol.a = 1.0;   // 鱼池版：不做岸边淡出，水面严格限制在格子内

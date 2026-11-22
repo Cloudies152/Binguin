@@ -21,7 +21,7 @@
     <description>鱼池里的静水。</description>
     <texturePath>Terrain/Surfaces/WaterShallowRamp</texturePath>
     <customShader>BinguinPondWaterType</customShader>
-    <waterDepthShader>WaterDepth</waterDepthShader>
+    <waterDepthShader>BinguinPondWaterDepth</waterDepthShader>
     <waterBodyType>Freshwater</waterBodyType>
     <renderPrecedence>394</renderPrecedence>
     <edgeType>Hard</edgeType>
