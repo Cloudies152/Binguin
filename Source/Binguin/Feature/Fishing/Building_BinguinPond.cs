@@ -43,6 +43,7 @@ namespace Binguin.Feature.Fishing
     [StaticConstructorOnStartup]
     public class Building_BinguinPond : Building
     {
+        private const bool UseFrameWater = false;   // true=帧动画水面；false=用原版水着色器
         private static Graphic[] waterFrames;      // 动态水面帧
         private const int WaterFrameCount = 12;
         private const int WaterFrameTicks = 6;     // 每 6 tick 换一帧
@@ -118,6 +119,11 @@ namespace Binguin.Feature.Fishing
         /// <summary>在水池范围里画一帧动态水面（整块 2×2，和相邻鱼池无缝衔接）。</summary>
         private void PrintWater(SectionLayer layer)
         {
+            if (!UseFrameWater)
+            {
+                return;   // 使用原版 WaterDepth 着色器时，不再画帧动画水面
+            }
+
             try
             {
                 Graphic[] frames = WaterFrames;
