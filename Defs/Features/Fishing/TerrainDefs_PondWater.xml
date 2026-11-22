@@ -21,7 +21,8 @@
     <defName>Binguin_PondWater</defName>
     <label>鱼池水面</label>
     <description>鱼池里的静水。</description>
-    <texturePath>Things/Building/Binguin/PondWaterTile</texturePath>
+    <texturePath>Terrain/Surfaces/WaterShallowRamp</texturePath>
+    <customShader>BinguinPondWaterShader</customShader>
     <renderPrecedence>394</renderPrecedence>
     <color>(1, 1, 1)</color>
     <pollutionColor>(1, 1, 1, 0.35)</pollutionColor>
