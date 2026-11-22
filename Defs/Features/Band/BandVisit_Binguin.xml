@@ -318,7 +318,7 @@
     <uiIconScale>1</uiIconScale>
     <graphicData>
       <texPath>Things/Building/Joy/Binguin/Band_Bass</texPath>
-      <drawSize>(1.9, 1.9)</drawSize>
+      <drawSize>(1.8, 1.8)</drawSize>
       <graphicClass>Graphic_Multi</graphicClass>
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>

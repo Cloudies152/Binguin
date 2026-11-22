@@ -29,6 +29,7 @@
     <graphicData>
       <texPath>Things/Building/Binguin/FishPond</texPath>
       <graphicClass>Graphic_Single</graphicClass>
+    <uiIconPath>Things/Building/Binguin/UI/FishPond</uiIconPath>
       <drawSize>(2,2)</drawSize>
       <shadowData>
         <volume>(2, 0.4, 2)</volume>
