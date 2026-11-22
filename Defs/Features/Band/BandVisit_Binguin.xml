@@ -148,6 +148,8 @@
     <defName>Binguin_Band_Microphone</defName>
     <label>冰鹅族麦克风</label>
     <description>冰鹅族乐队主唱用的立式麦克风。据说能把歌声里的情绪一并放大。</description>
+    <altitudeLayer>MetaOverlay</altitudeLayer>
+    <rotatable>false</rotatable>
     <size>(1,1)</size>
     <!-- ★ 2026-09-23 用户要求：操作点全部挪到乐器【后方】（远离观众那侧），
          让乐手站在乐器背后、面朝观众席演奏；麦克风仍是第一排（离观众最近那排）。
@@ -194,7 +196,7 @@
     <uiIconScale>1</uiIconScale>
     <graphicData>
       <texPath>Things/Building/Joy/Binguin/Band_Microphone</texPath>
-      <drawSize>(1.5, 1.5)</drawSize>
+      <drawSize>(1.6, 1.6)</drawSize>
       <graphicClass>Graphic_Single</graphicClass>
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
@@ -272,6 +274,8 @@
     <defName>Binguin_Band_Bass</defName>
     <label>冰鹅族贝斯</label>
     <description>冰鹅族乐队的四弦贝斯。是整支乐队的稳固骨架，只是不容易被发现。</description>
+    <altitudeLayer>MetaOverlay</altitudeLayer>
+    <rotatable>false</rotatable>
     <size>(1,1)</size>
     <interactionCellOffset>(0,0,-1)</interactionCellOffset>
     <!-- ★★★ 2026-09 修复（用户实测「放置地标后依然没法用」的真正原因）：
@@ -314,7 +318,7 @@
     <uiIconScale>1</uiIconScale>
     <graphicData>
       <texPath>Things/Building/Joy/Binguin/Band_Bass</texPath>
-      <drawSize>(1.5, 1.5)</drawSize>
+      <drawSize>(1.6, 1.6)</drawSize>
       <graphicClass>Graphic_Single</graphicClass>
       <drawRotated>false</drawRotated>
       <allowFlip>false</allowFlip>
