@@ -148,7 +148,7 @@
     <defName>Binguin_Band_Microphone</defName>
     <label>冰鹅族麦克风</label>
     <description>冰鹅族乐队主唱用的立式麦克风。据说能把歌声里的情绪一并放大。</description>
-    <altitudeLayer>MetaOverlay</altitudeLayer>
+    <altitudeLayer>MetaOverlays</altitudeLayer>
     <rotatable>true</rotatable>
     <size>(1,1)</size>
     <!-- ★ 2026-09-23 用户要求：操作点全部挪到乐器【后方】（远离观众那侧），
@@ -274,7 +274,7 @@
     <defName>Binguin_Band_Bass</defName>
     <label>冰鹅族贝斯</label>
     <description>冰鹅族乐队的四弦贝斯。是整支乐队的稳固骨架，只是不容易被发现。</description>
-    <altitudeLayer>MetaOverlay</altitudeLayer>
+    <altitudeLayer>MetaOverlays</altitudeLayer>
     <rotatable>true</rotatable>
     <size>(1,1)</size>
     <interactionCellOffset>(0,0,-1)</interactionCellOffset>
