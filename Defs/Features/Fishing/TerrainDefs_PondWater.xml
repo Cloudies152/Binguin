@@ -24,7 +24,7 @@
     <waterDepthShader>WaterDepth</waterDepthShader>
     <waterBodyType>Freshwater</waterBodyType>
     <renderPrecedence>394</renderPrecedence>
-    <edgeType>Water</edgeType>
+    <edgeType>Hard</edgeType>
     <fertility>0</fertility>
     <natural>false</natural>
     <avoidWander>true</avoidWander>
